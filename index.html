@@ -48,17 +48,13 @@
     overflow-x: hidden;
   }
 
-  /* Film grain overlay */
+  /* Film grain */
   body::after {
     content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9999;
+    position: fixed; inset: 0; pointer-events: none; z-index: 9999;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
     background-size: 180px 180px;
-    opacity: 0.034;
-    mix-blend-mode: overlay;
+    opacity: 0.034; mix-blend-mode: overlay;
   }
 
   /* ── NAV ────────────────────────────────────── */
@@ -67,16 +63,15 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 1.1rem 4%;
     background: rgba(13,13,13,0.88);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     transition: background 0.3s;
   }
   nav.scrolled { background: rgba(13,13,13,0.97); }
   .nav-logo {
     font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; font-weight: 700;
-    color: var(--white); letter-spacing: 0.02em;
+    font-size: 1.2rem; font-weight: 700; color: var(--white); letter-spacing: 0.02em;
+    position: relative; z-index: 210;
   }
   .nav-logo span { color: var(--gold); }
   .nav-links { display: flex; gap: 2rem; align-items: center; }
@@ -86,39 +81,70 @@
   }
   .nav-links a:hover { color: var(--white); }
   .nav-cta {
-    background: var(--gold) !important;
-    color: var(--dark) !important;
-    padding: 0.5rem 1.25rem !important;
-    font-weight: 600 !important; font-size: 0.76rem !important;
-    letter-spacing: 0.12em !important; border-radius: 2px;
-    transition: background 0.2s, box-shadow 0.2s !important;
+    background: var(--gold) !important; color: var(--dark) !important;
+    padding: 0.5rem 1.25rem !important; font-weight: 600 !important;
+    font-size: 0.76rem !important; letter-spacing: 0.12em !important;
+    border-radius: 2px; transition: background 0.2s, box-shadow 0.2s, transform 0.3s !important;
+    display: inline-block;
   }
-  .nav-cta:hover {
-    background: var(--gold-light) !important;
-    box-shadow: 0 0 20px rgba(201,168,76,0.35) !important;
-    color: var(--dark) !important;
+  .nav-cta:hover { background: var(--gold-light) !important; box-shadow: 0 0 20px rgba(201,168,76,0.35) !important; color: var(--dark) !important; }
+
+  /* Hamburger */
+  .nav-hamburger {
+    display: none; flex-direction: column; justify-content: center;
+    gap: 5px; background: none; border: none; cursor: pointer;
+    padding: 0.5rem; z-index: 210; position: relative;
+  }
+  .nav-hamburger span {
+    display: block; width: 22px; height: 1.5px;
+    background: var(--white); border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: center;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Mobile nav overlay */
+  .mobile-nav {
+    display: none; position: fixed; inset: 0; z-index: 205;
+    background: rgba(10,10,10,0.97);
+    backdrop-filter: blur(20px);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 2.5rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .mobile-nav.open { opacity: 1; pointer-events: auto; }
+  .mobile-nav a {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700; color: var(--white);
+    text-decoration: none; letter-spacing: -0.02em;
+    transition: color 0.2s;
+  }
+  .mobile-nav a:hover { color: var(--gold); }
+  .mobile-nav .mobile-cta {
+    margin-top: 1rem; background: var(--gold); color: var(--dark);
+    padding: 1rem 2.5rem; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; border-radius: 2px; text-decoration: none;
+    display: inline-block;
   }
 
   /* ── FLOATING CTA ───────────────────────────── */
   .float-cta {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
     display: flex; align-items: center; gap: 0.6rem;
-    background: var(--gold);
-    color: var(--dark);
-    padding: 0.85rem 1.4rem;
-    border-radius: 50px;
+    background: var(--gold); color: var(--dark);
+    padding: 0.85rem 1.4rem; border-radius: 50px;
     font-weight: 700; font-size: 0.8rem;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    text-decoration: none;
+    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
     box-shadow: 0 4px 30px rgba(201,168,76,0.5), 0 2px 10px rgba(0,0,0,0.4);
     opacity: 0; transform: translateY(20px) scale(0.95);
     transition: opacity 0.4s, transform 0.4s, background 0.2s, box-shadow 0.2s;
     pointer-events: none;
   }
-  .float-cta.visible {
-    opacity: 1; transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
+  .float-cta.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
   .float-cta:hover {
     background: var(--gold-light);
     box-shadow: 0 6px 40px rgba(201,168,76,0.65), 0 2px 10px rgba(0,0,0,0.4);
@@ -126,8 +152,7 @@
   }
   .float-cta .dot {
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--dark);
-    animation: pulse-dot 2s ease-in-out infinite;
+    background: var(--dark); animation: pulse-dot 2s ease-in-out infinite;
   }
   @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
@@ -141,97 +166,118 @@
     padding: 9rem 4% 5rem;
     position: relative; overflow: hidden;
   }
+  #heroCanvas {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  }
   .hero-bg {
-    position: absolute; inset: 0; pointer-events: none;
+    position: absolute; inset: 0; pointer-events: none; z-index: 1;
     background:
       radial-gradient(ellipse 70% 55% at 72% 35%, rgba(201,168,76,0.07) 0%, transparent 65%),
       radial-gradient(ellipse 50% 40% at 12% 80%, rgba(120,90,38,0.04) 0%, transparent 55%),
       radial-gradient(ellipse 120% 50% at 50% 115%, rgba(0,0,0,0.95) 0%, transparent 55%);
   }
-  /* Edge vignette */
   .hero-bg::after {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(0,0,0,0.5) 100%);
   }
-  /* Directional spotlight — not a filled disc */
   .hero-spotlight {
     position: absolute; top: -20%; right: -10%;
-    width: 900px; height: 900px; pointer-events: none;
-    background:
-      radial-gradient(ellipse 55% 45% at 58% 42%, rgba(201,168,76,0.065) 0%, rgba(201,168,76,0.02) 45%, transparent 72%);
+    width: 900px; height: 900px; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse 55% 45% at 58% 42%, rgba(201,168,76,0.065) 0%, rgba(201,168,76,0.02) 45%, transparent 72%);
     animation: slow-drift 18s ease-in-out infinite alternate;
   }
   @keyframes slow-drift {
-    from { transform: translate(0, 0) scale(1); }
-    to   { transform: translate(25px, -18px) scale(1.04); }
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(25px,-18px) scale(1.04); }
   }
+
+  /* All hero content above canvas */
+  .hero > *:not(#heroCanvas):not(.hero-bg):not(.hero-spotlight) { position: relative; z-index: 2; }
+
   .hero-eyebrow {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase;
     color: var(--warm-muted); margin-bottom: 2rem;
     display: flex; align-items: center; gap: 0.8rem;
-    position: relative;
+    animation: fadeUp 0.6s 0.1s both;
   }
   .hero-eyebrow::before {
     content: ''; display: block; width: 2.5rem; height: 1px;
-    background: linear-gradient(to right, transparent, var(--warm-muted));
-    flex-shrink: 0;
+    background: linear-gradient(to right, transparent, var(--warm-muted)); flex-shrink: 0;
   }
+
+  /* Split-line text reveal */
   .hero h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(4rem, 10vw, 9.5rem);
     font-weight: 900; line-height: 0.93;
     max-width: 1000px; margin-bottom: 2.2rem;
     letter-spacing: -0.04em;
-    position: relative;
   }
-  .hero h1 .line-gold {
-    font-style: italic; color: var(--gold);
-    text-shadow: 0 0 80px rgba(201,168,76,0.22), 0 0 200px rgba(201,168,76,0.08);
+  .reveal-line {
+    display: block; overflow: hidden; line-height: 1.05;
+  }
+  .reveal-line > span {
     display: block;
+    transform: translateY(110%) skewY(3deg);
+    animation: lineReveal 1s cubic-bezier(0.16,1,0.3,1) forwards;
+    will-change: transform;
   }
+  .reveal-line:nth-child(1) > span { animation-delay: 0.25s; }
+  .reveal-line:nth-child(2) > span { animation-delay: 0.48s; }
+  @keyframes lineReveal {
+    to { transform: translateY(0) skewY(0deg); }
+  }
+
+  /* Gold shimmer text */
+  .line-gold {
+    font-style: italic;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 35%, var(--gold-light) 48%, #fff8d0 52%, var(--gold-light) 58%, var(--gold) 100%);
+    background-size: 300% auto;
+    background-position: 200% center;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: goldShimmer 2.2s ease-out 1.1s forwards;
+  }
+  @keyframes goldShimmer {
+    to { background-position: -80% center; }
+  }
+
   .hero-sub {
     font-family: 'DM Sans', sans-serif;
     font-size: 1.05rem; color: var(--gray-light); max-width: 460px;
-    line-height: 1.82; margin-bottom: 3rem; position: relative;
-    font-weight: 300;
+    line-height: 1.82; margin-bottom: 3rem; font-weight: 300;
+    animation: fadeUp 0.7s 0.7s both;
   }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; position: relative; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.7s 0.88s both; }
 
   .btn-primary {
     background: var(--gold); color: var(--dark);
-    padding: 1rem 2.4rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 700;
-    font-size: 0.76rem; letter-spacing: 0.15em; text-transform: uppercase;
-    border: none; cursor: pointer; text-decoration: none; display: inline-block;
-    border-radius: 2px;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    padding: 1rem 2.4rem; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 0.76rem; letter-spacing: 0.15em;
+    text-transform: uppercase; border: none; cursor: pointer;
+    text-decoration: none; display: inline-block; border-radius: 2px;
     box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    position: relative;
   }
-  .btn-primary:hover {
-    background: var(--gold-light); transform: translateY(-2px);
-    box-shadow: 0 6px 32px rgba(201,168,76,0.5);
-  }
+  .btn-primary:hover { background: var(--gold-light); box-shadow: 0 6px 32px rgba(201,168,76,0.5); }
   .btn-outline {
     background: transparent; color: var(--white);
-    padding: 1rem 2.4rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 500;
-    font-size: 0.76rem; letter-spacing: 0.15em; text-transform: uppercase;
-    border: 1px solid rgba(245,240,232,0.18);
-    cursor: pointer; text-decoration: none; display: inline-block;
-    border-radius: 2px; transition: border-color 0.2s, background 0.2s;
+    padding: 1rem 2.4rem; font-family: 'DM Sans', sans-serif;
+    font-weight: 500; font-size: 0.76rem; letter-spacing: 0.15em;
+    text-transform: uppercase; border: 1px solid rgba(245,240,232,0.18);
+    cursor: pointer; text-decoration: none; display: inline-block; border-radius: 2px;
+    transition: border-color 0.2s, background 0.2s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    position: relative;
   }
-  .btn-outline:hover {
-    border-color: rgba(245,240,232,0.38);
-    background: rgba(245,240,232,0.04);
-  }
+  .btn-outline:hover { border-color: rgba(245,240,232,0.38); background: rgba(245,240,232,0.04); }
 
   .hero-stats {
     display: flex; gap: 3rem; margin-top: 4.5rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid rgba(245,240,232,0.09); flex-wrap: wrap;
-    position: relative;
+    padding-top: 2.5rem; border-top: 1px solid rgba(245,240,232,0.09);
+    flex-wrap: wrap; animation: fadeUp 0.7s 1.05s both;
   }
   .hero-stat-num {
     font-family: 'Playfair Display', serif;
@@ -254,8 +300,7 @@
   }
   .section-eyebrow::before {
     content: ''; display: block; width: 2rem; height: 1px;
-    background: linear-gradient(to right, transparent, var(--warm-muted));
-    flex-shrink: 0;
+    background: linear-gradient(to right, transparent, var(--warm-muted)); flex-shrink: 0;
   }
   .section-title {
     font-family: 'Playfair Display', serif;
@@ -263,17 +308,12 @@
     font-weight: 700; line-height: 1.04; margin-bottom: 1.2rem;
     letter-spacing: -0.03em;
   }
-  .section-title em {
-    font-style: italic; color: var(--gold);
-    text-shadow: 0 0 50px rgba(201,168,76,0.18);
-  }
+  .section-title em { font-style: italic; color: var(--gold); text-shadow: 0 0 50px rgba(201,168,76,0.18); }
   .section-sub {
     font-family: 'DM Sans', sans-serif;
-    color: var(--gray); max-width: 500px; line-height: 1.82; margin-bottom: 3.5rem;
-    font-size: 0.95rem; font-weight: 300;
+    color: var(--gray); max-width: 500px; line-height: 1.82;
+    margin-bottom: 3.5rem; font-size: 0.95rem; font-weight: 300;
   }
-
-  /* Subtle section depth accents */
   .glow-accent {
     position: absolute; pointer-events: none; border-radius: 50%;
     filter: blur(90px);
@@ -281,86 +321,88 @@
     width: 500px; height: 500px; top: -100px; left: -100px;
   }
 
-  /* ── PORTFOLIO ──────────────────────────────── */
-  #portfolio {
-    background: var(--dark2);
-    position: relative; overflow: hidden;
+  /* ── TICKER ─────────────────────────────────── */
+  .ticker-band {
+    background: var(--dark3);
+    border-top: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+    padding: 1.1rem 0; overflow: hidden; position: relative;
   }
+  .ticker-band::before,
+  .ticker-band::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2;
+    pointer-events: none;
+  }
+  .ticker-band::before { left: 0; background: linear-gradient(to right, var(--dark3), transparent); }
+  .ticker-band::after  { right: 0; background: linear-gradient(to left, var(--dark3), transparent); }
+  .ticker-track {
+    display: flex; gap: 3rem; white-space: nowrap;
+    animation: ticker-scroll 28s linear infinite;
+    width: max-content;
+  }
+  .ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .ticker-item {
+    display: flex; align-items: center; gap: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-muted);
+  }
+  .ticker-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--gold); opacity: 0.6; flex-shrink: 0;
+  }
+
+  /* ── PORTFOLIO ──────────────────────────────── */
+  #portfolio { background: var(--dark2); position: relative; overflow: hidden; }
   #portfolio::before {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none;
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse 60% 40% at 85% 15%, rgba(201,168,76,0.04) 0%, transparent 60%);
   }
-
-  /* Featured portfolio card — KATO */
-  .portfolio-featured {
-    margin-bottom: 1.5rem;
-  }
-  .portfolio-featured .browser-frame .browser-preview img {
-    aspect-ratio: 21/9 !important;
-  }
-  .portfolio-featured .portfolio-card-info {
-    padding: 1.3rem 1.5rem 1.7rem;
-  }
-  .portfolio-featured .portfolio-card-name {
-    font-size: 1.2rem;
-  }
-
-  /* Sub-grid for remaining 6 cards */
+  .portfolio-featured { margin-bottom: 1.5rem; }
+  .portfolio-featured .browser-frame .browser-preview img { aspect-ratio: 21/9 !important; }
+  .portfolio-featured .portfolio-card-info { padding: 1.3rem 1.5rem 1.7rem; }
+  .portfolio-featured .portfolio-card-name { font-size: 1.2rem; }
   .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem;
   }
 
-  /* Browser mockup frame — unified card system */
+  /* Browser frame — unified card */
   .browser-frame {
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid var(--card-border);
-    background: var(--dark3);
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--card-border); background: var(--dark3);
     transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, box-shadow 0.35s;
     cursor: pointer;
   }
-  .browser-frame:hover {
-    transform: translateY(-4px);
-    border-color: var(--card-border-hover);
-    box-shadow: var(--card-shadow-hover);
-  }
+  .browser-frame:hover { transform: translateY(-4px); border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); }
   .browser-chrome {
-    background: #1C1C1C;
-    padding: 0.58rem 1rem;
+    background: #1C1C1C; padding: 0.58rem 1rem;
     display: flex; align-items: center; gap: 0.75rem;
     border-bottom: 1px solid rgba(255,255,255,0.04);
   }
   .browser-dots { display: flex; gap: 0.38rem; }
-  .browser-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-  }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
   .dot-red   { background: #ff5f57; }
   .dot-yellow{ background: #febc2e; }
   .dot-green { background: #28c840; }
   .browser-bar {
-    flex: 1; background: #131313;
-    border-radius: 4px; padding: 0.26rem 0.7rem;
-    font-size: 0.67rem; color: #3e3e3e;
-    letter-spacing: 0.02em; white-space: nowrap; overflow: hidden;
-    text-overflow: ellipsis;
+    flex: 1; background: #131313; border-radius: 4px; padding: 0.26rem 0.7rem;
+    font-size: 0.67rem; color: #3e3e3e; letter-spacing: 0.02em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .browser-preview {
-    position: relative; overflow: hidden;
-  }
+  .browser-preview { position: relative; overflow: hidden; }
   .browser-preview img {
-    display: block; width: 100%;
-    aspect-ratio: 16/10;
+    display: block; width: 100%; aspect-ratio: 16/10;
     object-fit: cover; object-position: top;
     transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
   }
   .browser-frame:hover .browser-preview img { transform: scale(1.03); }
   .portfolio-card-info {
     padding: 1rem 1.2rem 1.3rem;
-    border-top: 1px solid rgba(245,240,232,0.04);
-    background: var(--dark3);
+    border-top: 1px solid rgba(245,240,232,0.04); background: var(--dark3);
   }
   .portfolio-card-tag {
     font-family: 'DM Sans', sans-serif;
@@ -373,60 +415,35 @@
   }
 
   /* ── TESTIMONIALS ───────────────────────────── */
-  #testimonials {
-    background: var(--dark);
-    position: relative; overflow: hidden;
-  }
+  #testimonials { background: var(--dark); position: relative; overflow: hidden; }
   #testimonials::before {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none;
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse 55% 55% at 90% 85%, rgba(100,80,38,0.05) 0%, transparent 55%);
   }
-  .testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; }
   .testimonial-card {
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 2rem;
-    background: var(--dark3);
-    position: relative;
+    border: 1px solid var(--card-border); border-radius: 8px; padding: 2rem;
+    background: var(--dark3); position: relative;
     transition: border-color 0.3s, box-shadow 0.35s, transform 0.35s cubic-bezier(0.22,1,0.36,1);
   }
-  .testimonial-card:hover {
-    border-color: var(--card-border-hover);
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-4px);
-  }
+  .testimonial-card:hover { border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); transform: translateY(-4px); }
   .testimonial-card::before {
-    content: '\201C';
-    position: absolute; top: 1.2rem; right: 1.5rem;
-    font-family: 'Playfair Display', serif;
-    font-size: 4.5rem; line-height: 1;
-    color: var(--white); opacity: 0.07;
-    pointer-events: none;
+    content: '\201C'; position: absolute; top: 1.2rem; right: 1.5rem;
+    font-family: 'Playfair Display', serif; font-size: 4.5rem; line-height: 1;
+    color: var(--white); opacity: 0.07; pointer-events: none;
   }
-  .stars {
-    display: flex; gap: 0.2rem; margin-bottom: 1rem;
-    color: var(--warm-accent); font-size: 0.85rem;
-  }
+  .stars { display: flex; gap: 0.2rem; margin-bottom: 1rem; color: var(--warm-accent); font-size: 0.85rem; }
   .testimonial-text {
     color: #c5bdb5; font-size: 0.88rem; line-height: 1.82;
     margin-bottom: 1.4rem; font-style: italic; font-family: 'DM Sans', sans-serif;
   }
-  .testimonial-author {
-    display: flex; align-items: center; gap: 0.8rem;
-  }
+  .testimonial-author { display: flex; align-items: center; gap: 0.8rem; }
   .author-avatar {
     width: 40px; height: 40px; border-radius: 50%;
-    background: rgba(245,240,232,0.05);
-    border: 1px solid var(--card-border);
+    background: rgba(245,240,232,0.05); border: 1px solid var(--card-border);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem; font-weight: 700; color: var(--warm-accent);
-    flex-shrink: 0;
+    font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700;
+    color: var(--warm-accent); flex-shrink: 0;
   }
   .author-name { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.88rem; }
   .author-biz { font-family: 'DM Sans', sans-serif; font-size: 0.74rem; color: var(--warm-muted); margin-top: 0.15rem; }
@@ -436,143 +453,165 @@
     background: linear-gradient(135deg, rgba(245,240,232,0.035) 0%, rgba(245,240,232,0.01) 100%);
     border-top: 1px solid rgba(245,240,232,0.07);
     border-bottom: 1px solid rgba(245,240,232,0.07);
-    padding: 3.5rem 4%;
-    position: relative; overflow: hidden;
+    padding: 3.5rem 4%; position: relative; overflow: hidden;
   }
-  .guarantee-inner {
-    display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;
-    max-width: 860px;
-  }
-  .guarantee-icon {
-    font-size: 3rem; flex-shrink: 0;
-    filter: drop-shadow(0 0 16px rgba(245,240,232,0.12));
-  }
+  .guarantee-inner { display: flex; align-items: center; gap: 3rem; flex-wrap: wrap; max-width: 860px; }
+  .guarantee-icon { font-size: 3rem; flex-shrink: 0; filter: drop-shadow(0 0 16px rgba(245,240,232,0.12)); }
   .guarantee-title {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700; margin-bottom: 0.6rem;
-    letter-spacing: -0.025em;
+    font-size: clamp(1.5rem,3vw,2rem); font-weight: 700;
+    margin-bottom: 0.6rem; letter-spacing: -0.025em;
   }
-  .guarantee-text {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--gray-light); font-size: 0.92rem; line-height: 1.78; max-width: 560px;
-    font-weight: 300;
-  }
+  .guarantee-text { font-family: 'DM Sans', sans-serif; color: var(--gray-light); font-size: 0.92rem; line-height: 1.78; max-width: 560px; font-weight: 300; }
   .guarantee-text strong { color: var(--white); font-weight: 500; }
 
-  /* ── PRICING ────────────────────────────────── */
-  #pricing {
-    background: var(--dark2);
-    position: relative; overflow: hidden;
+  /* ── COMPARISON ─────────────────────────────── */
+  .comparison-section {
+    background: var(--dark); padding: 7rem 4%; position: relative; overflow: hidden;
   }
+  .comparison-section::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.025) 0%, transparent 65%);
+  }
+  .comparison-table-wrap { overflow-x: auto; }
+  .comparison-table {
+    width: 100%; max-width: 860px; border-collapse: collapse;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+  }
+  .comparison-table th {
+    padding: 1rem 1.2rem; text-align: center;
+    border-bottom: 1px solid rgba(245,240,232,0.08);
+    font-weight: 600; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--warm-muted);
+  }
+  .comparison-table th.col-us {
+    color: var(--white); font-size: 0.82rem;
+    background: rgba(201,168,76,0.06);
+    border-radius: 8px 8px 0 0;
+    border: 1px solid rgba(201,168,76,0.2);
+    border-bottom: none;
+    position: relative;
+  }
+  .comparison-table th.col-us::before {
+    content: 'BEST VALUE';
+    position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+    background: var(--gold); color: var(--dark);
+    font-size: 0.55rem; font-weight: 700; letter-spacing: 0.18em;
+    padding: 0.22rem 0.7rem; white-space: nowrap;
+    border-radius: 0 0 4px 4px;
+  }
+  .comparison-table td {
+    padding: 0.9rem 1.2rem; text-align: center;
+    border-bottom: 1px solid rgba(245,240,232,0.05);
+    color: var(--gray); vertical-align: middle;
+    transition: background 0.2s;
+  }
+  .comparison-table tr:hover td { background: rgba(245,240,232,0.02); }
+  .comparison-table td.col-us {
+    color: var(--white); font-weight: 500;
+    background: rgba(201,168,76,0.04);
+    border-left: 1px solid rgba(201,168,76,0.15);
+    border-right: 1px solid rgba(201,168,76,0.15);
+  }
+  .comparison-table tr:last-child td.col-us {
+    border-radius: 0 0 8px 8px;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .comparison-table td.row-label {
+    text-align: left; color: var(--warm-accent);
+    font-size: 0.85rem; font-weight: 400;
+  }
+  .check { color: #6fcf97; font-size: 1rem; }
+  .cross { color: #555; font-size: 1rem; }
+  .partial { color: var(--warm-muted); font-size: 0.82rem; }
+
+  /* ── PRICING ────────────────────────────────── */
+  #pricing { background: var(--dark2); position: relative; overflow: hidden; }
   #pricing::before {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none;
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse 50% 55% at 18% 75%, rgba(201,168,76,0.04) 0%, transparent 55%);
   }
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem; max-width: 740px;
-  }
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 1.5rem; max-width: 740px; }
   .pricing-card {
-    border: 1px solid var(--card-border);
-    padding: 2.5rem; border-radius: 8px;
+    border: 1px solid var(--card-border); padding: 2.5rem; border-radius: 8px;
     background: var(--dark3); position: relative;
     transition: border-color 0.3s, box-shadow 0.35s, transform 0.35s cubic-bezier(0.22,1,0.36,1);
   }
-  .pricing-card:hover {
-    border-color: var(--card-border-hover);
-    box-shadow: var(--card-shadow-hover);
-    transform: translateY(-4px);
-  }
+  .pricing-card:hover { border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); transform: translateY(-4px); }
   .pricing-card.featured {
     border-color: rgba(201,168,76,0.32);
     background: linear-gradient(150deg, rgba(201,168,76,0.07), var(--dark3) 55%);
     box-shadow: var(--glow-strong);
   }
-  .pricing-card.featured:hover {
-    border-color: rgba(201,168,76,0.52);
-    transform: translateY(-5px);
-  }
+  .pricing-card.featured:hover { border-color: rgba(201,168,76,0.52); transform: translateY(-5px); }
   .pricing-card.featured::before {
-    content: 'MOST POPULAR';
-    position: absolute; top: -1px; right: 2rem;
-    background: var(--gold); color: var(--dark);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.18em;
-    padding: 0.28rem 0.8rem;
+    content: 'MOST POPULAR'; position: absolute; top: -1px; right: 2rem;
+    background: var(--gold); color: var(--dark); font-family: 'DM Sans', sans-serif;
+    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.18em; padding: 0.28rem 0.8rem;
   }
-  .pricing-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--warm-muted); margin-bottom: 1rem;
-  }
-  .pricing-price {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.2rem; font-weight: 900; line-height: 1; margin-bottom: 0.4rem;
-    letter-spacing: -0.03em;
-  }
+  .pricing-label { font-family: 'DM Sans', sans-serif; font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 1rem; }
+  .pricing-price { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 900; line-height: 1; margin-bottom: 0.4rem; letter-spacing: -0.03em; }
   .pricing-price sup { font-size: 1.4rem; vertical-align: top; margin-top: 0.5rem; }
   .pricing-period { font-family: 'DM Sans', sans-serif; color: var(--gray); font-size: 0.82rem; margin-bottom: 1.6rem; }
   .pricing-features { list-style: none; margin-bottom: 2rem; }
   .pricing-features li {
     padding: 0.55rem 0; border-bottom: 1px solid rgba(245,240,232,0.05);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.87rem; color: #bbb;
+    font-family: 'DM Sans', sans-serif; font-size: 0.87rem; color: #bbb;
     display: flex; align-items: center; gap: 0.7rem; font-weight: 300;
   }
   .pricing-features li::before { content: '✓'; color: var(--warm-accent); font-weight: 700; flex-shrink: 0; }
 
-  /* ── HOW IT WORKS ───────────────────────────── */
-  #how {
-    background: var(--dark);
-    position: relative; overflow: hidden;
+  /* Book a call CTA */
+  .book-band {
+    background: var(--dark2); padding: 5rem 4%;
+    border-top: 1px solid var(--card-border);
+    text-align: center; position: relative; overflow: hidden;
   }
+  .book-band::before {
+    content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 600px; height: 300px; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.055) 0%, transparent 70%);
+  }
+  .book-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 700;
+    letter-spacing: -0.03em; margin-bottom: 0.8rem; position: relative;
+  }
+  .book-title em { font-style: italic; color: var(--gold); }
+  .book-sub {
+    font-family: 'DM Sans', sans-serif; color: var(--gray);
+    font-size: 0.95rem; margin-bottom: 2.2rem; position: relative; font-weight: 300;
+  }
+  .book-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; position: relative; }
+
+  /* ── HOW IT WORKS ───────────────────────────── */
+  #how { background: var(--dark); position: relative; overflow: hidden; }
   #how::before {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none;
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(201,168,76,0.022) 0%, transparent 65%);
   }
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 2.5rem;
-  }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 2.5rem; }
   .step { position: relative; }
   .step-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 5.5rem; font-weight: 900;
-    color: rgba(245,240,232,0.04); line-height: 1; margin-bottom: 0.8rem;
-    letter-spacing: -0.05em;
+    font-family: 'Playfair Display', serif; font-size: 5.5rem; font-weight: 900;
+    color: rgba(245,240,232,0.04); line-height: 1; margin-bottom: 0.8rem; letter-spacing: -0.05em;
   }
   .step-title { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.98rem; margin-bottom: 0.5rem; }
   .step-desc { font-family: 'DM Sans', sans-serif; color: var(--gray); font-size: 0.85rem; line-height: 1.72; font-weight: 300; }
   .step-connector {
-    position: absolute; top: 2.8rem; right: -1.5rem;
-    width: 1.5rem; height: 1px;
+    position: absolute; top: 2.8rem; right: -1.5rem; width: 1.5rem; height: 1px;
     background: linear-gradient(to right, rgba(245,240,232,0.08), transparent);
   }
 
   /* ── SERVICES ───────────────────────────────── */
   #services { background: var(--dark2); position: relative; overflow: hidden; }
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.2rem;
-  }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1.2rem; }
   .service-card {
-    border: 1px solid var(--card-border);
-    padding: 1.8rem; border-radius: 8px;
+    border: 1px solid var(--card-border); padding: 1.8rem; border-radius: 8px;
     background: var(--dark3);
     transition: border-color 0.3s, background 0.3s, transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
   }
-  .service-card:hover {
-    border-color: var(--card-border-hover);
-    background: rgba(245,240,232,0.02);
-    transform: translateY(-4px);
-    box-shadow: var(--card-shadow-hover);
-  }
+  .service-card:hover { border-color: var(--card-border-hover); background: rgba(245,240,232,0.02); transform: translateY(-4px); box-shadow: var(--card-shadow-hover); }
   .service-icon { font-size: 1.5rem; margin-bottom: 1rem; }
   .service-name { font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; }
   .service-desc { font-family: 'DM Sans', sans-serif; color: var(--gray); font-size: 0.81rem; line-height: 1.72; font-weight: 300; }
@@ -582,24 +621,18 @@
   .faq-list { max-width: 680px; }
   .faq-item { border-bottom: 1px solid rgba(245,240,232,0.07); }
   .faq-question {
-    width: 100%; background: none; border: none;
-    color: var(--white); font-family: 'DM Sans', sans-serif;
-    font-size: 0.94rem; font-weight: 500; text-align: left;
-    padding: 1.4rem 0; cursor: pointer;
+    width: 100%; background: none; border: none; color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.94rem; font-weight: 500;
+    text-align: left; padding: 1.4rem 0; cursor: pointer;
     display: flex; justify-content: space-between; align-items: center; gap: 1rem;
     transition: color 0.2s;
   }
   .faq-question:hover { color: var(--warm-accent); }
-  .faq-icon {
-    color: var(--warm-muted); font-size: 1.3rem; flex-shrink: 0;
-    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
-    display: inline-block;
-  }
+  .faq-icon { color: var(--warm-muted); font-size: 1.3rem; flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); display: inline-block; }
   .faq-item.open .faq-icon { transform: rotate(45deg); }
   .faq-answer {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--gray); font-size: 0.87rem; line-height: 1.85;
-    max-height: 0; overflow: hidden; font-weight: 300;
+    font-family: 'DM Sans', sans-serif; color: var(--gray); font-size: 0.87rem;
+    line-height: 1.85; max-height: 0; overflow: hidden; font-weight: 300;
     transition: max-height 0.4s ease, padding 0.3s;
   }
   .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 1.4rem; }
@@ -607,60 +640,38 @@
   /* ── CTA BAND ───────────────────────────────── */
   .cta-band {
     background: linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(201,168,76,0.03) 50%, rgba(201,168,76,0.07) 100%);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 7rem 4%;
-    text-align: center; position: relative; overflow: hidden;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 7rem 4%; text-align: center; position: relative; overflow: hidden;
   }
   .cta-band::before {
-    content: '';
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 700px; height: 700px; border-radius: 50%;
+    content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 700px; height: 700px; border-radius: 50%; pointer-events: none;
     background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 65%);
-    pointer-events: none;
   }
   .cta-band h2 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
-    font-weight: 700; margin-bottom: 1rem; position: relative;
-    letter-spacing: -0.035em;
+    font-size: clamp(2.4rem,5.5vw,4.2rem); font-weight: 700;
+    margin-bottom: 1rem; position: relative; letter-spacing: -0.035em;
   }
   .cta-band h2 em { font-style: italic; color: var(--gold); text-shadow: 0 0 50px rgba(201,168,76,0.28); }
   .cta-band p { font-family: 'DM Sans', sans-serif; color: #777; margin-bottom: 2.5rem; font-size: 1rem; position: relative; font-weight: 300; }
   .cta-band .hero-actions { justify-content: center; position: relative; }
-  .cta-contact {
-    display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
-    margin-top: 2rem; position: relative;
-  }
+  .cta-contact { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; position: relative; }
   .cta-contact a {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--warm-muted); text-decoration: none;
+    font-family: 'DM Sans', sans-serif; color: var(--warm-muted); text-decoration: none;
     font-size: 0.82rem; letter-spacing: 0.06em;
-    display: flex; align-items: center; gap: 0.4rem;
-    transition: color 0.2s;
+    display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s;
   }
   .cta-contact a:hover { color: var(--white); }
 
   /* ── FOOTER ─────────────────────────────────── */
-  footer {
-    background: var(--dark); padding: 3.5rem 4% 2rem;
-    border-top: 1px solid rgba(245,240,232,0.07);
-  }
-  .footer-inner {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    flex-wrap: wrap; gap: 2rem; margin-bottom: 2.5rem;
-  }
-  .footer-brand {
-    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
-  }
+  footer { background: var(--dark); padding: 3.5rem 4% 2rem; border-top: 1px solid rgba(245,240,232,0.07); }
+  .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; margin-bottom: 2.5rem; }
+  .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; }
   .footer-brand span { color: var(--gold); }
   .footer-tagline { font-family: 'DM Sans', sans-serif; color: var(--gray); font-size: 0.78rem; margin-top: 0.4rem; font-weight: 300; }
   .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
-  .footer-links a {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--gray); text-decoration: none; font-size: 0.78rem;
-    letter-spacing: 0.06em; transition: color 0.2s;
-  }
+  .footer-links a { font-family: 'DM Sans', sans-serif; color: var(--gray); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.06em; transition: color 0.2s; }
   .footer-links a:hover { color: var(--white); }
   .footer-bottom {
     border-top: 1px solid rgba(245,240,232,0.06); padding-top: 1.5rem;
@@ -674,31 +685,25 @@
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .hero-eyebrow { animation: fadeUp 0.6s 0.1s both; }
-  .hero h1      { animation: fadeUp 0.7s 0.22s both; }
-  .hero-sub     { animation: fadeUp 0.7s 0.38s both; }
-  .hero-actions { animation: fadeUp 0.7s 0.52s both; }
-  .hero-stats   { animation: fadeUp 0.7s 0.68s both; }
-
-  /* Scroll reveal */
   .reveal {
     opacity: 0; transform: translateY(24px);
-    transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1),
-                transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
   }
   .reveal.visible { opacity: 1; transform: none; }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
 
   /* ── MOBILE ─────────────────────────────────── */
   @media (max-width: 900px) {
-    .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+    .portfolio-grid { grid-template-columns: repeat(2,1fr); }
     .portfolio-featured .browser-preview img { aspect-ratio: 16/7 !important; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .mobile-nav { display: flex; }
+    .comparison-table th, .comparison-table td { padding: 0.7rem 0.8rem; font-size: 0.8rem; }
   }
   @media (max-width: 640px) {
     nav { padding: 1rem 4%; }
-    .nav-links { display: none; }
     .hero { padding: 7rem 4% 3rem; }
     .portfolio-grid { grid-template-columns: 1fr; }
     .portfolio-featured .browser-preview img { aspect-ratio: 16/9 !important; }
@@ -729,34 +734,48 @@
     <a href="#services">Services</a>
     <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
   </div>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#portfolio" class="mobile-link">Portfolio</a>
+  <a href="#pricing" class="mobile-link">Pricing</a>
+  <a href="#how" class="mobile-link">How It Works</a>
+  <a href="#services" class="mobile-link">Services</a>
+  <a href="#faq" class="mobile-link">FAQ</a>
+  <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="mobile-cta">Text Us Now</a>
+</div>
 
 <!-- HERO -->
 <section class="hero">
+  <canvas id="heroCanvas"></canvas>
   <div class="hero-bg"></div>
   <div class="hero-spotlight"></div>
 
   <div class="hero-eyebrow">Phoenix, Arizona's Premier Web Strategy Partner</div>
   <h1>
-    Stop Losing Customers<br>
-    <span class="line-gold">to a Bad Website.</span>
+    <span class="reveal-line"><span>Stop Losing Customers</span></span>
+    <span class="reveal-line"><span class="line-gold">to a Bad Website.</span></span>
   </h1>
   <p class="hero-sub">Most small business websites cost you customers every single day. We fix that — with a stunning, conversion-focused site delivered in 5–7 business days.</p>
   <div class="hero-actions">
-    <a href="#pricing" class="btn-primary">See Pricing</a>
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline">Text Us Now</a>
+    <a href="#pricing" class="btn-primary magnetic">See Pricing</a>
+    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline magnetic">Text Us Now</a>
   </div>
   <div class="hero-stats">
     <div>
-      <div class="hero-stat-num">5–7</div>
+      <div class="hero-stat-num" data-target="7" data-prefix="5–">5–7</div>
       <div class="hero-stat-label">Business Day Delivery</div>
     </div>
     <div>
-      <div class="hero-stat-num">40+</div>
+      <div class="hero-stat-num" data-target="40" data-suffix="+">40+</div>
       <div class="hero-stat-label">Active Clients</div>
     </div>
     <div>
-      <div class="hero-stat-num">100%</div>
+      <div class="hero-stat-num" data-target="100" data-suffix="%">100%</div>
       <div class="hero-stat-label">Custom Design</div>
     </div>
     <div>
@@ -794,125 +813,98 @@
     </div>
   </div>
 
-  <!-- Remaining 6 in 3-column grid -->
   <div class="portfolio-grid reveal">
-
-    <!-- Carmen -->
     <div class="browser-frame">
       <div class="browser-chrome">
-        <div class="browser-dots">
-          <div class="browser-dot dot-red"></div>
-          <div class="browser-dot dot-yellow"></div>
-          <div class="browser-dot dot-green"></div>
-        </div>
+        <div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div>
         <div class="browser-bar">carmen2.vercel.app</div>
       </div>
-      <div class="browser-preview">
-        <img src="carmen-thumb.webp" alt="Carmen — A Tropical Mexican Experience">
-      </div>
+      <div class="browser-preview"><img src="carmen-thumb.webp" alt="Carmen — A Tropical Mexican Experience"></div>
       <div class="portfolio-card-info">
         <div class="portfolio-card-tag">Restaurant &amp; Nightlife</div>
         <div class="portfolio-card-name">Carmen — Tempe, AZ</div>
       </div>
     </div>
-
-    <!-- Hormone Zone -->
     <div class="browser-frame">
       <div class="browser-chrome">
-        <div class="browser-dots">
-          <div class="browser-dot dot-red"></div>
-          <div class="browser-dot dot-yellow"></div>
-          <div class="browser-dot dot-green"></div>
-        </div>
+        <div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div>
         <div class="browser-bar">hormone-zone.com</div>
       </div>
-      <div class="browser-preview">
-        <img src="hormonezone-thumb.webp" alt="Hormone Zone" style="object-position:top center;">
-      </div>
+      <div class="browser-preview"><img src="hormonezone-thumb.webp" alt="Hormone Zone" style="object-position:top center;"></div>
       <div class="portfolio-card-info">
         <div class="portfolio-card-tag">Healthcare &amp; Wellness</div>
         <div class="portfolio-card-name">Hormone Zone</div>
       </div>
     </div>
-
-    <!-- RedD Construction -->
     <div class="browser-frame">
       <div class="browser-chrome">
-        <div class="browser-dots">
-          <div class="browser-dot dot-red"></div>
-          <div class="browser-dot dot-yellow"></div>
-          <div class="browser-dot dot-green"></div>
-        </div>
+        <div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div>
         <div class="browser-bar">reddconstruction.com</div>
       </div>
-      <div class="browser-preview">
-        <img src="redd-thumb.webp" alt="RedD Construction LLC">
-      </div>
+      <div class="browser-preview"><img src="redd-thumb.webp" alt="RedD Construction LLC"></div>
       <div class="portfolio-card-info">
         <div class="portfolio-card-tag">Construction &amp; Outdoor Living</div>
         <div class="portfolio-card-name">RedD Construction LLC</div>
       </div>
     </div>
-
-    <!-- Life Reset Peptides -->
     <div class="browser-frame">
       <div class="browser-chrome">
-        <div class="browser-dots">
-          <div class="browser-dot dot-red"></div>
-          <div class="browser-dot dot-yellow"></div>
-          <div class="browser-dot dot-green"></div>
-        </div>
+        <div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div>
         <div class="browser-bar">liferesetpeptides.com</div>
       </div>
-      <div class="browser-preview">
-        <img src="lifereset-thumb.jpeg" alt="Life Reset Peptides">
-      </div>
+      <div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="Life Reset Peptides"></div>
       <div class="portfolio-card-info">
         <div class="portfolio-card-tag">Health &amp; E-Commerce</div>
         <div class="portfolio-card-name">Life Reset Peptides</div>
       </div>
     </div>
-
-    <!-- Segal Group -->
     <div class="browser-frame">
       <div class="browser-chrome">
-        <div class="browser-dots">
-          <div class="browser-dot dot-red"></div>
-          <div class="browser-dot dot-yellow"></div>
-          <div class="browser-dot dot-green"></div>
-        </div>
+        <div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div>
         <div class="browser-bar">segalgroup.com</div>
       </div>
-      <div class="browser-preview">
-        <img src="segal-thumb.webp" alt="Segal Group Insurance">
-      </div>
+      <div class="browser-preview"><img src="segal-thumb.webp" alt="Segal Group Insurance"></div>
       <div class="portfolio-card-info">
         <div class="portfolio-card-tag">Insurance &amp; Financial</div>
         <div class="portfolio-card-name">Segal Group</div>
       </div>
     </div>
-
-    <!-- Scottsdale Ketamine Clinic -->
     <div class="browser-frame">
       <div class="browser-chrome">
-        <div class="browser-dots">
-          <div class="browser-dot dot-red"></div>
-          <div class="browser-dot dot-yellow"></div>
-          <div class="browser-dot dot-green"></div>
-        </div>
+        <div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div>
         <div class="browser-bar">scottsdaleketamine.com</div>
       </div>
-      <div class="browser-preview">
-        <img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic">
-      </div>
+      <div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic"></div>
       <div class="portfolio-card-info">
         <div class="portfolio-card-tag">Healthcare &amp; Medical</div>
         <div class="portfolio-card-name">Scottsdale Ketamine Clinic</div>
       </div>
     </div>
-
   </div>
 </section>
+
+<!-- CLIENT TICKER -->
+<div class="ticker-band">
+  <div class="ticker-track">
+    <!-- Doubled for seamless loop -->
+    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>40+ Phoenix Businesses</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>40+ Phoenix Businesses</span>
+  </div>
+</div>
 
 <!-- TESTIMONIALS -->
 <section id="testimonials">
@@ -921,43 +913,30 @@
   <h2 class="section-title">Don't Take<br><em>Our Word for It.</em></h2>
   <p class="section-sub">Phoenix-area business owners who made the switch to a site that actually works for them.</p>
   <div class="testimonials-grid reveal">
-
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <p class="testimonial-text">"I was embarrassed to give out my website URL. Now I hand my card out to everyone. John Bert delivered in under 3 days and the calls started coming in within the first week."</p>
       <div class="testimonial-author">
         <div class="author-avatar">R</div>
-        <div>
-          <div class="author-name">Rick M.</div>
-          <div class="author-biz">Owner, HVAC Company · Phoenix, AZ</div>
-        </div>
+        <div><div class="author-name">Rick M.</div><div class="author-biz">Owner, HVAC Company · Phoenix, AZ</div></div>
       </div>
     </div>
-
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <p class="testimonial-text">"The $294/month plan is a no-brainer. I've had other agencies charge 10x that and deliver half the result. These guys are fast, professional, and they actually answer when you text them."</p>
       <div class="testimonial-author">
         <div class="author-avatar">S</div>
-        <div>
-          <div class="author-name">Sara L.</div>
-          <div class="author-biz">Owner, Boutique Fitness Studio · Scottsdale, AZ</div>
-        </div>
+        <div><div class="author-name">Sara L.</div><div class="author-biz">Owner, Boutique Fitness Studio · Scottsdale, AZ</div></div>
       </div>
     </div>
-
     <div class="testimonial-card">
       <div class="stars">★★★★★</div>
       <p class="testimonial-text">"We're a 2-person landscaping crew and couldn't afford the big agencies. John Bert gave us a site that looks like a million bucks — our leads tripled in the first month."</p>
       <div class="testimonial-author">
         <div class="author-avatar">T</div>
-        <div>
-          <div class="author-name">Tony &amp; Diana V.</div>
-          <div class="author-biz">Owners, Verde Lawn &amp; Landscape · Mesa, AZ</div>
-        </div>
+        <div><div class="author-name">Tony &amp; Diana V.</div><div class="author-biz">Owners, Verde Lawn &amp; Landscape · Mesa, AZ</div></div>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -967,10 +946,77 @@
     <div class="guarantee-icon">🛡️</div>
     <div>
       <div class="guarantee-title">Our Promise to You.</div>
-      <p class="guarantee-text">
-        We revise your website <strong>unlimited times</strong> until you're completely satisfied — no extra charges, no attitude. If after your first look you feel we completely missed the mark, we'll rebuild it from scratch. We don't stop until it's right, because our reputation depends on your success.
-      </p>
+      <p class="guarantee-text">We revise your website <strong>unlimited times</strong> until you're completely satisfied — no extra charges, no attitude. If after your first look you feel we completely missed the mark, we'll rebuild it from scratch. We don't stop until it's right, because our reputation depends on your success.</p>
     </div>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="comparison-section">
+  <div class="section-eyebrow" style="position:relative;z-index:1;">Why John Bert</div>
+  <h2 class="section-title" style="position:relative;z-index:1;">Stop Settling for<br><em>Less Than You Deserve.</em></h2>
+  <p class="section-sub" style="position:relative;z-index:1;">How we stack up against going it alone or overpaying a big agency.</p>
+  <div class="comparison-table-wrap reveal" style="position:relative;z-index:1;">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th style="text-align:left; width:34%;">Feature</th>
+          <th class="col-us">John Bert</th>
+          <th>Wix / Squarespace</th>
+          <th>Traditional Agency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">Custom design (not a template)</td>
+          <td class="col-us"><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Time to launch</td>
+          <td class="col-us">5–7 days</td>
+          <td class="partial">Weeks of DIY</td>
+          <td class="partial">6–12 weeks</td>
+        </tr>
+        <tr>
+          <td class="row-label">Monthly cost</td>
+          <td class="col-us">$294/mo</td>
+          <td class="partial">$16–$49 + your time</td>
+          <td class="partial">$1,000–$5,000+</td>
+        </tr>
+        <tr>
+          <td class="row-label">You do the work</td>
+          <td class="col-us">Never</td>
+          <td><span class="cross">Always</span></td>
+          <td class="partial">Sometimes</td>
+        </tr>
+        <tr>
+          <td class="row-label">Unlimited revisions</td>
+          <td class="col-us"><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td class="partial">Limited / hourly</td>
+        </tr>
+        <tr>
+          <td class="row-label">Hosting &amp; updates included</td>
+          <td class="col-us"><span class="check">✓</span></td>
+          <td class="partial">Hosting only</td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Text / call for changes</td>
+          <td class="col-us"><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td class="row-label">Real human. Fast responses.</td>
+          <td class="col-us"><span class="check">✓</span></td>
+          <td><span class="cross">Email bots</span></td>
+          <td class="partial">Account manager</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -981,7 +1027,6 @@
   <h2 class="section-title">Simple. Transparent.<br><em>No Surprises.</em></h2>
   <p class="section-sub">Two ways to get a world-class website. Both include a 30-minute consultation and delivery in 5–7 business days.</p>
   <div class="pricing-grid reveal">
-
     <div class="pricing-card">
       <div class="pricing-label">One-Time</div>
       <div class="pricing-price"><sup>$</sup>3,500</div>
@@ -995,9 +1040,8 @@
         <li>Contact forms &amp; Google Maps</li>
         <li>You own the site outright</li>
       </ul>
-      <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline" style="display:block;text-align:center;">Text to Get Started</a>
+      <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline magnetic" style="display:block;text-align:center;">Text to Get Started</a>
     </div>
-
     <div class="pricing-card featured">
       <div class="pricing-label">Monthly Plan</div>
       <div class="pricing-price"><sup>$</sup>294<span style="font-size:1.4rem;font-family:'DM Sans',sans-serif;font-weight:300;">/mo</span></div>
@@ -1011,12 +1055,21 @@
         <li>Security &amp; backups managed</li>
         <li>Cancel anytime, no penalty</li>
       </ul>
-      <a href="sms:4805890098?body=I'm interested in the monthly website plan at $294/mo" class="btn-primary" style="display:block;text-align:center;">Text to Get Started</a>
+      <a href="sms:4805890098?body=I'm interested in the monthly website plan at $294/mo" class="btn-primary magnetic" style="display:block;text-align:center;">Text to Get Started</a>
     </div>
-
   </div>
   <p style="margin-top:1.5rem;color:#444;font-size:0.82rem;font-family:'DM Sans',sans-serif;">Questions? Text or call <a href="tel:4805890098" style="color:var(--warm-accent);text-decoration:none;">(480) 589-0098</a> — we respond fast.</p>
 </section>
+
+<!-- BOOK A CALL -->
+<div class="book-band">
+  <div class="book-title">Not Sure Which Plan?<br><em>Book a Free 30-Minute Call.</em></div>
+  <p class="book-sub">No pitch. No pressure. Just 30 minutes to talk about your business and whether we're the right fit.</p>
+  <div class="book-actions">
+    <a href="https://calendly.com/johnbertweb/30min" target="_blank" rel="noopener" class="btn-primary magnetic">Book a Free Call</a>
+    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline magnetic">Text Instead</a>
+  </div>
+</div>
 
 <!-- HOW IT WORKS -->
 <section id="how">
@@ -1058,46 +1111,14 @@
   <h2 class="section-title">Grow Beyond<br><em>the Website.</em></h2>
   <p class="section-sub">A great website is the foundation. We offer the full stack of marketing services to drive real traffic and real leads.</p>
   <div class="services-grid reveal">
-    <div class="service-card">
-      <div class="service-icon">🔍</div>
-      <div class="service-name">SEO — Search Engine Optimization</div>
-      <div class="service-desc">Rank on Google when customers search for your services. Long-term organic traffic that compounds over time.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">📢</div>
-      <div class="service-name">Google Ads (PPC)</div>
-      <div class="service-desc">Get leads immediately with targeted Google search and display ads. Pay only for clicks that matter.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">📱</div>
-      <div class="service-name">Meta Ads (Facebook &amp; Instagram)</div>
-      <div class="service-desc">Reach your exact audience on social. Retargeting, lead gen, and brand campaigns that drive action.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">🏷️</div>
-      <div class="service-name">Brand Awareness Campaigns</div>
-      <div class="service-desc">Build recognition in your market. Display, video, and remarketing campaigns that keep your name top of mind.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">📰</div>
-      <div class="service-name">Traditional Advertising</div>
-      <div class="service-desc">Bandit signs, direct mail, local print, and radio. Sometimes offline reaches the customers online doesn't.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">🗺️</div>
-      <div class="service-name">Google Business Profile</div>
-      <div class="service-desc">Dominate local map results. Fully optimized GBP setup, reviews strategy, and local SEO citation building.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">✉️</div>
-      <div class="service-name">Email Marketing</div>
-      <div class="service-desc">Automated follow-up sequences, newsletters, and re-engagement campaigns to turn leads into loyal customers.</div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">📊</div>
-      <div class="service-name">Analytics &amp; Reporting</div>
-      <div class="service-desc">Know exactly what's working. Monthly reports with clear metrics — leads, traffic, conversions, and ROI.</div>
-    </div>
+    <div class="service-card"><div class="service-icon">🔍</div><div class="service-name">SEO — Search Engine Optimization</div><div class="service-desc">Rank on Google when customers search for your services. Long-term organic traffic that compounds over time.</div></div>
+    <div class="service-card"><div class="service-icon">📢</div><div class="service-name">Google Ads (PPC)</div><div class="service-desc">Get leads immediately with targeted Google search and display ads. Pay only for clicks that matter.</div></div>
+    <div class="service-card"><div class="service-icon">📱</div><div class="service-name">Meta Ads (Facebook &amp; Instagram)</div><div class="service-desc">Reach your exact audience on social. Retargeting, lead gen, and brand campaigns that drive action.</div></div>
+    <div class="service-card"><div class="service-icon">🏷️</div><div class="service-name">Brand Awareness Campaigns</div><div class="service-desc">Build recognition in your market. Display, video, and remarketing campaigns that keep your name top of mind.</div></div>
+    <div class="service-card"><div class="service-icon">📰</div><div class="service-name">Traditional Advertising</div><div class="service-desc">Bandit signs, direct mail, local print, and radio. Sometimes offline reaches the customers online doesn't.</div></div>
+    <div class="service-card"><div class="service-icon">🗺️</div><div class="service-name">Google Business Profile</div><div class="service-desc">Dominate local map results. Fully optimized GBP setup, reviews strategy, and local SEO citation building.</div></div>
+    <div class="service-card"><div class="service-icon">✉️</div><div class="service-name">Email Marketing</div><div class="service-desc">Automated follow-up sequences, newsletters, and re-engagement campaigns to turn leads into loyal customers.</div></div>
+    <div class="service-card"><div class="service-icon">📊</div><div class="service-name">Analytics &amp; Reporting</div><div class="service-desc">Know exactly what's working. Monthly reports with clear metrics — leads, traffic, conversions, and ROI.</div></div>
   </div>
 </section>
 
@@ -1107,59 +1128,35 @@
   <h2 class="section-title">Questions We<br><em>Get All the Time.</em></h2>
   <div class="faq-list reveal">
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        How fast can I actually get my website?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">How fast can I actually get my website?<span class="faq-icon">+</span></button>
       <div class="faq-answer">After your 30-minute consultation, we build and deliver your website in 5–7 business days. Most clients are live within a week of first contact. We don't mess around.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        What's included in the monthly plan?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">What's included in the monthly plan?<span class="faq-icon">+</span></button>
       <div class="faq-answer">The $294/month plan includes your custom website, free hosting, ongoing edits and updates, security and backups, priority support, and a free complete website refresh every 12 months. No hidden fees. Cancel anytime with no penalty.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        Do I own my website if I pay the one-time fee?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">Do I own my website if I pay the one-time fee?<span class="faq-icon">+</span></button>
       <div class="faq-answer">Yes — with the $3,500 one-time package, the website is yours outright. You own the code, the domain (if purchased through us or transferred), and all content. Take it anywhere.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        What if I don't like the first design?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">What if I don't like the first design?<span class="faq-icon">+</span></button>
       <div class="faq-answer">We do revisions until you're completely satisfied — on both plans. We get a full picture of your brand in the consultation call, which means most clients only need minor tweaks. But we don't stop until it's right.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        I'm not tech-savvy. Will I be able to manage this?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">I'm not tech-savvy. Will I be able to manage this?<span class="faq-icon">+</span></button>
       <div class="faq-answer">You don't need to be. On the monthly plan, we handle everything — updates, fixes, hosting. If you ever need a change, just text us. On the one-time plan, we build it easy to manage and walk you through it. No tech headaches.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        What industries do you work with?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">What industries do you work with?<span class="faq-icon">+</span></button>
       <div class="faq-answer">All of them — home services, restaurants, healthcare, fitness, legal, beauty, retail, and more. Our portfolio covers everything from steakhouses to chiropractors. If you're a local business that needs more customers, we're your agency.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        Can you help with more than just the website?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">Can you help with more than just the website?<span class="faq-icon">+</span></button>
       <div class="faq-answer">Absolutely. We offer SEO, Google Ads, Meta Ads, Google Business Profile optimization, email marketing, and traditional advertising. A great website is the foundation — we can build the whole marketing engine on top of it.</div>
     </div>
     <div class="faq-item">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        How do I get started?
-        <span class="faq-icon">+</span>
-      </button>
+      <button class="faq-question" onclick="toggleFaq(this)">How do I get started?<span class="faq-icon">+</span></button>
       <div class="faq-answer">Just text or call (480) 589-0098. That's it. No forms, no automated bots — you'll talk to a real person. Tell us a little about your business and we'll take it from there.</div>
     </div>
   </div>
@@ -1170,8 +1167,8 @@
   <h2>Ready to Get More<br><em>Customers?</em></h2>
   <p>Let's build something great. Text or call — we respond fast.</p>
   <div class="hero-actions">
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-primary">Text Us Now</a>
-    <a href="tel:4805890098" class="btn-outline">(480) 589-0098</a>
+    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-primary magnetic">Text Us Now</a>
+    <a href="tel:4805890098" class="btn-outline magnetic">(480) 589-0098</a>
   </div>
   <div class="cta-contact">
     <a href="tel:4805890098">📞 Call: (480) 589-0098</a>
@@ -1202,61 +1199,175 @@
 </footer>
 
 <script>
-  // ── FAQ TOGGLE ──────────────────────────────────
-  function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
+// ── HERO CANVAS CONSTELLATION ────────────────────
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  const PARTICLE_COUNT = 55;
+  const MAX_DIST = 155;
+  let particles = [], W, H, raf;
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
   }
 
-  // ── SCROLL REVEAL ───────────────────────────────
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        revealObserver.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.06 });
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  function Particle() {
+    this.x  = Math.random() * W;
+    this.y  = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.28;
+    this.vy = (Math.random() - 0.5) * 0.28;
+    this.r  = Math.random() * 1.4 + 0.4;
+    this.a  = Math.random() * 0.38 + 0.08;
+  }
+  Particle.prototype.tick = function() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W) this.vx *= -1;
+    if (this.y < 0 || this.y > H) this.vy *= -1;
+  };
+  Particle.prototype.draw = function() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(201,168,76,' + this.a + ')';
+    ctx.fill();
+  };
 
-  // ── FLOATING CTA ────────────────────────────────
-  const floatCta = document.getElementById('floatCta');
-  let floatVisible = false;
-  window.addEventListener('scroll', () => {
-    const shouldShow = window.scrollY > 400;
-    if (shouldShow !== floatVisible) {
-      floatVisible = shouldShow;
-      floatCta.classList.toggle('visible', shouldShow);
+  function init() {
+    resize();
+    particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].tick();
+      particles[i].draw();
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < MAX_DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = 'rgba(201,168,76,' + ((1 - d / MAX_DIST) * 0.11) + ')';
+          ctx.lineWidth = 0.7;
+          ctx.stroke();
+        }
+      }
     }
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
-  }, { passive: true });
+    raf = requestAnimationFrame(frame);
+  }
 
-  // ── STAGGERED GRID REVEALS ──────────────────────
-  const cardObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const parent = entry.target;
-        Array.from(parent.children).forEach((child, i) => {
-          setTimeout(() => {
-            child.style.opacity = '1';
-            child.style.transform = 'translateY(0)';
-          }, i * 75);
-        });
-        cardObserver.unobserve(parent);
-      }
-    });
-  }, { threshold: 0.04 });
-
-  document.querySelectorAll('.portfolio-grid, .services-grid, .testimonials-grid').forEach(grid => {
-    Array.from(grid.children).forEach(child => {
-      child.style.opacity = '0';
-      child.style.transform = 'translateY(20px)';
-      child.style.transition = 'opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1)';
-    });
-    cardObserver.observe(grid);
+  window.addEventListener('resize', () => {
+    resize();
+    particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
   });
+  init();
+  frame();
+})();
+
+// ── ANIMATED STAT COUNTERS ───────────────────────
+function animateCounter(el, target, prefix, suffix) {
+  const duration = 1800;
+  const start = performance.now();
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 4);
+    el.textContent = (prefix || '') + Math.floor(eased * target) + (suffix || '');
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseInt(el.dataset.target, 10);
+    if (!isNaN(target)) {
+      animateCounter(el, target, el.dataset.prefix || '', el.dataset.suffix || '');
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+
+// ── MAGNETIC BUTTONS ─────────────────────────────
+document.querySelectorAll('.magnetic').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const x = (e.clientX - r.left - r.width  / 2) * 0.28;
+    const y = (e.clientY - r.top  - r.height / 2) * 0.38;
+    btn.style.transition = 'transform 0.1s ease, background 0.2s, box-shadow 0.2s, border-color 0.2s';
+    btn.style.transform  = `translate(${x}px, ${y}px)`;
+  });
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), background 0.2s, box-shadow 0.2s, border-color 0.2s';
+    btn.style.transform  = '';
+  });
+});
+
+// ── MOBILE NAV ───────────────────────────────────
+const hamburger = document.getElementById('navHamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => {
+  const open = hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+document.querySelectorAll('.mobile-link, .mobile-cta').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// ── FAQ TOGGLE ───────────────────────────────────
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── SCROLL REVEAL ────────────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }
+  });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── FLOATING CTA ─────────────────────────────────
+const floatCta = document.getElementById('floatCta');
+let floatVisible = false;
+window.addEventListener('scroll', () => {
+  const show = window.scrollY > 400;
+  if (show !== floatVisible) { floatVisible = show; floatCta.classList.toggle('visible', show); }
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// ── STAGGERED GRID REVEALS ───────────────────────
+const cardObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    Array.from(entry.target.children).forEach((child, i) => {
+      setTimeout(() => { child.style.opacity = '1'; child.style.transform = 'translateY(0)'; }, i * 75);
+    });
+    cardObserver.unobserve(entry.target);
+  });
+}, { threshold: 0.04 });
+
+document.querySelectorAll('.portfolio-grid, .services-grid, .testimonials-grid').forEach(grid => {
+  Array.from(grid.children).forEach(child => {
+    child.style.opacity = '0';
+    child.style.transform = 'translateY(20px)';
+    child.style.transition = 'opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1)';
+  });
+  cardObserver.observe(grid);
+});
 </script>
 </body>
 </html>
