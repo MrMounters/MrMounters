@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>John Bert Web Agency — Websites That Win Customers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: rgba(201,168,76,0.15);
+    --dark: #0D0D0D;
+    --dark2: #111111;
+    --dark3: #181818;
+    --dark4: #1E1E1E;
+    --white: #F5F0E8;
+    --gray: #888;
+    --gray-light: #aaa;
+    --border: rgba(201,168,76,0.18);
+    --border-hover: rgba(201,168,76,0.55);
+    --glow: 0 0 40px rgba(201,168,76,0.12), 0 0 80px rgba(201,168,76,0.06);
+    --glow-strong: 0 0 30px rgba(201,168,76,0.25), 0 0 60px rgba(201,168,76,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 4%;
+    background: rgba(13,13,13,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+  }
+  nav.scrolled { background: rgba(13,13,13,0.97); }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--white); letter-spacing: 0.02em;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--gray); text-decoration: none; font-size: 0.82rem;
+    letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--gold) !important;
+    color: var(--dark) !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important; font-size: 0.78rem !important;
+    letter-spacing: 0.1em !important; border-radius: 2px;
+    transition: background 0.2s, box-shadow 0.2s !important;
+  }
+  .nav-cta:hover {
+    background: var(--gold-light) !important;
+    box-shadow: 0 0 20px rgba(201,168,76,0.35) !important;
+    color: var(--dark) !important;
+  }
+
+  /* ── FLOATING CTA ───────────────────────────── */
+  .float-cta {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
+    display: flex; align-items: center; gap: 0.6rem;
+    background: var(--gold);
+    color: var(--dark);
+    padding: 0.85rem 1.4rem;
+    border-radius: 50px;
+    font-weight: 700; font-size: 0.82rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 4px 30px rgba(201,168,76,0.5), 0 2px 10px rgba(0,0,0,0.4);
+    opacity: 0; transform: translateY(20px) scale(0.95);
+    transition: opacity 0.4s, transform 0.4s, background 0.2s, box-shadow 0.2s;
+    pointer-events: none;
+  }
+  .float-cta.visible {
+    opacity: 1; transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+  .float-cta:hover {
+    background: var(--gold-light);
+    box-shadow: 0 6px 40px rgba(201,168,76,0.65), 0 2px 10px rgba(0,0,0,0.4);
+    transform: translateY(-2px) scale(1.02);
+  }
+  .float-cta .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--dark);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.4); }
+  }
+
+  /* ── HERO ───────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 9rem 4% 5rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 60% at 65% 45%, rgba(201,168,76,0.09) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 55%);
+  }
+  .hero-glow {
+    position: absolute; top: 15%; left: -5%;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: slow-drift 12s ease-in-out infinite alternate;
+  }
+  @keyframes slow-drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(40px, -30px) scale(1.05); }
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.6rem;
+    display: flex; align-items: center; gap: 0.8rem;
+    position: relative;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 2.5rem; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 7.5vw, 7rem);
+    font-weight: 900; line-height: 1.0;
+    max-width: 860px; margin-bottom: 1.6rem;
+    letter-spacing: -0.025em;
+    position: relative;
+  }
+  .hero h1 .line-gold {
+    font-style: italic; color: var(--gold);
+    text-shadow: 0 0 60px rgba(201,168,76,0.3);
+    display: block;
+  }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--gray-light); max-width: 500px;
+    line-height: 1.75; margin-bottom: 2.8rem; position: relative;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; position: relative; }
+
+  .btn-primary {
+    background: var(--gold); color: var(--dark);
+    padding: 1rem 2.2rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 700;
+    font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+    border: none; cursor: pointer; text-decoration: none; display: inline-block;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  }
+  .btn-primary:hover {
+    background: var(--gold-light); transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(201,168,76,0.45);
+  }
+  .btn-outline {
+    background: transparent; color: var(--white);
+    padding: 1rem 2.2rem;
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.22);
+    cursor: pointer; text-decoration: none; display: inline-block;
+    border-radius: 2px; transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .btn-outline:hover {
+    border-color: var(--gold); color: var(--gold);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border); flex-wrap: wrap;
+    position: relative;
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 700; color: var(--gold);
+    text-shadow: 0 0 30px rgba(201,168,76,0.25);
+  }
+  .hero-stat-label {
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gray); margin-top: 0.3rem;
+  }
+
+  /* ── SECTION COMMONS ────────────────────────── */
+  section { padding: 6rem 4%; }
+  .section-eyebrow {
+    font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.9rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .section-eyebrow::before {
+    content: ''; display: block; width: 2rem; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-weight: 700; line-height: 1.1; margin-bottom: 1rem;
+  }
+  .section-title em {
+    font-style: italic; color: var(--gold);
+    text-shadow: 0 0 40px rgba(201,168,76,0.2);
+  }
+  .section-sub {
+    color: var(--gray); max-width: 520px; line-height: 1.75; margin-bottom: 3rem;
+  }
+
+  /* Section glow accent */
+  .glow-accent {
+    position: absolute; pointer-events: none; border-radius: 50%;
+    filter: blur(60px);
+    background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+    width: 400px; height: 400px; top: -80px; left: -80px;
+  }
+
+  /* ── PORTFOLIO ──────────────────────────────── */
+  #portfolio { background: var(--dark2); position: relative; overflow: hidden; }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
+  }
+
+  /* Browser mockup frame */
+  .browser-frame {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--dark3);
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, box-shadow 0.35s;
+    cursor: pointer;
+  }
+  .browser-frame:hover {
+    transform: translateY(-6px);
+    border-color: var(--border-hover);
+    box-shadow: var(--glow-strong), 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .browser-chrome {
+    background: #252525;
+    padding: 0.65rem 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .browser-dots { display: flex; gap: 0.38rem; }
+  .browser-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .dot-red   { background: #ff5f57; }
+  .dot-yellow{ background: #febc2e; }
+  .dot-green { background: #28c840; }
+  .browser-bar {
+    flex: 1; background: #1a1a1a;
+    border-radius: 4px; padding: 0.28rem 0.7rem;
+    font-size: 0.68rem; color: #555;
+    letter-spacing: 0.02em; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .browser-preview {
+    position: relative; overflow: hidden;
+  }
+  .browser-preview > div {
+    min-height: 200px;
+    transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .browser-frame:hover .browser-preview > div { transform: scale(1.03); }
+  .portfolio-card-info {
+    padding: 1.1rem 1.3rem 1.4rem;
+    border-top: 1px solid var(--border);
+    background: var(--dark3);
+  }
+  .portfolio-card-tag {
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.4rem;
+  }
+  .portfolio-card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700;
+  }
+
+  /* ── TESTIMONIALS ───────────────────────────── */
+  #testimonials { background: var(--dark); position: relative; overflow: hidden; }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .testimonial-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2rem;
+    background: var(--dark3);
+    position: relative;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+  .testimonial-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--glow);
+    transform: translateY(-3px);
+  }
+  .testimonial-card::before {
+    content: '\201C';
+    position: absolute; top: 1.2rem; right: 1.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem; line-height: 1;
+    color: var(--gold); opacity: 0.25;
+  }
+  .stars {
+    display: flex; gap: 0.2rem; margin-bottom: 1rem;
+    color: var(--gold); font-size: 0.9rem;
+  }
+  .testimonial-text {
+    color: #ccc; font-size: 0.9rem; line-height: 1.75;
+    margin-bottom: 1.4rem; font-style: italic;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .author-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--gold-dim);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700; color: var(--gold);
+    flex-shrink: 0;
+  }
+  .author-name { font-weight: 600; font-size: 0.88rem; }
+  .author-biz { font-size: 0.75rem; color: var(--gray); margin-top: 0.15rem; }
+
+  /* ── GUARANTEE ──────────────────────────────── */
+  .guarantee-band {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(201,168,76,0.03) 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 3.5rem 4%;
+    position: relative; overflow: hidden;
+  }
+  .guarantee-inner {
+    display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;
+    max-width: 860px;
+  }
+  .guarantee-icon {
+    font-size: 3.5rem; flex-shrink: 0;
+    filter: drop-shadow(0 0 20px rgba(201,168,76,0.4));
+  }
+  .guarantee-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700; margin-bottom: 0.6rem;
+  }
+  .guarantee-text {
+    color: var(--gray-light); font-size: 0.92rem; line-height: 1.7; max-width: 560px;
+  }
+  .guarantee-text strong { color: var(--gold); }
+
+  /* ── PRICING ────────────────────────────────── */
+  #pricing { background: var(--dark2); position: relative; overflow: hidden; }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem; max-width: 860px;
+  }
+  .pricing-card {
+    border: 1px solid var(--border);
+    padding: 2.5rem; border-radius: 6px;
+    background: var(--dark3); position: relative;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+  .pricing-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--glow);
+    transform: translateY(-3px);
+  }
+  .pricing-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(150deg, rgba(201,168,76,0.1), var(--dark3) 60%);
+    box-shadow: var(--glow-strong);
+  }
+  .pricing-card.featured:hover { transform: translateY(-5px); }
+  .pricing-card.featured::before {
+    content: 'MOST POPULAR';
+    position: absolute; top: -1px; right: 2rem;
+    background: var(--gold); color: var(--dark);
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em;
+    padding: 0.3rem 0.8rem;
+  }
+  .pricing-label {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+  }
+  .pricing-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.2rem; font-weight: 900; line-height: 1; margin-bottom: 0.4rem;
+  }
+  .pricing-price sup { font-size: 1.4rem; vertical-align: top; margin-top: 0.5rem; }
+  .pricing-period { color: var(--gray); font-size: 0.85rem; margin-bottom: 1.6rem; }
+  .pricing-features { list-style: none; margin-bottom: 2rem; }
+  .pricing-features li {
+    padding: 0.55rem 0; border-bottom: 1px solid var(--border);
+    font-size: 0.88rem; color: #bbb;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .pricing-features li::before { content: '✓'; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+  /* ── HOW IT WORKS ───────────────────────────── */
+  #how { background: var(--dark); position: relative; overflow: hidden; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+  }
+  .step { position: relative; }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem; font-weight: 900;
+    color: rgba(201,168,76,0.1); line-height: 1; margin-bottom: 0.8rem;
+    text-shadow: 0 0 30px rgba(201,168,76,0.08);
+  }
+  .step-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; }
+  .step-desc { color: var(--gray); font-size: 0.86rem; line-height: 1.65; }
+  .step-connector {
+    position: absolute; top: 2.5rem; right: -1.5rem;
+    width: 1.5rem; height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  /* ── SERVICES ───────────────────────────────── */
+  #services { background: var(--dark2); position: relative; overflow: hidden; }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+  .service-card {
+    border: 1px solid var(--border);
+    padding: 1.8rem; border-radius: 6px;
+    background: var(--dark3);
+    transition: border-color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .service-card:hover {
+    border-color: var(--border-hover);
+    background: rgba(201,168,76,0.04);
+    transform: translateY(-2px);
+    box-shadow: var(--glow);
+  }
+  .service-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+  .service-name { font-weight: 600; font-size: 0.94rem; margin-bottom: 0.5rem; letter-spacing: 0.02em; }
+  .service-desc { color: var(--gray); font-size: 0.82rem; line-height: 1.65; }
+
+  /* ── FAQ ────────────────────────────────────── */
+  #faq { background: var(--dark); }
+  .faq-list { max-width: 700px; }
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-question {
+    width: 100%; background: none; border: none;
+    color: var(--white); font-family: 'DM Sans', sans-serif;
+    font-size: 0.94rem; font-weight: 500; text-align: left;
+    padding: 1.4rem 0; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    transition: color 0.2s;
+  }
+  .faq-question:hover { color: var(--gold); }
+  .faq-icon {
+    color: var(--gold); font-size: 1.3rem; flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    display: inline-block;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-answer {
+    color: var(--gray); font-size: 0.87rem; line-height: 1.8;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+  }
+  .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 1.4rem; }
+
+  /* ── CTA BAND ───────────────────────────────── */
+  .cta-band {
+    background: linear-gradient(135deg, rgba(201,168,76,0.13) 0%, rgba(201,168,76,0.04) 50%, rgba(201,168,76,0.08) 100%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 6rem 4%;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-band::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .cta-band h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 700; margin-bottom: 1rem; position: relative;
+  }
+  .cta-band h2 em { font-style: italic; color: var(--gold); text-shadow: 0 0 40px rgba(201,168,76,0.3); }
+  .cta-band p { color: #888; margin-bottom: 2.5rem; font-size: 1rem; position: relative; }
+  .cta-band .hero-actions { justify-content: center; position: relative; }
+  .cta-contact {
+    display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+    margin-top: 2rem; position: relative;
+  }
+  .cta-contact a {
+    color: var(--gold); text-decoration: none;
+    font-size: 0.85rem; letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .cta-contact a:hover { color: var(--gold-light); }
+
+  /* ── FOOTER ─────────────────────────────────── */
+  footer {
+    background: var(--dark); padding: 3.5rem 4% 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 2rem; margin-bottom: 2.5rem;
+  }
+  .footer-brand {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
+  }
+  .footer-brand span { color: var(--gold); }
+  .footer-tagline { color: var(--gray); font-size: 0.8rem; margin-top: 0.4rem; }
+  .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .footer-links a {
+    color: var(--gray); text-decoration: none; font-size: 0.8rem;
+    letter-spacing: 0.05em; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom {
+    border-top: 1px solid var(--border); padding-top: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 0.5rem; color: #444; font-size: 0.76rem;
+  }
+
+  /* ── ANIMATIONS ─────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow { animation: fadeUp 0.6s 0.1s both; }
+  .hero h1      { animation: fadeUp 0.7s 0.22s both; }
+  .hero-sub     { animation: fadeUp 0.7s 0.38s both; }
+  .hero-actions { animation: fadeUp 0.7s 0.52s both; }
+  .hero-stats   { animation: fadeUp 0.7s 0.68s both; }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1),
+                transform 0.65s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* ── MOBILE ─────────────────────────────────── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 4%; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 4% 3rem; }
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .step-connector { display: none; }
+    .footer-inner { flex-direction: column; }
+    .hero-stats { gap: 2rem; }
+    .guarantee-inner { flex-direction: column; gap: 1.5rem; }
+    .float-cta { bottom: 1.2rem; right: 1.2rem; padding: 0.75rem 1.1rem; font-size: 0.76rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- FLOATING CTA -->
+<a href="sms:4805890098" class="float-cta" id="floatCta">
+  <span class="dot"></span>
+  Text Us Now
+</a>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo">John Bert <span>Web Agency</span></div>
+  <div class="nav-links">
+    <a href="#portfolio">Portfolio</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#how">How It Works</a>
+    <a href="#faq">FAQ</a>
+    <a href="#services">Services</a>
+    <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-eyebrow">Phoenix, Arizona's Premier Web Agency</div>
+  <h1>
+    Stop Losing Customers<br>
+    <span class="line-gold">to a Bad Website.</span>
+  </h1>
+  <p class="hero-sub">Most small business websites cost you customers every single day. We fix that — with a stunning, conversion-focused site delivered in 2–3 business days.</p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">See Pricing</a>
+    <a href="sms:4805890098" class="btn-outline">Text Us Now</a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="hero-stat-num" data-count="2">2–3</div>
+      <div class="hero-stat-label">Business Day Delivery</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">$174</div>
+      <div class="hero-stat-label">Per Month to Start</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">100%</div>
+      <div class="hero-stat-label">Custom Design</div>
+    </div>
+    <div>
+      <div class="hero-stat-num">480</div>
+      <div class="hero-stat-label">589-0098 — Text or Call</div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="glow-accent"></div>
+  <div class="section-eyebrow">Our Work</div>
+  <h2 class="section-title">Real Sites.<br><em>Real Businesses.</em></h2>
+  <p class="section-sub">Every website we build is custom-designed for the industry, audience, and goal. No templates. No shortcuts.</p>
+
+  <div class="portfolio-grid reveal">
+
+    <!-- Golden Oak Steakhouse -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">goldenoaksteakhouse.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#0D0D0D 0%,#1a1209 55%,#0D0D0D 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.4rem;padding:2rem;">
+          <div style="font-size:0.6rem;letter-spacing:0.3em;color:#888;text-transform:uppercase;">Est. 2004 · Scottsdale, AZ</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.6rem;color:#C9A84C;font-weight:700;letter-spacing:0.04em;">GOLDEN OAK</div>
+          <div style="font-size:0.65rem;letter-spacing:0.22em;color:#aaa;text-transform:uppercase;">Steakhouse &amp; Wine Bar</div>
+          <div style="width:2rem;height:1px;background:#C9A84C;margin:0.5rem 0;opacity:0.5;"></div>
+          <div style="font-size:0.72rem;color:#888;text-align:center;line-height:1.5;">Prime cuts · Award-winning wine list<br>Reservations open nightly</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Restaurant &amp; Hospitality</div>
+        <div class="portfolio-card-name">Golden Oak Steakhouse</div>
+      </div>
+    </div>
+
+    <!-- CenCal Masonry -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">cencalmasonry.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#f5f4f0 0%,#e8e4dc 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:1.25rem;color:#1a1a1a;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">CENCAL MASONRY</div>
+          <div style="font-size:0.62rem;letter-spacing:0.2em;color:#C9A84C;font-weight:700;text-transform:uppercase;">Built on Strength · Since 1998</div>
+          <div style="width:2rem;height:2px;background:#1a1a1a;margin:0.4rem 0;opacity:0.2;"></div>
+          <div style="font-size:0.72rem;color:#666;text-align:center;line-height:1.5;">Brick · Block · Stone · Retaining Walls<br>Free estimates — Central California</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Construction &amp; Trades</div>
+        <div class="portfolio-card-name">CenCal Masonry</div>
+      </div>
+    </div>
+
+    <!-- Eco Clean Turf -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">ecocleanturf.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#1a2e1a 0%,#2d4a2d 55%,#1a2e1a 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:1.2rem;color:#fff;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">ECO CLEAN TURF</div>
+          <div style="font-size:0.62rem;letter-spacing:0.18em;color:#6db56d;font-weight:600;text-transform:uppercase;">Cleaner Turf. Better Impact.</div>
+          <div style="width:2rem;height:1px;background:#6db56d;margin:0.4rem 0;opacity:0.6;"></div>
+          <div style="font-size:0.7rem;color:#aaccaa;text-align:center;line-height:1.5;">Synthetic turf cleaning &amp; maintenance<br>Serving Phoenix &amp; Scottsdale, AZ</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Outdoor Services</div>
+        <div class="portfolio-card-name">Eco Clean Turf</div>
+      </div>
+    </div>
+
+    <!-- Get Fit Training -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">getfittraining.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#1a0a0a 0%,#2a0f0f 55%,#1a0a0a 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.4rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:2rem;color:#fff;font-weight:900;letter-spacing:0.04em;line-height:1;">GET FIT</div>
+          <div style="font-size:0.6rem;letter-spacing:0.25em;color:#cc2200;font-weight:700;text-transform:uppercase;">Personal Training · Phoenix, AZ</div>
+          <div style="width:2rem;height:2px;background:#cc2200;margin:0.4rem 0;"></div>
+          <div style="font-size:0.7rem;color:#aaa;text-align:center;line-height:1.5;">1-on-1 coaching · Group classes<br>First session free</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Fitness &amp; Health</div>
+        <div class="portfolio-card-name">Get Fit Training</div>
+      </div>
+    </div>
+
+    <!-- Madison's Day Spa -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">madisonsdayspa.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#1a0d12 0%,#2a1520 55%,#1a0d12 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-size:0.55rem;letter-spacing:0.3em;color:#c4a0a0;text-transform:uppercase;">Est. 2011 · Glendale, AZ</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#f5ede8;font-weight:400;letter-spacing:0.12em;">Madison's</div>
+          <div style="font-size:0.6rem;letter-spacing:0.25em;color:#c4a0a0;text-transform:uppercase;">Day Spa &amp; Wellness</div>
+          <div style="width:2rem;height:1px;background:#c4a0a0;margin:0.4rem 0;opacity:0.4;"></div>
+          <div style="font-size:0.68rem;color:#a08888;text-align:center;line-height:1.5;">Facials · Massage · Body Treatments<br>Book online — Same-day available</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Beauty &amp; Wellness</div>
+        <div class="portfolio-card-name">Madison's Day Spa</div>
+      </div>
+    </div>
+
+    <!-- Arizona Oasis Pool Builder -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">arizonaoasispools.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#0a1520 0%,#0e2030 55%,#0a1520 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;color:#5ba3c9;text-transform:uppercase;">Pool Design &amp; Build · Phoenix Metro</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#fff;font-weight:700;letter-spacing:0.04em;">Arizona Oasis</div>
+          <div style="width:2rem;height:1px;background:#5ba3c9;margin:0.4rem 0;opacity:0.5;"></div>
+          <div style="font-size:0.7rem;color:#99bbcc;text-align:center;line-height:1.5;">Custom pools · Spas · Water features<br>Free 3D design consultation</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Home Improvement</div>
+        <div class="portfolio-card-name">Arizona Oasis Pool Builder</div>
+      </div>
+    </div>
+
+    <!-- Bright Smiles Dental -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">brightsmilesdentalaz.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#f0f4f8 0%,#e2eaf2 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:0.6rem;letter-spacing:0.2em;color:#4a7a9b;text-transform:uppercase;">Family &amp; Cosmetic Dentistry</div>
+          <div style="font-family:'DM Sans',sans-serif;font-size:1.3rem;color:#1a2a3a;font-weight:700;letter-spacing:0.04em;">BRIGHT SMILES</div>
+          <div style="font-size:0.62rem;letter-spacing:0.15em;color:#4a7a9b;font-weight:600;">DENTAL CARE · MESA, AZ</div>
+          <div style="width:2rem;height:2px;background:#4a7a9b;margin:0.4rem 0;opacity:0.4;"></div>
+          <div style="font-size:0.7rem;color:#667788;text-align:center;line-height:1.5;">New patients welcome · Accepting most insurance<br>Emergency slots available</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Healthcare &amp; Dental</div>
+        <div class="portfolio-card-name">Bright Smiles Dental Care</div>
+      </div>
+    </div>
+
+    <!-- Cape Claw Lobster Rolls -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">capeclawlobster.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#0f0c05 0%,#1a1408 55%,#0f0c05 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.4rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:1.1rem;color:#fff;font-weight:300;letter-spacing:0.2em;text-transform:uppercase;">Cape Claw</div>
+          <div style="font-size:0.62rem;letter-spacing:0.22em;color:#cc5500;font-weight:700;text-transform:uppercase;">Lobster Rolls · Clam Chowder</div>
+          <div style="width:2rem;height:1px;background:#cc5500;margin:0.4rem 0;opacity:0.6;"></div>
+          <div style="font-size:0.7rem;color:#aaa;text-align:center;line-height:1.5;">Fast-casual New England seafood<br>Tempe &amp; Chandler locations</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Food &amp; Restaurant</div>
+        <div class="portfolio-card-name">Cape Claw Lobster Rolls</div>
+      </div>
+    </div>
+
+    <!-- Madison Law Firm -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">madisonlawaz.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#0d1020 0%,#141830 55%,#0d1020 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-size:0.55rem;letter-spacing:0.3em;color:#8899bb;text-transform:uppercase;">Attorneys at Law · Phoenix, AZ</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.4rem;color:#C9A84C;font-weight:700;letter-spacing:0.06em;">MADISON</div>
+          <div style="font-size:0.6rem;letter-spacing:0.2em;color:#8899bb;text-transform:uppercase;">Law Firm</div>
+          <div style="width:2rem;height:1px;background:#C9A84C;margin:0.4rem 0;opacity:0.4;"></div>
+          <div style="font-size:0.7rem;color:#6677aa;text-align:center;line-height:1.5;">Personal Injury · Family Law · Contracts<br>Free initial consultation</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Legal Services</div>
+        <div class="portfolio-card-name">Madison Law Firm</div>
+      </div>
+    </div>
+
+    <!-- Align Well Chiropractic -->
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <div class="browser-dot dot-red"></div>
+          <div class="browser-dot dot-yellow"></div>
+          <div class="browser-dot dot-green"></div>
+        </div>
+        <div class="browser-bar">alignwellchiro.com</div>
+      </div>
+      <div class="browser-preview">
+        <div style="min-height:200px;background:linear-gradient(160deg,#f0f4f0 0%,#e5ece5 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;padding:2rem;">
+          <div style="font-family:'DM Sans',sans-serif;font-size:0.6rem;letter-spacing:0.2em;color:#4a7a5b;text-transform:uppercase;">Chiropractic &amp; Wellness</div>
+          <div style="font-family:'DM Sans',sans-serif;font-size:1.2rem;color:#1a2a1a;font-weight:700;letter-spacing:0.04em;">ALIGN WELL</div>
+          <div style="font-size:0.62rem;letter-spacing:0.15em;color:#4a7a5b;font-weight:600;">CHIROPRACTIC · GILBERT, AZ</div>
+          <div style="width:2rem;height:2px;background:#4a7a5b;margin:0.4rem 0;opacity:0.4;"></div>
+          <div style="font-size:0.7rem;color:#667766;text-align:center;line-height:1.5;">Back &amp; neck pain relief · Sports injuries<br>New patients seen same day</div>
+        </div>
+      </div>
+      <div class="portfolio-card-info">
+        <div class="portfolio-card-tag">Healthcare</div>
+        <div class="portfolio-card-name">Align Well Chiropractic</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="glow-accent" style="right:-80px;left:auto;top:auto;bottom:-80px;"></div>
+  <div class="section-eyebrow">Client Stories</div>
+  <h2 class="section-title">Don't Take<br><em>Our Word for It.</em></h2>
+  <p class="section-sub">Phoenix-area business owners who made the switch to a site that actually works for them.</p>
+  <div class="testimonials-grid reveal">
+
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"I was embarrassed to give out my website URL. Now I hand my card out to everyone. John Bert delivered in under 3 days and the calls started coming in within the first week."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">R</div>
+        <div>
+          <div class="author-name">Rick M.</div>
+          <div class="author-biz">Owner, HVAC Company · Phoenix, AZ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"The $174/month plan is a no-brainer. I've had other agencies charge 10x that and deliver half the result. These guys are fast, professional, and they actually answer when you text them."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">S</div>
+        <div>
+          <div class="author-name">Sara L.</div>
+          <div class="author-biz">Owner, Boutique Fitness Studio · Scottsdale, AZ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"We're a 2-person landscaping crew and couldn't afford the big agencies. John Bert gave us a site that looks like a million bucks — our leads tripled in the first month."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">T</div>
+        <div>
+          <div class="author-name">Tony &amp; Diana V.</div>
+          <div class="author-biz">Owners, Verde Lawn &amp; Landscape · Mesa, AZ</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<div class="guarantee-band">
+  <div class="guarantee-inner">
+    <div class="guarantee-icon">🛡️</div>
+    <div>
+      <div class="guarantee-title">Our Promise to You.</div>
+      <p class="guarantee-text">
+        We revise your website <strong>unlimited times</strong> until you're completely satisfied — no extra charges, no attitude. If after your first look you feel we completely missed the mark, we'll rebuild it from scratch. We don't stop until it's right, because our reputation depends on your success.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="glow-accent"></div>
+  <div class="section-eyebrow">Pricing</div>
+  <h2 class="section-title">Simple. Transparent.<br><em>No Surprises.</em></h2>
+  <p class="section-sub">Two ways to get a world-class website. Both include a 1-hour consultation and delivery in 2–3 business days.</p>
+  <div class="pricing-grid reveal">
+
+    <div class="pricing-card">
+      <div class="pricing-label">One-Time</div>
+      <div class="pricing-price"><sup>$</sup>3,500</div>
+      <div class="pricing-period">One-time payment. Yours forever.</div>
+      <ul class="pricing-features">
+        <li>Custom design built for your brand</li>
+        <li>1-hour strategy consultation</li>
+        <li>2–3 business day delivery</li>
+        <li>Unlimited revision rounds</li>
+        <li>Mobile responsive &amp; fast</li>
+        <li>Contact forms &amp; Google Maps</li>
+        <li>You own the site outright</li>
+      </ul>
+      <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline" style="display:block;text-align:center;">Text to Get Started</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="pricing-label">Monthly Plan</div>
+      <div class="pricing-price"><sup>$</sup>174<span style="font-size:1.5rem;font-family:'DM Sans',sans-serif;font-weight:300;">/mo</span></div>
+      <div class="pricing-period">Cancel anytime. No contracts.</div>
+      <ul class="pricing-features">
+        <li>Everything in One-Time, plus:</li>
+        <li>Free hosting included</li>
+        <li>Free website refresh every 12 months</li>
+        <li>Ongoing edits &amp; updates</li>
+        <li>Priority support</li>
+        <li>Security &amp; backups managed</li>
+        <li>Cancel anytime, no penalty</li>
+      </ul>
+      <a href="sms:4805890098?body=I'm interested in the monthly website plan at $174/mo" class="btn-primary" style="display:block;text-align:center;">Text to Get Started</a>
+    </div>
+
+  </div>
+  <p style="margin-top:1.5rem;color:#555;font-size:0.82rem;">Questions? Text or call <a href="tel:4805890098" style="color:var(--gold);text-decoration:none;">(480) 589-0098</a> — we respond fast.</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="glow-accent" style="right:-80px;left:auto;"></div>
+  <div class="section-eyebrow">The Process</div>
+  <h2 class="section-title">From Zero to Live<br><em>in Days, Not Months.</em></h2>
+  <p class="section-sub">We keep it simple so you can focus on running your business.</p>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Pick Your Package</div>
+      <div class="step-desc">Choose one-time or monthly. Text or call us to kick things off — no lengthy intake forms.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">1-Hour Consultation</div>
+      <div class="step-desc">We learn your business, goals, and brand. You tell us what winning looks like — we'll build it.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">We Build It</div>
+      <div class="step-desc">Your custom website is designed and delivered in 2–3 business days. Fast, professional, and built to convert.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Revise &amp; Launch</div>
+      <div class="step-desc">We make any revisions until it's exactly right. Then we go live and start getting you more customers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="glow-accent"></div>
+  <div class="section-eyebrow">Additional Services</div>
+  <h2 class="section-title">Grow Beyond<br><em>the Website.</em></h2>
+  <p class="section-sub">A great website is the foundation. We offer the full stack of marketing services to drive real traffic and real leads.</p>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <div class="service-icon">🔍</div>
+      <div class="service-name">SEO — Search Engine Optimization</div>
+      <div class="service-desc">Rank on Google when customers search for your services. Long-term organic traffic that compounds over time.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📢</div>
+      <div class="service-name">Google Ads (PPC)</div>
+      <div class="service-desc">Get leads immediately with targeted Google search and display ads. Pay only for clicks that matter.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📱</div>
+      <div class="service-name">Meta Ads (Facebook &amp; Instagram)</div>
+      <div class="service-desc">Reach your exact audience on social. Retargeting, lead gen, and brand campaigns that drive action.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🏷️</div>
+      <div class="service-name">Brand Awareness Campaigns</div>
+      <div class="service-desc">Build recognition in your market. Display, video, and remarketing campaigns that keep your name top of mind.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📰</div>
+      <div class="service-name">Traditional Advertising</div>
+      <div class="service-desc">Bandit signs, direct mail, local print, and radio. Sometimes offline reaches the customers online doesn't.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🗺️</div>
+      <div class="service-name">Google Business Profile</div>
+      <div class="service-desc">Dominate local map results. Fully optimized GBP setup, reviews strategy, and local SEO citation building.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">✉️</div>
+      <div class="service-name">Email Marketing</div>
+      <div class="service-desc">Automated follow-up sequences, newsletters, and re-engagement campaigns to turn leads into loyal customers.</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📊</div>
+      <div class="service-name">Analytics &amp; Reporting</div>
+      <div class="service-desc">Know exactly what's working. Monthly reports with clear metrics — leads, traffic, conversions, and ROI.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-eyebrow">FAQ</div>
+  <h2 class="section-title">Questions We<br><em>Get All the Time.</em></h2>
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How fast can I actually get my website?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">After your 1-hour consultation, we build and deliver your website in 2–3 business days. Most clients are live within a week of first contact. We don't mess around.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What's included in the monthly plan?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">The $174/month plan includes your custom website, free hosting, ongoing edits and updates, security and backups, priority support, and a free complete website refresh every 12 months. No hidden fees. Cancel anytime with no penalty.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Do I own my website if I pay the one-time fee?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">Yes — with the $3,500 one-time package, the website is yours outright. You own the code, the domain (if purchased through us or transferred), and all content. Take it anywhere.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What if I don't like the first design?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">We do revisions until you're completely satisfied — on both plans. We get a full picture of your brand in the consultation call, which means most clients only need minor tweaks. But we don't stop until it's right.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        I'm not tech-savvy. Will I be able to manage this?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">You don't need to be. On the monthly plan, we handle everything — updates, fixes, hosting. If you ever need a change, just text us. On the one-time plan, we build it easy to manage and walk you through it. No tech headaches.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        What industries do you work with?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">All of them — home services, restaurants, healthcare, fitness, legal, beauty, retail, and more. Our portfolio covers everything from steakhouses to chiropractors. If you're a local business that needs more customers, we're your agency.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Can you help with more than just the website?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">Absolutely. We offer SEO, Google Ads, Meta Ads, Google Business Profile optimization, email marketing, and traditional advertising. A great website is the foundation — we can build the whole marketing engine on top of it.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        How do I get started?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">Just text or call (480) 589-0098. That's it. No forms, no automated bots — you'll talk to a real person. Tell us a little about your business and we'll take it from there.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <h2>Ready to Get More<br><em>Customers?</em></h2>
+  <p>Let's build something great. Text or call — we respond fast.</p>
+  <div class="hero-actions">
+    <a href="sms:4805890098" class="btn-primary">Text Us Now</a>
+    <a href="tel:4805890098" class="btn-outline">(480) 589-0098</a>
+  </div>
+  <div class="cta-contact">
+    <a href="tel:4805890098">📞 Call: (480) 589-0098</a>
+    <a href="sms:4805890098">💬 Text: (480) 589-0098</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">John Bert <span>Web Agency</span></div>
+      <div class="footer-tagline">Websites That Win Customers — Phoenix, AZ</div>
+    </div>
+    <div class="footer-links">
+      <a href="#portfolio">Portfolio</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#how">How It Works</a>
+      <a href="#services">Services</a>
+      <a href="#faq">FAQ</a>
+      <a href="tel:4805890098">(480) 589-0098</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 John Bert Web Agency. All rights reserved.</span>
+    <span style="color:var(--gold);">Text or Call: (480) 589-0098</span>
+  </div>
+</footer>
+
+<script>
+  // ── FAQ TOGGLE ──────────────────────────────────
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // ── SCROLL REVEAL ───────────────────────────────
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── FLOATING CTA ────────────────────────────────
+  const floatCta = document.getElementById('floatCta');
+  let floatVisible = false;
+  window.addEventListener('scroll', () => {
+    const shouldShow = window.scrollY > 400;
+    if (shouldShow !== floatVisible) {
+      floatVisible = shouldShow;
+      floatCta.classList.toggle('visible', shouldShow);
+    }
+
+    // Darken nav on scroll
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+
+  // ── STAGGERED GRID REVEALS ──────────────────────
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const parent = entry.target;
+        const children = parent.children;
+        Array.from(children).forEach((child, i) => {
+          setTimeout(() => {
+            child.style.opacity = '1';
+            child.style.transform = 'translateY(0)';
+          }, i * 80);
+        });
+        cardObserver.unobserve(parent);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.portfolio-grid, .services-grid, .testimonials-grid').forEach(grid => {
+    Array.from(grid.children).forEach(child => {
+      child.style.opacity = '0';
+      child.style.transform = 'translateY(20px)';
+      child.style.transition = 'opacity 0.55s cubic-bezier(0.22,1,0.36,1), transform 0.55s cubic-bezier(0.22,1,0.36,1)';
+    });
+    cardObserver.observe(grid);
+  });
+</script>
+</body>
+</html>
