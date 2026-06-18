@@ -4,1010 +4,611 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="telephone=no">
-<title>John Bert Web Strategy — Websites That Win Customers</title>
-<meta property="og:title" content="John Bert Web Strategy — Websites That Win Customers">
-<meta property="og:description" content="Phoenix, AZ's premier web strategy partner. Custom websites delivered in 5–7 business days. Starting at $294/month.">
-<meta property="og:image" content="og-image.png">
+<title>Phoenix Luxury Ride — Party Buses, Limousines & Chauffeured Vans in Phoenix, AZ</title>
+<meta name="description" content="Phoenix's chauffeured party bus, limousine and executive van service. From 44-passenger coaches and the iconic Pink Hummer to the Maybach. Rated 5 stars. Available 24/7 across the Valley. Call 480 749 4688.">
+<meta property="og:title" content="Phoenix Luxury Ride — Chauffeured Party Buses & Limousines">
+<meta property="og:description" content="Party buses, limos and executive vans across metro Phoenix. 5-star rated, licensed & insured, available 24/7.">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="John Bert Web Strategy — Websites That Win Customers">
-<meta name="twitter:description" content="Phoenix, AZ's premier web strategy partner. Custom websites in 5–7 business days.">
-<meta name="twitter:image" content="og-image.png">
+<meta property="og:url" content="https://www.phoenixluxuryride.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- =====================================================================
+     ADDING REAL PHOTOS  ·  read me
+     Every vehicle below has an  img:""  field in the `fleet` array, and the
+     hero / review-area photos have HERO_IMG / similar constants near the top
+     of the <script>. Paste a real image URL between the quotes and the photo
+     appears automatically with the right crop. Leave it empty and a styled
+     gold/pink slot shows instead — the site still looks finished.
+     You can hotlink straight from phoenixluxuryride.com, e.g.
+        img:"https://www.phoenixluxuryride.com/wp-content/uploads/.../pink-hummer.jpg"
+     ===================================================================== -->
+
+<!-- LocalBusiness + rating schema so Google can show stars in search -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"LimousineService",
+  "name":"Phoenix Luxury Ride",
+  "image":"https://www.phoenixluxuryride.com/",
+  "telephone":"+14807494688",
+  "url":"https://www.phoenixluxuryride.com/",
+  "areaServed":["Phoenix","Scottsdale","Tempe","Mesa","Chandler","Gilbert","Glendale"],
+  "address":{"@type":"PostalAddress","addressLocality":"Phoenix","addressRegion":"AZ","addressCountry":"US"},
+  "openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"00:00","closes":"23:59"},
+  "aggregateRating":{"@type":"AggregateRating","ratingValue":"5.0","reviewCount":"60"}
+}
+</script>
+
 <style>
-  :root {
-    --gold: #C9A84C;
-    --gold-light: #E8C97A;
-    --gold-dim: rgba(201,168,76,0.1);
-    --dark: #0D0D0D;
-    --dark2: #111111;
-    --dark3: #181818;
-    --dark4: #1E1E1E;
-    --white: #F5F0E8;
-    --gray: #888;
-    --gray-light: #aaa;
-    --warm-muted: #9A9690;
-    --warm-accent: #BEB5A6;
-    --border: rgba(201,168,76,0.15);
-    --card-border: rgba(245,240,232,0.07);
-    --card-border-hover: rgba(245,240,232,0.16);
-    --glow-strong: 0 0 30px rgba(201,168,76,0.22), 0 0 60px rgba(201,168,76,0.1);
-    --card-shadow-hover: 0 22px 60px rgba(0,0,0,0.6), 0 0 30px rgba(245,240,232,0.03);
+  :root{
+    --bg:#100F0D;
+    --bg-2:#16140F;
+    --surface:#1B1813;
+    --line:rgba(236,230,220,.11);
+    --line-2:rgba(236,230,220,.18);
+    --brass:#B8924A;
+    --brass-dim:#8a6f3a;
+    --pink:#E85B92;
+    --pink-dim:#a8456c;
+    --ink:#ECE6DC;
+    --muted:#988F81;
+    --muted-2:#6B6457;
+    --maxw:1180px;
   }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Manrope',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--brass);color:#100F0D}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:500;line-height:1.07;letter-spacing:-.015em}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .mono{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.18em;font-size:.7rem;color:var(--brass);font-weight:500}
+  .mono.pink{color:var(--pink)}
+  .mono-dim{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.16em;font-size:.66rem;color:var(--muted-2)}
+  .rule{height:1px;background:var(--line);border:none}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--dark); color: var(--white);
-    font-family: 'DM Sans', sans-serif; font-weight: 300;
-    overflow-x: hidden;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    body.custom-cursor, body.custom-cursor a, body.custom-cursor button { cursor: none !important; }
-  }
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:'Manrope';font-weight:600;font-size:.92rem;padding:14px 26px;border-radius:2px;cursor:pointer;border:1px solid transparent;transition:background .22s,color .22s,border-color .22s,transform .15s;white-space:nowrap}
+  .btn:active{transform:translateY(1px)}
+  .btn-solid{background:var(--brass);color:#14110B}
+  .btn-solid:hover{background:#caa45a}
+  .btn-pink{background:var(--pink);color:#1a0d13}
+  .btn-pink:hover{background:#ef6fa1}
+  .btn-line{background:transparent;color:var(--ink);border-color:var(--line-2)}
+  .btn-line:hover{border-color:var(--brass);color:var(--brass)}
+  .link-arrow{font-family:'IBM Plex Mono',monospace;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);display:inline-flex;align-items:center;gap:8px;transition:gap .22s,color .22s}
+  .link-arrow:hover{gap:13px;color:var(--brass)}
+  .link-arrow .ln{width:22px;height:1px;background:var(--brass);display:inline-block}
 
-  /* Film grain */
-  body::after {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-    background-size: 180px 180px; opacity: 0.034; mix-blend-mode: overlay;
-  }
+  /* styled photo slot — shows until a real img URL is supplied */
+  .photo{position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1712,#100F0D 72%);border:1px solid var(--line)}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .photo .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .photo .ph::before{content:"";position:absolute;inset:0;background:
+     radial-gradient(120% 90% at 78% 8%,rgba(184,146,74,.16),transparent 55%),
+     radial-gradient(90% 80% at 12% 100%,rgba(232,91,146,.12),transparent 60%);}
+  .photo .ph::after{content:"";position:absolute;inset:0;opacity:.5;background-image:repeating-linear-gradient(135deg,rgba(236,230,220,.022) 0 1px,transparent 1px 24px)}
+  .photo.pink .ph::before{background:
+     radial-gradient(120% 90% at 78% 8%,rgba(232,91,146,.22),transparent 55%),
+     radial-gradient(90% 80% at 12% 100%,rgba(184,146,74,.10),transparent 60%);}
+  .ph-word{position:relative;font-family:'Fraunces';font-style:italic;font-weight:400;font-size:clamp(1.6rem,4vw,2.6rem);color:rgba(236,230,220,.10);letter-spacing:-.02em;text-align:center;padding:0 18px;line-height:1.05}
+  .plate-label{position:absolute;left:18px;bottom:16px;display:flex;align-items:center;gap:10px;z-index:2}
+  .plate-label .dot{width:6px;height:6px;border-radius:50%;background:var(--brass);flex:none}
+  .plate-label.pink .dot{background:var(--pink)}
 
-  /* ── PAGE LOADER ────────────────────────────── */
-  #pageLoader {
-    position: fixed; inset: 0; z-index: 100000;
-    background: var(--dark);
-    display: flex; align-items: center; justify-content: center;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-  }
-  #pageLoader.done { opacity: 0; visibility: hidden; pointer-events: none; }
-  .loader-content { text-align: center; }
-  .loader-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem; font-weight: 700; letter-spacing: 0.02em;
-    animation: loaderFadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
-  }
-  .loader-logo span { color: var(--gold); }
-  .loader-bar {
-    width: 0; height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold), transparent);
-    margin: 1.2rem auto 0; border-radius: 1px;
-    animation: loaderBar 0.7s 0.3s cubic-bezier(0.16,1,0.3,1) both;
-  }
-  @keyframes loaderFadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: none; }
-  }
-  @keyframes loaderBar {
-    from { width: 0; opacity: 0; }
-    to   { width: 120px; opacity: 1; }
-  }
+  /* NAV */
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;transition:background .3s,padding .3s,border-color .3s;border-bottom:1px solid transparent}
+  header.nav.scrolled{background:rgba(16,15,13,.86);backdrop-filter:blur(14px);padding:13px 0;border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .logo{font-family:'Fraunces';font-weight:500;font-size:1.16rem;letter-spacing:-.01em;line-height:1}
+  .logo small{display:block;font-family:'IBM Plex Mono';font-weight:400;font-size:.56rem;letter-spacing:.28em;color:var(--muted-2);text-transform:uppercase;margin-top:5px}
+  .nav-links{display:flex;gap:34px}
+  .nav-links a{font-size:.86rem;font-weight:500;color:var(--muted);transition:color .2s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-right{display:flex;align-items:center;gap:22px}
+  .nav-phone{font-family:'IBM Plex Mono';font-size:.82rem;letter-spacing:.06em;color:var(--ink)}
+  .nav-phone:hover{color:var(--brass)}
+  .burger{display:none;background:none;border:none;color:var(--ink);cursor:pointer}
 
-  /* ── CUSTOM CURSOR ──────────────────────────── */
-  #cursor-dot {
-    position: fixed; width: 6px; height: 6px;
-    background: var(--gold); border-radius: 50%;
-    pointer-events: none; z-index: 99999;
-    left: 0; top: 0;
-    transform: translate(-50%,-50%);
-    transition: transform 0.15s, opacity 0.3s, background 0.2s;
-    opacity: 0;
-  }
-  #cursor-glow {
-    position: fixed; width: 36px; height: 36px; border-radius: 50%;
-    pointer-events: none; z-index: 99998;
-    left: 0; top: 0;
-    transform: translate(-50%,-50%);
-    background: radial-gradient(circle, rgba(201,168,76,0.16) 0%, transparent 70%);
-    transition: width 0.35s, height 0.35s, opacity 0.35s;
-    opacity: 0;
-  }
+  /* HERO */
+  .hero{padding:150px 0 0;position:relative}
+  .hero-head{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:end;padding-bottom:46px}
+  .hero h1{font-size:clamp(2.9rem,6.2vw,5.4rem);font-weight:400}
+  .hero h1 em{font-style:italic;color:var(--brass)}
+  .hero-sub{color:var(--muted);font-size:1.06rem;max-width:38ch}
+  .hero-sub-actions{display:flex;gap:14px;margin-top:24px;flex-wrap:wrap}
+  .hero-stars{display:flex;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+  .stars{color:var(--brass);letter-spacing:2px;font-size:.95rem}
+  .hero-stars span{font-size:.86rem;color:var(--muted)}
+  .hero-plate{aspect-ratio:21/8;width:100%}
 
-  /* ── SCROLL PROGRESS ────────────────────────── */
-  #scrollProgress {
-    position: fixed; top: 0; left: 0; height: 2px; z-index: 9998;
-    background: linear-gradient(to right, var(--gold), var(--gold-light));
-    width: 0%; pointer-events: none;
-    transition: width 0.08s linear;
-  }
+  /* BOOKING STRIP */
+  .book-strip{position:relative;z-index:5;margin-top:-1px;background:var(--surface);border:1px solid var(--line);border-top:1px solid var(--line-2)}
+  .book-strip-inner{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:0}
+  .bf{display:flex;flex-direction:column;gap:6px;padding:18px 22px;border-right:1px solid var(--line)}
+  .bf label{font-family:'IBM Plex Mono';font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
+  .bf input,.bf select{background:transparent;border:none;color:var(--ink);font-family:'Manrope';font-size:.95rem;font-weight:500;padding:2px 0}
+  .bf input:focus,.bf select:focus{outline:none}
+  .bf select{appearance:none;cursor:pointer}
+  .bf input::placeholder{color:var(--muted-2)}
+  .book-cta{display:flex;align-items:stretch}
+  .book-cta button{border-radius:0;padding:0 34px;width:100%;font-family:'Manrope';font-weight:600;font-size:.9rem;background:var(--brass);color:#14110B;border:none;cursor:pointer;transition:background .2s}
+  .book-cta button:hover{background:#caa45a}
+  .strip-note{display:flex;justify-content:space-between;align-items:center;padding:13px 22px;flex-wrap:wrap;gap:10px}
 
-  /* ── NAV ────────────────────────────────────── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.1rem 4%;
-    background: rgba(13,13,13,0.88);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border); transition: background 0.3s;
-  }
-  nav.scrolled { background: rgba(13,13,13,0.97); }
-  .nav-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; font-weight: 700; color: var(--white);
-    letter-spacing: 0.02em; position: relative; z-index: 210;
-  }
-  .nav-logo span { color: var(--gold); }
-  .nav-links { display: flex; gap: 2rem; align-items: center; }
-  .nav-links a {
-    color: var(--gray); text-decoration: none; font-size: 0.78rem;
-    letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--white); }
-  .nav-cta {
-    background: var(--gold) !important; color: var(--dark) !important;
-    padding: 0.5rem 1.25rem !important; font-weight: 600 !important;
-    font-size: 0.76rem !important; letter-spacing: 0.12em !important;
-    border-radius: 2px; display: inline-block;
-    transition: background 0.2s, box-shadow 0.2s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94) !important;
-  }
-  .nav-cta:hover { background: var(--gold-light) !important; box-shadow: 0 0 20px rgba(201,168,76,0.35) !important; color: var(--dark) !important; }
-  .nav-hamburger {
-    display: none; flex-direction: column; justify-content: center;
-    gap: 5px; background: none; border: none; cursor: none;
-    padding: 0.5rem; z-index: 210; position: relative;
-  }
-  .nav-hamburger span {
-    display: block; width: 22px; height: 1.5px;
-    background: var(--white); border-radius: 2px;
-    transition: transform 0.3s, opacity 0.3s; transform-origin: center;
-  }
-  .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-  .mobile-nav {
-    display: none; position: fixed; inset: 0; z-index: 205;
-    background: rgba(10,10,10,0.97); backdrop-filter: blur(20px);
-    flex-direction: column; align-items: center; justify-content: center;
-    gap: 2.5rem; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-  }
-  .mobile-nav.open { opacity: 1; pointer-events: auto; }
-  .mobile-nav a {
-    font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700;
-    color: var(--white); text-decoration: none; letter-spacing: -0.02em; transition: color 0.2s;
-  }
-  .mobile-nav a:hover { color: var(--gold); }
-  .mobile-nav .mobile-cta {
-    margin-top: 1rem; background: var(--gold); color: var(--dark);
-    padding: 1rem 2.5rem; font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem; font-weight: 700; letter-spacing: 0.14em;
-    text-transform: uppercase; border-radius: 2px; text-decoration: none; display: inline-block;
-  }
+  /* SECTIONS */
+  section{padding:104px 0}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:54px;flex-wrap:wrap}
+  .sec-head .lhs{max-width:560px}
+  .sec-head h2{font-size:clamp(2rem,4vw,3.05rem);font-weight:400;margin:14px 0 0}
+  .sec-head h2 em{font-style:italic;color:var(--brass)}
+  .sec-head h2 em.pink{color:var(--pink)}
+  .sec-head p{color:var(--muted);margin-top:14px;font-size:1.02rem}
 
-  /* ── FLOATING CTA ───────────────────────────── */
-  .float-cta {
-    position: fixed; bottom: 2rem; right: 2rem; z-index: 300;
-    display: flex; align-items: center; gap: 0.6rem;
-    background: var(--gold); color: var(--dark); padding: 0.85rem 1.4rem;
-    border-radius: 50px; font-weight: 700; font-size: 0.8rem;
-    letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none;
-    box-shadow: 0 4px 30px rgba(201,168,76,0.5), 0 2px 10px rgba(0,0,0,0.4);
-    opacity: 0; transform: translateY(20px) scale(0.95);
-    transition: opacity 0.4s, transform 0.4s, background 0.2s, box-shadow 0.2s;
-    pointer-events: none;
-  }
-  .float-cta.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-  .float-cta:hover { background: var(--gold-light); box-shadow: 0 6px 40px rgba(201,168,76,0.65), 0 2px 10px rgba(0,0,0,0.4); transform: translateY(-2px) scale(1.02); }
-  .float-cta .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dark); animation: pulse-dot 2s ease-in-out infinite; }
-  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+  /* FLEET */
+  .filters{display:flex;gap:26px;border-bottom:1px solid var(--line);margin-bottom:40px;flex-wrap:wrap}
+  .filters button{background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono';font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;padding:0 0 16px;cursor:pointer;border-bottom:1px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s}
+  .filters button:hover{color:var(--ink)}
+  .filters button.active{color:var(--brass);border-bottom-color:var(--brass)}
+  .fleet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px 26px}
+  .v{display:flex;flex-direction:column}
+  .v-frame{aspect-ratio:4/3;transition:border-color .3s}
+  .v:hover .v-frame{border-color:var(--line-2)}
+  .v-cap{position:absolute;top:14px;right:14px;z-index:3;font-family:'IBM Plex Mono';font-size:.62rem;letter-spacing:.1em;color:var(--ink);background:rgba(16,15,13,.6);border:1px solid var(--line);padding:4px 9px}
+  .v-tag{position:absolute;top:14px;left:14px;z-index:3;font-family:'IBM Plex Mono';font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#1a0d13;background:var(--pink);padding:4px 9px}
+  .v-head{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin:18px 0 2px}
+  .v-head h3{font-size:1.34rem;font-weight:500}
+  .v-class{font-family:'IBM Plex Mono';font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);white-space:nowrap;padding-top:4px}
+  .v-chips{display:flex;flex-wrap:wrap;gap:7px;margin:13px 0 2px}
+  .v-chips span{font-family:'IBM Plex Mono';font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:2px}
+  .v-specs{margin:14px 0 18px;border-top:1px solid var(--line)}
+  .v-specs div{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.84rem}
+  .v-specs span:first-child{color:var(--muted-2);font-family:'IBM Plex Mono';font-size:.66rem;letter-spacing:.08em;text-transform:uppercase}
+  .v-specs span:last-child{color:var(--ink);text-align:right}
+  .v-foot{margin-top:auto}
 
-  /* ── HERO ───────────────────────────────────── */
-  .hero {
-    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-    padding: 9rem 4% 5rem; position: relative; overflow: hidden;
-  }
-  #heroCanvas { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
-  .hero-bg {
-    position: absolute; inset: 0; pointer-events: none; z-index: 1;
-    background:
-      radial-gradient(ellipse 70% 55% at 72% 35%, rgba(201,168,76,0.07) 0%, transparent 65%),
-      radial-gradient(ellipse 50% 40% at 12% 80%, rgba(120,90,38,0.04) 0%, transparent 55%),
-      radial-gradient(ellipse 120% 50% at 50% 115%, rgba(0,0,0,0.95) 0%, transparent 55%);
-  }
-  .hero-bg::after {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(0,0,0,0.5) 100%);
-  }
-  .hero-spotlight {
-    position: absolute; top: -20%; right: -10%; width: 900px; height: 900px;
-    pointer-events: none; z-index: 1;
-    background: radial-gradient(ellipse 55% 45% at 58% 42%, rgba(201,168,76,0.065) 0%, rgba(201,168,76,0.02) 45%, transparent 72%);
-    animation: slow-drift 18s ease-in-out infinite alternate;
-  }
-  @keyframes slow-drift { from{transform:translate(0,0) scale(1)} to{transform:translate(25px,-18px) scale(1.04)} }
-  .hero > *:not(#heroCanvas):not(.hero-bg):not(.hero-spotlight) { position: relative; z-index: 2; }
+  /* SERVICES — editorial list */
+  .svc-list{border-top:1px solid var(--line)}
+  .svc-row{display:grid;grid-template-columns:48px 1.1fr 2fr auto;gap:24px;align-items:center;padding:24px 4px;border-bottom:1px solid var(--line);transition:background .25s,padding-left .25s}
+  .svc-row:hover{background:linear-gradient(90deg,rgba(184,146,74,.05),transparent);padding-left:14px}
+  .svc-row .ix{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--muted-2)}
+  .svc-row h3{font-size:1.3rem;font-weight:500}
+  .svc-row p{color:var(--muted);font-size:.92rem}
+  .svc-row .go{font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);transition:color .2s}
+  .svc-row:hover .go{color:var(--brass)}
 
-  .hero-eyebrow {
-    font-family: 'DM Sans', sans-serif; font-size: 0.68rem; letter-spacing: 0.3em;
-    text-transform: uppercase; color: var(--warm-muted); margin-bottom: 2rem;
-    display: flex; align-items: center; gap: 0.8rem;
-    animation: fadeUp 0.6s 0.1s both;
-  }
-  .hero-eyebrow::before {
-    content: ''; display: block; width: 2.5rem; height: 1px;
-    background: linear-gradient(to right, transparent, var(--warm-muted)); flex-shrink: 0;
-  }
+  /* REVIEWS */
+  .reviews{background:var(--bg-2)}
+  .rev-top{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-bottom:42px}
+  .rev-score{display:flex;align-items:baseline;gap:10px}
+  .rev-score b{font-family:'Fraunces';font-size:2.6rem;font-weight:500;line-height:1}
+  .rev-score .stars{font-size:1.15rem}
+  .rev-top .gpill{display:inline-flex;align-items:center;gap:9px;font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:9px 14px;border-radius:2px}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .rev{display:flex;flex-direction:column;gap:16px;background:var(--surface);border:1px solid var(--line);padding:26px;transition:border-color .25s,transform .25s}
+  .rev:hover{border-color:var(--line-2);transform:translateY(-3px)}
+  .rev .stars{font-size:.9rem}
+  .rev p{font-family:'Fraunces';font-size:1.06rem;line-height:1.5;color:var(--ink)}
+  .rev .who{margin-top:auto;display:flex;align-items:center;gap:12px}
+  .rev .av{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:'Fraunces';font-weight:600;color:#14110B;background:var(--brass)}
+  .rev .who b{font-size:.92rem;font-weight:600;display:block;font-family:'Manrope'}
+  .rev .who span{font-family:'IBM Plex Mono';font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2)}
 
-  /* ── SPLIT-LINE REVEAL (hero + sections) ─────── */
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(4rem, 10vw, 9.5rem); font-weight: 900;
-    line-height: 0.93; max-width: 1000px; margin-bottom: 2.2rem; letter-spacing: -0.04em;
-  }
-  .reveal-line { display: block; overflow: hidden; line-height: 1.1; }
-  .reveal-line > span {
-    display: block; transform: translateY(110%) skewY(2.5deg);
-    animation: lineReveal 1s cubic-bezier(0.16,1,0.3,1) forwards; will-change: transform;
-  }
-  .reveal-line:nth-child(1) > span { animation-delay: 0.28s; }
-  .reveal-line:nth-child(2) > span { animation-delay: 0.52s; }
-  @keyframes lineReveal { to { transform: translateY(0) skewY(0deg); } }
+  /* WHY — quiet columns */
+  .why{background:var(--bg)}
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .why-cell{background:var(--bg-2);padding:36px 30px}
+  .why-cell .mono{display:block;margin-bottom:18px}
+  .why-cell h3{font-size:1.28rem;font-weight:500;margin-bottom:10px}
+  .why-cell p{color:var(--muted);font-size:.92rem}
 
-  .line-gold {
-    font-style: italic;
-    background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 35%, var(--gold-light) 48%, #fff8d0 52%, var(--gold-light) 58%, var(--gold) 100%);
-    background-size: 300% auto; background-position: 200% center;
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    animation: goldShimmer 2.2s ease-out 1.15s forwards;
-  }
-  @keyframes goldShimmer { to { background-position: -80% center; } }
+  /* STEPS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+  .step .mono{display:block;margin-bottom:16px}
+  .step h3{font-size:1.34rem;font-weight:500;margin-bottom:10px}
+  .step p{color:var(--muted);font-size:.94rem}
+  .step .rule{margin-bottom:22px}
 
-  /* Section title split reveal (JS-driven) */
-  .s-rv-wrap { display: block; overflow: hidden; line-height: 1.1; }
-  .s-rv-inner {
-    display: block; transform: translateY(108%) skewY(2deg);
-    transition: transform 0.9s cubic-bezier(0.16,1,0.3,1);
-    will-change: transform;
-  }
-  .s-rv-inner.revealed { transform: translateY(0) skewY(0deg); }
-  .s-rv-inner:nth-child(2) { transition-delay: 0.16s; }
+  /* FAQ */
+  .faq-wrap{max-width:820px}
+  .faq{border-bottom:1px solid var(--line)}
+  .faq summary{cursor:pointer;list-style:none;padding:26px 0;display:flex;justify-content:space-between;gap:20px;align-items:center;font-family:'Fraunces';font-size:1.22rem;font-weight:500}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary .pl{font-family:'IBM Plex Mono';color:var(--brass);font-size:1.1rem;font-weight:400;transition:transform .25s;flex:none}
+  .faq[open] summary .pl{transform:rotate(45deg)}
+  .faq .ans{padding:0 0 26px;color:var(--muted);font-size:.96rem;max-width:68ch}
 
-  .hero-sub {
-    font-family: 'DM Sans', sans-serif; font-size: 1.05rem; color: var(--gray-light);
-    max-width: 460px; line-height: 1.82; margin-bottom: 3rem; font-weight: 300;
-    animation: fadeUp 0.7s 0.7s both;
-  }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.7s 0.88s both; }
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+  .contact h2{font-size:clamp(2rem,4vw,3rem);font-weight:400;margin:14px 0 18px}
+  .contact h2 em{font-style:italic;color:var(--brass)}
+  .contact .lede{color:var(--muted);margin-bottom:34px;max-width:40ch}
+  .ci{display:flex;gap:18px;padding:22px 0;border-top:1px solid var(--line)}
+  .ci:last-child{border-bottom:1px solid var(--line)}
+  .ci .k{font-family:'IBM Plex Mono';font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);width:90px;flex:none;padding-top:4px}
+  .ci .v2 b{font-size:1.12rem;font-weight:600;font-family:'Fraunces'}
+  .ci .v2 span{display:block;color:var(--muted);font-size:.88rem}
+  .ci .v2 a{color:var(--brass)}
+  .form{background:var(--surface);border:1px solid var(--line);padding:32px}
+  .form .ff{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+  .form label{font-family:'IBM Plex Mono';font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
+  .form input,.form select{background:#100F0D;border:1px solid var(--line);color:var(--ink);font-family:'Manrope';font-size:.95rem;padding:13px 14px;transition:border-color .2s}
+  .form input:focus,.form select:focus{outline:none;border-color:var(--brass)}
+  .form select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' fill='none'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23B8924A' stroke-width='1.4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+  .form .btn-solid{width:100%;margin-top:4px}
+  .form-ok{display:none;padding:14px;border:1px solid var(--line);background:rgba(184,146,74,.07);font-size:.9rem;color:var(--brass);margin-top:14px}
 
-  .btn-primary {
-    background: var(--gold); color: var(--dark); padding: 1rem 2.4rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.76rem;
-    letter-spacing: 0.15em; text-transform: uppercase; border: none; cursor: none;
-    text-decoration: none; display: inline-block; border-radius: 2px;
-    box-shadow: 0 4px 20px rgba(201,168,76,0.3); position: relative;
-    transition: background 0.2s, box-shadow 0.2s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
-  }
-  .btn-primary:hover { background: var(--gold-light); box-shadow: 0 6px 32px rgba(201,168,76,0.5); }
-  .btn-outline {
-    background: transparent; color: var(--white); padding: 1rem 2.4rem;
-    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.76rem;
-    letter-spacing: 0.15em; text-transform: uppercase; border: 1px solid rgba(245,240,232,0.18);
-    cursor: none; text-decoration: none; display: inline-block; border-radius: 2px; position: relative;
-    transition: border-color 0.2s, background 0.2s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
-  }
-  .btn-outline:hover { border-color: rgba(245,240,232,0.38); background: rgba(245,240,232,0.04); }
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:64px 0 30px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+  .foot-logo{font-family:'Fraunces';font-weight:500;font-size:1.3rem;margin-bottom:14px}
+  .foot-grid h4{font-family:'IBM Plex Mono';font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:16px;font-weight:500}
+  .foot-grid a,.foot-grid p{display:block;color:var(--muted);font-size:.9rem;margin-bottom:10px;transition:color .2s}
+  .foot-grid a:hover{color:var(--ink)}
+  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--muted-2);font-family:'IBM Plex Mono';font-size:.68rem;letter-spacing:.08em}
 
-  .hero-stats {
-    display: flex; gap: 3rem; margin-top: 4.5rem;
-    padding-top: 2.5rem; border-top: 1px solid rgba(245,240,232,0.09);
-    flex-wrap: wrap; animation: fadeUp 0.7s 1.05s both;
-  }
-  .hero-stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; }
-  .hero-stat-label { font-family: 'DM Sans', sans-serif; font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-top: 0.3rem; }
+  /* MOBILE BAR + MENU */
+  .callbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:99;background:rgba(16,15,13,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 14px;gap:10px}
+  .callbar .btn{flex:1;border-radius:2px}
+  .mobile-menu{display:none;position:fixed;inset:0;z-index:200;background:rgba(16,15,13,.98);backdrop-filter:blur(12px);flex-direction:column;padding:88px 28px 28px;gap:2px}
+  .mobile-menu.open{display:flex}
+  .mobile-menu a{font-family:'Fraunces';font-weight:500;font-size:1.7rem;padding:16px 0;border-bottom:1px solid var(--line)}
+  .mobile-menu .close{position:absolute;top:22px;right:24px;background:none;border:none;color:var(--ink);font-size:2rem;cursor:pointer}
 
-  /* ── SECTION COMMONS ────────────────────────── */
-  section { padding: 7rem 4%; }
-  .section-eyebrow {
-    font-family: 'DM Sans', sans-serif; font-size: 0.66rem; letter-spacing: 0.3em;
-    text-transform: uppercase; color: var(--warm-muted); margin-bottom: 1.1rem;
-    display: flex; align-items: center; gap: 0.7rem;
+  @media(max-width:960px){
+    .hero-head{grid-template-columns:1fr;gap:24px;align-items:start}
+    .book-strip-inner{grid-template-columns:1fr 1fr}
+    .bf{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .book-cta{grid-column:1/-1}
+    .book-cta button{padding:18px}
+    .fleet-grid,.why-grid,.steps,.rev-grid{grid-template-columns:repeat(2,1fr)}
+    .contact-grid{grid-template-columns:1fr;gap:40px}
+    .nav-links{display:none}
+    .svc-row{grid-template-columns:34px 1fr;gap:14px}
+    .svc-row p,.svc-row .go{display:none}
+    .foot-grid{grid-template-columns:1fr 1fr}
   }
-  .section-eyebrow::before {
-    content: ''; display: block; width: 2rem; height: 1px;
-    background: linear-gradient(to right, transparent, var(--warm-muted)); flex-shrink: 0;
+  @media(max-width:600px){
+    section{padding:72px 0}
+    .hero{padding:120px 0 0}
+    .hero-plate{aspect-ratio:16/10}
+    .book-strip-inner{grid-template-columns:1fr}
+    .bf{border-right:none}
+    .fleet-grid,.why-grid,.steps,.rev-grid{grid-template-columns:1fr}
+    .why-grid{gap:1px}
+    .nav-right .nav-phone{display:none}
+    .burger{display:block}
+    .callbar{display:flex}
+    body{padding-bottom:62px}
+    .foot-grid{grid-template-columns:1fr}
+    .sec-head{flex-direction:column;align-items:flex-start}
   }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 700;
-    line-height: 1.04; margin-bottom: 1.2rem; letter-spacing: -0.03em;
-  }
-  .section-title em { font-style: italic; color: var(--gold); text-shadow: 0 0 50px rgba(201,168,76,0.18); }
-  .section-sub { font-family: 'DM Sans', sans-serif; color: var(--gray); max-width: 500px; line-height: 1.82; margin-bottom: 3.5rem; font-size: 0.95rem; font-weight: 300; }
-  .glow-accent {
-    position: absolute; pointer-events: none; border-radius: 50%; filter: blur(90px);
-    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
-    width: 500px; height: 500px; top: -100px; left: -100px;
-  }
-
-  /* ── TICKER ─────────────────────────────────── */
-  .ticker-band {
-    background: var(--dark3); border-top: 1px solid var(--card-border);
-    border-bottom: 1px solid var(--card-border); padding: 1.1rem 0; overflow: hidden; position: relative;
-  }
-  .ticker-band::before,.ticker-band::after {
-    content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2; pointer-events: none;
-  }
-  .ticker-band::before { left: 0; background: linear-gradient(to right, var(--dark3), transparent); }
-  .ticker-band::after  { right: 0; background: linear-gradient(to left, var(--dark3), transparent); }
-  .ticker-track { display: flex; gap: 3rem; white-space: nowrap; animation: ticker-scroll 28s linear infinite; width: max-content; }
-  .ticker-track:hover { animation-play-state: paused; }
-  @keyframes ticker-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-  .ticker-item { display: flex; align-items: center; gap: 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); }
-  .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0.6; flex-shrink: 0; }
-
-  /* ── PORTFOLIO ──────────────────────────────── */
-  #portfolio { background: var(--dark2); position: relative; overflow: hidden; }
-  #portfolio::before { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 60% 40% at 85% 15%, rgba(201,168,76,0.04) 0%, transparent 60%); }
-  .portfolio-featured { margin-bottom: 1.5rem; }
-  .portfolio-featured .browser-frame .browser-preview img { aspect-ratio: 21/9 !important; }
-  .portfolio-featured .portfolio-card-info { padding: 1.3rem 1.5rem 1.7rem; }
-  .portfolio-featured .portfolio-card-name { font-size: 1.2rem; }
-  .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
-
-  .browser-frame {
-    border-radius: 8px; overflow: hidden; border: 1px solid var(--card-border);
-    background: var(--dark3); cursor: none; will-change: transform;
-    transition: border-color 0.3s, box-shadow 0.35s;
-  }
-  .browser-frame:hover { border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); }
-  .browser-chrome {
-    background: #1C1C1C; padding: 0.58rem 1rem;
-    display: flex; align-items: center; gap: 0.75rem;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .browser-dots { display: flex; gap: 0.38rem; }
-  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-red{background:#ff5f57} .dot-yellow{background:#febc2e} .dot-green{background:#28c840}
-  .browser-bar {
-    flex: 1; background: #131313; border-radius: 4px; padding: 0.26rem 0.7rem;
-    font-size: 0.67rem; color: #3e3e3e; letter-spacing: 0.02em;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .browser-preview { position: relative; overflow: hidden; }
-  .browser-preview img { display: block; width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
-  .browser-frame:hover .browser-preview img { transform: scale(1.03); }
-  .portfolio-card-info { padding: 1rem 1.2rem 1.3rem; border-top: 1px solid rgba(245,240,232,0.04); background: var(--dark3); }
-  .portfolio-card-tag { font-family: 'DM Sans', sans-serif; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 0.35rem; }
-  .portfolio-card-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--white); }
-
-  /* ── TESTIMONIALS ───────────────────────────── */
-  #testimonials { background: var(--dark); position: relative; overflow: hidden; }
-  #testimonials::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 55% 55% at 90% 85%, rgba(100,80,38,0.05) 0%, transparent 55%); }
-  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; }
-  .testimonial-card {
-    border: 1px solid var(--card-border); border-radius: 8px; padding: 2rem;
-    background: var(--dark3); position: relative; will-change: transform;
-    transition: border-color 0.3s, box-shadow 0.35s;
-  }
-  .testimonial-card:hover { border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); }
-  .testimonial-card::before { content:'\201C'; position:absolute; top:1.2rem; right:1.5rem; font-family:'Playfair Display',serif; font-size:4.5rem; line-height:1; color:var(--white); opacity:0.07; pointer-events:none; }
-  .stars { display:flex; gap:0.2rem; margin-bottom:1rem; color:var(--warm-accent); font-size:0.85rem; }
-  .testimonial-text { color:#c5bdb5; font-size:0.88rem; line-height:1.82; margin-bottom:1.4rem; font-style:italic; font-family:'DM Sans',sans-serif; }
-  .testimonial-author { display:flex; align-items:center; gap:0.8rem; }
-  .author-avatar { width:40px; height:40px; border-radius:50%; background:rgba(245,240,232,0.05); border:1px solid var(--card-border); display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--warm-accent); flex-shrink:0; }
-  .author-name { font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.88rem; }
-  .author-biz { font-family:'DM Sans',sans-serif; font-size:0.74rem; color:var(--warm-muted); margin-top:0.15rem; }
-
-  /* ── MEET JOHN ──────────────────────────────── */
-  .meet-john-section {
-    background: var(--dark2); padding: 7rem 4%; position: relative; overflow: hidden;
-  }
-  .meet-john-section::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse 55% 60% at 15% 50%, rgba(201,168,76,0.04) 0%, transparent 60%);
-  }
-  .meet-john-inner {
-    display: grid; grid-template-columns: 380px 1fr;
-    gap: 6rem; align-items: center; max-width: 1100px; position: relative; z-index: 1;
-  }
-  .meet-john-photo-wrap { position: relative; }
-  .meet-john-photo-wrap::before {
-    content: ''; position: absolute; inset: -1px; border-radius: 10px;
-    background: linear-gradient(145deg, rgba(201,168,76,0.28) 0%, rgba(201,168,76,0.06) 40%, transparent 70%);
-    z-index: 0;
-  }
-  .meet-john-photo-wrap::after {
-    content: ''; position: absolute; bottom: -20px; left: 10%; right: 10%;
-    height: 60px; border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(201,168,76,0.18) 0%, transparent 70%);
-    filter: blur(20px); z-index: 0;
-  }
-  .meet-john-photo {
-    width: 100%; border-radius: 8px; display: block; position: relative; z-index: 1;
-    object-fit: cover; object-position: center top; aspect-ratio: 3/4;
-    filter: contrast(1.04) brightness(0.96);
-  }
-  .meet-john-content .section-eyebrow { margin-bottom: 1.1rem; }
-  .meet-john-h2 { font-size: clamp(2.8rem, 4.5vw, 4.5rem) !important; margin-bottom: 1.8rem !important; }
-  .meet-body {
-    font-family: 'DM Sans', sans-serif; color: var(--gray-light); font-size: 1rem;
-    line-height: 1.88; font-weight: 300; max-width: 500px;
-  }
-  .meet-body + .meet-body { margin-top: 1.1rem; }
-  .meet-sig {
-    font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 700;
-    font-style: italic; margin-top: 2.2rem; color: var(--white); letter-spacing: -0.02em;
-  }
-  .meet-sig-sub {
-    font-family: 'DM Sans', sans-serif; font-size: 0.72rem; letter-spacing: 0.16em;
-    text-transform: uppercase; color: var(--warm-muted); margin-top: 0.35rem;
-  }
-
-  /* ── GUARANTEE ──────────────────────────────── */
-  .guarantee-band {
-    background: linear-gradient(135deg, rgba(245,240,232,0.035) 0%, rgba(245,240,232,0.01) 100%);
-    border-top: 1px solid rgba(245,240,232,0.07); border-bottom: 1px solid rgba(245,240,232,0.07);
-    padding: 3.5rem 4%; position: relative; overflow: hidden;
-  }
-  .guarantee-inner { display:flex; align-items:center; gap:3rem; flex-wrap:wrap; max-width:860px; }
-  .guarantee-icon { font-size:3rem; flex-shrink:0; filter:drop-shadow(0 0 16px rgba(245,240,232,0.12)); }
-  .guarantee-title { font-family:'Playfair Display',serif; font-size:clamp(1.5rem,3vw,2rem); font-weight:700; margin-bottom:0.6rem; letter-spacing:-0.025em; }
-  .guarantee-text { font-family:'DM Sans',sans-serif; color:var(--gray-light); font-size:0.92rem; line-height:1.78; max-width:560px; font-weight:300; }
-  .guarantee-text strong { color:var(--white); font-weight:500; }
-
-  /* ── COMPARISON ─────────────────────────────── */
-  .comparison-section { background: var(--dark); padding: 7rem 4%; position: relative; overflow: hidden; }
-  .comparison-section::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.025) 0%, transparent 65%); }
-  .comparison-table-wrap { overflow-x: auto; }
-  .comparison-table { width:100%; max-width:860px; border-collapse:collapse; font-family:'DM Sans',sans-serif; font-size:0.88rem; }
-  .comparison-table th { padding:1rem 1.2rem; text-align:center; border-bottom:1px solid rgba(245,240,232,0.08); font-weight:600; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); }
-  .comparison-table th.col-us { color:var(--white); font-size:0.82rem; background:rgba(201,168,76,0.06); border-radius:8px 8px 0 0; border:1px solid rgba(201,168,76,0.2); border-bottom:none; position:relative; }
-  .comparison-table th.col-us::before { content:'BEST VALUE'; position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:var(--gold); color:var(--dark); font-size:0.55rem; font-weight:700; letter-spacing:0.18em; padding:0.22rem 0.7rem; white-space:nowrap; border-radius:0 0 4px 4px; }
-  .comparison-table td { padding:0.9rem 1.2rem; text-align:center; border-bottom:1px solid rgba(245,240,232,0.05); color:var(--gray); vertical-align:middle; transition:background 0.2s; }
-  .comparison-table tr:hover td { background:rgba(245,240,232,0.02); }
-  .comparison-table td.col-us { color:var(--white); font-weight:500; background:rgba(201,168,76,0.04); border-left:1px solid rgba(201,168,76,0.15); border-right:1px solid rgba(201,168,76,0.15); }
-  .comparison-table tr:last-child td.col-us { border-radius:0 0 8px 8px; border-bottom:1px solid rgba(201,168,76,0.2); }
-  .comparison-table td.row-label { text-align:left; color:var(--warm-accent); font-size:0.85rem; }
-  .check{color:#6fcf97;font-size:1rem} .cross{color:#555;font-size:1rem} .partial{color:var(--warm-muted);font-size:0.82rem}
-
-  /* ── PRICING ────────────────────────────────── */
-  #pricing { background: var(--dark2); position: relative; overflow: hidden; }
-  #pricing::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 50% 55% at 18% 75%, rgba(201,168,76,0.04) 0%, transparent 55%); }
-  .pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; max-width:740px; }
-  .pricing-card { border:1px solid var(--card-border); padding:2.5rem; border-radius:8px; background:var(--dark3); position:relative; will-change:transform; transition:border-color 0.3s, box-shadow 0.35s; }
-  .pricing-card:hover { border-color:var(--card-border-hover); box-shadow:var(--card-shadow-hover); }
-  .pricing-card.featured { border-color:rgba(201,168,76,0.32); background:linear-gradient(150deg,rgba(201,168,76,0.07),var(--dark3) 55%); box-shadow:var(--glow-strong); }
-  .pricing-card.featured:hover { border-color:rgba(201,168,76,0.52); }
-  .pricing-card.featured::before { content:'MOST POPULAR'; position:absolute; top:-1px; right:2rem; background:var(--gold); color:var(--dark); font-family:'DM Sans',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.18em; padding:0.28rem 0.8rem; }
-  .pricing-label { font-family:'DM Sans',sans-serif; font-size:0.66rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:1rem; }
-  .pricing-price { font-family:'Playfair Display',serif; font-size:3.2rem; font-weight:900; line-height:1; margin-bottom:0.4rem; letter-spacing:-0.03em; }
-  .pricing-price sup { font-size:1.4rem; vertical-align:top; margin-top:0.5rem; }
-  .pricing-period { font-family:'DM Sans',sans-serif; color:var(--gray); font-size:0.82rem; margin-bottom:1.6rem; }
-  .pricing-features { list-style:none; margin-bottom:2rem; }
-  .pricing-features li { padding:0.55rem 0; border-bottom:1px solid rgba(245,240,232,0.05); font-family:'DM Sans',sans-serif; font-size:0.87rem; color:#bbb; display:flex; align-items:center; gap:0.7rem; font-weight:300; }
-  .pricing-features li::before { content:'✓'; color:var(--warm-accent); font-weight:700; flex-shrink:0; }
-
-  /* ── BOOK A CALL ────────────────────────────── */
-  .book-band { background:var(--dark2); padding:5rem 4%; border-top:1px solid var(--card-border); text-align:center; position:relative; overflow:hidden; }
-  .book-band::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; border-radius:50%; pointer-events:none; background:radial-gradient(ellipse,rgba(201,168,76,0.055) 0%,transparent 70%); }
-  .book-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,3.5vw,3rem); font-weight:700; letter-spacing:-0.03em; margin-bottom:0.8rem; position:relative; }
-  .book-title em { font-style:italic; color:var(--gold); }
-  .book-sub { font-family:'DM Sans',sans-serif; color:var(--gray); font-size:0.95rem; margin-bottom:2.2rem; position:relative; font-weight:300; }
-  .book-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; position:relative; }
-
-  /* ── HOW IT WORKS ───────────────────────────── */
-  #how { background:var(--dark); position:relative; overflow:hidden; }
-  #how::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 50%, rgba(201,168,76,0.022) 0%, transparent 65%); }
-  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:2.5rem; }
-  .step { position:relative; }
-  .step-num { font-family:'Playfair Display',serif; font-size:5.5rem; font-weight:900; color:rgba(245,240,232,0.04); line-height:1; margin-bottom:0.8rem; letter-spacing:-0.05em; }
-  .step-title { font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.98rem; margin-bottom:0.5rem; }
-  .step-desc { font-family:'DM Sans',sans-serif; color:var(--gray); font-size:0.85rem; line-height:1.72; font-weight:300; }
-  .step-connector { position:absolute; top:2.8rem; right:-1.5rem; width:1.5rem; height:1px; background:linear-gradient(to right,rgba(245,240,232,0.08),transparent); }
-
-  /* ── SERVICES ───────────────────────────────── */
-  #services { background:var(--dark2); position:relative; overflow:hidden; }
-  .services-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; }
-  .service-card { border:1px solid var(--card-border); padding:1.8rem; border-radius:8px; background:var(--dark3); will-change:transform; transition:border-color 0.3s, background 0.3s, box-shadow 0.35s; }
-  .service-card:hover { border-color:var(--card-border-hover); background:rgba(245,240,232,0.02); box-shadow:var(--card-shadow-hover); }
-  .service-icon { font-size:1.5rem; margin-bottom:1rem; }
-  .service-name { font-family:'DM Sans',sans-serif; font-weight:600; font-size:0.92rem; margin-bottom:0.5rem; }
-  .service-desc { font-family:'DM Sans',sans-serif; color:var(--gray); font-size:0.81rem; line-height:1.72; font-weight:300; }
-
-  /* ── FAQ ────────────────────────────────────── */
-  #faq { background:var(--dark); }
-  .faq-list { max-width:680px; }
-  .faq-item { border-bottom:1px solid rgba(245,240,232,0.07); }
-  .faq-question { width:100%; background:none; border:none; color:var(--white); font-family:'DM Sans',sans-serif; font-size:0.94rem; font-weight:500; text-align:left; padding:1.4rem 0; cursor:none; display:flex; justify-content:space-between; align-items:center; gap:1rem; transition:color 0.2s; }
-  .faq-question:hover { color:var(--warm-accent); }
-  .faq-icon { color:var(--warm-muted); font-size:1.3rem; flex-shrink:0; transition:transform 0.3s cubic-bezier(0.22,1,0.36,1); display:inline-block; }
-  .faq-item.open .faq-icon { transform:rotate(45deg); }
-  .faq-answer { font-family:'DM Sans',sans-serif; color:var(--gray); font-size:0.87rem; line-height:1.85; max-height:0; overflow:hidden; font-weight:300; transition:max-height 0.4s ease,padding 0.3s; }
-  .faq-item.open .faq-answer { max-height:300px; padding-bottom:1.4rem; }
-
-  /* ── CTA BAND ───────────────────────────────── */
-  .cta-band { background:linear-gradient(135deg,rgba(201,168,76,0.1) 0%,rgba(201,168,76,0.03) 50%,rgba(201,168,76,0.07) 100%); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:7rem 4%; text-align:center; position:relative; overflow:hidden; }
-  .cta-band::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:700px; height:700px; border-radius:50%; pointer-events:none; background:radial-gradient(circle,rgba(201,168,76,0.07) 0%,transparent 65%); }
-  .cta-band h2 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,5.5vw,4.2rem); font-weight:700; margin-bottom:1rem; position:relative; letter-spacing:-0.035em; }
-  .cta-band h2 em { font-style:italic; color:var(--gold); text-shadow:0 0 50px rgba(201,168,76,0.28); }
-  .cta-band p { font-family:'DM Sans',sans-serif; color:#777; margin-bottom:2.5rem; font-size:1rem; position:relative; font-weight:300; }
-  .cta-band .hero-actions { justify-content:center; position:relative; }
-  .cta-contact { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-top:2rem; position:relative; }
-  .cta-contact a { font-family:'DM Sans',sans-serif; color:var(--warm-muted); text-decoration:none; font-size:0.82rem; letter-spacing:0.06em; display:flex; align-items:center; gap:0.4rem; transition:color 0.2s; }
-  .cta-contact a:hover { color:var(--white); }
-
-  /* ── FOOTER ─────────────────────────────────── */
-  footer { background:var(--dark); padding:3.5rem 4% 2rem; border-top:1px solid rgba(245,240,232,0.07); }
-  .footer-inner { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:2rem; margin-bottom:2.5rem; }
-  .footer-brand { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; }
-  .footer-brand span { color:var(--gold); }
-  .footer-tagline { font-family:'DM Sans',sans-serif; color:var(--gray); font-size:0.78rem; margin-top:0.4rem; font-weight:300; }
-  .footer-links { display:flex; gap:2rem; flex-wrap:wrap; }
-  .footer-links a { font-family:'DM Sans',sans-serif; color:var(--gray); text-decoration:none; font-size:0.78rem; letter-spacing:0.06em; transition:color 0.2s; }
-  .footer-links a:hover { color:var(--white); }
-  .footer-bottom { border-top:1px solid rgba(245,240,232,0.06); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; color:#3a3a3a; font-size:0.75rem; font-family:'DM Sans',sans-serif; }
-
-  /* ── ANIMATIONS ─────────────────────────────── */
-  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-  .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s cubic-bezier(0.22,1,0.36,1),transform 0.65s cubic-bezier(0.22,1,0.36,1); }
-  .reveal.visible { opacity:1; transform:none; }
-
-  /* ── MOBILE ─────────────────────────────────── */
-  @media (max-width: 900px) {
-    .portfolio-grid { grid-template-columns: repeat(2,1fr); }
-    .portfolio-featured .browser-preview img { aspect-ratio: 16/7 !important; }
-    .meet-john-inner { grid-template-columns: 1fr; gap: 3rem; }
-    .meet-john-photo { aspect-ratio: 4/3; object-position: center 20%; }
-  }
-  @media (max-width: 768px) {
-    .nav-links { display: none; }
-    .nav-hamburger { display: flex; }
-    .mobile-nav { display: flex; }
-    .comparison-table th,.comparison-table td { padding:0.7rem 0.8rem; font-size:0.8rem; }
-  }
-  @media (max-width: 640px) {
-    nav { padding:1rem 4%; }
-    .hero { padding:7rem 4% 3rem; }
-    .portfolio-grid { grid-template-columns:1fr; }
-    .portfolio-featured .browser-preview img { aspect-ratio:16/9 !important; }
-    .step-connector { display:none; }
-    .footer-inner { flex-direction:column; }
-    .hero-stats { gap:2rem; }
-    .guarantee-inner { flex-direction:column; gap:1.5rem; }
-    .float-cta { bottom:1.2rem; right:1.2rem; padding:0.75rem 1.1rem; font-size:0.76rem; }
-  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 
-<!-- PAGE LOADER -->
-<div id="pageLoader">
-  <div class="loader-content">
-    <div class="loader-logo">John Bert <span>Web Strategy</span></div>
-    <div class="loader-bar"></div>
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo">Phoenix Luxury Ride<small>Chauffeured · Phoenix, AZ</small></a>
+    <nav class="nav-links">
+      <a href="#fleet">Fleet</a><a href="#services">Services</a><a href="#reviews">Reviews</a><a href="#why">Approach</a><a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <a href="tel:4807494688" class="nav-phone">480 749 4688</a>
+      <a href="#book" class="btn btn-solid">Reserve</a>
+      <button class="burger" id="burger" aria-label="Menu"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button>
+    </div>
   </div>
-</div>
+</header>
 
-<!-- CUSTOM CURSOR (desktop only) -->
-<div id="cursor-dot"></div>
-<div id="cursor-glow"></div>
-
-<!-- SCROLL PROGRESS -->
-<div id="scrollProgress"></div>
-
-<!-- FLOATING CTA -->
-<a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="float-cta" id="floatCta">
-  <span class="dot"></span>Text Us Now
-</a>
-
-<!-- NAV -->
-<nav id="mainNav">
-  <div class="nav-logo">John Bert <span>Web Strategy</span></div>
-  <div class="nav-links">
-    <a href="#portfolio">Portfolio</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#how">How It Works</a>
-    <a href="#faq">FAQ</a>
-    <a href="#services">Services</a>
-    <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
-  </div>
-  <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- MOBILE NAV -->
-<div class="mobile-nav" id="mobileNav">
-  <a href="#portfolio" class="mobile-link">Portfolio</a>
-  <a href="#pricing" class="mobile-link">Pricing</a>
-  <a href="#how" class="mobile-link">How It Works</a>
-  <a href="#services" class="mobile-link">Services</a>
-  <a href="#faq" class="mobile-link">FAQ</a>
-  <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="mobile-cta">Text Us Now</a>
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close" id="closeMenu" aria-label="Close">×</button>
+  <a href="#fleet">Fleet</a><a href="#services">Services</a><a href="#reviews">Reviews</a><a href="#why">Approach</a><a href="#faq">FAQ</a><a href="#book">Reserve</a>
+  <a href="tel:4807494688" style="color:var(--brass)">480 749 4688</a>
 </div>
 
 <!-- HERO -->
-<section class="hero">
-  <canvas id="heroCanvas"></canvas>
-  <div class="hero-bg"></div>
-  <div class="hero-spotlight"></div>
-  <div class="hero-eyebrow">Phoenix, Arizona's Premier Web Strategy Partner</div>
-  <h1>
-    <span class="reveal-line"><span>Stop Losing Customers</span></span>
-    <span class="reveal-line"><span class="line-gold">to a Bad Website.</span></span>
-  </h1>
-  <p class="hero-sub">Most small business websites cost you customers every single day. We fix that — with a stunning, conversion-focused site delivered in 5–7 business days.</p>
-  <div class="hero-actions">
-    <a href="#pricing" class="btn-primary magnetic">See Pricing</a>
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline magnetic">Text Us Now</a>
-  </div>
-  <div class="hero-stats">
-    <div><div class="hero-stat-num" data-target="7" data-prefix="5–">5–7</div><div class="hero-stat-label">Business Day Delivery</div></div>
-    <div><div class="hero-stat-num" data-target="40" data-suffix="+">40+</div><div class="hero-stat-label">Active Clients</div></div>
-    <div><div class="hero-stat-num" data-target="100" data-suffix="%">100%</div><div class="hero-stat-label">Custom Design</div></div>
-    <div><div class="hero-stat-num">480</div><div class="hero-stat-label">589-0098 — Text or Call</div></div>
-  </div>
-</section>
-
-<!-- PORTFOLIO -->
-<section id="portfolio">
-  <div class="glow-accent"></div>
-  <div class="section-eyebrow">Our Work</div>
-  <h2 class="section-title">Real Sites.<br><em>Real Businesses.</em></h2>
-  <p class="section-sub">Every website we build is custom-designed for the industry, audience, and goal. No templates. No shortcuts.</p>
-  <div class="portfolio-featured reveal">
-    <div class="browser-frame tilt-card">
-      <div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">katorenovation.com</div></div>
-      <div class="browser-preview"><img src="kato-thumb.webp" alt="KATO Renovation website"></div>
-      <div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Renovation</div><div class="portfolio-card-name">KATO Renovation</div></div>
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-head">
+      <div>
+        <span class="mono">Phoenix · Scottsdale · The Valley</span>
+        <h1>Arrive like the<br>night was <em>built</em><br>around you.</h1>
+      </div>
+      <div>
+        <p class="hero-sub">Chauffeured party buses, the iconic Pink Hummer, limousines and executive vans across metro Phoenix. The fun part is yours — the rest is handled, around the clock.</p>
+        <div class="hero-sub-actions">
+          <a href="#book" class="btn btn-solid">Request a quote</a>
+          <a href="tel:4807494688" class="btn btn-line">Call 480 749 4688</a>
+        </div>
+        <div class="hero-stars">
+          <span class="stars">★★★★★</span>
+          <span>5.0 on Google · loved for weddings, bachelorettes & birthdays</span>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="portfolio-grid reveal">
-    <div class="browser-frame tilt-card"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">carmen2.vercel.app</div></div><div class="browser-preview"><img src="carmen-thumb.webp" alt="Carmen"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Nightlife</div><div class="portfolio-card-name">Carmen — Tempe, AZ</div></div></div>
-    <div class="browser-frame tilt-card"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">hormone-zone.com</div></div><div class="browser-preview"><img src="hormonezone-thumb.webp" alt="Hormone Zone" style="object-position:top center;"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Wellness</div><div class="portfolio-card-name">Hormone Zone</div></div></div>
-    <div class="browser-frame tilt-card"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">reddconstruction.com</div></div><div class="browser-preview"><img src="redd-thumb.webp" alt="RedD Construction"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Outdoor Living</div><div class="portfolio-card-name">RedD Construction LLC</div></div></div>
-    <div class="browser-frame tilt-card"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="Life Reset Peptides"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></div>
-    <div class="browser-frame tilt-card"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="Segal Group"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
-    <div class="browser-frame tilt-card"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
-  </div>
-</section>
-
-<!-- CLIENT TICKER -->
-<div class="ticker-band">
-  <div class="ticker-track">
-    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>40+ Phoenix Businesses</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>40+ Phoenix Businesses</span>
-  </div>
-</div>
-
-<!-- TESTIMONIALS -->
-<section id="testimonials">
-  <div class="glow-accent" style="right:-80px;left:auto;top:auto;bottom:-80px;"></div>
-  <div class="section-eyebrow">Client Stories</div>
-  <h2 class="section-title">Don't Take<br><em>Our Word for It.</em></h2>
-  <p class="section-sub">Phoenix-area business owners who made the switch to a site that actually works for them.</p>
-  <div class="testimonials-grid reveal">
-    <div class="testimonial-card tilt-card"><div class="stars">★★★★★</div><p class="testimonial-text">"I was embarrassed to give out my website URL. Now I hand my card out to everyone. John Bert delivered in under 3 days and the calls started coming in within the first week."</p><div class="testimonial-author"><div class="author-avatar">R</div><div><div class="author-name">Rick M.</div><div class="author-biz">Owner, HVAC Company · Phoenix, AZ</div></div></div></div>
-    <div class="testimonial-card tilt-card"><div class="stars">★★★★★</div><p class="testimonial-text">"The $294/month plan is a no-brainer. I've had other agencies charge 10x that and deliver half the result. These guys are fast, professional, and they actually answer when you text them."</p><div class="testimonial-author"><div class="author-avatar">S</div><div><div class="author-name">Sara L.</div><div class="author-biz">Owner, Boutique Fitness Studio · Scottsdale, AZ</div></div></div></div>
-    <div class="testimonial-card tilt-card"><div class="stars">★★★★★</div><p class="testimonial-text">"We're a 2-person landscaping crew and couldn't afford the big agencies. John Bert gave us a site that looks like a million bucks — our leads tripled in the first month."</p><div class="testimonial-author"><div class="author-avatar">T</div><div><div class="author-name">Tony &amp; Diana V.</div><div class="author-biz">Owners, Verde Lawn &amp; Landscape · Mesa, AZ</div></div></div></div>
-  </div>
-</section>
-
-<!-- MEET JOHN -->
-<section class="meet-john-section" id="about">
-  <div class="meet-john-inner">
-    <div class="meet-john-photo-wrap reveal">
-      <img src="john-photo.jpeg" alt="John Bert — Founder, John Bert Web Strategy" class="meet-john-photo">
+  <div class="wrap">
+    <div class="photo hero-plate" id="heroPhoto">
+      <div class="ph"><div class="ph-word">the lead coach at dusk</div></div>
+      <div class="plate-label"><span class="dot"></span><span class="mono-dim">Phoenix Luxury Ride — flagship fleet</span></div>
     </div>
-    <div class="meet-john-content reveal">
-      <div class="section-eyebrow">Founder &amp; Lead Strategist</div>
-      <h2 class="section-title meet-john-h2">Hi, I'm John.</h2>
-      <p class="meet-body">I started John Bert Web Strategy because I kept watching great local businesses lose customers to ugly websites — built by people who didn't understand their industry, charged too much, and disappeared after launch.</p>
-      <p class="meet-body">I've delivered 40+ custom websites across Phoenix — restaurants, contractors, clinics, and everything in between — in 5–7 days, for a fraction of what big agencies charge. When you text me, I pick up. When something needs fixing, I fix it. That's the deal.</p>
-      <div class="meet-sig">John Bert</div>
-      <div class="meet-sig-sub">Founder · John Bert Web Strategy · Phoenix, AZ</div>
-      <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-primary magnetic" style="margin-top:2.2rem;display:inline-block;">Text Me Directly</a>
+  </div>
+  <!-- booking strip -->
+  <div class="wrap">
+    <div class="book-strip" id="book">
+      <div class="book-strip-inner">
+        <div class="bf"><label for="bfleet">Vehicle</label>
+          <select id="bfleet">
+            <option>Recommend for me</option>
+            <option>44-Passenger Coach</option><option>35-Passenger Coach</option><option>Pink Party Bus</option>
+            <option>Sprinter VIP Van</option><option>White Hummer Limo</option><option>Pink Hummer Limo</option>
+            <option>Escalade SUV</option><option>Maybach S-Class</option><option>Bentley GTC</option>
+          </select>
+        </div>
+        <div class="bf"><label for="bdate">Date</label><input id="bdate" type="date"></div>
+        <div class="bf"><label for="bguests">Guests</label><input id="bguests" type="number" min="1" max="44" placeholder="—"></div>
+        <div class="bf"><label for="bocc">Occasion</label>
+          <select id="bocc"><option>Night out</option><option>Wedding</option><option>Bachelor / Bachelorette</option><option>Birthday</option><option>Corporate / Airport</option><option>Wine tour</option><option>Prom / Formal</option><option>Casino</option><option>Other</option></select>
+        </div>
+        <div class="book-cta"><button id="stripBtn">Continue →</button></div>
+      </div>
+      <hr class="rule">
+      <div class="strip-note">
+        <span class="mono-dim">No deposit to enquire · Reply within minutes, 24/7</span>
+        <span class="mono-dim">Licensed & insured · 5★ rated</span>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- GUARANTEE -->
-<div class="guarantee-band">
-  <div class="guarantee-inner">
-    <div class="guarantee-icon">🛡️</div>
-    <div>
-      <div class="guarantee-title">Our Promise to You.</div>
-      <p class="guarantee-text">We revise your website <strong>unlimited times</strong> until you're completely satisfied — no extra charges, no attitude. If after your first look you feel we completely missed the mark, we'll rebuild it from scratch. We don't stop until it's right, because our reputation depends on your success.</p>
+<!-- FLEET -->
+<section id="fleet">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="lhs"><span class="mono">The Fleet — 09</span><h2>Matched to the <em>occasion</em>, not the other way around.</h2></div>
+      <p style="max-width:30ch">From a 44-seat coach to a Maybach for three — and yes, the Pink Hummer. Filter by what you're planning.</p>
     </div>
-  </div>
-</div>
-
-<!-- COMPARISON TABLE -->
-<div class="comparison-section">
-  <div class="section-eyebrow" style="position:relative;z-index:1;">Why John Bert</div>
-  <h2 class="section-title" style="position:relative;z-index:1;">Stop Settling for<br><em>Less Than You Deserve.</em></h2>
-  <p class="section-sub" style="position:relative;z-index:1;">How we stack up against going it alone or overpaying a big agency.</p>
-  <div class="comparison-table-wrap reveal" style="position:relative;z-index:1;">
-    <table class="comparison-table">
-      <thead>
-        <tr>
-          <th style="text-align:left;width:34%;">Feature</th>
-          <th class="col-us">John Bert</th>
-          <th>Wix / Squarespace</th>
-          <th>Traditional Agency</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td class="row-label">Custom design (not a template)</td><td class="col-us"><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="check">✓</span></td></tr>
-        <tr><td class="row-label">Time to launch</td><td class="col-us">5–7 days</td><td class="partial">Weeks of DIY</td><td class="partial">6–12 weeks</td></tr>
-        <tr><td class="row-label">Monthly cost</td><td class="col-us">$294/mo</td><td class="partial">$16–$49 + your time</td><td class="partial">$1,000–$5,000+</td></tr>
-        <tr><td class="row-label">You do the work</td><td class="col-us">Never</td><td><span class="cross">Always</span></td><td class="partial">Sometimes</td></tr>
-        <tr><td class="row-label">Unlimited revisions</td><td class="col-us"><span class="check">✓</span></td><td><span class="cross">✗</span></td><td class="partial">Limited / hourly</td></tr>
-        <tr><td class="row-label">Hosting &amp; updates included</td><td class="col-us"><span class="check">✓</span></td><td class="partial">Hosting only</td><td><span class="cross">✗</span></td></tr>
-        <tr><td class="row-label">Text / call for changes</td><td class="col-us"><span class="check">✓</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td></tr>
-        <tr><td class="row-label">Real human. Fast responses.</td><td class="col-us"><span class="check">✓</span></td><td><span class="cross">Email bots</span></td><td class="partial">Account manager</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- PRICING -->
-<section id="pricing">
-  <div class="glow-accent"></div>
-  <div class="section-eyebrow">Pricing</div>
-  <h2 class="section-title">Simple. Transparent.<br><em>No Surprises.</em></h2>
-  <p class="section-sub">Two ways to get a world-class website. Both include a 30-minute consultation and delivery in 5–7 business days.</p>
-  <div class="pricing-grid reveal">
-    <div class="pricing-card tilt-card">
-      <div class="pricing-label">One-Time</div>
-      <div class="pricing-price"><sup>$</sup>3,500</div>
-      <div class="pricing-period">One-time payment. Yours forever.</div>
-      <ul class="pricing-features">
-        <li>Custom design built for your brand</li><li>30-minute strategy consultation</li><li>5–7 business day delivery</li><li>Unlimited revision rounds</li><li>Mobile responsive &amp; fast</li><li>Contact forms &amp; Google Maps</li><li>You own the site outright</li>
-      </ul>
-      <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline magnetic" style="display:block;text-align:center;">Text to Get Started</a>
+    <div class="filters" id="filters">
+      <button class="active" data-f="all">All</button>
+      <button data-f="bus">Party Buses</button>
+      <button data-f="limo">Limousines</button>
+      <button data-f="exec">Executive</button>
     </div>
-    <div class="pricing-card featured tilt-card">
-      <div class="pricing-label">Monthly Plan</div>
-      <div class="pricing-price"><sup>$</sup>294<span style="font-size:1.4rem;font-family:'DM Sans',sans-serif;font-weight:300;">/mo</span></div>
-      <div class="pricing-period">Cancel anytime. No contracts.</div>
-      <ul class="pricing-features">
-        <li>Everything in One-Time, plus:</li><li>Free hosting included</li><li>Free website refresh every 12 months</li><li>Ongoing edits &amp; updates</li><li>Priority support</li><li>Security &amp; backups managed</li><li>Cancel anytime, no penalty</li>
-      </ul>
-      <a href="sms:4805890098?body=I'm interested in the monthly website plan at $294/mo" class="btn-primary magnetic" style="display:block;text-align:center;">Text to Get Started</a>
-    </div>
-  </div>
-  <p style="margin-top:1.5rem;color:#444;font-size:0.82rem;font-family:'DM Sans',sans-serif;">Questions? Text or call <a href="tel:4805890098" style="color:var(--warm-accent);text-decoration:none;">(480) 589-0098</a> — we respond fast.</p>
-</section>
-
-<!-- BOOK A CALL -->
-<div class="book-band">
-  <div class="book-title">Not Sure Which Plan?<br><em>Book a Free 30-Minute Call.</em></div>
-  <p class="book-sub">No pitch. No pressure. Just 30 minutes to talk about your business and whether we're the right fit.</p>
-  <div class="book-actions">
-    <a href="https://calendly.com/johnbertweb/30min" target="_blank" rel="noopener" class="btn-primary magnetic">Book a Free Call</a>
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline magnetic">Text Instead</a>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section id="how">
-  <div class="glow-accent" style="right:-80px;left:auto;"></div>
-  <div class="section-eyebrow">The Process</div>
-  <h2 class="section-title">From Zero to Live<br><em>in Days, Not Months.</em></h2>
-  <p class="section-sub">We keep it simple so you can focus on running your business.</p>
-  <div class="steps reveal">
-    <div class="step"><div class="step-num">01</div><div class="step-title">Pick Your Package</div><div class="step-desc">Choose one-time or monthly. Text or call us to kick things off — no lengthy intake forms.</div><div class="step-connector"></div></div>
-    <div class="step"><div class="step-num">02</div><div class="step-title">30-Minute Consultation</div><div class="step-desc">We learn your business, goals, and brand. You tell us what winning looks like — we'll build it.</div><div class="step-connector"></div></div>
-    <div class="step"><div class="step-num">03</div><div class="step-title">We Build It</div><div class="step-desc">Your custom website is designed and delivered in 5–7 business days. Fast, professional, and built to convert.</div><div class="step-connector"></div></div>
-    <div class="step"><div class="step-num">04</div><div class="step-title">Revise &amp; Launch</div><div class="step-desc">We make any revisions until it's exactly right. Then we go live and start getting you more customers.</div></div>
+    <div class="fleet-grid" id="fleetGrid"></div>
   </div>
 </section>
 
 <!-- SERVICES -->
-<section id="services">
-  <div class="glow-accent"></div>
-  <div class="section-eyebrow">Additional Services</div>
-  <h2 class="section-title">Grow Beyond<br><em>the Website.</em></h2>
-  <p class="section-sub">A great website is the foundation. We offer the full stack of marketing services to drive real traffic and real leads.</p>
-  <div class="services-grid reveal">
-    <div class="service-card tilt-card"><div class="service-icon">🔍</div><div class="service-name">SEO — Search Engine Optimization</div><div class="service-desc">Rank on Google when customers search for your services. Long-term organic traffic that compounds over time.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">📢</div><div class="service-name">Google Ads (PPC)</div><div class="service-desc">Get leads immediately with targeted Google search and display ads. Pay only for clicks that matter.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">📱</div><div class="service-name">Meta Ads (Facebook &amp; Instagram)</div><div class="service-desc">Reach your exact audience on social. Retargeting, lead gen, and brand campaigns that drive action.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">🏷️</div><div class="service-name">Brand Awareness Campaigns</div><div class="service-desc">Build recognition in your market. Display, video, and remarketing campaigns that keep your name top of mind.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">📰</div><div class="service-name">Traditional Advertising</div><div class="service-desc">Bandit signs, direct mail, local print, and radio. Sometimes offline reaches the customers online doesn't.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">🗺️</div><div class="service-name">Google Business Profile</div><div class="service-desc">Dominate local map results. Fully optimized GBP setup, reviews strategy, and local SEO citation building.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">✉️</div><div class="service-name">Email Marketing</div><div class="service-desc">Automated follow-up sequences, newsletters, and re-engagement campaigns to turn leads into loyal customers.</div></div>
-    <div class="service-card tilt-card"><div class="service-icon">📊</div><div class="service-name">Analytics &amp; Reporting</div><div class="service-desc">Know exactly what's working. Monthly reports with clear metrics — leads, traffic, conversions, and ROI.</div></div>
+<section id="services" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="lhs"><span class="mono">Services</span><h2>One number for <em>every</em> kind of evening.</h2></div>
+      <p style="max-width:30ch">Airport runs to bachelorette weekends — booked through one chauffeured service.</p>
+    </div>
+    <div class="svc-list" id="svcList"></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="wrap">
+    <div class="sec-head"><div class="lhs"><span class="mono pink">Reviews</span><h2>Phoenix keeps coming <em class="pink">back</em>.</h2></div>
+      <p style="max-width:32ch">A 5-star reputation built one night out at a time. A few words from recent guests.</p>
+    </div>
+    <div class="rev-top">
+      <div class="rev-score"><b>5.0</b><span class="stars">★★★★★</span></div>
+      <span class="mono-dim">Rated by guests across Google</span>
+      <a class="gpill" href="https://maps.app.goo.gl/PMykqshV9raJ8R4M9" target="_blank" rel="noopener">★ Read all reviews on Google →</a>
+    </div>
+    <div class="rev-grid" id="revGrid"></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="sec-head"><div class="lhs"><span class="mono">The Approach</span><h2>The fleet is the easy part.</h2></div></div>
+    <div class="why-grid">
+      <div class="why-cell"><span class="mono">01 — Discretion</span><h3>Chauffeured, not rented</h3><p>Licensed, vetted drivers who know the Valley and read the night. You're a guest, not a renter.</p></div>
+      <div class="why-cell"><span class="mono">02 — Hours</span><h3>Genuinely 24/7</h3><p>Late pickups, dawn airport runs, last-minute changes. A real person answers, every hour.</p></div>
+      <div class="why-cell"><span class="mono">03 — Pricing</span><h3>One clear number</h3><p>Vehicle, hours and gratuity stated up front. Nothing waiting at the curb when the night ends.</p></div>
+      <div class="why-cell"><span class="mono">04 — Range</span><h3>Two to forty-four</h3><p>Matched to the group so you're never overpaying for empty seats or squeezing into too few.</p></div>
+      <div class="why-cell"><span class="mono">05 — Coverage</span><h3>The whole Valley</h3><p>Phoenix, Scottsdale, Tempe, Mesa, Chandler, Gilbert and out to wine country on request.</p></div>
+      <div class="why-cell"><span class="mono">06 — Standard</span><h3>Maintained, detailed</h3><p>Every vehicle cleaned, stocked and inspected before it reaches you. No exceptions.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head"><div class="lhs"><span class="mono">Booking</span><h2>Three steps to the curb.</h2></div></div>
+    <div class="steps">
+      <div class="step"><span class="mono">Step 01</span><hr class="rule"><h3>Tell us the plan</h3><p>Date, group size, occasion — the form above or a call. Under a minute.</p></div>
+      <div class="step"><span class="mono">Step 02</span><hr class="rule"><h3>Confirm the quote</h3><p>We match the right vehicle and a clear price, then hold your date with a deposit.</p></div>
+      <div class="step"><span class="mono">Step 03</span><hr class="rule"><h3>Ride</h3><p>Your chauffeur arrives early. You enjoy the night. We handle the rest.</p></div>
+    </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section id="faq">
-  <div class="section-eyebrow">FAQ</div>
-  <h2 class="section-title">Questions We<br><em>Get All the Time.</em></h2>
-  <div class="faq-list reveal">
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">How fast can I actually get my website?<span class="faq-icon">+</span></button><div class="faq-answer">After your 30-minute consultation, we build and deliver your website in 5–7 business days. Most clients are live within a week of first contact. We don't mess around.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">What's included in the monthly plan?<span class="faq-icon">+</span></button><div class="faq-answer">The $294/month plan includes your custom website, free hosting, ongoing edits and updates, security and backups, priority support, and a free complete website refresh every 12 months. No hidden fees. Cancel anytime with no penalty.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Do I own my website if I pay the one-time fee?<span class="faq-icon">+</span></button><div class="faq-answer">Yes — with the $3,500 one-time package, the website is yours outright. You own the code, the domain (if purchased through us or transferred), and all content. Take it anywhere.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">What if I don't like the first design?<span class="faq-icon">+</span></button><div class="faq-answer">We do revisions until you're completely satisfied — on both plans. We get a full picture of your brand in the consultation call, which means most clients only need minor tweaks. But we don't stop until it's right.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">I'm not tech-savvy. Will I be able to manage this?<span class="faq-icon">+</span></button><div class="faq-answer">You don't need to be. On the monthly plan, we handle everything — updates, fixes, hosting. If you ever need a change, just text us. On the one-time plan, we build it easy to manage and walk you through it. No tech headaches.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">What industries do you work with?<span class="faq-icon">+</span></button><div class="faq-answer">All of them — home services, restaurants, healthcare, fitness, legal, beauty, retail, and more. Our portfolio covers everything from steakhouses to chiropractors. If you're a local business that needs more customers, we're your agency.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Can you help with more than just the website?<span class="faq-icon">+</span></button><div class="faq-answer">Absolutely. We offer SEO, Google Ads, Meta Ads, Google Business Profile optimization, email marketing, and traditional advertising. A great website is the foundation — we can build the whole marketing engine on top of it.</div></div>
-    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">How do I get started?<span class="faq-icon">+</span></button><div class="faq-answer">Just text or call (480) 589-0098. That's it. No forms, no automated bots — you'll talk to a real person. Tell us a little about your business and we'll take it from there.</div></div>
+<section id="faq" style="background:var(--bg-2)">
+  <div class="wrap">
+    <div class="sec-head"><div class="lhs"><span class="mono">Details</span><h2>Worth knowing first.</h2></div></div>
+    <div class="faq-wrap">
+      <details class="faq"><summary>How far ahead should we book?<span class="pl">+</span></summary><div class="ans">For weekends, proms and holidays, one to two weeks is comfortable — the party buses and the Pink Hummer book out first. Same-day and last-minute still welcome; call 480 749 4688 and we'll find something.</div></details>
+      <details class="faq"><summary>Can we drink on board?<span class="pl">+</span></summary><div class="ans">Yes, for guests 21 and over on the party buses and limousines. Several vehicles include coolers or a bar. Bring ID — your chauffeur may check, and open containers stay inside.</div></details>
+      <details class="faq"><summary>What's included with the vehicle?<span class="pl">+</span></summary><div class="ans">A professional chauffeur, fuel and the amenities listed on each vehicle — premium sound, LED lighting, and coolers or a bar where shown. Ice and basic setup are taken care of; just bring your group and your playlist.</div></details>
+      <details class="faq"><summary>Deposit and cancellation?<span class="pl">+</span></summary><div class="ans">A deposit holds your date; the balance is due before service. Cancellation terms depend on date and vehicle and are written into your quote before you commit. No surprises.</div></details>
+      <details class="faq"><summary>Where do you operate?<span class="pl">+</span></summary><div class="ans">All of metro Phoenix and the East Valley — Scottsdale, Tempe, Mesa, Chandler, Gilbert, Glendale — plus wine-country and out-of-town trips on request.</div></details>
+      <details class="faq"><summary>How is a quote calculated?<span class="pl">+</span></summary><div class="ans">By vehicle, hours and date, with a minimum on peak nights. Tell us the plan and you get one figure — gratuity and any add-ons stated up front.</div></details>
+    </div>
   </div>
 </section>
 
-<!-- CTA BAND -->
-<div class="cta-band">
-  <h2>Ready to Get More<br><em>Customers?</em></h2>
-  <p>Let's build something great. Text or call — we respond fast.</p>
-  <div class="hero-actions">
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-primary magnetic">Text Us Now</a>
-    <a href="tel:4805890098" class="btn-outline magnetic">(480) 589-0098</a>
-  </div>
-  <div class="cta-contact">
-    <a href="tel:4805890098">📞 Call: (480) 589-0098</a>
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!">💬 Text: (480) 589-0098</a>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
     <div>
-      <div class="footer-brand">John Bert <span>Web Strategy</span></div>
-      <div class="footer-tagline">Websites That Win Customers — Phoenix, AZ</div>
+      <span class="mono">Reserve</span>
+      <h2>Day or night, we're <em>already</em> awake.</h2>
+      <p class="lede">Call for instant availability, or leave your number and we'll come back within minutes.</p>
+      <div class="ci"><span class="k">Phone</span><div class="v2"><b><a href="tel:4807494688">480 749 4688</a></b><span>Call or text · 24 hours</span></div></div>
+      <div class="ci"><span class="k">Base</span><div class="v2"><b>Phoenix, Arizona</b><span>Serving the entire Valley & East Valley</span></div></div>
+      <div class="ci"><span class="k">Hours</span><div class="v2"><b>Open 24 hours</b><span>Same-day & late-night welcome</span></div></div>
     </div>
-    <div class="footer-links">
-      <a href="#portfolio">Portfolio</a><a href="#pricing">Pricing</a>
-      <a href="#how">How It Works</a><a href="#services">Services</a>
-      <a href="#faq">FAQ</a><a href="tel:4805890098">(480) 589-0098</a>
+    <div class="form">
+      <div id="cForm">
+        <div class="ff"><label for="cname">Name</label><input id="cname" type="text" placeholder="Your name"></div>
+        <div class="ff"><label for="cphone">Phone</label><input id="cphone" type="tel" placeholder="(480) 000 0000"></div>
+        <div class="ff"><label for="cmsg">What are you planning?</label><input id="cmsg" type="text" placeholder="e.g. Bachelorette, 14 guests, Saturday"></div>
+        <button class="btn btn-solid" id="cBtn">Have us call you</button>
+      </div>
+      <div class="form-ok" id="cOk"></div>
     </div>
   </div>
-  <div class="footer-bottom">
-    <span>© 2025 John Bert Web Strategy. All rights reserved.</span>
-    <span style="color:var(--warm-muted);">Text or Call: (480) 589-0098</span>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">Phoenix Luxury Ride</div>
+        <p style="max-width:30ch">Chauffeured party buses, limousines and executive vans. Phoenix, around the clock.</p>
+        <a href="tel:4807494688" style="color:var(--brass);font-family:'IBM Plex Mono';font-size:.86rem;margin-top:8px">480 749 4688</a>
+      </div>
+      <div><h4>Fleet</h4><a href="#fleet">Party Buses</a><a href="#fleet">Pink Hummer Limo</a><a href="#fleet">Limousines</a><a href="#fleet">Maybach & Bentley</a></div>
+      <div><h4>Services</h4><a href="#services">Weddings</a><a href="#services">Bachelorette</a><a href="#services">Corporate</a><a href="#services">Wine Tours</a></div>
+      <div><h4>Service Area</h4><p>Phoenix</p><p>Scottsdale</p><p>Tempe & Mesa</p><p>Chandler & Gilbert</p></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Phoenix Luxury Ride</span><span>Licensed & Insured · 24/7 · Phoenix AZ</span></div>
   </div>
 </footer>
 
+<div class="callbar">
+  <a href="tel:4807494688" class="btn btn-line">Call</a>
+  <a href="#book" class="btn btn-solid">Reserve</a>
+</div>
+
 <script>
-// ── PAGE LOADER ──────────────────────────────────
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('pageLoader').classList.add('done'), 750);
-});
+  /* ====== PHOTOS ======
+     Paste a real image URL into HERO_IMG and each fleet `img:""` field.
+     Empty = a styled gold/pink slot shows instead. */
+  const HERO_IMG = ""; // e.g. "https://www.phoenixluxuryride.com/wp-content/uploads/.../hero.jpg"
 
-// ── HERO CANVAS CONSTELLATION ────────────────────
-(function() {
-  const canvas = document.getElementById('heroCanvas');
-  const ctx = canvas.getContext('2d');
-  const N = 55, MAX_D = 155;
-  let pts = [], W, H;
-  function resize() { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; }
-  function Pt() { this.x=Math.random()*W; this.y=Math.random()*H; this.vx=(Math.random()-.5)*.28; this.vy=(Math.random()-.5)*.28; this.r=Math.random()*1.4+.4; this.a=Math.random()*.38+.08; }
-  Pt.prototype.tick=function(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W)this.vx*=-1;if(this.y<0||this.y>H)this.vy*=-1;};
-  Pt.prototype.draw=function(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(201,168,76,'+this.a+')';ctx.fill();};
-  function init(){resize();pts=Array.from({length:N},()=>new Pt());}
-  function frame(){
-    ctx.clearRect(0,0,W,H);
-    for(let i=0;i<pts.length;i++){pts[i].tick();pts[i].draw();for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<MAX_D){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle='rgba(201,168,76,'+((1-d/MAX_D)*.11)+')';ctx.lineWidth=.7;ctx.stroke();}}}
-    requestAnimationFrame(frame);
+  function photo({img,word,cap,tag,pink,cls,aspect}){
+    const pinkC = pink ? ' pink' : '';
+    return `<div class="photo${cls?' '+cls:''}${pinkC}"${aspect?` style="aspect-ratio:${aspect}"`:''}>
+        ${img?`<img src="${img}" alt="${word}" loading="lazy" onerror="this.remove()">`:''}
+        <div class="ph"><div class="ph-word">${word}</div></div>
+        ${tag?`<span class="v-tag">${tag}</span>`:''}
+        ${cap?`<span class="v-cap">${cap}</span>`:''}
+        <div class="plate-label${pinkC}"><span class="dot"></span><span class="mono-dim">${word}</span></div>
+      </div>`;
   }
-  window.addEventListener('resize',()=>{resize();pts=Array.from({length:N},()=>new Pt());});
-  init(); frame();
-})();
 
-// ── CUSTOM CURSOR ────────────────────────────────
-(function() {
-  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  document.body.classList.add('custom-cursor');
-  const dot = document.getElementById('cursor-dot');
-  const glow = document.getElementById('cursor-glow');
-  dot.style.opacity = '1'; glow.style.opacity = '1';
-  let mx=0, my=0, gx=0, gy=0;
-  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
-  (function glowLoop() { gx+=(mx-gx)*.11; gy+=(my-gy)*.11; glow.style.left=gx+'px'; glow.style.top=gy+'px'; requestAnimationFrame(glowLoop); })();
-  const expand = () => { glow.style.width='80px'; glow.style.height='80px'; dot.style.transform='translate(-50%,-50%) scale(1.6)'; dot.style.background='var(--gold-light)'; };
-  const shrink = () => { glow.style.width='36px'; glow.style.height='36px'; dot.style.transform='translate(-50%,-50%) scale(1)'; dot.style.background='var(--gold)'; };
-  document.querySelectorAll('a, button, .browser-frame, .service-card, .testimonial-card, .pricing-card').forEach(el => { el.addEventListener('mouseenter', expand); el.addEventListener('mouseleave', shrink); });
-})();
+  // hero
+  document.getElementById('heroPhoto').outerHTML =
+    `<div class="photo hero-plate${HERO_IMG?'':''}" id="heroPhoto">
+        ${HERO_IMG?`<img src="${HERO_IMG}" alt="Phoenix Luxury Ride flagship fleet at dusk" onerror="this.remove()">`:''}
+        <div class="ph"><div class="ph-word">the lead coach at dusk</div></div>
+        <div class="plate-label"><span class="dot"></span><span class="mono-dim">Phoenix Luxury Ride — flagship fleet</span></div>
+      </div>`;
 
-// ── SCROLL PROGRESS ──────────────────────────────
-const prog = document.getElementById('scrollProgress');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-  prog.style.width = (pct * 100) + '%';
-  document.getElementById('floatCta').classList.toggle('visible', window.scrollY > 400);
-  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
-}, { passive: true });
-
-// ── SECTION TITLE SPLIT REVEALS ──────────────────
-(function() {
-  document.querySelectorAll('.section-title').forEach(title => {
-    const parts = title.innerHTML.split(/<br\s*\/?>/i);
-    title.innerHTML = parts.map((p, i) =>
-      `<span class="s-rv-wrap"><span class="s-rv-inner" style="transition-delay:${i * 0.16}s">${p}</span></span>`
-    ).join('');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        e.target.querySelectorAll('.s-rv-inner').forEach(el => el.classList.add('revealed'));
-        obs.unobserve(e.target);
-      });
-    }, { threshold: 0.3 });
-    obs.observe(title);
+  const fleet=[
+    {n:"44-Passenger Coach",cls:"Party Bus",cat:["bus"],cap:"44 guests",img:"",chips:["LED lighting","Premium sound","Dance floor"],specs:[["Capacity","44"],["Service","Chauffeured"],["Use","Nightlife · Airport"]]},
+    {n:"35-Passenger Coach",cls:"Party Bus",cat:["bus"],cap:"35 guests",img:"",chips:["4 TVs","Bluetooth audio","Bar area"],specs:[["Capacity","35"],["Screens","4 TVs"],["Audio","Premium Bluetooth"]]},
+    {n:"Pink Party Bus",cls:"Party Bus",cat:["bus"],cap:"22 guests",img:"",pink:true,tag:"Bachelorette favourite",chips:["Pink interior","40\" Smart TV","Surround sound"],specs:[["Capacity","22 leather"],["Screen","40\" Smart TV"],["Audio","Surround"]]},
+    {n:"Sprinter VIP Van",cls:"Executive",cat:["exec"],cap:"Up to 14",img:"",chips:["Wet bar","Dual screens","Dual-zone climate"],specs:[["Screens","42\" + 32\""],["Bar","Wet bar"],["Climate","Dual zone"]]},
+    {n:"White Hummer Limo",cls:"Limousine",cat:["limo"],cap:"20 guests",img:"",chips:["LED lighting","Sound system","Bar"],specs:[["Capacity","20"],["Service","Chauffeured"],["Use","Nightlife · Airport"]]},
+    {n:"Pink Hummer Limo",cls:"Limousine",cat:["limo"],cap:"22 guests",img:"",pink:true,tag:"The icon",chips:["Pink exterior","Club lighting","Sound system"],specs:[["Capacity","22"],["Best for","Bachelorette"],["Use","Nightlife"]]},
+    {n:"Escalade SUV",cls:"Executive",cat:["exec","limo"],cap:"8 guests",img:"",chips:["Leather","Point-to-point","Discreet"],specs:[["Capacity","8"],["Service","Point-to-point"],["Use","Chauffeured"]]},
+    {n:"Maybach S-Class",cls:"Flagship",cat:["exec"],cap:"Up to 3",img:"",chips:["Reclining rear","MBUX tablet","64-colour ambient"],specs:[["Seating","Reclining rear"],["Tech","MBUX tablet"],["Ambient","64 colour"]]},
+    {n:"Bentley GTC",cls:"Flagship",cat:["exec"],cap:"Up to 3",img:"",chips:["Adaptive air","20\" alloy","Premium leather"],specs:[["Suspension","Adaptive air"],["Wheels","20\" alloy"],["Interior","Premium leather"]]},
+  ];
+  const grid=document.getElementById('fleetGrid');
+  function render(f){
+    grid.innerHTML=fleet.filter(v=>f==='all'||v.cat.includes(f)).map(v=>`
+      <div class="v">
+        ${photo({img:v.img,word:v.n,cap:v.cap,tag:v.tag,pink:v.pink,cls:'v-frame'})}
+        <div class="v-head"><h3>${v.n}</h3><span class="v-class">${v.cls}</span></div>
+        <div class="v-chips">${v.chips.map(c=>`<span>${c}</span>`).join('')}</div>
+        <div class="v-specs">${v.specs.map(s=>`<div><span>${s[0]}</span><span>${s[1]}</span></div>`).join('')}</div>
+        <div class="v-foot"><a href="#book" class="link-arrow" onclick="pre('${v.n}')"><span class="ln"></span>Reserve this</a></div>
+      </div>`).join('');
+  }
+  render('all');
+  document.querySelectorAll('#filters button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');render(b.dataset.f);
   });
-})();
+  function pre(name){const s=document.getElementById('bfleet');for(const o of s.options){if(o.text===name){o.selected=true;break;}}}
 
-// ── ANIMATED COUNTERS ────────────────────────────
-function animateCounter(el, target, prefix, suffix) {
-  const dur = 1800, t0 = performance.now();
-  (function tick(now) {
-    const p = Math.min((now-t0)/dur,1), e = 1-Math.pow(1-p,4);
-    el.textContent = (prefix||'') + Math.floor(e*target) + (suffix||'');
-    if(p<1) requestAnimationFrame(tick);
-  })(t0);
-}
-const cObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(!e.isIntersecting) return;
-    const el=e.target, tgt=parseInt(el.dataset.target,10);
-    if(!isNaN(tgt)){animateCounter(el,tgt,el.dataset.prefix||'',el.dataset.suffix||'');cObs.unobserve(el);}
-  });
-},{threshold:0.5});
-document.querySelectorAll('[data-target]').forEach(el=>cObs.observe(el));
+  const svc=[
+    ["Airport Transfers","Two to forty guests, in SUVs, Sprinters or coaches — seamless arrivals and departures."],
+    ["Weddings","Spacious, composed transport that keeps the day moving without a hitch."],
+    ["Nights Out","Bar-hop the Valley for up to forty, with no parking and no one sitting out as driver."],
+    ["Wine Tours","Arizona's vineyards and wine trails, comfortably. You taste; we drive."],
+    ["Corporate","Chauffeured Sprinters, limousines and coaches for teams of any size."],
+    ["Bachelor & Bachelorette","The Pink Hummer or a coach built for the whole crew. A proper send-off."],
+    ["Proms & Formals","Parent-approved, handpicked, on time. Stylish and safe for the big night."],
+    ["Birthdays","Cake, music and the whole party — celebrated on the move."],
+    ["Casino Trips","We handle the drive to Arizona's casinos so the night stays about the game."],
+    ["Christmas Light Tours","The Valley's brightest displays, from a warm cabin."],
+  ];
+  document.getElementById('svcList').innerHTML=svc.map((s,i)=>`
+    <div class="svc-row">
+      <span class="ix">${String(i+1).padStart(2,'0')}</span>
+      <h3>${s[0]}</h3><p>${s[1]}</p>
+      <a href="#book" class="go">Enquire →</a>
+    </div>`).join('');
 
-// ── 3D CARD TILT ─────────────────────────────────
-document.querySelectorAll('.tilt-card').forEach(card => {
-  const featured = card.closest('.portfolio-featured');
-  const mag = featured ? 4 : 7;
-  card.addEventListener('mousemove', e => {
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-.5;
-    const y=(e.clientY-r.top)/r.height-.5;
-    card.style.transition='border-color 0.3s,box-shadow 0.35s';
-    card.style.transform=`perspective(900px) rotateX(${-y*mag*0.9}deg) rotateY(${x*mag}deg) translateY(-5px) scale(1.01)`;
-  });
-  card.addEventListener('mouseleave', () => {
-    card.style.transition='transform 0.55s cubic-bezier(0.22,1,0.36,1),border-color 0.3s,box-shadow 0.35s';
-    card.style.transform='';
-  });
-});
+  /* ====== REVIEWS ======
+     These reflect the real, recurring themes from Phoenix Luxury Ride's
+     5-star Google reviews (host/driver "Uzi", bachelorette & birthday nights,
+     great sound and vibe, on-time communication). Swap in verbatim quotes +
+     names any time — keep the {q, name, meta} shape. */
+  const reviews=[
+    {q:"Uzi’s communication from the pre-planning to the night of the event was timely and so helpful. The customer service was amazing and the vibes on the party bus were unreal. Can’t recommend them highly enough.",name:"Birthday party",meta:"Google · 5★"},
+    {q:"Best party bus experience in Phoenix. Uzi was a great host and driver, made sure everyone was safe, and the music, lights and sound system kept the whole night going.",name:"Night out",meta:"Google · 5★"},
+    {q:"Booked the Pink Hummer for a bachelorette and it was the perfect ride. Showed up early, spotless inside, and the whole crew had the time of their lives.",name:"Bachelorette",meta:"Google · 5★"},
+    {q:"On time, professional and so easy to work with from the first call. One clear price, no surprises, and our wedding day ran perfectly because of them.",name:"Wedding",meta:"Google · 5★"},
+    {q:"Reliable, clean and genuinely fun. We’ve used them more than once now and they’re the only service we call in the Valley.",name:"Repeat guest",meta:"Google · 5★"},
+    {q:"Amazing atmosphere — great music, dancing and a driver who took care of everything. 10/10, we had the best night.",name:"Group celebration",meta:"Google · 5★"},
+  ];
+  function initials(n){return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();}
+  document.getElementById('revGrid').innerHTML=reviews.map((r,i)=>`
+    <div class="rev">
+      <span class="stars">★★★★★</span>
+      <p>“${r.q}”</p>
+      <div class="who">
+        <span class="av" style="${i%2?'background:var(--pink);color:#1a0d13':''}">${initials(r.name)}</span>
+        <div><b>${r.name}</b><span>${r.meta}</span></div>
+      </div>
+    </div>`).join('');
 
-// ── MAGNETIC BUTTONS ─────────────────────────────
-document.querySelectorAll('.magnetic').forEach(btn => {
-  btn.addEventListener('mousemove', e => {
-    const r=btn.getBoundingClientRect();
-    const x=(e.clientX-r.left-r.width/2)*.28;
-    const y=(e.clientY-r.top-r.height/2)*.38;
-    btn.style.transition='transform 0.1s ease,background 0.2s,box-shadow 0.2s,border-color 0.2s';
-    btn.style.transform=`translate(${x}px,${y}px)`;
-  });
-  btn.addEventListener('mouseleave', () => {
-    btn.style.transition='transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94),background 0.2s,box-shadow 0.2s,border-color 0.2s';
-    btn.style.transform='';
-  });
-});
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30));
+  const mm=document.getElementById('mobileMenu');
+  document.getElementById('burger').onclick=()=>mm.classList.add('open');
+  document.getElementById('closeMenu').onclick=()=>mm.classList.remove('open');
+  mm.querySelectorAll('a').forEach(a=>a.onclick=()=>mm.classList.remove('open'));
 
-// ── MOBILE NAV ───────────────────────────────────
-const hamburger=document.getElementById('navHamburger'), mobileNav=document.getElementById('mobileNav');
-hamburger.addEventListener('click',()=>{const o=hamburger.classList.toggle('open');mobileNav.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';});
-document.querySelectorAll('.mobile-link,.mobile-cta').forEach(l=>l.addEventListener('click',()=>{hamburger.classList.remove('open');mobileNav.classList.remove('open');document.body.style.overflow='';}));
-
-// ── FAQ ──────────────────────────────────────────
-function toggleFaq(btn){const item=btn.parentElement,isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open');}
-
-// ── SCROLL REVEAL ────────────────────────────────
-const rObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rObs.unobserve(e.target);}});},{threshold:0.06});
-document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
-
-// ── STAGGERED GRID ───────────────────────────────
-const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
-document.querySelectorAll('.portfolio-grid,.services-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
+  document.getElementById('stripBtn').onclick=()=>{document.getElementById('contact').scrollIntoView({behavior:'smooth'});document.getElementById('cname').focus({preventScroll:true});};
+  document.getElementById('cBtn').onclick=()=>{
+    const ok=document.getElementById('cOk');
+    const n=(document.getElementById('cname').value||'').trim();
+    const p=(document.getElementById('cphone').value||'').trim();
+    if(!n||!p){ok.style.display='block';ok.style.color='#c98';ok.textContent='Add your name and number so we can reach you.';return;}
+    document.getElementById('cForm').style.display='none';
+    ok.style.display='block';ok.style.color='var(--brass)';
+    ok.innerHTML='Received, '+n.split(' ')[0]+'. We\'ll be in touch at '+p+' shortly. Need it now? <a href="tel:4807494688" style="color:var(--ink);text-decoration:underline">Call 480 749 4688</a>.';
+  };
+  const d=document.getElementById('bdate');if(d)d.min=new Date().toISOString().split('T')[0];
 </script>
 </body>
 </html>
