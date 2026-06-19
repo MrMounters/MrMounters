@@ -84,7 +84,10 @@
 
   /* styled photo slot — shows until a real img URL is supplied */
   .photo{position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1712,#100F0D 72%);border:1px solid var(--line)}
-  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .photo img,.photo video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:
+     linear-gradient(90deg,rgba(16,15,13,.5),rgba(16,15,13,.12) 42%,transparent 70%),
+     linear-gradient(0deg,rgba(16,15,13,.55),transparent 38%)}
   .photo .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
   .photo .ph::before{content:"";position:absolute;inset:0;background:
      radial-gradient(120% 90% at 78% 8%,rgba(184,146,74,.16),transparent 55%),
@@ -333,8 +336,12 @@
   </div>
   <div class="wrap">
     <div class="photo hero-plate" id="heroPhoto">
-      <div class="ph"><div class="ph-word">the lead coach at dusk</div></div>
-      <div class="plate-label"><span class="dot"></span><span class="mono-dim">Phoenix Luxury Ride — flagship fleet</span></div>
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata"
+        poster="https://www.phoenixluxuryride.com/wp-content/uploads/2025/10/Div-1-1_imgupscaler.ai_v2Pro_2K-1.webp">
+        <source src="https://www.phoenixluxuryride.com/wp-content/uploads/2025/09/WhatsApp-Video-2025-02-07-at-11.49.10_54fc2e61.mp4" type="video/mp4">
+      </video>
+      <div class="hero-veil"></div>
+      <div class="plate-label"><span class="dot"></span><span class="mono-dim">Phoenix Luxury Ride — on the road tonight</span></div>
     </div>
   </div>
   <!-- booking strip -->
@@ -496,10 +503,8 @@
 
 <script>
   /* ====== PHOTOS ======
-     Paste a real image URL into HERO_IMG and each fleet `img:""` field.
-     Empty = a styled gold/pink slot shows instead. */
-  const HERO_IMG = ""; // e.g. "https://www.phoenixluxuryride.com/wp-content/uploads/.../hero.jpg"
-
+     Hero is a looping video (set in the markup above). Each fleet vehicle
+     pulls its photo from the `img` field below; empty = styled gold/pink slot. */
   function photo({img,word,cap,tag,pink,cls,aspect}){
     const pinkC = pink ? ' pink' : '';
     return `<div class="photo${cls?' '+cls:''}${pinkC}"${aspect?` style="aspect-ratio:${aspect}"`:''}>
@@ -511,24 +516,16 @@
       </div>`;
   }
 
-  // hero
-  document.getElementById('heroPhoto').outerHTML =
-    `<div class="photo hero-plate${HERO_IMG?'':''}" id="heroPhoto">
-        ${HERO_IMG?`<img src="${HERO_IMG}" alt="Phoenix Luxury Ride flagship fleet at dusk" onerror="this.remove()">`:''}
-        <div class="ph"><div class="ph-word">the lead coach at dusk</div></div>
-        <div class="plate-label"><span class="dot"></span><span class="mono-dim">Phoenix Luxury Ride — flagship fleet</span></div>
-      </div>`;
-
   const fleet=[
-    {n:"44-Passenger Coach",cls:"Party Bus",cat:["bus"],cap:"44 guests",img:"",chips:["LED lighting","Premium sound","Dance floor"],specs:[["Capacity","44"],["Service","Chauffeured"],["Use","Nightlife · Airport"]]},
-    {n:"35-Passenger Coach",cls:"Party Bus",cat:["bus"],cap:"35 guests",img:"",chips:["4 TVs","Bluetooth audio","Bar area"],specs:[["Capacity","35"],["Screens","4 TVs"],["Audio","Premium Bluetooth"]]},
-    {n:"Pink Party Bus",cls:"Party Bus",cat:["bus"],cap:"22 guests",img:"",pink:true,tag:"Bachelorette favourite",chips:["Pink interior","40\" Smart TV","Surround sound"],specs:[["Capacity","22 leather"],["Screen","40\" Smart TV"],["Audio","Surround"]]},
-    {n:"Sprinter VIP Van",cls:"Executive",cat:["exec"],cap:"Up to 14",img:"",chips:["Wet bar","Dual screens","Dual-zone climate"],specs:[["Screens","42\" + 32\""],["Bar","Wet bar"],["Climate","Dual zone"]]},
-    {n:"White Hummer Limo",cls:"Limousine",cat:["limo"],cap:"20 guests",img:"",chips:["LED lighting","Sound system","Bar"],specs:[["Capacity","20"],["Service","Chauffeured"],["Use","Nightlife · Airport"]]},
-    {n:"Pink Hummer Limo",cls:"Limousine",cat:["limo"],cap:"22 guests",img:"",pink:true,tag:"The icon",chips:["Pink exterior","Club lighting","Sound system"],specs:[["Capacity","22"],["Best for","Bachelorette"],["Use","Nightlife"]]},
-    {n:"Escalade SUV",cls:"Executive",cat:["exec","limo"],cap:"8 guests",img:"",chips:["Leather","Point-to-point","Discreet"],specs:[["Capacity","8"],["Service","Point-to-point"],["Use","Chauffeured"]]},
-    {n:"Maybach S-Class",cls:"Flagship",cat:["exec"],cap:"Up to 3",img:"",chips:["Reclining rear","MBUX tablet","64-colour ambient"],specs:[["Seating","Reclining rear"],["Tech","MBUX tablet"],["Ambient","64 colour"]]},
-    {n:"Bentley GTC",cls:"Flagship",cat:["exec"],cap:"Up to 3",img:"",chips:["Adaptive air","20\" alloy","Premium leather"],specs:[["Suspension","Adaptive air"],["Wheels","20\" alloy"],["Interior","Premium leather"]]},
+    {n:"44-Passenger Coach",cls:"Party Bus",cat:["bus"],cap:"44 guests",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/10/Div-1-1_imgupscaler.ai_v2Pro_2K-1.webp",chips:["LED lighting","Premium sound","Dance floor"],specs:[["Capacity","44"],["Service","Chauffeured"],["Use","Nightlife · Airport"]]},
+    {n:"35-Passenger Coach",cls:"Party Bus",cat:["bus"],cap:"35 guests",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/09/Div-2.webp",chips:["4 TVs","Bluetooth audio","Bar area"],specs:[["Capacity","35"],["Screens","4 TVs"],["Audio","Premium Bluetooth"]]},
+    {n:"Pink Party Bus",cls:"Party Bus",cat:["bus"],cap:"22 guests",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/09/Generated-Image-September-17-2025-2_47PM.webp",pink:true,tag:"Bachelorette favourite",chips:["Pink interior","40\" Smart TV","Surround sound"],specs:[["Capacity","22 leather"],["Screen","40\" Smart TV"],["Audio","Surround"]]},
+    {n:"Sprinter VIP Van",cls:"Executive",cat:["exec"],cap:"Up to 14",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/09/ca53ec9d68fb83869b2c7ee5c9f4461667d79765.webp",chips:["Wet bar","Dual screens","Dual-zone climate"],specs:[["Screens","42\" + 32\""],["Bar","Wet bar"],["Climate","Dual zone"]]},
+    {n:"White Hummer Limo",cls:"Limousine",cat:["limo"],cap:"20 guests",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/09/ca53ec9d68fb83869b2c7ee5c9f4461667d79765.webp",chips:["LED lighting","Sound system","Bar"],specs:[["Capacity","20"],["Service","Chauffeured"],["Use","Nightlife · Airport"]]},
+    {n:"Pink Hummer Limo",cls:"Limousine",cat:["limo"],cap:"22 guests",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/10/504c2495ac8692fffffde0368992ad3597e0d79d_imgupscaler.ai_v2Pro_2K.webp",pink:true,tag:"The icon",chips:["Pink exterior","Club lighting","Sound system"],specs:[["Capacity","22"],["Best for","Bachelorette"],["Use","Nightlife"]]},
+    {n:"Escalade SUV",cls:"Executive",cat:["exec","limo"],cap:"8 guests",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/09/Generated-Image-September-17-2025-2_45PM.webp",chips:["Leather","Point-to-point","Discreet"],specs:[["Capacity","8"],["Service","Point-to-point"],["Use","Chauffeured"]]},
+    {n:"Maybach S-Class",cls:"Flagship",cat:["exec"],cap:"Up to 3",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/10/Div-1-1_imgupscaler.ai_v2Pro_2K.webp",chips:["Reclining rear","MBUX tablet","64-colour ambient"],specs:[["Seating","Reclining rear"],["Tech","MBUX tablet"],["Ambient","64 colour"]]},
+    {n:"Bentley GTC",cls:"Flagship",cat:["exec"],cap:"Up to 3",img:"https://www.phoenixluxuryride.com/wp-content/uploads/2025/10/Div_imgupscaler.ai_v2Pro_2K.webp",chips:["Adaptive air","20\" alloy","Premium leather"],specs:[["Suspension","Adaptive air"],["Wheels","20\" alloy"],["Interior","Premium leather"]]},
   ];
   const grid=document.getElementById('fleetGrid');
   function render(f){
