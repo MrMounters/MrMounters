@@ -43,24 +43,24 @@
 
 <style>
   :root{
-    --bg:#100F0D;
-    --bg-2:#16140F;
-    --surface:#1B1813;
+    --bg:#0E0A12;
+    --bg-2:#140D1A;
+    --surface:#1A1220;
     --line:rgba(236,230,220,.11);
     --line-2:rgba(236,230,220,.18);
-    --brass:#B8924A;
-    --brass-dim:#8a6f3a;
-    --pink:#E85B92;
-    --pink-dim:#a8456c;
-    --ink:#ECE6DC;
-    --muted:#988F81;
-    --muted-2:#6B6457;
+    --brass:#CBA15B;
+    --brass-dim:#9c7b3f;
+    --pink:#F25CA2;
+    --pink-dim:#b8497c;
+    --ink:#F0EAE0;
+    --muted:#9A9183;
+    --muted-2:#6E6759;
     --maxw:1180px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--ink);font-family:'Manrope',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  ::selection{background:var(--brass);color:#100F0D}
+  ::selection{background:var(--pink);color:#140D1A}
   h1,h2,h3{font-family:'Fraunces',serif;font-weight:500;line-height:1.07;letter-spacing:-.015em}
   a{color:inherit;text-decoration:none}
   img{display:block;max-width:100%}
@@ -86,8 +86,9 @@
   .photo{position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1712,#100F0D 72%);border:1px solid var(--line)}
   .photo img,.photo video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .hero-veil{position:absolute;inset:0;z-index:1;pointer-events:none;background:
-     linear-gradient(90deg,rgba(16,15,13,.5),rgba(16,15,13,.12) 42%,transparent 70%),
-     linear-gradient(0deg,rgba(16,15,13,.55),transparent 38%)}
+     radial-gradient(70% 120% at 88% 4%,rgba(242,92,162,.18),transparent 55%),
+     linear-gradient(90deg,rgba(14,10,18,.5),rgba(14,10,18,.12) 42%,transparent 70%),
+     linear-gradient(0deg,rgba(14,10,18,.62),transparent 40%)}
   .photo .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
   .photo .ph::before{content:"";position:absolute;inset:0;background:
      radial-gradient(120% 90% at 78% 8%,rgba(184,146,74,.16),transparent 55%),
@@ -119,7 +120,7 @@
   .hero{padding:150px 0 0;position:relative}
   .hero-head{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:end;padding-bottom:46px}
   .hero h1{font-size:clamp(2.9rem,6.2vw,5.4rem);font-weight:400}
-  .hero h1 em{font-style:italic;color:var(--brass)}
+  .hero h1 em{font-style:italic;background:linear-gradient(100deg,var(--brass) 28%,var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
   .hero-sub{color:var(--muted);font-size:1.06rem;max-width:38ch}
   .hero-sub-actions{display:flex;gap:14px;margin-top:24px;flex-wrap:wrap}
   .hero-stars{display:flex;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
@@ -498,6 +499,7 @@
 
 <div class="callbar">
   <a href="tel:4807494688" class="btn btn-line">Call</a>
+  <a href="sms:+14807494688?&body=Hi%2C%20I%20would%20like%20to%20inquire%20about%20a%20limousine%20rental." class="btn btn-line">Text</a>
   <a href="#book" class="btn btn-solid">Reserve</a>
 </div>
 
