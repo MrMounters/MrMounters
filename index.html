@@ -13,6 +13,9 @@
 <meta name="twitter:title" content="John Bert Web Strategy — Websites That Win Customers">
 <meta name="twitter:description" content="Phoenix, AZ's premier web strategy partner. Custom websites in 5–7 business days.">
 <meta name="twitter:image" content="og-image.png">
+<script>
+(function(){var t=localStorage.getItem('jb-theme'),l=window.matchMedia('(prefers-color-scheme: light)').matches;if(t==='light'||(t===null&&l))document.documentElement.setAttribute('data-theme','light');})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -35,6 +38,126 @@
     --glow-strong: 0 0 30px rgba(201,168,76,0.22), 0 0 60px rgba(201,168,76,0.1);
     --card-shadow-hover: 0 22px 60px rgba(0,0,0,0.6), 0 0 30px rgba(245,240,232,0.03);
   }
+
+  /* ── LIGHT THEME ────────────────────────────────── */
+  [data-theme="light"] {
+    --dark: #F8F6F2;
+    --dark2: #EDEAE5;
+    --dark3: #FFFFFF;
+    --dark4: #F2F0EC;
+    --white: #1A1916;
+    --gray: #5C5750;
+    --gray-light: #3E3C38;
+    --warm-muted: #7C756A;
+    --warm-accent: #5E5750;
+    --border: rgba(201,168,76,0.22);
+    --card-border: rgba(0,0,0,0.09);
+    --card-border-hover: rgba(0,0,0,0.18);
+    --glow-strong: 0 0 30px rgba(201,168,76,0.14), 0 0 60px rgba(201,168,76,0.06);
+    --card-shadow-hover: 0 22px 60px rgba(0,0,0,0.1), 0 0 0 1px rgba(201,168,76,0.1);
+  }
+  [data-theme="light"] body { background: var(--dark); color: var(--white); }
+  [data-theme="light"] body::after { opacity: 0.016; mix-blend-mode: multiply; }
+  [data-theme="light"] nav { background: rgba(248,246,242,0.92); }
+  [data-theme="light"] nav.scrolled { background: rgba(248,246,242,0.99); }
+  [data-theme="light"] .browser-chrome { background: #E2DED9; border-bottom-color: rgba(0,0,0,0.06); }
+  [data-theme="light"] .browser-bar { background: #D6D2CC; color: #999; }
+  [data-theme="light"] .mobile-nav { background: rgba(248,246,242,0.98); }
+  [data-theme="light"] .mobile-nav a { color: var(--white); }
+  [data-theme="light"] #pageLoader { background: var(--dark); }
+  [data-theme="light"] .hero-sub { color: #4A4840; }
+  [data-theme="light"] .hero-bg {
+    background:
+      radial-gradient(ellipse 70% 55% at 72% 35%, rgba(201,168,76,0.08) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 12% 80%, rgba(120,90,38,0.04) 0%, transparent 55%),
+      radial-gradient(ellipse 120% 50% at 50% 115%, rgba(238,234,228,0.95) 0%, transparent 55%);
+  }
+  [data-theme="light"] .hero-spotlight { background: radial-gradient(ellipse 55% 45% at 58% 42%, rgba(201,168,76,0.05) 0%, rgba(201,168,76,0.015) 45%, transparent 72%); }
+  [data-theme="light"] .section-sub { color: #58524C; }
+  [data-theme="light"] .ticker-band { background: var(--dark2); }
+  [data-theme="light"] .ticker-band::before { background: linear-gradient(to right, var(--dark2), transparent); }
+  [data-theme="light"] .ticker-band::after  { background: linear-gradient(to left, var(--dark2), transparent); }
+  [data-theme="light"] .guarantee-band { background: rgba(0,0,0,0.025); border-color: rgba(0,0,0,0.06); }
+  [data-theme="light"] .certs-band { background: var(--dark); }
+  [data-theme="light"] .comparison-section { background: var(--dark2); }
+  [data-theme="light"] .comparison-table td.row-label { color: #6A6258; }
+  [data-theme="light"] #faq { background: var(--dark2); }
+  [data-theme="light"] .faq-question { color: var(--white); }
+  [data-theme="light"] .faq-answer { color: var(--gray); }
+  [data-theme="light"] .faq-item { border-bottom-color: rgba(0,0,0,0.1); }
+  [data-theme="light"] .cta-band { background: linear-gradient(135deg,rgba(201,168,76,0.1) 0%,rgba(201,168,76,0.03) 50%,rgba(201,168,76,0.07) 100%); }
+  [data-theme="light"] .book-band { background: var(--dark2); border-top-color: rgba(0,0,0,0.07); }
+  [data-theme="light"] footer { background: var(--dark2); border-top-color: rgba(0,0,0,0.07); }
+  [data-theme="light"] .footer-bottom { color: #A8A29C; border-top-color: rgba(0,0,0,0.07); }
+  [data-theme="light"] .lm-doc { background: #fff; border-color: rgba(201,168,76,0.32); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+  [data-theme="light"] .lm-doc-back { background: var(--dark4); }
+  [data-theme="light"] .lm-line { background: rgba(0,0,0,0.1); }
+  [data-theme="light"] .lm-chk-bar { background: rgba(0,0,0,0.1); }
+  [data-theme="light"] .lm-chk-empty { border-color: rgba(0,0,0,0.2); }
+  [data-theme="light"] .lm-modal-card { background: #fff; }
+  [data-theme="light"] .lm-input { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.14); color: var(--white); }
+  [data-theme="light"] .lm-input::placeholder { color: var(--warm-muted); }
+  [data-theme="light"] .lm-sms-legal { color: #B0AAA4; }
+  [data-theme="light"] .lm-sms-legal strong { color: #888; }
+  [data-theme="light"] .lm-skip { color: #C0BAB4; }
+  [data-theme="light"] #cookieBanner { background: rgba(250,248,245,0.97); border-top-color: rgba(201,168,76,0.2); }
+  [data-theme="light"] .cb-text { color: #6A6258; }
+  [data-theme="light"] .cb-decline { border-color: rgba(0,0,0,0.15); color: var(--warm-muted); }
+  [data-theme="light"] .cb-decline:hover { border-color: rgba(0,0,0,0.25); }
+
+  /* ── THEME TOGGLE ───────────────────────────────── */
+  .theme-toggle {
+    display: flex; align-items: center; background: none; border: none;
+    cursor: pointer; padding: 0.3rem; border-radius: 20px; position: relative; z-index: 210;
+    margin-right: 0.2rem; flex-shrink: 0;
+  }
+  .tt-track {
+    width: 40px; height: 22px; border-radius: 11px; position: relative;
+    background: rgba(245,240,232,0.1); border: 1px solid rgba(245,240,232,0.14);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  [data-theme="light"] .tt-track { background: rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.15); }
+  .tt-thumb {
+    position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--gold);
+    transition: transform 0.32s cubic-bezier(0.22,1,0.36,1), background 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; line-height: 1;
+  }
+  [data-theme="light"] .tt-thumb { transform: translateX(18px); }
+
+  /* ── COOKIE CONSENT ─────────────────────────────── */
+  #cookieBanner {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 8000;
+    background: rgba(14,12,10,0.97); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(201,168,76,0.18);
+    padding: 1.1rem 4%; display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; flex-wrap: wrap;
+    transform: translateY(100%); opacity: 0; pointer-events: none;
+    transition: transform 0.48s cubic-bezier(0.22,1,0.36,1), opacity 0.48s;
+  }
+  #cookieBanner.cb-show { transform: none; opacity: 1; pointer-events: auto; }
+  .cb-text {
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: #A0998F;
+    line-height: 1.65; max-width: 660px; flex: 1; font-weight: 300;
+  }
+  .cb-text a { color: var(--warm-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .cb-actions { display: flex; gap: 0.65rem; align-items: center; flex-shrink: 0; }
+  .cb-accept {
+    background: var(--gold); color: var(--dark); border: none;
+    padding: 0.6rem 1.4rem; border-radius: 3px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.74rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .cb-accept:hover { background: var(--gold-light); box-shadow: 0 4px 20px rgba(201,168,76,0.38); }
+  .cb-decline {
+    background: none; border: 1px solid rgba(245,240,232,0.13); color: var(--warm-muted);
+    padding: 0.58rem 1rem; border-radius: 3px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.74rem; letter-spacing: 0.06em;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .cb-decline:hover { border-color: rgba(245,240,232,0.24); color: var(--white); }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -397,24 +520,24 @@
     background: radial-gradient(ellipse 55% 60% at 15% 50%, rgba(201,168,76,0.04) 0%, transparent 60%);
   }
   .meet-john-inner {
-    display: grid; grid-template-columns: 380px 1fr;
-    gap: 6rem; align-items: center; max-width: 1100px; position: relative; z-index: 1;
+    display: grid; grid-template-columns: 220px 1fr;
+    gap: 5rem; align-items: center; max-width: 1100px; position: relative; z-index: 1;
   }
-  .meet-john-photo-wrap { position: relative; }
+  .meet-john-photo-wrap { position: relative; width: 220px; height: 220px; flex-shrink: 0; }
   .meet-john-photo-wrap::before {
-    content: ''; position: absolute; inset: -1px; border-radius: 10px;
-    background: linear-gradient(145deg, rgba(201,168,76,0.28) 0%, rgba(201,168,76,0.06) 40%, transparent 70%);
+    content: ''; position: absolute; inset: -3px; border-radius: 50%;
+    background: linear-gradient(145deg, rgba(201,168,76,0.5) 0%, rgba(201,168,76,0.12) 45%, transparent 75%);
     z-index: 0;
   }
   .meet-john-photo-wrap::after {
-    content: ''; position: absolute; bottom: -20px; left: 10%; right: 10%;
-    height: 60px; border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(201,168,76,0.18) 0%, transparent 70%);
-    filter: blur(20px); z-index: 0;
+    content: ''; position: absolute; bottom: -18px; left: 10%; right: 10%;
+    height: 50px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.22) 0%, transparent 70%);
+    filter: blur(18px); z-index: 0;
   }
   .meet-john-photo {
-    width: 100%; border-radius: 8px; display: block; position: relative; z-index: 1;
-    object-fit: cover; object-position: center top; aspect-ratio: 3/4;
+    width: 220px; height: 220px; border-radius: 50%; display: block; position: relative; z-index: 1;
+    object-fit: cover; object-position: center top;
     filter: contrast(1.04) brightness(0.96);
   }
   .meet-john-content .section-eyebrow { margin-bottom: 1.1rem; }
@@ -537,6 +660,109 @@
   .footer-links a:hover { color:var(--white); }
   .footer-bottom { border-top:1px solid rgba(245,240,232,0.06); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; color:#3a3a3a; font-size:0.75rem; font-family:'DM Sans',sans-serif; }
 
+  /* ── LEAD MAGNET MODAL ───────────────────────── */
+  @property --spin-a { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+  .lm-modal-overlay {
+    position: fixed; inset: 0; z-index: 50000; display: none;
+    align-items: center; justify-content: center; padding: 1.2rem;
+    background: rgba(0,0,0,0); backdrop-filter: blur(0px);
+    transition: background 0.32s ease, backdrop-filter 0.32s ease;
+  }
+  .lm-modal-overlay.lm-modal-open {
+    background: rgba(0,0,0,0.82); backdrop-filter: blur(10px);
+  }
+  .lm-modal-card {
+    background: var(--dark3); border: 1px solid rgba(201,168,76,0.22);
+    border-top: 3px solid var(--gold); border-radius: 12px;
+    padding: 2.8rem 2.4rem; max-width: 420px; width: 100%; position: relative;
+    transform: translateY(30px) scale(0.96); opacity: 0;
+    transition: transform 0.38s cubic-bezier(0.16,1,0.3,1), opacity 0.38s;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(201,168,76,0.06);
+    max-height: 90vh; overflow-y: auto;
+  }
+  .lm-modal-overlay.lm-modal-open .lm-modal-card { transform: none; opacity: 1; }
+  .lm-modal-close {
+    position: absolute; top: 0.85rem; right: 1rem; background: none; border: none;
+    color: var(--warm-muted); font-size: 1rem; cursor: none; padding: 0.4rem; line-height: 1;
+    transition: color 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .lm-modal-close:hover { color: var(--white); }
+  .lm-modal-eyebrow {
+    font-family: 'DM Sans', sans-serif; font-size: 0.6rem; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .lm-modal-eyebrow::before { content:''; width:1.4rem; height:1px; background:var(--gold); flex-shrink:0; }
+  .lm-modal-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; line-height: 1.22; letter-spacing: -0.025em; margin-bottom: 0.7rem; color: var(--white); }
+  .lm-modal-sub { font-family: 'DM Sans', sans-serif; font-size: 0.87rem; color: var(--gray-light); line-height: 1.72; margin-bottom: 1.5rem; font-weight: 300; }
+  .lm-input {
+    width: 100%; background: rgba(245,240,232,0.04); border: 1px solid rgba(245,240,232,0.12);
+    border-radius: 6px; padding: 0.88rem 1rem; color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 0.65rem; display: block;
+  }
+  .lm-input:focus { border-color: rgba(201,168,76,0.45); box-shadow: 0 0 0 3px rgba(201,168,76,0.08); }
+  .lm-input::placeholder { color: var(--warm-muted); }
+  .lm-modal-btn {
+    width: 100%; background: var(--gold); color: var(--dark); border: none;
+    padding: 0.95rem 1rem; border-radius: 3px; cursor: none;
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.78rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    transition: background 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(201,168,76,0.25);
+  }
+  .lm-modal-btn:hover { background: var(--gold-light); box-shadow: 0 6px 28px rgba(201,168,76,0.42); }
+  .lm-fine { font-family: 'DM Sans', sans-serif; font-size: 0.67rem; color: var(--warm-muted); text-align: center; margin-top: 0.85rem; line-height: 1.5; }
+  .lm-step2-check {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(111,207,151,0.1); border: 1px solid rgba(111,207,151,0.28);
+    color: #6fcf97; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.1rem;
+  }
+  .lm-stop-text { font-family: 'DM Sans', sans-serif; font-size: 0.67rem; color: var(--warm-muted); text-align: center; margin-top: 0.75rem; line-height: 1.55; }
+  .lm-stop-text strong { color: #999; letter-spacing: 0.06em; }
+  .lm-skip {
+    display: block; width: 100%; text-align: center; background: none; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.7rem; color: #3a3a3a;
+    cursor: none; padding: 0.55rem 0 0; transition: color 0.2s;
+    text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #2a2a2a;
+  }
+  .lm-skip:hover { color: var(--warm-muted); }
+  .lm-step3-icon { font-size: 3rem; text-align: center; margin-bottom: 0.5rem; animation: lm-bounce-in 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+  @keyframes lm-bounce-in { from{transform:translateY(-14px) scale(0.75);opacity:0} to{transform:none;opacity:1} }
+  .lm-sms-legal { font-family: 'DM Sans', sans-serif; font-size: 0.61rem; color: #3a3a3a; line-height: 1.6; margin-top: 1.2rem; text-align: center; font-weight: 300; }
+  .lm-sms-legal strong { color: #555; }
+  .lm-step-hidden { display: none !important; }
+  .lm-step-out { animation: lm-out 0.26s ease forwards; }
+  .lm-step-in { opacity: 0; transform: translateX(24px); }
+  .lm-step-in-active { opacity: 1; transform: none; transition: opacity 0.32s ease, transform 0.32s cubic-bezier(0.16,1,0.3,1); }
+  @keyframes lm-out { to { opacity:0; transform:translateX(-22px); } }
+
+  /* ── TEXT US NOW RING ANIMATION ──────────────── */
+  .text-now-ring { position: relative; isolation: isolate; overflow: visible !important; }
+  .text-now-ring::before {
+    content: ''; position: absolute; inset: -2.5px; border-radius: 4px;
+    background: conic-gradient(from var(--spin-a), transparent 0%, rgba(201,168,76,0.9) 12%, rgba(232,201,122,0.55) 22%, transparent 34%);
+    animation: btn-border-spin 3.2s linear infinite;
+    pointer-events: none; z-index: -1;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    padding: 2px;
+  }
+  @keyframes btn-border-spin { to { --spin-a: 360deg; } }
+
+  /* Float CTA sonar rings */
+  .float-cta.visible::before, .float-cta.visible::after {
+    content: ''; position: absolute; inset: 0; border-radius: 50px;
+    border: 1.5px solid rgba(201,168,76,0.55);
+    animation: sonar-ring 2.4s ease-out infinite; pointer-events: none;
+  }
+  .float-cta.visible::after { animation-delay: 1.15s; }
+  @keyframes sonar-ring {
+    0%   { transform: scale(1);   opacity: 0.75; }
+    100% { transform: scale(2.1); opacity: 0; }
+  }
+
   /* ── ANIMATIONS ─────────────────────────────── */
   @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
   .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s cubic-bezier(0.22,1,0.36,1),transform 0.65s cubic-bezier(0.22,1,0.36,1); }
@@ -625,8 +851,8 @@
   @media (max-width: 900px) {
     .portfolio-grid { grid-template-columns: repeat(2,1fr); }
     .portfolio-featured .browser-preview img { aspect-ratio: 16/7 !important; }
-    .meet-john-inner { grid-template-columns: 1fr; gap: 3rem; }
-    .meet-john-photo { aspect-ratio: 4/3; object-position: center 20%; }
+    .meet-john-inner { grid-template-columns: 1fr; gap: 3rem; justify-items: center; }
+    .meet-john-photo-wrap { margin: 0 auto; }
     .lead-magnet-inner { grid-template-columns: 1fr; gap: 2.5rem; }
     .lm-visual { justify-content: center; }
   }
@@ -682,6 +908,13 @@
     <a href="#services">Services</a>
     <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
   </div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
+    <div class="tt-track">
+      <div class="tt-thumb" id="ttThumb">
+        <span id="ttIcon">🌙</span>
+      </div>
+    </div>
+  </button>
   <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
@@ -710,7 +943,7 @@
   <p class="hero-sub">Most small business websites cost you customers every single day. We fix that — with a stunning, conversion-focused site delivered in 5–7 business days.</p>
   <div class="hero-actions">
     <a href="#pricing" class="btn-primary magnetic">See Pricing</a>
-    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline magnetic">Text Us Now</a>
+    <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="btn-outline magnetic text-now-ring">Text Us Now</a>
   </div>
   <div class="hero-stats">
     <div><div class="hero-stat-num" data-target="7" data-prefix="5–">5–7</div><div class="hero-stat-label">Business Day Delivery</div></div>
@@ -761,7 +994,7 @@
       </ul>
       <div class="lm-actions">
         <a href="#" onclick="handlePdfDownload(event)" class="btn-primary magnetic">Download Free Guide</a>
-        <span class="lm-disclaimer">No email required. Instant download.</span>
+        <span class="lm-disclaimer">Free. Takes 10 seconds.</span>
       </div>
     </div>
   </div>
@@ -1040,6 +1273,59 @@
   </div>
 </footer>
 
+<!-- COOKIE CONSENT -->
+<div id="cookieBanner" role="dialog" aria-label="Cookie consent">
+  <p class="cb-text">
+    We use cookies to personalize content and analyze traffic. By clicking <strong style="color:var(--warm-accent);">Accept</strong>, you agree to our use of cookies as described in our <a href="#" onclick="return false;">Privacy Policy</a>. You can manage preferences at any time.
+  </p>
+  <div class="cb-actions">
+    <button class="cb-decline" id="cbDecline">Decline</button>
+    <button class="cb-accept" id="cbAccept">Accept All</button>
+  </div>
+</div>
+
+<!-- LEAD MAGNET MODAL -->
+<div id="lmModal" class="lm-modal-overlay" aria-hidden="true">
+  <div class="lm-modal-card" role="dialog" aria-modal="true" aria-label="Download Free Website Audit Checklist">
+    <button class="lm-modal-close" onclick="closeLmModal()" aria-label="Close">✕</button>
+
+    <!-- Step 1: Email -->
+    <div id="lmStep1" class="lm-step">
+      <div class="lm-modal-eyebrow">Free Download</div>
+      <h3 class="lm-modal-title">Get Your Free Website Audit Checklist</h3>
+      <p class="lm-modal-sub">17 things your website must do to win customers. Most Phoenix business sites fail at least 11 of them.</p>
+      <form onsubmit="lmNext(event,1)">
+        <input type="email" id="lmEmail" class="lm-input" placeholder="your@email.com" required autocomplete="email">
+        <button type="submit" class="lm-modal-btn">Send Me the Free Guide →</button>
+      </form>
+      <p class="lm-fine">We respect your privacy. Unsubscribe anytime.</p>
+    </div>
+
+    <!-- Step 2: Phone (surprise second ask) -->
+    <div id="lmStep2" class="lm-step lm-step-hidden">
+      <div class="lm-step2-check">✓</div>
+      <h3 class="lm-modal-title">One last thing.</h3>
+      <p class="lm-modal-sub">Where should we text you if we spot a quick win on your site?</p>
+      <form onsubmit="lmNext(event,2)">
+        <input type="tel" id="lmPhone" class="lm-input" placeholder="(480) 000-0000" autocomplete="tel">
+        <button type="submit" class="lm-modal-btn">Get My Free Guide →</button>
+      </form>
+      <p class="lm-stop-text">That's it — you're done. Msg &amp; data rates may apply. Reply <strong>STOP</strong> to opt out anytime.</p>
+      <button class="lm-skip" onclick="lmNext(null,2,true)">Skip — take me straight to the download</button>
+    </div>
+
+    <!-- Step 3: Download -->
+    <div id="lmStep3" class="lm-step lm-step-hidden">
+      <div class="lm-step3-icon">📄</div>
+      <div class="lm-step2-check" style="margin:0 auto 1.2rem;">✓</div>
+      <h3 class="lm-modal-title">You're all set!</h3>
+      <p class="lm-modal-sub">Your Website Audit Checklist is downloading now. Check your downloads folder in a moment.</p>
+      <a href="website-audit-checklist.pdf" download="John-Bert-Website-Audit-Checklist.pdf" class="lm-modal-btn" style="text-decoration:none;display:block;text-align:center;">↓ Download Again</a>
+      <p class="lm-sms-legal">By providing your phone number, you consent to receive automated marketing texts from John Bert Web Strategy. Reply <strong>STOP</strong> to opt out at any time. Message &amp; data rates may apply. Consent is not a condition of purchase.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── PAGE LOADER ──────────────────────────────────
 window.addEventListener('load', () => {
@@ -1163,16 +1449,60 @@ const hamburger=document.getElementById('navHamburger'), mobileNav=document.getE
 hamburger.addEventListener('click',()=>{const o=hamburger.classList.toggle('open');mobileNav.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';});
 document.querySelectorAll('.mobile-link,.mobile-cta').forEach(l=>l.addEventListener('click',()=>{hamburger.classList.remove('open');mobileNav.classList.remove('open');document.body.style.overflow='';}));
 
-// ── PDF DOWNLOAD TOAST ──────────────────────────
+// ── LEAD MAGNET MODAL ────────────────────────────
+let _lmEmail = '', _lmPhone = '';
+const lmModal = document.getElementById('lmModal');
+
 function handlePdfDownload(e) {
   e.preventDefault();
-  const t = document.createElement('div');
-  t.style.cssText = "position:fixed;bottom:5.5rem;left:50%;transform:translateX(-50%) translateY(10px);background:#1E1E1E;border:1px solid rgba(201,168,76,0.3);color:#F5F0E8;padding:0.95rem 1.8rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;z-index:10000;box-shadow:0 8px 32px rgba(0,0,0,0.55);white-space:nowrap;opacity:0;transition:opacity 0.3s,transform 0.3s;";
-  t.innerHTML = 'PDF dropping soon — <a href="sms:4805890098?body=Hi John, can you send me the Website Audit Checklist?" style="color:#C9A84C;text-decoration:none;font-weight:500;">text us for an early copy</a> ↗';
-  document.body.appendChild(t);
-  requestAnimationFrame(() => { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
-  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(6px)'; setTimeout(() => t.remove(), 350); }, 5000);
+  lmModal.style.display = 'flex'; lmModal.removeAttribute('aria-hidden');
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => lmModal.classList.add('lm-modal-open'));
+  setTimeout(() => document.getElementById('lmEmail').focus(), 60);
 }
+
+function closeLmModal() {
+  lmModal.classList.remove('lm-modal-open');
+  setTimeout(() => {
+    lmModal.style.display = 'none'; lmModal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    ['lmStep1','lmStep2','lmStep3'].forEach((id,i) => {
+      const el = document.getElementById(id);
+      el.classList.toggle('lm-step-hidden', i > 0);
+      el.classList.remove('lm-step-out','lm-step-in','lm-step-in-active');
+    });
+    document.getElementById('lmEmail').value = '';
+    document.getElementById('lmPhone').value = '';
+  }, 320);
+}
+
+function lmNext(e, step, skip) {
+  if (e) e.preventDefault();
+  if (step === 1) _lmEmail = document.getElementById('lmEmail').value.trim();
+  if (step === 2 && !skip) _lmPhone = document.getElementById('lmPhone').value.trim();
+  // TODO: wire up to FormSpree/webhook — replace with your endpoint:
+  // fetch('https://formspree.io/f/YOUR_FORM_ID', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email:_lmEmail, phone:_lmPhone}) });
+
+  const cur = document.getElementById('lmStep' + step);
+  const nxt = document.getElementById('lmStep' + (step + 1));
+  cur.classList.add('lm-step-out');
+  setTimeout(() => {
+    cur.classList.add('lm-step-hidden'); cur.classList.remove('lm-step-out');
+    nxt.classList.remove('lm-step-hidden'); nxt.classList.add('lm-step-in');
+    requestAnimationFrame(() => nxt.classList.add('lm-step-in-active'));
+    if (step === 2) {
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = 'website-audit-checklist.pdf';
+        a.download = 'John-Bert-Website-Audit-Checklist.pdf';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }, 350);
+    }
+  }, 280);
+}
+
+lmModal.addEventListener('click', e => { if (e.target === lmModal) closeLmModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && lmModal.style.display !== 'none') closeLmModal(); });
 
 // ── FAQ ──────────────────────────────────────────
 function toggleFaq(btn){const item=btn.parentElement,isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open');}
@@ -1184,6 +1514,43 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 // ── STAGGERED GRID ───────────────────────────────
 const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
 document.querySelectorAll('.portfolio-grid,.services-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
+
+// ── THEME TOGGLE ─────────────────────────────────
+(function() {
+  const btn = document.getElementById('themeToggle');
+  const icon = document.getElementById('ttIcon');
+  function isLight() { return document.documentElement.getAttribute('data-theme') === 'light'; }
+  function syncIcon() { icon.textContent = isLight() ? '☀️' : '🌙'; }
+  syncIcon();
+  btn.addEventListener('click', () => {
+    const light = !isLight();
+    if (light) {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('jb-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('jb-theme', 'dark');
+    }
+    syncIcon();
+  });
+})();
+
+// ── COOKIE CONSENT ───────────────────────────────
+(function() {
+  if (localStorage.getItem('jb-cookie')) return;
+  const banner = document.getElementById('cookieBanner');
+  setTimeout(() => banner.classList.add('cb-show'), 1200);
+  function dismiss() {
+    banner.classList.remove('cb-show');
+    setTimeout(() => { banner.style.display = 'none'; }, 500);
+  }
+  document.getElementById('cbAccept').addEventListener('click', () => {
+    localStorage.setItem('jb-cookie', 'accepted'); dismiss();
+  });
+  document.getElementById('cbDecline').addEventListener('click', () => {
+    localStorage.setItem('jb-cookie', 'declined'); dismiss();
+  });
+})();
 </script>
 </body>
 </html>
