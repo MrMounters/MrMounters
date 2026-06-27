@@ -408,9 +408,136 @@ footer{
 .footer-links{display:flex;gap:1.5rem;justify-content:center;margin-top:1rem}
 .footer-links a{font-size:.82rem;color:var(--gray);transition:color .2s}
 .footer-links a:hover{color:var(--gold)}
+
+/* ── PAGE LOADER ─────────────────────────────────── */
+#page-loader{
+  position:fixed;inset:0;z-index:99999;
+  background:var(--dark);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;
+  transition:opacity .5s,visibility .5s;
+}
+#page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.loader-logo{
+  font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;
+  color:var(--white);letter-spacing:.04em;
+  animation:loaderFadeUp .6s ease both;
+}
+.loader-logo em{font-style:italic;color:var(--gold)}
+.loader-bar-wrap{width:120px;height:2px;background:rgba(201,168,76,0.15);border-radius:2px;overflow:hidden}
+.loader-bar{height:100%;background:linear-gradient(to right,var(--gold),var(--gold-light));width:0;animation:loaderBar .9s .2s ease forwards}
+@keyframes loaderFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes loaderBar{from{width:0}to{width:100%}}
+
+/* ── CUSTOM CURSOR ───────────────────────────────── */
+#cursor-dot{
+  position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;
+  background:var(--gold);pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);transition:transform .1s,opacity .2s;
+  mix-blend-mode:screen;
+}
+#cursor-ring{
+  position:fixed;top:0;left:0;width:36px;height:36px;border-radius:50%;
+  border:1.5px solid rgba(201,168,76,0.4);pointer-events:none;z-index:99997;
+  transform:translate(-50%,-50%);
+  transition:left .12s ease,top .12s ease,width .2s,height .2s,opacity .2s;
+}
+body:not(:hover) #cursor-dot,body:not(:hover) #cursor-ring{opacity:0}
+@media(hover:none){#cursor-dot,#cursor-ring{display:none}}
+
+/* ── NOISE OVERLAY ───────────────────────────────── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size:180px 180px;opacity:0.028;mix-blend-mode:overlay;
+}
+
+/* ── HERO CANVAS ─────────────────────────────────── */
+#hero-canvas{position:absolute;inset:0;pointer-events:none;opacity:.55}
+
+/* ── TICKER ──────────────────────────────────────── */
+.ticker-band{
+  background:var(--dark2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  overflow:hidden;white-space:nowrap;padding:.75rem 0;position:relative;
+}
+.ticker-band::before,.ticker-band::after{
+  content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;
+}
+.ticker-band::before{left:0;background:linear-gradient(to right,var(--dark2),transparent)}
+.ticker-band::after{right:0;background:linear-gradient(to left,var(--dark2),transparent)}
+.ticker-track{display:inline-flex;gap:0;animation:ticker 28s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+.ticker-item{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:0 2rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--warm-accent);font-weight:500;
+}
+.ticker-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── TESTIMONIALS ────────────────────────────────── */
+.testi-card{
+  background:var(--dark3);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:2rem;
+  transition:border-color .25s,box-shadow .25s;
+}
+.testi-card:hover{border-color:var(--border);box-shadow:var(--glow-strong)}
+.testi-stars{color:var(--gold);font-size:.9rem;margin-bottom:1rem;letter-spacing:.1em}
+.testi-quote{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.05rem;line-height:1.65;color:var(--warm-accent);margin-bottom:1.3rem;
+}
+.testi-author{display:flex;align-items:center;gap:.75rem}
+.testi-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-dim),rgba(201,168,76,0.2));
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;color:var(--gold);flex-shrink:0;
+}
+.testi-name{font-size:.9rem;font-weight:600;margin-bottom:.15rem}
+.testi-role{font-size:.78rem;color:var(--gray)}
+
+/* ── BLOGGER THEME SECTION ───────────────────────── */
+.theme-card{
+  border-radius:var(--radius);overflow:hidden;
+  border:2px solid var(--card-border);
+  transition:border-color .3s,transform .3s,box-shadow .3s;
+  cursor:pointer;
+}
+.theme-card:hover{border-color:var(--gold);transform:translateY(-6px);box-shadow:var(--glow-strong)}
+.theme-preview{
+  width:100%;height:160px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;position:relative;overflow:hidden;
+}
+.theme-preview-lines{
+  position:absolute;inset:0;padding:1.2rem;display:flex;flex-direction:column;gap:.4rem;
+  opacity:.35;
+}
+.theme-preview-lines span{
+  display:block;border-radius:2px;background:currentColor;
+}
+.theme-info{padding:1.2rem;background:var(--dark3)}
+.theme-info h3{font-size:.95rem;font-family:'DM Sans',sans-serif;font-weight:600;margin-bottom:.25rem}
+.theme-info p{font-size:.8rem;color:var(--gray)}
+.theme-tag{
+  display:inline-block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);background:var(--gold-dim);
+  padding:.18rem .6rem;border-radius:50px;margin-top:.5rem;font-weight:600;
+}
 </style>
 </head>
 <body>
+
+<!-- PAGE LOADER -->
+<div id="page-loader">
+  <div class="loader-logo">Plume &amp; <em>Pixxel</em></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
 
 <!-- PROGRESS BAR -->
 <div id="progress-bar"></div>
@@ -466,6 +593,7 @@ footer{
 <!-- ═══════════════════════════════════════════════ -->
 <section class="hero">
   <div class="hero-bg"></div>
+  <canvas id="hero-canvas"></canvas>
   <div class="hero-content reveal">
     <span class="overline"
       data-en="Creative Digital Studio"
@@ -496,6 +624,30 @@ footer{
     </div>
   </div>
 </section>
+
+<!-- TICKER BAND -->
+<div class="ticker-band" aria-hidden="true">
+  <div class="ticker-track">
+    <!-- first copy -->
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Web Design" data-fr="Design Web" data-es="Diseño Web" data-zh="网页设计" data-ar="تصميم ويب" data-hi="वेब डिज़ाइन">Web Design</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Brand Identity" data-fr="Identité de Marque" data-es="Identidad de Marca" data-zh="品牌识别" data-ar="هوية العلامة" data-hi="ब्रांड पहचान">Brand Identity</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="AI Advertising" data-fr="Publicité IA" data-es="Publicidad IA" data-zh="AI广告" data-ar="إعلانات ذكاء اصطناعي" data-hi="AI विज्ञापन">AI Advertising</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="5–7 Day Delivery" data-fr="Livraison en 5–7 Jours" data-es="Entrega en 5–7 Días" data-zh="5-7天交付" data-ar="تسليم ٥–٧ أيام" data-hi="5-7 दिन डिलीवरी">5–7 Day Delivery</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="NYC · Dakar" data-fr="NYC · Dakar" data-es="NYC · Dakar" data-zh="纽约 · 达喀尔" data-ar="نيويورك · داكار" data-hi="NYC · डकार">NYC · Dakar</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Booking Automation" data-fr="Automatisation Réservation" data-es="Automatización de Reservas" data-zh="预约自动化" data-ar="أتمتة الحجز" data-hi="बुकिंग ऑटोमेशन">Booking Automation</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Express Delivery" data-fr="Livraison Express" data-es="Entrega Express" data-zh="急速交付" data-ar="تسليم عاجل" data-hi="एक्सप्रेस डिलीवरी">Express Delivery</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="EN · FR · ES · ZH · AR · HI" data-fr="EN · FR · ES · ZH · AR · HI" data-es="EN · FR · ES · ZH · AR · HI" data-zh="EN · FR · ES · ZH · AR · HI" data-ar="EN · FR · ES · ZH · AR · HI" data-hi="EN · FR · ES · ZH · AR · HI">EN · FR · ES · ZH · AR · HI</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Web Design" data-fr="Design Web" data-es="Diseño Web" data-zh="网页设计" data-ar="تصميم ويب" data-hi="वेब डिज़ाइन">Web Design</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Brand Identity" data-fr="Identité de Marque" data-es="Identidad de Marca" data-zh="品牌识别" data-ar="هوية العلامة" data-hi="ब्रांड पहचान">Brand Identity</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="AI Advertising" data-fr="Publicité IA" data-es="Publicidad IA" data-zh="AI广告" data-ar="إعلانات ذكاء اصطناعي" data-hi="AI विज्ञापन">AI Advertising</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="5–7 Day Delivery" data-fr="Livraison en 5–7 Jours" data-es="Entrega en 5–7 Días" data-zh="5-7天交付" data-ar="تسليم ٥–٧ أيام" data-hi="5-7 दिन डिलीवरी">5–7 Day Delivery</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="NYC · Dakar" data-fr="NYC · Dakar" data-es="NYC · Dakar" data-zh="纽约 · 达喀尔" data-ar="نيويورك · داكار" data-hi="NYC · डकार">NYC · Dakar</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Booking Automation" data-fr="Automatisation Réservation" data-es="Automatización de Reservas" data-zh="预约自动化" data-ar="أتمتة الحجز" data-hi="बुकिंग ऑटोमेशन">Booking Automation</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="Express Delivery" data-fr="Livraison Express" data-es="Entrega Express" data-zh="急速交付" data-ar="تسليم عاجل" data-hi="एक्सप्रेस डिलीवरी">Express Delivery</span></span>
+    <span class="ticker-item"><span class="ticker-dot"></span><span data-en="EN · FR · ES · ZH · AR · HI" data-fr="EN · FR · ES · ZH · AR · HI" data-es="EN · FR · ES · ZH · AR · HI" data-zh="EN · FR · ES · ZH · AR · HI" data-ar="EN · FR · ES · ZH · AR · HI" data-hi="EN · FR · ES · ZH · AR · HI">EN · FR · ES · ZH · AR · HI</span></span>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════ -->
 <!-- SECTION 2 · SERVICES OVERVIEW                  -->
@@ -1354,6 +1506,180 @@ footer{
 </section>
 
 <!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 15 · TESTIMONIALS                      -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Client Stories" data-fr="Témoignages Clients" data-es="Historias de Clientes" data-zh="客户评价" data-ar="قصص العملاء" data-hi="क्लाइंट की कहानियाँ">Client Stories</span>
+      <h2 class="section-heading"
+        data-en="What Our Clients <em>Say</em>" data-fr="Ce Que Nos Clients <em>Disent</em>" data-es="Lo Que Dicen Nuestros <em>Clientes</em>" data-zh="我们客户<em>的评价</em>" data-ar="ما يقوله <em>عملاؤنا</em>" data-hi="हमारे क्लाइंट <em>क्या कहते हैं</em>">What Our Clients <em>Say</em></h2>
+      <div class="gold-line center"></div>
+    </div>
+    <div class="grid-3">
+      <div class="testi-card reveal reveal-d1">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote"
+          data-en='"Jasmine delivered my site in 6 days. It looks better than sites that took agencies 3 months to build. My bookings doubled in the first week."'
+          data-fr='"Jasmine a livré mon site en 6 jours. Il est plus beau que des sites qu'ont pris des agences 3 mois à construire. Mes réservations ont doublé la première semaine."'
+          data-es='"Jasmine entregó mi sitio en 6 días. Se ve mejor que sitios que les tomaron a agencias 3 meses construir. Mis reservas se duplicaron en la primera semana."'
+          data-zh='"Jasmine 6天内交付了我的网站。它比那些花了代理公司3个月才建好的网站更漂亮。第一周我的预约量翻了一番。"'
+          data-ar='"سلّمت جاسمين موقعي في 6 أيام. يبدو أجمل من مواقع استغرقت وكالات 3 أشهر لبنائها. ضاعفت حجوزاتي في الأسبوع الأول."'
+          data-hi='"Jasmine ने मेरी साइट 6 दिनों में डिलीवर की। यह उन साइटों से बेहतर दिखती है जिन्हें एजेंसियों ने 3 महीने में बनाया। पहले हफ्ते में मेरी बुकिंग दोगुनी हो गई।"'
+          >"Jasmine delivered my site in 6 days. It looks better than sites that took agencies 3 months to build. My bookings doubled in the first week."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SK</div>
+          <div>
+            <div class="testi-name">Sofia K.</div>
+            <div class="testi-role"
+              data-en="Photographer, New York" data-fr="Photographe, New York" data-es="Fotógrafa, Nueva York" data-zh="摄影师，纽约" data-ar="مصورة، نيويورك" data-hi="फोटोग्राफर, न्यूयॉर्क">Photographer, New York</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-d2">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote"
+          data-en='"The bilingual setup was exactly what my Francophone clients needed. My brand finally looks as professional as the service I provide."'
+          data-fr='"La configuration bilingue était exactement ce dont mes clients francophones avaient besoin. Ma marque ressemble enfin à la qualité du service que je fournis."'
+          data-es='"La configuración bilingüe era exactamente lo que mis clientes francófonos necesitaban. Mi marca finalmente luce tan profesional como el servicio que brindo."'
+          data-zh='"双语设置正是我的法语客户所需要的。我的品牌终于看起来和我提供的服务一样专业了。"'
+          data-ar='"الإعداد ثنائي اللغة كان بالضبط ما احتاجه عملائي الناطقون بالفرنسية. تبدو علامتي التجارية أخيراً باحترافية تعكس خدمتي."'
+          data-hi='"द्विभाषी सेटअप ठीक वही था जो मेरे फ्रेंकोफोन क्लाइंट को चाहिए था। मेरा ब्रांड अब उतना ही पेशेवर दिखता है जितनी मेरी सेवा है।"'
+          >"The bilingual setup was exactly what my Francophone clients needed. My brand finally looks as professional as the service I provide."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">ML</div>
+          <div>
+            <div class="testi-name">Marc L.</div>
+            <div class="testi-role"
+              data-en="Business Coach, Paris" data-fr="Coach Business, Paris" data-es="Coach de Negocios, París" data-zh="商业教练，巴黎" data-ar="مدرب أعمال، باريس" data-hi="बिज़नेस कोच, पेरिस">Business Coach, Paris</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card reveal reveal-d3">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote"
+          data-en='"I sent a voice note on Monday. By Friday I had a full brand identity and a live website. I've never felt so seen as a creative."'
+          data-fr='"J'ai envoyé une note vocale lundi. Vendredi, j'avais une identité de marque complète et un site en ligne. Je n'ai jamais été si compris en tant que créatif."'
+          data-es='"Envié una nota de voz el lunes. El viernes tenía una identidad de marca completa y un sitio web en vivo. Nunca me había sentido tan comprendida como creativa."'
+          data-zh='"周一我发了一条语音消息。到周五我已经有了完整的品牌标识和一个上线的网站。作为一个创作者，我从未感到如此被理解。"'
+          data-ar='"أرسلت ملاحظة صوتية يوم الاثنين. بحلول الجمعة كان لدي هوية علامة تجارية كاملة وموقع مباشر. لم أشعر قط بهذا القدر من الفهم كمبدع."'
+          data-hi='"मैंने सोमवार को एक वॉयस नोट भेजा। शुक्रवार तक मेरे पास एक पूरी ब्रांड आइडेंटिटी और एक लाइव वेबसाइट थी। एक क्रिएटिव के रूप में मैंने कभी इतना समझा महसूस नहीं किया।"'
+          >"I sent a voice note on Monday. By Friday I had a full brand identity and a live website. I've never felt so seen as a creative."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AD</div>
+          <div>
+            <div class="testi-name">Amina D.</div>
+            <div class="testi-role"
+              data-en="Fashion Designer, Dakar" data-fr="Styliste, Dakar" data-es="Diseñadora de Moda, Dakar" data-zh="时装设计师，达喀尔" data-ar="مصممة أزياء، داكار" data-hi="फैशन डिज़ाइनर, डकार">Fashion Designer, Dakar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 16 · BLOGGER THEMES                    -->
+<!-- ═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Blogging &amp; Content" data-fr="Thème d'Blogueur" data-es="Temas de Blog" data-zh="博客主题" data-ar="قوالب المدونة" data-hi="ब्लॉगर थीम">Blogging &amp; Content</span>
+      <h2 class="section-heading"
+        data-en="Blogger <em>Themes</em> That Convert Readers" data-fr="Thèmes de <em>Blogueur</em> Qui Convertissent" data-es="Temas de <em>Blog</em> Que Convierten Lectores" data-zh="将读者转化的<em>博客主题</em>" data-ar="قوالب مدونة <em>تحوّل</em> القراء" data-hi="ब्लॉगर <em>थीम</em> जो पाठकों को कन्वर्ट करें">Blogger <em>Themes</em> That Convert Readers</h2>
+      <div class="gold-line center"></div>
+      <p class="section-sub"
+        data-en="Not just pretty — engineered to grow your audience and turn readers into subscribers, clients, and customers."
+        data-fr="Pas seulement beaux — conçus pour développer votre audience et transformer les lecteurs en abonnés, clients et acheteurs."
+        data-es="No solo bonitos — diseñados para hacer crecer tu audiencia y convertir lectores en suscriptores, clientes y compradores."
+        data-zh="不仅仅是美观——专为扩大受众并将读者转化为订阅者、客户和消费者而设计。"
+        data-ar="ليست جميلة فحسب — مصممة لتنمية جمهورك وتحويل القراء إلى مشتركين وعملاء."
+        data-hi="केवल सुंदर नहीं — आपके दर्शकों को बढ़ाने और पाठकों को सब्सक्राइबर, क्लाइंट में बदलने के लिए इंजीनियर किया गया।">Not just pretty — engineered to grow your audience and turn readers into subscribers, clients, and customers.</p>
+    </div>
+    <div class="grid-3" style="margin-bottom:2.5rem">
+      <!-- Theme 1 -->
+      <div class="theme-card reveal reveal-d1">
+        <div class="theme-preview" style="background:#1A1A2E;color:#C9A84C">
+          <div class="theme-preview-lines">
+            <span style="height:8px;width:40%"></span>
+            <span style="height:4px;width:70%"></span>
+            <span style="height:4px;width:55%"></span>
+            <span style="height:60px;width:100%;border-radius:6px;opacity:.2"></span>
+            <span style="height:4px;width:80%"></span>
+            <span style="height:4px;width:60%"></span>
+          </div>
+          <span style="position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#C9A84C">Nocturne</span>
+        </div>
+        <div class="theme-info">
+          <h3 data-en="Nocturne" data-fr="Nocturne" data-es="Nocturne" data-zh="夜曲" data-ar="نوكتورن" data-hi="नोक्टर्न">Nocturne</h3>
+          <p data-en="Dark luxury editorial theme for lifestyle and fashion bloggers."
+             data-fr="Thème éditorial luxe sombre pour les blogueurs lifestyle et mode."
+             data-es="Tema editorial de lujo oscuro para bloggers de lifestyle y moda."
+             data-zh="生活方式和时尚博主的深色奢华编辑主题。"
+             data-ar="قالب تحريري فاخر داكن لمدوني أسلوب الحياة والموضة."
+             data-hi="लाइफस्टाइल और फैशन ब्लॉगर के लिए डार्क लक्ज़री एडिटोरियल थीम।">Dark luxury editorial theme for lifestyle and fashion bloggers.</p>
+          <span class="theme-tag" data-en="Editorial" data-fr="Éditorial" data-es="Editorial" data-zh="编辑" data-ar="تحريري" data-hi="एडिटोरियल">Editorial</span>
+        </div>
+      </div>
+      <!-- Theme 2 -->
+      <div class="theme-card reveal reveal-d2">
+        <div class="theme-preview" style="background:#FDF6EE;color:#C9A84C">
+          <div class="theme-preview-lines" style="color:#D4B483">
+            <span style="height:8px;width:50%"></span>
+            <span style="height:4px;width:75%"></span>
+            <span style="height:4px;width:40%"></span>
+            <span style="height:55px;width:100%;border-radius:6px;opacity:.15"></span>
+            <span style="height:4px;width:65%"></span>
+            <span style="height:4px;width:50%"></span>
+          </div>
+          <span style="position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#C9A84C">Lumière</span>
+        </div>
+        <div class="theme-info">
+          <h3 data-en="Lumière" data-fr="Lumière" data-es="Lumière" data-zh="光芒" data-ar="لوميير" data-hi="लुमिएर">Lumière</h3>
+          <p data-en="Warm minimal theme for wellness, food, and personal brand bloggers."
+             data-fr="Thème minimal chaleureux pour les blogueurs bien-être, cuisine et marque personnelle."
+             data-es="Tema minimal cálido para bloggers de bienestar, comida y marca personal."
+             data-zh="适合健康、美食和个人品牌博主的温暖极简主题。"
+             data-ar="قالب بسيط دافئ لمدوني العافية والطعام والعلامة الشخصية."
+             data-hi="वेलनेस, फूड और पर्सनल ब्रांड ब्लॉगर के लिए वार्म मिनिमल थीम।">Warm minimal theme for wellness, food, and personal brand bloggers.</p>
+          <span class="theme-tag" data-en="Minimal" data-fr="Minimal" data-es="Minimal" data-zh="极简" data-ar="بسيط" data-hi="मिनिमल">Minimal</span>
+        </div>
+      </div>
+      <!-- Theme 3 -->
+      <div class="theme-card reveal reveal-d3">
+        <div class="theme-preview" style="background:#0D1F0D;color:#6BBF6B">
+          <div class="theme-preview-lines" style="color:#6BBF6B">
+            <span style="height:8px;width:45%"></span>
+            <span style="height:4px;width:68%"></span>
+            <span style="height:4px;width:52%"></span>
+            <span style="height:55px;width:100%;border-radius:6px;opacity:.2"></span>
+            <span style="height:4px;width:72%"></span>
+            <span style="height:4px;width:48%"></span>
+          </div>
+          <span style="position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:#6BBF6B">Savane</span>
+        </div>
+        <div class="theme-info">
+          <h3 data-en="Savane" data-fr="Savane" data-es="Savane" data-zh="萨瓦纳" data-ar="سافان" data-hi="सवाना">Savane</h3>
+          <p data-en="Nature-inspired editorial theme rooted in African aesthetics and global storytelling."
+             data-fr="Thème éditorial inspiré de la nature, ancré dans les esthétiques africaines et la narration mondiale."
+             data-es="Tema editorial inspirado en la naturaleza, arraigado en estéticas africanas y narrativa global."
+             data-zh="受自然启发的编辑主题，植根于非洲美学和全球叙事。"
+             data-ar="قالب تحريري مستوحى من الطبيعة متجذر في الجماليات الأفريقية."
+             data-hi="प्रकृति-प्रेरित एडिटोरियल थीम अफ्रीकी सौंदर्यशास्त्र और वैश्विक कहानी में निहित।">Nature-inspired editorial theme rooted in African aesthetics and global storytelling.</p>
+          <span class="theme-tag" data-en="Afro-Modern" data-fr="Afro-Moderne" data-es="Afro-Moderno" data-zh="非洲现代" data-ar="أفرو-حديث" data-hi="अफ्रो-मॉडर्न">Afro-Modern</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center" class="reveal">
+      <a href="#contact" class="btn btn-gold"
+         data-en="Get My Blogger Theme" data-fr="Obtenir Mon Thème de Blogueur" data-es="Obtener Mi Tema de Blog" data-zh="获取我的博客主题" data-ar="احصل على قالب مدونتي" data-hi="मेरी ब्लॉगर थीम पाएं">Get My Blogger Theme</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
 <!-- FOOTER                                         -->
 <!-- ═══════════════════════════════════════════════ -->
 <footer>
@@ -1385,6 +1711,73 @@ footer{
 <!-- JAVASCRIPT                                     -->
 <!-- ═══════════════════════════════════════════════ -->
 <script>
+/* ── PAGE LOADER ──────────────────────────────── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('page-loader').classList.add('done');
+  }, 900);
+});
+
+/* ── CUSTOM CURSOR ────────────────────────────── */
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function raf(){
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(raf);
+})();
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='54px'; ring.style.height='54px'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='36px'; ring.style.height='36px'; });
+});
+
+/* ── HERO CONSTELLATION ───────────────────────── */
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, pts;
+  function resize(){
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  function mkPts(){
+    pts = Array.from({length:55}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
+      r: Math.random()*1.5+.4
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i];
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(201,168,76,0.55)';
+      ctx.fill();
+      for(let j=i+1;j<pts.length;j++){
+        const q=pts[j], d=Math.hypot(p.x-q.x,p.y-q.y);
+        if(d<110){
+          ctx.beginPath();
+          ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle=`rgba(201,168,76,${(1-d/110)*0.12})`;
+          ctx.lineWidth=.6; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  resize(); mkPts(); draw();
+  window.addEventListener('resize', ()=>{ resize(); mkPts(); });
+})();
+
 /* ── LANG SWITCHER ────────────────────────────── */
 const LANG_LABELS = {en:'EN',fr:'FR',es:'ES',zh:'ZH',ar:'AR',hi:'HI'};
 const RTL_LANGS = ['ar'];
