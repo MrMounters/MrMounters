@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plume & Pixxel — Studio Créatif</title>
+<meta name="description" content="Studio de création digitale — sites web, identité visuelle, publicité IA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ──────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font:inherit}
+
+/* ── COLOR TOKENS ───────────────────────────────── */
+:root{
+  --gold:#C9A84C;
+  --gold-light:#E8C97A;
+  --gold-dim:rgba(201,168,76,0.1);
+  --dark:#0D0D0D;
+  --dark2:#111111;
+  --dark3:#181818;
+  --dark4:#1E1E1E;
+  --white:#F5F0E8;
+  --gray:#888;
+  --gray-light:#aaa;
+  --warm-muted:#9A9690;
+  --warm-accent:#BEB5A6;
+  --border:rgba(201,168,76,0.15);
+  --card-border:rgba(245,240,232,0.07);
+  --card-border-hover:rgba(245,240,232,0.16);
+  --glow-strong:0 0 30px rgba(201,168,76,0.22),0 0 60px rgba(201,168,76,0.1);
+  --card-shadow-hover:0 22px 60px rgba(0,0,0,0.6),0 0 30px rgba(245,240,232,0.03);
+  --accent:#C9A84C;
+  --btn-bg:linear-gradient(135deg,#C9A84C,#E8C97A);
+  --radius:14px;
+  --section-pad:100px 5%;
+}
+
+/* ── BASE ───────────────────────────────────────── */
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);
+  color:var(--white);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:rgba(201,168,76,0.25);color:var(--white)}
+
+/* ── TYPOGRAPHY ─────────────────────────────────── */
+h1,h2,h3,h4{font-family:'Playfair Display',serif;line-height:1.15}
+.overline{
+  font-family:'DM Sans',sans-serif;
+  font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:.9rem;display:block;
+}
+.section-heading{font-size:clamp(2rem,4vw,3rem);font-weight:700;margin-bottom:1rem}
+.section-heading em{font-style:italic;color:var(--gold)}
+.section-sub{color:var(--gray-light);font-size:1.05rem;max-width:620px;line-height:1.7}
+.text-center{text-align:center}
+.text-center .section-sub{margin-inline:auto}
+
+/* ── BUTTONS ────────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.82rem 2rem;border-radius:50px;font-size:.92rem;font-weight:600;
+  transition:all .25s;
+}
+.btn-gold{
+  background:var(--btn-bg);color:#0D0D0D;
+  box-shadow:0 4px 20px rgba(201,168,76,0.3);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.45)}
+.btn-outline{
+  border:1.5px solid var(--border);color:var(--white);
+}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── NAV ─────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 5%;
+  background:rgba(13,13,13,0.8);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  transition:background .3s;
+}
+nav.scrolled{background:rgba(13,13,13,0.97)}
+.nav-logo{
+  display:flex;align-items:center;gap:.7rem;
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;
+}
+.logo-circle{
+  width:42px;height:42px;border-radius:50%;
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;letter-spacing:.05em;color:var(--gold);
+  font-family:'DM Sans',sans-serif;font-weight:600;
+}
+.nav-links{display:flex;align-items:center;gap:2rem}
+.nav-links a{font-size:.9rem;color:var(--warm-accent);transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+
+/* Lang switcher */
+.lang-switcher{position:relative}
+.lang-current{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.4rem .9rem;border-radius:50px;
+  border:1.5px solid var(--border);
+  font-size:.82rem;font-weight:600;color:var(--warm-accent);
+  transition:border-color .2s;
+  background:transparent;
+}
+.lang-current:hover,.lang-current.open{border-color:var(--gold);color:var(--gold)}
+.lang-current svg{width:12px;height:12px;transition:transform .2s}
+.lang-current.open svg{transform:rotate(180deg)}
+.lang-dropdown{
+  position:absolute;top:calc(100% + .5rem);right:0;
+  background:var(--dark3);border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;min-width:120px;
+  opacity:0;pointer-events:none;transform:translateY(-6px);
+  transition:all .2s;box-shadow:0 12px 40px rgba(0,0,0,0.5);
+}
+.lang-dropdown.open{opacity:1;pointer-events:auto;transform:none}
+.lang-dropdown button{
+  display:block;width:100%;text-align:left;
+  padding:.6rem 1rem;font-size:.85rem;color:var(--warm-accent);
+  transition:background .15s,color .15s;
+}
+.lang-dropdown button:hover,.lang-dropdown button.active{
+  background:rgba(201,168,76,0.1);color:var(--gold);
+}
+
+/* Mobile nav */
+.hamburger{display:none;flex-direction:column;gap:5px;padding:.4rem}
+.hamburger span{display:block;width:22px;height:2px;background:var(--white);transition:all .3s;border-radius:2px}
+.mobile-nav{
+  display:none;position:fixed;inset:0;top:64px;
+  background:rgba(13,13,13,0.98);z-index:800;
+  flex-direction:column;align-items:center;justify-content:center;gap:2rem;
+  padding:2rem;
+}
+.mobile-nav.open{display:flex}
+.mobile-nav a{font-size:1.4rem;font-family:'Playfair Display',serif}
+
+@media(max-width:768px){
+  .nav-links,.nav-right .btn{display:none}
+  .hamburger{display:flex}
+  .nav-right .lang-switcher{display:flex}
+}
+
+/* ── HERO ────────────────────────────────────────── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:120px 5% 80px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 65% 55% at 60% 40%,rgba(201,168,76,0.07) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 35% at 10% 75%,rgba(201,168,76,0.04) 0%,transparent 55%);
+  pointer-events:none;
+}
+.hero-content{position:relative;max-width:680px}
+.hero h1{font-size:clamp(2.8rem,6vw,4.8rem);font-weight:900;line-height:1.08;margin-bottom:1.5rem}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{color:var(--warm-accent);font-size:1.1rem;max-width:500px;margin-bottom:2.5rem;line-height:1.7}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+
+/* ── SECTION WRAPPER ─────────────────────────────── */
+section{padding:var(--section-pad)}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-header{margin-bottom:3.5rem}
+
+/* ── CARD GRID ───────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.grid-2-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+
+@media(max-width:900px){
+  .grid-3,.grid-2-3{grid-template-columns:repeat(2,1fr)}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:580px){
+  .grid-2,.grid-3,.grid-4,.grid-2-3{grid-template-columns:1fr}
+}
+
+/* ── SERVICE CARD ────────────────────────────────── */
+.svc-card{
+  background:var(--dark3);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:1.8rem;
+  transition:border-color .25s,transform .25s,box-shadow .25s;
+}
+.svc-card:hover{
+  border-color:var(--card-border-hover);
+  transform:translateY(-4px);
+  box-shadow:var(--card-shadow-hover);
+}
+.svc-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:1.1rem;font-size:1.3rem;
+}
+.svc-card h3{font-size:1.05rem;margin-bottom:.5rem;font-family:'DM Sans',sans-serif;font-weight:600}
+.svc-card p{font-size:.9rem;color:var(--gray);line-height:1.65}
+
+/* ── FEATURE CARD ────────────────────────────────── */
+.feat-card{
+  background:var(--dark3);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:2rem;
+  transition:border-color .25s,box-shadow .25s;
+}
+.feat-card:hover{border-color:var(--border);box-shadow:var(--glow-strong)}
+.feat-card h3{font-size:1.1rem;font-family:'DM Sans',sans-serif;font-weight:600;margin-bottom:.6rem}
+.feat-card p{font-size:.9rem;color:var(--gray);line-height:1.65}
+.feat-tag{
+  display:inline-block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);background:var(--gold-dim);
+  padding:.22rem .7rem;border-radius:50px;margin-bottom:.8rem;font-weight:600;
+}
+
+/* ── CTA STRIP ───────────────────────────────────── */
+.cta-strip{
+  margin-top:2.5rem;padding:2rem 2.5rem;
+  background:linear-gradient(135deg,rgba(201,168,76,0.08) 0%,rgba(201,168,76,0.03) 100%);
+  border:1px solid var(--border);border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
+}
+.cta-strip p{color:var(--warm-accent);font-size:1rem}
+
+/* ── DIVIDER ─────────────────────────────────────── */
+.gold-line{
+  width:48px;height:2px;
+  background:linear-gradient(to right,var(--gold),transparent);
+  margin:1.2rem 0;
+}
+.gold-line.center{margin-inline:auto}
+
+/* ── SECTION BACKGROUNDS ─────────────────────────── */
+.bg-dark2{background:var(--dark2)}
+.bg-dark3{background:var(--dark3)}
+
+/* ── SCROLL REVEAL ───────────────────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+.reveal-d1{transition-delay:.1s}
+.reveal-d2{transition-delay:.2s}
+.reveal-d3{transition-delay:.3s}
+.reveal-d4{transition-delay:.4s}
+
+/* ── PROGRESS BAR ────────────────────────────────── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(to right,var(--gold),var(--gold-light));
+  z-index:9999;width:0%;pointer-events:none;transition:width .1s linear;
+}
+
+/* ── RTL support ─────────────────────────────────── */
+[dir="rtl"] .gold-line{background:linear-gradient(to left,var(--gold),transparent)}
+[dir="rtl"] .nav-logo{flex-direction:row-reverse}
+
+/* ── STYLE QUIZ CARDS ────────────────────────────── */
+.style-card{
+  border-radius:var(--radius);padding:1.8rem;
+  border:2px solid var(--card-border);
+  transition:border-color .3s,transform .3s;cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.style-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+.style-card.featured{border-color:var(--gold);background:rgba(201,168,76,0.05)}
+.style-card-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:.25rem}
+.style-card-tag{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem;display:block}
+.style-card p{font-size:.88rem;color:var(--gray);line-height:1.6}
+
+/* light bg style cards */
+.style-card.light-bg{background:#F5F0E8;color:#1A1916}
+.style-card.light-bg .style-card-tag{color:var(--gold)}
+.style-card.light-bg p{color:#5C5750}
+.style-card.pink-bg{background:#F2D7E0;color:#2D1020}
+.style-card.pink-bg .style-card-tag{color:#9B3A5A}
+.style-card.pink-bg p{color:#5A2D3A}
+.style-card.green-bg{background:#1A2B1A;color:#C8E6C8}
+.style-card.green-bg .style-card-tag{color:#6BBF6B}
+.style-card.green-bg p{color:#9EC49E}
+.style-card.brown-bg{background:#3B2206;color:#F0D9C0}
+.style-card.brown-bg .style-card-tag{color:#C9913A}
+.style-card.brown-bg p{color:#C4A882}
+
+/* ── ABOUT SECTION ───────────────────────────────── */
+.about-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:5rem;align-items:center}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:3rem}}
+.about-logo-wrap{
+  aspect-ratio:1;max-width:280px;
+  border:2px solid var(--border);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--dark3);position:relative;
+  margin:0 auto;
+}
+.about-logo-text{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:900;color:var(--gold)}
+.city-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:var(--dark4);border:1px solid var(--border);
+  border-radius:50px;padding:.35rem .9rem;font-size:.8rem;color:var(--warm-accent);
+  margin:.3rem;
+}
+.about-bullets{list-style:none;margin:1.5rem 0}
+.about-bullets li{
+  display:flex;align-items:flex-start;gap:.7rem;
+  padding:.5rem 0;border-bottom:1px solid var(--card-border);
+  font-size:.95rem;color:var(--warm-accent);
+}
+.about-bullets li::before{content:"→";color:var(--gold);flex-shrink:0;margin-top:.05rem}
+.founder-row{display:flex;align-items:center;gap:.9rem;margin-top:1.5rem}
+.founder-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.9rem;color:#0D0D0D;flex-shrink:0;
+}
+.founder-name{font-weight:600;font-size:.95rem}
+.founder-title{font-size:.8rem;color:var(--gray)}
+
+/* ── PROCESS ─────────────────────────────────────── */
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem}
+@media(max-width:900px){.process-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.process-grid{grid-template-columns:1fr}}
+.process-card{
+  background:var(--dark3);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:1.8rem;text-align:center;
+}
+.process-num{
+  width:44px;height:44px;border-radius:50%;
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-weight:700;font-size:1.1rem;color:var(--gold);
+  margin:0 auto 1.2rem;
+}
+.process-card h3{font-size:1rem;font-family:'DM Sans',sans-serif;font-weight:600;margin-bottom:.5rem}
+.process-card p{font-size:.88rem;color:var(--gray);line-height:1.6}
+
+/* ── INFO CARDS (Bon à Savoir) ───────────────────── */
+.info-card{
+  background:var(--dark3);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:1.8rem;
+}
+.info-card-icon{font-size:1.4rem;margin-bottom:.9rem}
+.info-card h3{font-size:.98rem;font-family:'DM Sans',sans-serif;font-weight:600;margin-bottom:.45rem}
+.info-card p{font-size:.88rem;color:var(--gray);line-height:1.65}
+
+/* ── PORTFOLIO ───────────────────────────────────── */
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+@media(max-width:900px){.portfolio-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.portfolio-grid{grid-template-columns:1fr}}
+.portfolio-card{
+  border-radius:var(--radius);overflow:hidden;border:1px solid var(--card-border);
+  transition:border-color .25s,transform .25s;
+}
+.portfolio-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+.portfolio-thumb{
+  width:100%;aspect-ratio:16/9;object-fit:cover;
+  background:var(--dark4);display:flex;align-items:center;justify-content:center;
+}
+.portfolio-thumb-placeholder{
+  width:100%;aspect-ratio:16/9;background:var(--dark4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;color:var(--border);
+}
+.portfolio-info{padding:1.1rem 1.3rem;background:var(--dark3)}
+.portfolio-info h3{font-size:.95rem;font-family:'DM Sans',sans-serif;font-weight:600;margin-bottom:.25rem}
+.portfolio-info p{font-size:.82rem;color:var(--gray)}
+
+/* ── CONTACT ─────────────────────────────────────── */
+.contact-inner{max-width:640px;margin:0 auto;text-align:center}
+.contact-detail{
+  display:flex;align-items:center;gap:.7rem;
+  justify-content:center;padding:.6rem 0;font-size:.95rem;color:var(--warm-accent);
+}
+.contact-detail a:hover{color:var(--gold)}
+.contact-icon{color:var(--gold);font-size:1.1rem}
+.contact-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:2rem 0}
+@media(max-width:500px){.contact-cards{grid-template-columns:1fr}}
+.contact-card{
+  background:var(--dark3);border:1px solid var(--card-border);
+  border-radius:var(--radius);padding:1.3rem 1.5rem;text-align:left;
+}
+.contact-card .label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.3rem}
+.contact-card .value{font-size:.92rem;color:var(--white);font-weight:500}
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer{
+  background:var(--dark2);border-top:1px solid var(--border);
+  padding:3rem 5% 2rem;text-align:center;
+}
+.footer-social{
+  font-size:1.6rem;font-family:'Playfair Display',serif;font-style:italic;
+  color:var(--gold);margin-bottom:2rem;letter-spacing:.02em;
+}
+.footer-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:.5rem}
+.footer-copy{font-size:.82rem;color:var(--gray);margin-top:1.5rem}
+.footer-links{display:flex;gap:1.5rem;justify-content:center;margin-top:1rem}
+.footer-links a{font-size:.82rem;color:var(--gray);transition:color .2s}
+.footer-links a:hover{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">
+    <div class="logo-circle">P&amp;P</div>
+    <span>Plume &amp; Pixxel</span>
+  </a>
+  <div class="nav-links">
+    <a href="#services"   data-en="Services"  data-fr="Services"  data-es="Servicios" data-zh="服务"   data-ar="الخدمات"  data-hi="सेवाएं">Services</a>
+    <a href="#portfolio"  data-en="Portfolio" data-fr="Portfolio" data-es="Portafolio" data-zh="案例"   data-ar="معرض"     data-hi="पोर्टफोलियो">Portfolio</a>
+    <a href="#about"      data-en="About"     data-fr="À Propos"  data-es="Nosotros"  data-zh="关于"   data-ar="عنا"      data-hi="हमारे बारे में">About</a>
+    <a href="#contact"    data-en="Contact"   data-fr="Contact"   data-es="Contacto"  data-zh="联系"   data-ar="تواصل"   data-hi="संपर्क">Contact</a>
+  </div>
+  <div class="nav-right">
+    <!-- Lang Switcher -->
+    <div class="lang-switcher">
+      <button class="lang-current" id="lang-btn" aria-expanded="false">
+        <span id="lang-label">EN</span>
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="2,4 6,8 10,4"/></svg>
+      </button>
+      <div class="lang-dropdown" id="lang-dropdown">
+        <button data-lang="en"  class="active">🌐 EN — English</button>
+        <button data-lang="fr">🌐 FR — Français</button>
+        <button data-lang="es">🌐 ES — Español</button>
+        <button data-lang="zh">🌐 ZH — 中文</button>
+        <button data-lang="ar">🌐 AR — العربية</button>
+        <button data-lang="hi">🌐 HI — हिन्दी</button>
+      </div>
+    </div>
+    <a href="#contact" class="btn btn-gold"
+       data-en="Get Started" data-fr="Commencer" data-es="Empezar" data-zh="开始" data-ar="ابدأ" data-hi="शुरू करें">Get Started</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#services"  onclick="closeMobileNav()" data-en="Services"  data-fr="Services"  data-es="Servicios" data-zh="服务"  data-ar="الخدمات" data-hi="सेवाएं">Services</a>
+  <a href="#portfolio" onclick="closeMobileNav()" data-en="Portfolio" data-fr="Portfolio" data-es="Portafolio" data-zh="案例"  data-ar="معرض"    data-hi="पोर्टफोलियो">Portfolio</a>
+  <a href="#about"     onclick="closeMobileNav()" data-en="About"     data-fr="À Propos"  data-es="Nosotros"  data-zh="关于"  data-ar="عنا"     data-hi="हमारे बारे में">About</a>
+  <a href="#contact"   onclick="closeMobileNav()" data-en="Contact"   data-fr="Contact"   data-es="Contacto"  data-zh="联系"  data-ar="تواصل"  data-hi="संपर्क">Contact</a>
+  <a href="#contact"   onclick="closeMobileNav()" class="btn btn-gold"
+     data-en="Get Started" data-fr="Commencer" data-es="Empezar" data-zh="开始" data-ar="ابدأ" data-hi="शुरू करें">Get Started</a>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 1 · HERO                               -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content reveal">
+    <span class="overline"
+      data-en="Creative Digital Studio"
+      data-fr="Studio Créatif Digital"
+      data-es="Estudio Creativo Digital"
+      data-zh="创意数字工作室"
+      data-ar="استوديو إبداعي رقمي"
+      data-hi="क्रिएटिव डिजिटल स्टूडियो">Creative Digital Studio</span>
+    <h1>
+      <span data-en="Websites That" data-fr="Des Sites Web Qui" data-es="Sitios Web Que" data-zh="让您的品牌" data-ar="مواقع تجعل" data-hi="वेबसाइटें जो">Websites That</span>
+      <br><em data-en="Win Clients" data-fr="Convertissent" data-es="Convierten" data-zh="赢得客户" data-ar="تكسب العملاء" data-hi="ग्राहक जीतें">Win Clients</em>
+      <br><span data-en="While You Sleep" data-fr="Pendant Que Vous Dormez" data-es="Mientras Duermes" data-zh="在您入睡时" data-ar="وأنت نائم" data-hi="जब आप सोते हैं">While You Sleep</span>
+    </h1>
+    <div class="gold-line"></div>
+    <p class="hero-sub"
+      data-en="From New York to Dakar — we craft digital identities and high-converting websites for serious creators and brands."
+      data-fr="De New York à Dakar — nous créons des identités digitales et des sites web qui convertissent pour les créateurs sérieux."
+      data-es="De Nueva York a Dakar — creamos identidades digitales y sitios web de alta conversión para creadores y marcas serias."
+      data-zh="从纽约到达喀尔——我们为认真的创作者和品牌打造数字身份和高转化率网站。"
+      data-ar="من نيويورك إلى داكار — نصمم هويات رقمية ومواقع عالية التحويل للمبدعين والعلامات التجارية."
+      data-hi="न्यूयॉर्क से डकार तक — हम गंभीर क्रिएटर्स और ब्रांड्स के लिए डिजिटल पहचान और उच्च-रूपांतरण वेबसाइट बनाते हैं।"
+      >From New York to Dakar — we craft digital identities and high-converting websites for serious creators and brands.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn btn-gold"
+         data-en="Request Your Project" data-fr="Demander Votre Projet" data-es="Solicitar Su Proyecto" data-zh="申请您的项目" data-ar="اطلب مشروعك" data-hi="अपना प्रोजेक्ट मांगें">Request Your Project</a>
+      <a href="#portfolio" class="btn btn-outline"
+         data-en="View Our Work" data-fr="Voir Nos Réalisations" data-es="Ver Nuestro Trabajo" data-zh="查看我们的作品" data-ar="شاهد أعمالنا" data-hi="हमारा काम देखें">View Our Work</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 2 · SERVICES OVERVIEW                  -->
+<!-- ═══════════════════════════════════════════════ -->
+<section id="services" class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="What We Offer" data-fr="Ce Que Nous Offrons" data-es="Lo Que Ofrecemos" data-zh="我们提供的服务" data-ar="ما نقدمه" data-hi="हम क्या प्रदान करते हैं">What We Offer</span>
+      <h2 class="section-heading"
+        data-en="Everything Your Brand <em>Needs</em>" data-fr="Tout Ce Dont Votre Marque <em>A Besoin</em>" data-es="Todo Lo Que Su Marca <em>Necesita</em>" data-zh="您的品牌<em>需要的一切</em>" data-ar="كل ما تحتاجه علامتك <em>التجارية</em>" data-hi="आपके ब्रांड को <em>जो चाहिए</em>">Everything Your Brand <em>Needs</em></h2>
+      <div class="gold-line center"></div>
+      <p class="section-sub"
+        data-en="A full suite of creative services — built to position you as the obvious choice in your market."
+        data-fr="Une suite complète de services créatifs — conçue pour vous positionner comme le choix évident sur votre marché."
+        data-es="Una suite completa de servicios creativos — diseñada para posicionarte como la elección obvia en tu mercado."
+        data-zh="一套完整的创意服务——旨在将您定位为市场上的不二之选。"
+        data-ar="مجموعة كاملة من الخدمات الإبداعية — مصممة لتضعك كخيار واضح في سوقك."
+        data-hi="क्रिएटिव सेवाओं का पूरा सेट — आपको अपने बाजार में स्पष्ट पसंद के रूप में स्थापित करने के लिए बनाया गया।"
+        >A full suite of creative services — built to position you as the obvious choice in your market.</p>
+    </div>
+    <div class="grid-2-3">
+      <!-- Card 1 -->
+      <div class="svc-card reveal reveal-d1">
+        <div class="svc-icon">🌐</div>
+        <h3 data-en="Web Design &amp; Development" data-fr="Design &amp; Développement Web" data-es="Diseño &amp; Desarrollo Web" data-zh="网页设计与开发" data-ar="تصميم وتطوير الويب" data-hi="वेब डिज़ाइन और विकास">Web Design &amp; Development</h3>
+        <p data-en="Custom sites built to convert visitors into paying clients — fast, responsive, and stunning."
+           data-fr="Sites sur mesure conçus pour convertir les visiteurs en clients — rapides, responsifs et éblouissants."
+           data-es="Sitios a medida diseñados para convertir visitantes en clientes — rápidos, responsivos y deslumbrantes."
+           data-zh="定制网站，将访客转化为付费客户——快速、响应式且令人惊艳。"
+           data-ar="مواقع مخصصة مصممة لتحويل الزوار إلى عملاء — سريعة ومتجاوبة ورائعة."
+           data-hi="कस्टम साइटें जो विजिटर को भुगतान करने वाले क्लाइंट में बदलती हैं — तेज़, रिस्पॉन्सिव और शानदार।">Custom sites built to convert visitors into paying clients — fast, responsive, and stunning.</p>
+      </div>
+      <!-- Card 2 -->
+      <div class="svc-card reveal reveal-d2">
+        <div class="svc-icon">✦</div>
+        <h3 data-en="Brand Identity" data-fr="Identité de Marque" data-es="Identidad de Marca" data-zh="品牌视觉识别" data-ar="هوية العلامة التجارية" data-hi="ब्रांड पहचान">Brand Identity</h3>
+        <p data-en="Logo, color system, typography, and brand guidelines that make you unforgettable."
+           data-fr="Logo, palette de couleurs, typographie et charte graphique qui vous rendent inoubliable."
+           data-es="Logo, sistema de color, tipografía y guías de marca que te hacen inolvidable."
+           data-zh="标志、色彩系统、字体和品牌指南，让您令人难忘。"
+           data-ar="شعار ونظام ألوان وطباعة وإرشادات علامة تجارية تجعلك لا يُنسى."
+           data-hi="लोगो, रंग प्रणाली, टाइपोग्राफी और ब्रांड गाइडलाइन जो आपको अविस्मरणीय बनाते हैं।">Logo, color system, typography, and brand guidelines that make you unforgettable.</p>
+      </div>
+      <!-- Card 3 -->
+      <div class="svc-card reveal reveal-d3">
+        <div class="svc-icon">🎬</div>
+        <h3 data-en="AI Cinematic Ads" data-fr="Publicité Cinématique IA" data-es="Anuncios Cinematográficos IA" data-zh="AI电影广告" data-ar="إعلانات سينمائية بالذكاء الاصطناعي" data-hi="AI सिनेमैटिक विज्ञापन">AI Cinematic Ads</h3>
+        <p data-en="Scroll-stopping video ads powered by AI — cinematic quality at a fraction of the cost."
+           data-fr="Vidéos publicitaires captivantes propulsées par l'IA — qualité cinématographique à moindre coût."
+           data-es="Anuncios en video que detienen el scroll impulsados por IA — calidad cinematográfica a menor costo."
+           data-zh="由AI驱动的停滚视频广告——以极低成本实现电影级品质。"
+           data-ar="إعلانات فيديو مدعومة بالذكاء الاصطناعي — جودة سينمائية بتكلفة أقل."
+           data-hi="AI-संचालित स्क्रॉल-रोकने वाले वीडियो विज्ञापन — कम लागत में सिनेमैटिक गुणवत्ता।">Scroll-stopping video ads powered by AI — cinematic quality at a fraction of the cost.</p>
+      </div>
+      <!-- Card 4 -->
+      <div class="svc-card reveal reveal-d1">
+        <div class="svc-icon">📅</div>
+        <h3 data-en="Booking &amp; Automation" data-fr="Réservation &amp; Automatisation" data-es="Reservas &amp; Automatización" data-zh="预约与自动化" data-ar="الحجز والأتمتة" data-hi="बुकिंग और ऑटोमेशन">Booking &amp; Automation</h3>
+        <p data-en="Let clients book and pay while you focus on your craft. Fully automated pipelines."
+           data-fr="Laissez vos clients réserver et payer pendant que vous vous concentrez sur votre art."
+           data-es="Deja que los clientes reserven y paguen mientras te enfocas en tu trabajo."
+           data-zh="让客户在您专注工作时自动预约和付款。全自动化流程。"
+           data-ar="دع العملاء يحجزون ويدفعون بينما تركز على عملك. أنابيب أتمتة كاملة."
+           data-hi="क्लाइंट बुक और पे करते रहें जबकि आप अपने काम पर ध्यान दें। पूरी तरह स्वचालित।">Let clients book and pay while you focus on your craft. Fully automated pipelines.</p>
+      </div>
+      <!-- Card 5 -->
+      <div class="svc-card reveal reveal-d2">
+        <div class="svc-icon">🔄</div>
+        <h3 data-en="Maintenance &amp; Updates" data-fr="Maintenance &amp; Mises à Jour" data-es="Mantenimiento &amp; Actualizaciones" data-zh="维护与更新" data-ar="الصيانة والتحديثات" data-hi="रखरखाव और अपडेट">Maintenance &amp; Updates</h3>
+        <p data-en="Your site stays fresh, fast, and secure — without you lifting a finger."
+           data-fr="Votre site reste frais, rapide et sécurisé — sans que vous ayez à lever le petit doigt."
+           data-es="Tu sitio se mantiene fresco, rápido y seguro — sin que muevas un dedo."
+           data-zh="您的网站保持新鲜、快速且安全——无需您动一根手指。"
+           data-ar="يبقى موقعك حديثاً وسريعاً وآمناً — دون أن ترفع إصبعاً."
+           data-hi="आपकी साइट ताज़ी, तेज़ और सुरक्षित रहती है — बिना आपकी मेहनत के।">Your site stays fresh, fast, and secure — without you lifting a finger.</p>
+      </div>
+      <!-- Card 6 -->
+      <div class="svc-card reveal reveal-d3">
+        <div class="svc-icon">🚀</div>
+        <h3 data-en="Express Delivery" data-fr="Livraison Express" data-es="Entrega Express" data-zh="急速交付" data-ar="تسليم سريع" data-hi="एक्सप्रेस डिलीवरी">Express Delivery</h3>
+        <p data-en="Your site live in 5–7 business days. No waiting months for a website that should exist today."
+           data-fr="Votre site en ligne en 5 à 7 jours ouvrés. Fini d'attendre des mois."
+           data-es="Tu sitio en vivo en 5–7 días hábiles. Sin esperar meses por un sitio que debería existir hoy."
+           data-zh="5至7个工作日内上线。不再等待数月。"
+           data-ar="موقعك يعمل في 5-7 أيام عمل. لا انتظار لأشهر."
+           data-hi="5-7 कार्यदिवसों में आपकी साइट लाइव। महीनों इंतजार नहीं।">Your site live in 5–7 business days. No waiting months for a website that should exist today.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 3 · AI CINEMATIC ADS                   -->
+<!-- ═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="overline"
+        data-en="Powered by AI" data-fr="Propulsé par l'IA" data-es="Impulsado por IA" data-zh="AI驱动" data-ar="مدعوم بالذكاء الاصطناعي" data-hi="AI-संचालित">Powered by AI</span>
+      <h2 class="section-heading"
+        data-en="Cinematic <em>AI</em> Advertising" data-fr="Publicité <em>Cinématique</em> IA" data-es="Publicidad <em>Cinematográfica</em> IA" data-zh="电影级 <em>AI</em> 广告" data-ar="إعلانات <em>سينمائية</em> بالذكاء الاصطناعي" data-hi="सिनेमैटिक <em>AI</em> विज्ञापन">Cinematic <em>AI</em> Advertising</h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="grid-2">
+      <div class="feat-card reveal reveal-d1">
+        <span class="feat-tag" data-en="Video" data-fr="Vidéo" data-es="Video" data-zh="视频" data-ar="فيديو" data-hi="वीडियो">Video</span>
+        <h3 data-en="Short-Form Video Ads" data-fr="Vidéos Publicitaires Courtes" data-es="Anuncios de Video Cortos" data-zh="短视频广告" data-ar="إعلانات فيديو قصيرة" data-hi="शॉर्ट-फॉर्म वीडियो विज्ञापन">Short-Form Video Ads</h3>
+        <p data-en="Reels, TikToks, and YouTube Shorts crafted with cinematic AI tools that stop the scroll and drive action."
+           data-fr="Reels, TikToks et YouTube Shorts créés avec des outils IA cinématiques qui stoppent le scroll et déclenchent l'action."
+           data-es="Reels, TikToks y YouTube Shorts elaborados con herramientas de IA que detienen el scroll y generan acción."
+           data-zh="用电影级AI工具制作的Reels、TikTok和YouTube Shorts，停止滑动，驱动行动。"
+           data-ar="ريلز وتيك توك ويوتيوب شورتس مصنوعة بأدوات الذكاء الاصطناعي تجذب الانتباه وتحفز الفعل."
+           data-hi="Reels, TikToks, और YouTube Shorts सिनेमैटिक AI टूल्स से बनाए — स्क्रॉल रोकें और एक्शन दिलाएं।">Reels, TikToks, and YouTube Shorts crafted with cinematic AI tools that stop the scroll and drive action.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <span class="feat-tag" data-en="Images" data-fr="Images" data-es="Imágenes" data-zh="图片" data-ar="صور" data-hi="छवियाँ">Images</span>
+        <h3 data-en="AI Visual Campaigns" data-fr="Campagnes Visuelles IA" data-es="Campañas Visuales IA" data-zh="AI视觉营销活动" data-ar="حملات بصرية بالذكاء الاصطناعي" data-hi="AI विज़ुअल कैंपेन">AI Visual Campaigns</h3>
+        <p data-en="Studio-quality visuals generated and refined by AI — banners, social posts, and ad creatives at scale."
+           data-fr="Visuels de qualité studio générés par IA — bannières, posts sociaux et créatifs publicitaires à grande échelle."
+           data-es="Visuales de calidad estudio generados por IA — banners, publicaciones sociales y creativos publicitarios a escala."
+           data-zh="AI生成并精炼的工作室级视觉效果——横幅、社交帖子和广告创意大规模生产。"
+           data-ar="مرئيات بجودة استوديو مولدة بالذكاء الاصطناعي — لافتات ومنشورات اجتماعية وإعلانات إبداعية."
+           data-hi="AI-जनित स्टूडियो-क्वालिटी विज़ुअल — बैनर, सोशल पोस्ट और विज्ञापन क्रिएटिव बड़े पैमाने पर।">Studio-quality visuals generated and refined by AI — banners, social posts, and ad creatives at scale.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <span class="feat-tag" data-en="Copy" data-fr="Rédaction" data-es="Redacción" data-zh="文案" data-ar="نصوص" data-hi="कॉपी">Copy</span>
+        <h3 data-en="Conversion Copywriting" data-fr="Rédaction de Conversion" data-es="Redacción de Conversión" data-zh="转化文案" data-ar="نصوص تحويل" data-hi="कन्वर्जन कॉपीराइटिंग">Conversion Copywriting</h3>
+        <p data-en="Words that sell. Every headline, CTA, and body text is engineered to move your audience to act."
+           data-fr="Des mots qui vendent. Chaque titre, CTA et corps de texte est conçu pour inciter votre audience à agir."
+           data-es="Palabras que venden. Cada titular, CTA y cuerpo de texto está diseñado para mover a tu audiencia a actuar."
+           data-zh="能卖货的文字。每一个标题、CTA和正文都经过精心设计，推动受众采取行动。"
+           data-ar="كلمات تبيع. كل عنوان ودعوة للعمل ونص مصمم لدفع جمهورك للتصرف."
+           data-hi="बिकने वाले शब्द। हर हेडलाइन, CTA और बॉडी टेक्स्ट आपके दर्शकों को एक्शन लेने के लिए प्रेरित करता है।">Words that sell. Every headline, CTA, and body text is engineered to move your audience to act.</p>
+      </div>
+      <div class="feat-card reveal reveal-d4">
+        <span class="feat-tag" data-en="Strategy" data-fr="Stratégie" data-es="Estrategia" data-zh="策略" data-ar="استراتيجية" data-hi="रणनीति">Strategy</span>
+        <h3 data-en="Ad Strategy &amp; Targeting" data-fr="Stratégie &amp; Ciblage Publicitaire" data-es="Estrategia &amp; Segmentación de Anuncios" data-zh="广告策略与定向" data-ar="استراتيجية الإعلانات والاستهداف" data-hi="विज्ञापन रणनीति और लक्ष्यीकरण">Ad Strategy &amp; Targeting</h3>
+        <p data-en="Know who to target, where to reach them, and exactly what to say. Data-backed ad strategy."
+           data-fr="Sachez qui cibler, où les atteindre et exactement quoi dire. Stratégie publicitaire basée sur les données."
+           data-es="Saber a quién dirigirse, dónde alcanzarlos y exactamente qué decir. Estrategia de anuncios respaldada por datos."
+           data-zh="了解目标受众、在哪里触达他们，以及说什么。数据支撑的广告策略。"
+           data-ar="اعرف من تستهدف وأين تصل إليهم وماذا تقول بالضبط. استراتيجية إعلانية مدعومة بالبيانات."
+           data-hi="जानें कि किसे टार्गेट करना है, कहाँ पहुँचना है, और क्या कहना है। डेटा-समर्थित विज्ञापन रणनीति।">Know who to target, where to reach them, and exactly what to say. Data-backed ad strategy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 4 · BRAND DIRECTION                    -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="overline"
+        data-en="Brand Direction" data-fr="Direction de Marque" data-es="Dirección de Marca" data-zh="品牌方向" data-ar="توجيه العلامة التجارية" data-hi="ब्रांड दिशा">Brand Direction</span>
+      <h2 class="section-heading"
+        data-en="Build a Brand They <em>Remember</em>" data-fr="Construisez une Marque <em>Mémorable</em>" data-es="Construye una Marca que <em>Recuerden</em>" data-zh="打造令人<em>难忘</em>的品牌" data-ar="بناء علامة تجارية <em>لا تُنسى</em>" data-hi="एक ब्रांड बनाएं जिसे वे <em>याद रखें</em>">Build a Brand They <em>Remember</em></h2>
+      <div class="gold-line"></div>
+    </div>
+    <div class="grid-2">
+      <div class="feat-card reveal reveal-d1">
+        <h3 data-en="Visual Identity System" data-fr="Système d'Identité Visuelle" data-es="Sistema de Identidad Visual" data-zh="视觉识别系统" data-ar="نظام الهوية البصرية" data-hi="विज़ुअल आइडेंटिटी सिस्टम">Visual Identity System</h3>
+        <p data-en="Logo suite, color palette, typography, and mockups — everything packaged and ready to deploy across all channels."
+           data-fr="Suite de logos, palette de couleurs, typographie et maquettes — tout packagé et prêt à déployer."
+           data-es="Suite de logos, paleta de colores, tipografía y mockups — todo empaquetado y listo para desplegar."
+           data-zh="标志套件、色彩调色板、排版和样机——一切打包完毕，随时可在所有渠道部署。"
+           data-ar="مجموعة شعارات ولوحة ألوان وطباعة وماكيتات — كل شيء معبأ وجاهز للنشر."
+           data-hi="लोगो सूट, रंग पैलेट, टाइपोग्राफी और मॉकअप — सब कुछ पैकेज्ड और सभी चैनलों पर तैनात करने के लिए तैयार।">Logo suite, color palette, typography, and mockups — everything packaged and ready to deploy across all channels.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <h3 data-en="Brand Voice &amp; Messaging" data-fr="Voix &amp; Messages de Marque" data-es="Voz &amp; Mensajes de Marca" data-zh="品牌声音与信息" data-ar="صوت العلامة التجارية والرسائل" data-hi="ब्रांड वॉयस और मैसेजिंग">Brand Voice &amp; Messaging</h3>
+        <p data-en="The words, tone, and story that set you apart. We craft your narrative so clients choose you without hesitation."
+           data-fr="Les mots, le ton et l'histoire qui vous différencient. Nous créons votre récit pour que les clients vous choisissent."
+           data-es="Las palabras, el tono y la historia que te diferencian. Creamos tu narrativa para que los clientes te elijan."
+           data-zh="让您与众不同的文字、语调和故事。我们打造您的叙事，让客户毫不犹豫地选择您。"
+           data-ar="الكلمات والنبرة والقصة التي تميزك. نصوغ روايتك حتى يختارك العملاء بلا تردد."
+           data-hi="शब्द, लहजा और कहानी जो आपको अलग बनाती है। हम आपकी नैरेटिव तैयार करते हैं ताकि क्लाइंट बिना झिझक आपको चुनें।">The words, tone, and story that set you apart. We craft your narrative so clients choose you without hesitation.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <h3 data-en="Social Media Templates" data-fr="Modèles de Réseaux Sociaux" data-es="Plantillas de Redes Sociales" data-zh="社交媒体模板" data-ar="قوالب وسائل التواصل الاجتماعي" data-hi="सोशल मीडिया टेम्पलेट">Social Media Templates</h3>
+        <p data-en="Editable Canva or Figma templates so your social presence always matches your brand — effortlessly."
+           data-fr="Modèles Canva ou Figma modifiables pour que votre présence sociale corresponde toujours à votre marque."
+           data-es="Plantillas editables de Canva o Figma para que tu presencia social siempre coincida con tu marca."
+           data-zh="可编辑的Canva或Figma模板，让您的社交媒体形象始终与品牌保持一致。"
+           data-ar="قوالب Canva أو Figma قابلة للتحرير حتى يتطابق وجودك الاجتماعي دائماً مع علامتك."
+           data-hi="संपादन योग्य Canva या Figma टेम्पलेट ताकि आपकी सोशल उपस्थिति हमेशा आपके ब्रांड से मेल खाए।">Editable Canva or Figma templates so your social presence always matches your brand — effortlessly.</p>
+      </div>
+      <div class="feat-card reveal reveal-d4">
+        <h3 data-en="Brand Strategy Session" data-fr="Session de Stratégie de Marque" data-es="Sesión de Estrategia de Marca" data-zh="品牌战略会议" data-ar="جلسة استراتيجية العلامة التجارية" data-hi="ब्रांड स्ट्रैटेजी सेशन">Brand Strategy Session</h3>
+        <p data-en="A focused 90-min deep-dive into your brand positioning, target audience, and competitive landscape."
+           data-fr="Une session approfondie de 90 min sur votre positionnement de marque, votre audience cible et votre paysage concurrentiel."
+           data-es="Una sesión profunda de 90 min sobre tu posicionamiento de marca, audiencia objetivo y panorama competitivo."
+           data-zh="90分钟深度会议，聚焦品牌定位、目标受众和竞争格局。"
+           data-ar="جلسة معمقة مدتها 90 دقيقة في تحديد موقع علامتك وجمهورك المستهدف والمشهد التنافسي."
+           data-hi="90 मिनट की गहरी डाइव आपके ब्रांड पोजिशनिंग, टार्गेट ऑडियंस और प्रतिस्पर्धी परिदृश्य में।">A focused 90-min deep-dive into your brand positioning, target audience, and competitive landscape.</p>
+      </div>
+    </div>
+    <div class="cta-strip reveal">
+      <p data-en="Ready to build a brand that commands attention?"
+         data-fr="Prêt à construire une marque qui capte l'attention ?"
+         data-es="¿Listo para construir una marca que exija atención?"
+         data-zh="准备好打造一个引人注目的品牌了吗？"
+         data-ar="هل أنت مستعد لبناء علامة تجارية تجذب الانتباه؟"
+         data-hi="क्या आप ध्यान आकर्षित करने वाला ब्रांड बनाने के लिए तैयार हैं?">Ready to build a brand that commands attention?</p>
+      <a href="#contact" class="btn btn-gold"
+         data-en="Start Your Brand" data-fr="Lancer Votre Marque" data-es="Iniciar Su Marca" data-zh="开始您的品牌" data-ar="ابدأ علامتك" data-hi="अपना ब्रांड शुरू करें">Start Your Brand</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 5 · FOR SERIOUS CREATORS               -->
+<!-- ═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="For Serious Creators" data-fr="Pour les Créateurs Sérieux" data-es="Para Creadores Serios" data-zh="为认真的创作者" data-ar="للمبدعين الجادين" data-hi="गंभीर क्रिएटर्स के लिए">For Serious Creators</span>
+      <h2 class="section-heading"
+        data-en="Designed for <em>Creators</em> Who Want Results" data-fr="Conçu pour les <em>Créateurs</em> Qui Veulent des Résultats" data-es="Diseñado para <em>Creadores</em> Que Quieren Resultados" data-zh="为追求结果的<em>创作者</em>而设计" data-ar="مصمم للـ<em>مبدعين</em> الذين يريدون النتائج" data-hi="<em>क्रिएटर्स</em> के लिए डिज़ाइन जो परिणाम चाहते हैं">Designed for <em>Creators</em> Who Want Results</h2>
+      <div class="gold-line center"></div>
+    </div>
+    <div class="grid-3">
+      <div class="feat-card reveal reveal-d1">
+        <div class="svc-icon">🎨</div>
+        <h3 data-en="Photographers &amp; Videographers" data-fr="Photographes &amp; Vidéastes" data-es="Fotógrafos &amp; Videógrafos" data-zh="摄影师与摄像师" data-ar="المصورون وصانعو الفيديو" data-hi="फोटोग्राफर और वीडियोग्राफर">Photographers &amp; Videographers</h3>
+        <p data-en="Portfolio sites that showcase your work beautifully and bring inquiry forms that actually convert."
+           data-fr="Sites portfolios qui présentent votre travail magnifiquement et apportent des formulaires de demande qui convertissent."
+           data-es="Sitios de portafolio que muestran tu trabajo bellamente con formularios de consulta que convierten."
+           data-zh="精美展示作品的作品集网站，带来真正转化的询问表单。"
+           data-ar="مواقع محافظ تعرض عملك بشكل جميل مع نماذج استفسار تحول."
+           data-hi="पोर्टफोलियो साइटें जो आपके काम को खूबसूरती से दिखाती हैं और वास्तव में कन्वर्ट होने वाले इनक्वायरी फॉर्म लाती हैं।">Portfolio sites that showcase your work beautifully and bring inquiry forms that actually convert.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="svc-icon">💆</div>
+        <h3 data-en="Coaches &amp; Consultants" data-fr="Coachs &amp; Consultants" data-es="Coaches &amp; Consultores" data-zh="教练与顾问" data-ar="المدربون والمستشارون" data-hi="कोच और सलाहकार">Coaches &amp; Consultants</h3>
+        <p data-en="Authority-building sites with booking systems, testimonials, and funnels that fill your calendar."
+           data-fr="Sites renforçant l'autorité avec systèmes de réservation, témoignages et entonnoirs qui remplissent votre agenda."
+           data-es="Sitios que construyen autoridad con sistemas de reservas, testimonios y embudos que llenan tu calendario."
+           data-zh="建立权威的网站，配备预约系统、推荐语和漏斗，让您的日历满满当当。"
+           data-ar="مواقع بناء السلطة مع أنظمة الحجز والشهادات والمسارات التي تملأ تقويمك."
+           data-hi="अथॉरिटी-बिल्डिंग साइटें बुकिंग सिस्टम, टेस्टिमोनियल और फनल के साथ जो आपका कैलेंडर भर दें।">Authority-building sites with booking systems, testimonials, and funnels that fill your calendar.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <div class="svc-icon">🛍️</div>
+        <h3 data-en="E-Commerce Brands" data-fr="Marques E-Commerce" data-es="Marcas de E-Commerce" data-zh="电商品牌" data-ar="علامات التجارة الإلكترونية" data-hi="ई-कॉमर्स ब्रांड">E-Commerce Brands</h3>
+        <p data-en="Stores that look premium, load instantly, and turn browsers into buyers — on every device."
+           data-fr="Boutiques premium qui chargent instantanément et transforment les visiteurs en acheteurs — sur chaque appareil."
+           data-es="Tiendas de aspecto premium que cargan al instante y convierten navegadores en compradores — en cada dispositivo."
+           data-zh="看起来高端、瞬间加载、将浏览者变为买家的商店——在每台设备上。"
+           data-ar="متاجر تبدو فاخرة وتحمل فورياً وتحول المتصفحين إلى مشترين — على كل جهاز."
+           data-hi="प्रीमियम दिखने वाले स्टोर जो तुरंत लोड होते हैं और ब्राउज़र को खरीदार में बदलते हैं — हर डिवाइस पर।">Stores that look premium, load instantly, and turn browsers into buyers — on every device.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem" class="reveal">
+      <a href="#contact" class="btn btn-gold"
+         data-en="This Is For Me" data-fr="C'est Pour Moi" data-es="Esto Es Para Mí" data-zh="这正是我需要的" data-ar="هذا بالنسبة لي" data-hi="यह मेरे लिए है">This Is For Me</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 6 · SHIFT YOUR FOCUS                   -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Shift Your Focus" data-fr="Transformez-le — Focus sur le Vôtre" data-es="Cambia Tu Enfoque" data-zh="转移焦点" data-ar="حوّل تركيزك" data-hi="अपना फोकस बदलें">Shift Your Focus</span>
+      <h2 class="section-heading"
+        data-en="Let Us Handle the <em>Tech</em>" data-fr="Laissez-nous Gérer la <em>Technique</em>" data-es="Déjanos Manejar la <em>Técnica</em>" data-zh="让我们处理<em>技术</em>" data-ar="دعنا نتولى <em>التقنية</em>" data-hi="हमें <em>टेक</em> संभालने दें">Let Us Handle the <em>Tech</em></h2>
+      <div class="gold-line center"></div>
+    </div>
+    <div class="grid-3">
+      <div class="feat-card reveal reveal-d1">
+        <h3 data-en="No Tech Skills Required" data-fr="Aucune Compétence Technique Requise" data-es="Sin Habilidades Técnicas Requeridas" data-zh="无需技术技能" data-ar="لا حاجة لمهارات تقنية" data-hi="कोई तकनीकी कौशल आवश्यक नहीं">No Tech Skills Required</h3>
+        <p data-en="You focus on your craft. We handle everything from hosting to security updates to speed optimization."
+           data-fr="Vous vous concentrez sur votre art. Nous gérons tout, de l'hébergement aux mises à jour de sécurité."
+           data-es="Tú te enfocas en tu trabajo. Nosotros manejamos todo, desde el hosting hasta las actualizaciones de seguridad."
+           data-zh="您专注于自己的工作。我们处理从托管到安全更新到速度优化的一切。"
+           data-ar="ركز على عملك. نحن نتولى كل شيء من الاستضافة إلى تحديثات الأمان."
+           data-hi="आप अपने काम पर ध्यान दें। हम होस्टिंग से लेकर सुरक्षा अपडेट से लेकर स्पीड ऑप्टिमाइज़ेशन तक सब कुछ संभालते हैं।">You focus on your craft. We handle everything from hosting to security updates to speed optimization.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <h3 data-en="One Point of Contact" data-fr="Un Seul Point de Contact" data-es="Un Solo Punto de Contacto" data-zh="单一联系人" data-ar="نقطة اتصال واحدة" data-hi="एकल संपर्क बिंदु">One Point of Contact</h3>
+        <p data-en="No agencies, no middle-men. You work directly with the designer and strategist who builds your site."
+           data-fr="Pas d'agences, pas d'intermédiaires. Vous travaillez directement avec le designer et stratège qui crée votre site."
+           data-es="Sin agencias, sin intermediarios. Trabajas directamente con el diseñador y estratega que construye tu sitio."
+           data-zh="没有代理机构，没有中间人。您直接与设计师和策略师合作。"
+           data-ar="لا وكالات ولا وسطاء. تعمل مباشرة مع المصمم والاستراتيجي الذي يبني موقعك."
+           data-hi="कोई एजेंसी नहीं, कोई बिचौलिया नहीं। आप सीधे उस डिज़ाइनर और स्ट्रैटेजिस्ट के साथ काम करते हैं जो आपकी साइट बनाता है।">No agencies, no middle-men. You work directly with the designer and strategist who builds your site.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <h3 data-en="Transparent Pricing" data-fr="Tarification Transparente" data-es="Precios Transparentes" data-zh="透明定价" data-ar="تسعير شفاف" data-hi="पारदर्शी मूल्य निर्धारण">Transparent Pricing</h3>
+        <p data-en="No hidden fees, no surprise invoices. You know exactly what you're getting and what you're paying for."
+           data-fr="Pas de frais cachés, pas de factures surprises. Vous savez exactement ce que vous obtenez et ce que vous payez."
+           data-es="Sin tarifas ocultas, sin facturas sorpresa. Sabes exactamente lo que obtienes y lo que pagas."
+           data-zh="没有隐性费用，没有意外账单。您确切知道您得到什么，您为什么付费。"
+           data-ar="لا رسوم مخفية ولا فواتير مفاجئة. أنت تعرف بالضبط ما تحصل عليه وما تدفعه."
+           data-hi="कोई छुपी फीस नहीं, कोई अचानक इनवॉयस नहीं। आप जानते हैं आप क्या पा रहे हैं और किसके लिए भुगतान कर रहे हैं।">No hidden fees, no surprise invoices. You know exactly what you're getting and what you're paying for.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem" class="reveal">
+      <a href="#contact" class="btn btn-gold"
+         data-en="Let's Work Together" data-fr="Travaillons Ensemble" data-es="Trabajemos Juntos" data-zh="让我们合作" data-ar="فلنعمل معاً" data-hi="मिलकर काम करते हैं">Let's Work Together</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 7 · CLIENTS BOOK WHILE YOU CREATE      -->
+<!-- ═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Automated Booking" data-fr="Réservation Automatisée" data-es="Reserva Automatizada" data-zh="自动化预约" data-ar="الحجز الآلي" data-hi="स्वचालित बुकिंग">Automated Booking</span>
+      <h2 class="section-heading"
+        data-en="Let Clients Book While <em>You Create</em>" data-fr="Laissez Vos Clients Réserver Pendant Que <em>Vous Créez</em>" data-es="Deja que los Clientes Reserven Mientras <em>Tú Creas</em>" data-zh="让客户预约，<em>您专注创作</em>" data-ar="دع العملاء يحجزون بينما <em>تبدع</em>" data-hi="क्लाइंट बुक करें जब <em>आप क्रिएट करें</em>">Let Clients Book While <em>You Create</em></h2>
+      <div class="gold-line center"></div>
+      <p class="section-sub"
+        data-en="Your website works 24/7 — taking bookings, collecting payments, and sending confirmations while you focus on the work that matters."
+        data-fr="Votre site travaille 24h/24 — prenant des réservations, collectant des paiements et envoyant des confirmations pendant que vous vous concentrez sur l'essentiel."
+        data-es="Tu sitio trabaja 24/7 — tomando reservas, cobrando pagos y enviando confirmaciones mientras te enfocas en el trabajo que importa."
+        data-zh="您的网站全天候运作——接受预约、收款和发送确认，而您专注于真正重要的工作。"
+        data-ar="موقعك يعمل على مدار الساعة — يأخذ الحجوزات ويجمع المدفوعات ويرسل التأكيدات بينما تركز على العمل المهم."
+        data-hi="आपकी वेबसाइट 24/7 काम करती है — बुकिंग लेना, भुगतान एकत्र करना और पुष्टि भेजना जबकि आप महत्वपूर्ण काम पर ध्यान देते हैं।"
+        >Your website works 24/7 — taking bookings, collecting payments, and sending confirmations while you focus on the work that matters.</p>
+    </div>
+    <div class="grid-3">
+      <div class="feat-card reveal reveal-d1">
+        <div class="svc-icon">⚡</div>
+        <h3 data-en="Instant Booking Integration" data-fr="Intégration de Réservation Instantanée" data-es="Integración de Reserva Instantánea" data-zh="即时预约集成" data-ar="تكامل الحجز الفوري" data-hi="इंस्टेंट बुकिंग इंटीग्रेशन">Instant Booking Integration</h3>
+        <p data-en="Calendly, Acuity, or custom booking — seamlessly embedded so clients can book in under 60 seconds."
+           data-fr="Calendly, Acuity ou réservation personnalisée — intégrés de manière transparente pour que les clients réservent en moins de 60 secondes."
+           data-es="Calendly, Acuity o reserva personalizada — integrados sin problemas para que los clientes reserven en menos de 60 segundos."
+           data-zh="Calendly、Acuity或自定义预约——无缝嵌入，让客户60秒内完成预约。"
+           data-ar="Calendly أو Acuity أو حجز مخصص — مدمج بسلاسة حتى يحجز العملاء في أقل من 60 ثانية."
+           data-hi="Calendly, Acuity, या कस्टम बुकिंग — सीमलेस एम्बेडेड ताकि क्लाइंट 60 सेकंड में बुक कर सकें।">Calendly, Acuity, or custom booking — seamlessly embedded so clients can book in under 60 seconds.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="svc-icon">💳</div>
+        <h3 data-en="Payment Collection" data-fr="Collecte de Paiement" data-es="Cobro de Pagos" data-zh="支付收款" data-ar="تحصيل المدفوعات" data-hi="भुगतान संग्रह">Payment Collection</h3>
+        <p data-en="Stripe, PayPal, and more — collect deposits or full payments at the time of booking. No chasing invoices."
+           data-fr="Stripe, PayPal et plus — collectez des acomptes ou des paiements complets au moment de la réservation."
+           data-es="Stripe, PayPal y más — cobra depósitos o pagos completos en el momento de la reserva. Sin perseguir facturas."
+           data-zh="Stripe、PayPal等——在预约时收取押金或全额付款。无需追讨发票。"
+           data-ar="Stripe وPayPal والمزيد — اجمع الودائع أو المدفوعات الكاملة وقت الحجز. لا مطاردة للفواتير."
+           data-hi="Stripe, PayPal और अधिक — बुकिंग के समय डिपॉजिट या पूर्ण भुगतान एकत्र करें। इनवॉयस का पीछा नहीं।">Stripe, PayPal, and more — collect deposits or full payments at the time of booking. No chasing invoices.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <div class="svc-icon">📧</div>
+        <h3 data-en="Automated Follow-Ups" data-fr="Suivis Automatisés" data-es="Seguimientos Automatizados" data-zh="自动跟进" data-ar="المتابعات الآلية" data-hi="स्वचालित फॉलो-अप">Automated Follow-Ups</h3>
+        <p data-en="Confirmation emails, reminders, and thank-you messages sent automatically — your client experience, always on."
+           data-fr="E-mails de confirmation, rappels et messages de remerciement envoyés automatiquement — votre expérience client, toujours active."
+           data-es="Correos de confirmación, recordatorios y mensajes de agradecimiento enviados automáticamente."
+           data-zh="自动发送确认邮件、提醒和感谢消息——您的客户体验，永远在线。"
+           data-ar="رسائل تأكيد وتذكيرات وشكر ترسل تلقائياً — تجربة عملائك دائماً تعمل."
+           data-hi="पुष्टि ईमेल, रिमाइंडर और धन्यवाद संदेश स्वचालित रूप से भेजे — आपका क्लाइंट अनुभव हमेशा चालू।">Confirmation emails, reminders, and thank-you messages sent automatically — your client experience, always on.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem" class="reveal">
+      <a href="#contact" class="btn btn-gold"
+         data-en="Automate My Bookings" data-fr="Automatiser Mes Réservations" data-es="Automatizar Mis Reservas" data-zh="自动化我的预约" data-ar="أتمتة حجوزاتي" data-hi="मेरी बुकिंग स्वचालित करें">Automate My Bookings</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 8 · MAINTENANCE                        -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Stress-Free Maintenance" data-fr="Maintenance Sans Stress" data-es="Mantenimiento Sin Estrés" data-zh="无压力维护" data-ar="صيانة خالية من التوتر" data-hi="तनाव-मुक्त रखरखाव">Stress-Free Maintenance</span>
+      <h2 class="section-heading"
+        data-en="Keep Your Site <em>Fresh</em> &amp; Flawless" data-fr="Gardez Votre Site <em>Frais</em> &amp; Parfait" data-es="Mantén Tu Sitio <em>Fresco</em> y Sin Fallas" data-zh="让您的网站保持<em>新鲜</em>且完美" data-ar="حافظ على موقعك <em>حديثاً</em> ومثالياً" data-hi="अपनी साइट को <em>ताज़ा</em> और बेदाग रखें">Keep Your Site <em>Fresh</em> &amp; Flawless</h2>
+      <div class="gold-line center"></div>
+    </div>
+    <div class="grid-4">
+      <div class="info-card reveal reveal-d1">
+        <div class="info-card-icon">🔒</div>
+        <h3 data-en="Security Updates" data-fr="Mises à Jour Sécurité" data-es="Actualizaciones de Seguridad" data-zh="安全更新" data-ar="تحديثات الأمان" data-hi="सुरक्षा अपडेट">Security Updates</h3>
+        <p data-en="Regular patches and monitoring to keep your site safe from vulnerabilities."
+           data-fr="Correctifs réguliers et surveillance pour protéger votre site des vulnérabilités."
+           data-es="Parches regulares y monitoreo para mantener tu sitio seguro de vulnerabilidades."
+           data-zh="定期补丁和监控，保护您的网站免受漏洞侵害。"
+           data-ar="تصحيحات منتظمة ومراقبة لحماية موقعك من الثغرات الأمنية."
+           data-hi="नियमित पैच और निगरानी आपकी साइट को कमजोरियों से सुरक्षित रखने के लिए।">Regular patches and monitoring to keep your site safe from vulnerabilities.</p>
+      </div>
+      <div class="info-card reveal reveal-d2">
+        <div class="info-card-icon">✏️</div>
+        <h3 data-en="Content Updates" data-fr="Mises à Jour de Contenu" data-es="Actualizaciones de Contenido" data-zh="内容更新" data-ar="تحديثات المحتوى" data-hi="कंटेंट अपडेट">Content Updates</h3>
+        <p data-en="New photos, pricing changes, new service pages — just send it over and we handle the rest."
+           data-fr="Nouvelles photos, changements de tarification, nouvelles pages — envoyez-les et nous gérons le reste."
+           data-es="Nuevas fotos, cambios de precios, nuevas páginas — solo envíalos y nosotros nos encargamos del resto."
+           data-zh="新照片、价格变更、新服务页面——只需发过来，我们处理其余的。"
+           data-ar="صور جديدة وتغييرات في الأسعار وصفحات خدمة جديدة — أرسلها فقط ونحن نتولى الباقي."
+           data-hi="नई तस्वीरें, मूल्य परिवर्तन, नई सेवा पेज — बस भेज दें और हम बाकी संभालते हैं।">New photos, pricing changes, new service pages — just send it over and we handle the rest.</p>
+      </div>
+      <div class="info-card reveal reveal-d3">
+        <div class="info-card-icon">⚡</div>
+        <h3 data-en="Speed Optimization" data-fr="Optimisation de Vitesse" data-es="Optimización de Velocidad" data-zh="速度优化" data-ar="تحسين السرعة" data-hi="स्पीड ऑप्टिमाइज़ेशन">Speed Optimization</h3>
+        <p data-en="Ongoing performance tuning so your site loads fast — always, on every device."
+           data-fr="Optimisation continue des performances pour que votre site charge rapidement — toujours, sur chaque appareil."
+           data-es="Ajuste continuo del rendimiento para que tu sitio cargue rápido — siempre, en cada dispositivo."
+           data-zh="持续性能调优，确保您的网站始终快速加载——在每台设备上。"
+           data-ar="ضبط أداء مستمر حتى يحمل موقعك بسرعة — دائماً على كل جهاز."
+           data-hi="निरंतर परफॉर्मेंस ट्यूनिंग ताकि आपकी साइट हमेशा तेज़ लोड हो — हर डिवाइस पर।">Ongoing performance tuning so your site loads fast — always, on every device.</p>
+      </div>
+      <div class="info-card reveal reveal-d4">
+        <div class="info-card-icon">📊</div>
+        <h3 data-en="Monthly Reports" data-fr="Rapports Mensuels" data-es="Informes Mensuales" data-zh="月度报告" data-ar="تقارير شهرية" data-hi="मासिक रिपोर्ट">Monthly Reports</h3>
+        <p data-en="Know exactly how your site is performing — traffic, conversions, and opportunities to grow."
+           data-fr="Sachez exactement comment votre site performe — trafic, conversions et opportunités de croissance."
+           data-es="Conoce exactamente cómo está funcionando tu sitio — tráfico, conversiones y oportunidades de crecimiento."
+           data-zh="确切了解您的网站表现——流量、转化率和增长机会。"
+           data-ar="اعرف بالضبط كيف يؤدي موقعك — حركة المرور والتحويلات وفرص النمو."
+           data-hi="जानें आपकी साइट कैसा प्रदर्शन कर रही है — ट्रैफिक, कन्वर्जन और विकास के अवसर।">Know exactly how your site is performing — traffic, conversions, and opportunities to grow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 9 · PORTFOLIO                          -->
+<!-- ═══════════════════════════════════════════════ -->
+<section id="portfolio">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Our Work" data-fr="Nos Réalisations" data-es="Nuestro Trabajo" data-zh="我们的作品" data-ar="أعمالنا" data-hi="हमारा काम">Our Work</span>
+      <h2 class="section-heading"
+        data-en="Sites We've <em>Built</em>" data-fr="Sites Que Nous Avons <em>Créés</em>" data-es="Sitios Que Hemos <em>Construido</em>" data-zh="我们<em>打造</em>的网站" data-ar="مواقع <em>بنيناها</em>" data-hi="साइटें जो हमने <em>बनाई</em>">Sites We've <em>Built</em></h2>
+      <div class="gold-line center"></div>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-card reveal reveal-d1">
+        <div class="portfolio-thumb-placeholder">🌿</div>
+        <div class="portfolio-info">
+          <h3>House of Lune</h3>
+          <p data-en="Wellness Brand · Booking Site" data-fr="Marque Bien-être · Site de Réservation" data-es="Marca de Bienestar · Sitio de Reservas" data-zh="健康品牌·预约网站" data-ar="علامة العافية · موقع الحجز" data-hi="वेलनेस ब्रांड · बुकिंग साइट">Wellness Brand · Booking Site</p>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-d2">
+        <div class="portfolio-thumb-placeholder">📸</div>
+        <div class="portfolio-info">
+          <h3>Soft Studio</h3>
+          <p data-en="Photography Portfolio · E-Commerce" data-fr="Portfolio Photo · E-Commerce" data-es="Portafolio Fotográfico · E-Commerce" data-zh="摄影作品集·电商" data-ar="محفظة تصوير · تجارة إلكترونية" data-hi="फोटोग्राफी पोर्टफोलियो · ई-कॉमर्स">Photography Portfolio · E-Commerce</p>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-d3">
+        <div class="portfolio-thumb-placeholder">✨</div>
+        <div class="portfolio-info">
+          <h3>Mia Beauty</h3>
+          <p data-en="Beauty Brand · Online Store" data-fr="Marque Beauté · Boutique En Ligne" data-es="Marca de Belleza · Tienda Online" data-zh="美妆品牌·网店" data-ar="علامة جمال · متجر إلكتروني" data-hi="ब्यूटी ब्रांड · ऑनलाइन स्टोर">Beauty Brand · Online Store</p>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-d1">
+        <div class="portfolio-thumb-placeholder">🌍</div>
+        <div class="portfolio-info">
+          <h3>Terre &amp; Lumière</h3>
+          <p data-en="Lifestyle Brand · Landing Page" data-fr="Marque Lifestyle · Page d'Atterrissage" data-es="Marca de Estilo de Vida · Landing Page" data-zh="生活方式品牌·落地页" data-ar="علامة أسلوب حياة · صفحة هبوط" data-hi="लाइफस्टाइल ब्रांड · लैंडिंग पेज">Lifestyle Brand · Landing Page</p>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-d2">
+        <div class="portfolio-thumb-placeholder">🏠</div>
+        <div class="portfolio-info">
+          <h3>Maison Élite</h3>
+          <p data-en="Luxury Real Estate · Lead Gen" data-fr="Immobilier de Luxe · Génération de Leads" data-es="Inmobiliaria de Lujo · Generación de Leads" data-zh="豪华房产·潜客生成" data-ar="عقارات فاخرة · توليد عملاء محتملين" data-hi="लक्जरी रियल एस्टेट · लीड जेन">Luxury Real Estate · Lead Gen</p>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-d3">
+        <div class="portfolio-thumb-placeholder">🏜️</div>
+        <div class="portfolio-info">
+          <h3>Sahel Noir</h3>
+          <p data-en="Fashion Label · Lookbook" data-fr="Label Mode · Lookbook" data-es="Sello de Moda · Lookbook" data-zh="时尚品牌·Lookbook" data-ar="علامة أزياء · لوك بوك" data-hi="फैशन लेबल · लुकबुक">Fashion Label · Lookbook</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 10 · STYLE QUIZ                        -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Find Your Style" data-fr="Trouvez Votre Style" data-es="Encuentra Tu Estilo" data-zh="找到您的风格" data-ar="اكتشف أسلوبك" data-hi="अपनी स्टाइल खोजें">Find Your Style</span>
+      <h2 class="section-heading"
+        data-en="Which Style <em>Speaks</em> to You?" data-fr="Quel Style Vous <em>Parle</em>?" data-es="¿Qué Estilo te <em>Habla</em>?" data-zh="哪种风格<em>适合</em>您？" data-ar="أي أسلوب <em>يتحدث</em> إليك؟" data-hi="कौन सी स्टाइल आपसे <em>बात</em> करती है?">Which Style <em>Speaks</em> to You?</h2>
+      <div class="gold-line center"></div>
+      <p class="section-sub"
+        data-en="Tell us your vibe — and we'll design around it. Every site we build starts here."
+        data-fr="Parlez-nous de votre ambiance — nous la translaterons en design. Chaque site que nous créons commence ici."
+        data-es="Cuéntanos tu vibe — y diseñaremos en torno a ello. Cada sitio que construimos comienza aquí."
+        data-zh="告诉我们您的风格——我们将围绕它设计。我们构建的每个网站都从这里开始。"
+        data-ar="أخبرنا بأسلوبك — وسنصمم حوله. كل موقع نبنيه يبدأ من هنا."
+        data-hi="हमें अपना वाइब बताएं — और हम उसके इर्द-गिर्द डिज़ाइन करेंगे। हमारी हर साइट यहीं से शुरू होती है।"
+        >Tell us your vibe — and we'll design around it. Every site we build starts here.</p>
+    </div>
+    <div class="grid-3" style="margin-bottom:2.5rem">
+      <div class="style-card light-bg reveal reveal-d1">
+        <div class="style-card-name">House of Lune</div>
+        <span class="style-card-tag" data-en="LUNAR · CALM" data-fr="LUNAIRE · CALME" data-es="LUNAR · CALMA" data-zh="月亮 · 平静" data-ar="قمري · هادئ" data-hi="चंद्र · शांत">LUNAR · CALM</span>
+        <p data-en="Feminine softness meets minimalist precision. Soothing palettes, fluid typography, breathing room."
+           data-fr="Douceur féminine rencontre précision minimaliste. Palettes apaisantes, typographie fluide."
+           data-es="Suavidad femenina se encuentra con precisión minimalista. Paletas suaves, tipografía fluida."
+           data-zh="女性柔美与极简精准的融合。舒缓调色板、流畅排版、呼吸空间。"
+           data-ar="النعومة الأنثوية تلتقي بالدقة البسيطة. لوحات مريحة وطباعة سلسة."
+           data-hi="स्त्री कोमलता मिनिमलिस्ट सटीकता से मिलती है। सुखद पैलेट, तरल टाइपोग्राफी।">Feminine softness meets minimalist precision. Soothing palettes, fluid typography, breathing room.</p>
+      </div>
+      <div class="style-card featured reveal reveal-d2">
+        <div class="style-card-name">Soft Studio</div>
+        <span class="style-card-tag" data-en="FEMININE · SOFT" data-fr="FÉMININ · DOUX" data-es="FEMENINO · SUAVE" data-zh="女性 · 柔和" data-ar="أنثوي · ناعم" data-hi="स्त्री · नरम">FEMININE · SOFT</span>
+        <p data-en="Warmth, intimacy, and elegant restraint. Perfect for beauty, coaching, and lifestyle brands."
+           data-fr="Chaleur, intimité et élégance retenue. Parfait pour la beauté, le coaching et les marques lifestyle."
+           data-es="Calidez, intimidad y elegante moderación. Perfecto para belleza, coaching y marcas lifestyle."
+           data-zh="温暖、亲密和优雅克制。完美适合美妆、辅导和生活方式品牌。"
+           data-ar="الدفء والحميمية والأناقة المقيدة. مثالي للجمال والتدريب وعلامات أسلوب الحياة."
+           data-hi="गर्मजोशी, अंतरंगता और सुरुचिपूर्ण संयम। ब्यूटी, कोचिंग और लाइफस्टाइल ब्रांड के लिए परफेक्ट।">Warmth, intimacy, and elegant restraint. Perfect for beauty, coaching, and lifestyle brands.</p>
+      </div>
+      <div class="style-card reveal reveal-d3">
+        <div class="style-card-name">Mia Beauty</div>
+        <span class="style-card-tag" data-en="MINIMAL · EPIC" data-fr="MINIMAL · ÉPIQUE" data-es="MINIMAL · ÉPICO" data-zh="极简 · 壮观" data-ar="بسيط · ملحمي" data-hi="मिनिमल · एपिक">MINIMAL · EPIC</span>
+        <p data-en="Clean, bold, and intentional. Every pixel earns its place. For brands that don't need to shout."
+           data-fr="Propre, audacieux et intentionnel. Chaque pixel mérite sa place. Pour les marques qui n'ont pas besoin de crier."
+           data-es="Limpio, audaz e intencional. Cada pixel gana su lugar. Para marcas que no necesitan gritar."
+           data-zh="干净、大胆、有意图。每个像素都有其存在的理由。适合不需要高喊的品牌。"
+           data-ar="نظيف وجريء ومقصود. كل بكسل يستحق مكانه. للعلامات التي لا تحتاج إلى الصراخ."
+           data-hi="साफ, साहसी और जानबूझकर। हर पिक्सेल अपनी जगह कमाता है। उन ब्रांड्स के लिए जिन्हें चिल्लाने की जरूरत नहीं।">Clean, bold, and intentional. Every pixel earns its place. For brands that don't need to shout.</p>
+      </div>
+      <div class="style-card green-bg reveal reveal-d1">
+        <div class="style-card-name">Terre &amp; Lumière</div>
+        <span class="style-card-tag" data-en="NATURAL · WARM" data-fr="NATUREL · CHALEUREUX" data-es="NATURAL · CÁLIDO" data-zh="自然 · 温暖" data-ar="طبيعي · دافئ" data-hi="प्राकृतिक · गर्म">NATURAL · WARM</span>
+        <p data-en="Earth tones, organic textures, and human warmth. For brands that feel as good as they look."
+           data-fr="Tons de terre, textures organiques et chaleur humaine. Pour les marques qui ressentent autant qu'elles paraissent."
+           data-es="Tonos tierra, texturas orgánicas y calidez humana. Para marcas que se sienten tan bien como se ven."
+           data-zh="大地色调、有机纹理和人性温暖。适合感觉与外观一样好的品牌。"
+           data-ar="ألوان ترابية وملمس عضوي ودفء إنساني. للعلامات التي تشعر بها بقدر ما تراها."
+           data-hi="अर्थ टोन, ऑर्गेनिक टेक्सचर और मानवीय गर्मजोशी। उन ब्रांड्स के लिए जो दिखते जितना अच्छा महसूस करते हैं।">Earth tones, organic textures, and human warmth. For brands that feel as good as they look.</p>
+      </div>
+      <div class="style-card featured reveal reveal-d2">
+        <div class="style-card-name">Maison Élite</div>
+        <span class="style-card-tag" data-en="LUXURY · NOW" data-fr="LUXE · MAINTENANT" data-es="LUJO · AHORA" data-zh="奢华 · 当下" data-ar="فاخر · الآن" data-hi="लक्ज़री · अभी">LUXURY · NOW</span>
+        <p data-en="Dark, editorial, and commanding. Bold contrasts, gold accents, cinematic presence."
+           data-fr="Sombre, éditorial et dominant. Contrastes audacieux, accents dorés, présence cinématique."
+           data-es="Oscuro, editorial y dominante. Contrastes audaces, acentos dorados, presencia cinematográfica."
+           data-zh="深沉、编辑性、威严感。大胆对比、金色点缀、电影般的存在感。"
+           data-ar="داكن وتحريري وآمر. تباينات جريئة ولمسات ذهبية وحضور سينمائي."
+           data-hi="डार्क, एडिटोरियल और कमांडिंग। बोल्ड कंट्रास्ट, गोल्ड एक्सेंट, सिनेमैटिक उपस्थिति।">Dark, editorial, and commanding. Bold contrasts, gold accents, cinematic presence.</p>
+      </div>
+      <div class="style-card brown-bg reveal reveal-d3">
+        <div class="style-card-name">Sahel Noir</div>
+        <span class="style-card-tag" data-en="AFRO-LUNAR" data-fr="AFRO-LUNAIRE" data-es="AFRO-LUNAR" data-zh="非洲月亮" data-ar="أفرو-قمري" data-hi="अफ्रो-लूनार">AFRO-LUNAR</span>
+        <p data-en="Rooted in heritage, elevated with modern edge. Rich textures, deep palettes, ancestral energy."
+           data-fr="Ancré dans le patrimoine, élevé avec une touche moderne. Textures riches, palettes profondes, énergie ancestrale."
+           data-es="Arraigado en la herencia, elevado con un toque moderno. Texturas ricas, paletas profundas, energía ancestral."
+           data-zh="植根于传承，融入现代边缘。丰富纹理、深沉调色板、祖先能量。"
+           data-ar="متجذر في التراث مع لمسة عصرية. ملمس غني ولوحات عميقة وطاقة أجدادية."
+           data-hi="विरासत में निहित, आधुनिक किनारे के साथ उन्नत। समृद्ध बनावट, गहरे पैलेट, पैतृक ऊर्जा।">Rooted in heritage, elevated with modern edge. Rich textures, deep palettes, ancestral energy.</p>
+      </div>
+    </div>
+    <div style="text-align:center" class="reveal">
+      <a href="#contact" class="btn btn-gold"
+         data-en="Book Your Style" data-fr="Réserver Votre Style" data-es="Reservar Tu Estilo" data-zh="预约您的风格" data-ar="احجز أسلوبك" data-hi="अपनी स्टाइल बुक करें">Book Your Style</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 11 · ABOUT                             -->
+<!-- ═══════════════════════════════════════════════ -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <!-- Left col -->
+      <div class="reveal">
+        <div class="about-logo-wrap">
+          <div class="about-logo-text">P&amp;P</div>
+        </div>
+        <div style="text-align:center;margin-top:1.5rem">
+          <span class="city-badge">🗽 NYC</span>
+          <span class="city-badge">🇸🇳 Dakar</span>
+        </div>
+      </div>
+      <!-- Right col -->
+      <div class="reveal reveal-d2">
+        <span class="overline"
+          data-en="Behind the Studio" data-fr="Derrière Plume &amp; Pixxel" data-es="Detrás del Estudio" data-zh="工作室背后" data-ar="خلف الاستوديو" data-hi="स्टूडियो के पीछे">Behind the Studio</span>
+        <h2 class="section-heading"
+          data-en="Behind <em>Plume &amp; Pixxel</em>" data-fr="Derrière <em>Plume &amp; Pixxel</em>" data-es="Detrás de <em>Plume &amp; Pixxel</em>" data-zh="<em>Plume &amp; Pixxel</em> 背后" data-ar="خلف <em>Plume &amp; Pixxel</em>" data-hi="<em>Plume &amp; Pixxel</em> के पीछे">Behind <em>Plume &amp; Pixxel</em></h2>
+        <div class="gold-line"></div>
+        <p style="color:var(--warm-accent);line-height:1.75;margin-bottom:1rem"
+          data-en="Bonjour, I'm Jasmine H. — a creative studio founder from New York and Dakar, Senegal. Born at the intersection of French and Senegalese culture, I've channeled that duality into design, creativity, and strategy."
+          data-fr="Bonjour, je suis Jasmine H. — fondatrice de studio créatif entre New York et Dakar, Sénégal. Née à l'intersection des cultures française et sénégalaise, j'ai canalisé cette dualité dans le design, la créativité et la stratégie."
+          data-es="Bonjour, soy Jasmine H. — fundadora de un estudio creativo entre Nueva York y Dakar, Senegal. Nacida en la intersección de las culturas francesa y senegalesa."
+          data-zh="你好，我是Jasmine H.——一位来自纽约和塞内加尔达喀尔的创意工作室创始人。生于法国和塞内加尔文化交汇处，我将这种双重性融入设计、创意和战略中。"
+          data-ar="مرحباً، أنا جاسمين هـ. — مؤسسة استوديو إبداعي من نيويورك وداكار، السنغال. وُلدت عند تقاطع الثقافتين الفرنسية والسنغالية."
+          data-hi="Bonjour, मैं Jasmine H. हूँ — न्यूयॉर्क और डकार, सेनेगल से क्रिएटिव स्टूडियो संस्थापक। फ्रांसीसी और सेनेगली संस्कृति के चौराहे पर जन्मी।"
+          >Bonjour, I'm Jasmine H. — a creative studio founder from New York and Dakar, Senegal. Born at the intersection of French and Senegalese culture, I've channeled that duality into design, creativity, and strategy.</p>
+        <p style="color:var(--warm-accent);line-height:1.75"
+          data-en="Plume &amp; Pixxel was born from the desire to create a studio where beauty and performance aren't opposites — a site that looks incredible AND converts clients."
+          data-fr="Plume &amp; Pixxel est né du désir de créer un studio où beauté et performance ne sont pas opposées — un site qui soit magnifique ET qui convertit."
+          data-es="Plume &amp; Pixxel nació del deseo de crear un estudio donde la belleza y el rendimiento no son opuestos."
+          data-zh="Plume &amp; Pixxel诞生于这样的愿望：创建一个美丽与性能并存的工作室——一个看起来令人惊叹且能转化客户的网站。"
+          data-ar="وُلد Plume &amp; Pixxel من الرغبة في إنشاء استوديو حيث الجمال والأداء ليسا متناقضين."
+          data-hi="Plume &amp; Pixxel इस इच्छा से जन्मा कि एक स्टूडियो बनाया जाए जहाँ सौंदर्य और प्रदर्शन विपरीत नहीं हैं।"
+          >Plume &amp; Pixxel was born from the desire to create a studio where beauty and performance aren't opposites — a site that looks incredible AND converts clients.</p>
+        <ul class="about-bullets">
+          <li data-en="Between NYC &amp; Dakar — fresh eyes on every new market"
+              data-fr="Entre NYC &amp; Dakar — regard neuf sur chaque nouveau marché"
+              data-es="Entre NYC y Dakar — ojos frescos en cada nuevo mercado"
+              data-zh="往返于纽约和达喀尔之间——对每个新市场都有新鲜视角"
+              data-ar="بين نيويورك وداكار — أعين جديدة على كل سوق"
+              data-hi="NYC और Dakar के बीच — हर नए बाजार पर नजरें">Between NYC &amp; Dakar — fresh eyes on every new market</li>
+          <li data-en="Bilingual — English &amp; French 🇫🇷"
+              data-fr="Bilingue — Anglais &amp; Français 🇫🇷"
+              data-es="Bilingüe — Inglés y Francés 🇫🇷"
+              data-zh="双语——英语和法语 🇫🇷"
+              data-ar="ثنائي اللغة — الإنجليزية والفرنسية 🇫🇷"
+              data-hi="द्विभाषी — अंग्रेजी और फ्रेंच 🇫🇷">Bilingual — English &amp; French 🇫🇷</li>
+          <li data-en="Rapid turnaround — most sites delivered in 5–7 days"
+              data-fr="Livraison rapide — la plupart des sites livrés en 5 à 7 jours"
+              data-es="Entrega rápida — la mayoría de los sitios entregados en 5-7 días"
+              data-zh="快速交付——大多数网站在5-7天内交付"
+              data-ar="تسليم سريع — معظم المواقع تُسلَّم في 5-7 أيام"
+              data-hi="तेज़ टर्नअराउंड — अधिकतर साइटें 5-7 दिनों में डिलीवर">Rapid turnaround — most sites delivered in 5–7 days</li>
+          <li data-en="Flexible payment — in USD, Euros, or CFA"
+              data-fr="Paiement flexible — en USD, Euros ou CFA"
+              data-es="Pago flexible — en USD, Euros o CFA"
+              data-zh="灵活付款——美元、欧元或西非法郎"
+              data-ar="دفع مرن — بالدولار أو اليورو أو فرنك أفريقي"
+              data-hi="लचीला भुगतान — USD, Euros, या CFA में">Flexible payment — in USD, Euros, or CFA</li>
+          <li data-en="Real partnership — we stay engaged, not just deliverers"
+              data-fr="Vrai partenariat — nous restons engagés, pas seulement livreurs"
+              data-es="Asociación real — nos mantenemos comprometidos, no solo entregamos"
+              data-zh="真正的合作伙伴关系——我们保持参与，不仅仅是交付者"
+              data-ar="شراكة حقيقية — نبقى منخرطين وليس مجرد مسلمين"
+              data-hi="वास्तविक साझेदारी — हम जुड़े रहते हैं, केवल डिलीवर नहीं करते">Real partnership — we stay engaged, not just deliverers</li>
+        </ul>
+        <a href="#contact" class="btn btn-gold"
+           data-en="Work With Us" data-fr="Travaillons Ensemble" data-es="Trabajar Con Nosotros" data-zh="与我们合作" data-ar="العمل معنا" data-hi="हमारे साथ काम करें">Work With Us</a>
+        <div class="founder-row">
+          <div class="founder-avatar">JH</div>
+          <div>
+            <div class="founder-name" data-en="Jasmine H." data-fr="Jasmine H." data-es="Jasmine H." data-zh="Jasmine H." data-ar="جاسمين هـ." data-hi="Jasmine H.">Jasmine H.</div>
+            <div class="founder-title" data-en="Founder · Plume &amp; Pixxel" data-fr="Fondatrice · Plume &amp; Pixxel" data-es="Fundadora · Plume &amp; Pixxel" data-zh="创始人 · Plume &amp; Pixxel" data-ar="المؤسسة · Plume &amp; Pixxel" data-hi="संस्थापक · Plume &amp; Pixxel">Founder · Plume &amp; Pixxel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 12 · PROCESS                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="bg-dark2">
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="How We Work" data-fr="Comment Ça Marche" data-es="Cómo Trabajamos" data-zh="我们如何工作" data-ar="كيف نعمل" data-hi="हम कैसे काम करते हैं">How We Work</span>
+      <h2 class="section-heading"
+        data-en="The <em>Process</em>" data-fr="Le <em>Processus</em>" data-es="El <em>Proceso</em>" data-zh="我们的<em>流程</em>" data-ar="<em>العملية</em>" data-hi="<em>प्रक्रिया</em>">The <em>Process</em></h2>
+      <div class="gold-line center"></div>
+      <p class="section-sub"
+        data-en="Simple, fluid, and built to fit your schedule."
+        data-fr="Simple, fluide et conçu pour s'adapter à votre emploi du temps."
+        data-es="Simple, fluido y construido para adaptarse a tu agenda."
+        data-zh="简单、流畅，专为适应您的时间表而设计。"
+        data-ar="بسيط وسلس ومصمم ليناسب جدولك الزمني."
+        data-hi="सरल, तरल, और आपके शेड्यूल के अनुरूप बनाया गया।">Simple, fluid, and built to fit your schedule.</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-card reveal reveal-d1">
+        <div class="process-num">01</div>
+        <h3 data-en="You Contact Us" data-fr="Vous Nous Contactez" data-es="Nos Contactas" data-zh="您联系我们" data-ar="تتواصل معنا" data-hi="आप हमसे संपर्क करें">You Contact Us</h3>
+        <p data-en="Fill out the project form. Tell us about your vision, goals, timeline, and budget — no call required to start."
+           data-fr="Remplissez le formulaire de projet. Parlez-nous de votre vision, objectifs, calendrier et budget."
+           data-es="Completa el formulario de proyecto. Cuéntanos sobre tu visión, objetivos, cronograma y presupuesto."
+           data-zh="填写项目表格。告诉我们您的愿景、目标、时间线和预算——无需电话即可开始。"
+           data-ar="املأ نموذج المشروع. أخبرنا عن رؤيتك وأهدافك وجدولك الزمني وميزانيتك."
+           data-hi="प्रोजेक्ट फॉर्म भरें। हमें अपनी दृष्टि, लक्ष्य, समयरेखा और बजट के बारे में बताएं।">Fill out the project form. Tell us about your vision, goals, timeline, and budget — no call required to start.</p>
+      </div>
+      <div class="process-card reveal reveal-d2">
+        <div class="process-num">02</div>
+        <h3 data-en="We Plan Together" data-fr="On Planifie Ensemble" data-es="Planificamos Juntos" data-zh="我们共同规划" data-ar="نخطط معاً" data-hi="हम मिलकर योजना बनाते हैं">We Plan Together</h3>
+        <p data-en="We align on strategy, sitemap, style direction, and deliverables. You know exactly what to expect."
+           data-fr="Nous nous alignons sur la stratégie, le plan de site, la direction stylistique et les livrables."
+           data-es="Nos alineamos en estrategia, mapa del sitio, dirección de estilo y entregables."
+           data-zh="我们在策略、网站地图、风格方向和交付物上达成一致。您确切知道会得到什么。"
+           data-ar="نتوافق على الاستراتيجية وخريطة الموقع واتجاه الأسلوب والمخرجات."
+           data-hi="हम रणनीति, साइटमैप, स्टाइल दिशा और डिलीवरेबल पर संरेखित होते हैं।">We align on strategy, sitemap, style direction, and deliverables. You know exactly what to expect.</p>
+      </div>
+      <div class="process-card reveal reveal-d3">
+        <div class="process-num">03</div>
+        <h3 data-en="We Create" data-fr="On Crée" data-es="Creamos" data-zh="我们创造" data-ar="نبدع" data-hi="हम बनाते हैं">We Create</h3>
+        <p data-en="Design, development, copywriting, and testing — all handled by our studio. You give feedback, we refine."
+           data-fr="Design, développement, rédaction et tests — tout géré par notre studio. Vous donnez votre avis, nous peaufinons."
+           data-es="Diseño, desarrollo, redacción y pruebas — todo manejado por nuestro estudio. Das retroalimentación, refinamos."
+           data-zh="设计、开发、文案和测试——全部由我们的工作室处理。您提供反馈，我们精炼。"
+           data-ar="التصميم والتطوير والكتابة والاختبار — كل شيء يتولاه استوديونا. تقدم ملاحظاتك ونحسّن."
+           data-hi="डिज़ाइन, विकास, कॉपीराइटिंग और परीक्षण — सब हमारे स्टूडियो द्वारा। आप फीडबैक दें, हम परिष्कृत करते हैं।">Design, development, copywriting, and testing — all handled by our studio. You give feedback, we refine.</p>
+      </div>
+      <div class="process-card reveal reveal-d4">
+        <div class="process-num">04</div>
+        <h3 data-en="You Go Live" data-fr="Vous Êtes en Ligne" data-es="Sales en Vivo" data-zh="您上线了" data-ar="تنطلق مباشراً" data-hi="आप लाइव हो जाते हैं">You Go Live</h3>
+        <p data-en="Launch day feels great. Your site is live, fast, and ready to win clients — and we're here if you ever need updates."
+           data-fr="Le jour du lancement est formidable. Votre site est en ligne, rapide et prêt à gagner des clients."
+           data-es="El día del lanzamiento es emocionante. Tu sitio está en vivo, rápido y listo para ganar clientes."
+           data-zh="上线那天感觉很好。您的网站上线了、快速且准备好赢得客户——我们随时为您提供更新支持。"
+           data-ar="يوم الإطلاق رائع. موقعك يعمل وسريع وجاهز لكسب العملاء."
+           data-hi="लॉन्च का दिन शानदार लगता है। आपकी साइट लाइव है, तेज़ है और क्लाइंट जीतने के लिए तैयार है।">Launch day feels great. Your site is live, fast, and ready to win clients — and we're here if you ever need updates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 13 · BON À SAVOIR (FAQ/INFO)           -->
+<!-- ═══════════════════════════════════════════════ -->
+<section>
+  <div class="section-inner">
+    <div class="section-header text-center reveal">
+      <span class="overline"
+        data-en="Good to Know" data-fr="Bon à Savoir" data-es="Bueno Saber" data-zh="须知事项" data-ar="جيد أن تعرف" data-hi="जानना अच्छा है">Good to Know</span>
+      <h2 class="section-heading"
+        data-en="Before We <em>Start</em> — A Few Things" data-fr="Avant de Commencer — <em>Quelques Infos</em>" data-es="Antes de Comenzar — <em>Algunas Cosas</em>" data-zh="开始之前——<em>几件事</em>" data-ar="قبل أن نبدأ — <em>بعض الأشياء</em>" data-hi="शुरू करने से पहले — <em>कुछ बातें</em>">Before We <em>Start</em> — A Few Things</h2>
+      <div class="gold-line center"></div>
+      <p class="section-sub"
+        data-en="All of this, so there are no surprises."
+        data-fr="Tout cela, afin qu'il n'y ait pas de surprises."
+        data-es="Todo esto, para que no haya sorpresas."
+        data-zh="了解这些，这样就不会有意外。"
+        data-ar="كل هذا حتى لا تكون هناك مفاجآت."
+        data-hi="यह सब, ताकि कोई आश्चर्य न हो।">All of this, so there are no surprises.</p>
+    </div>
+    <div class="grid-3">
+      <div class="info-card reveal reveal-d1">
+        <div class="info-card-icon">💰</div>
+        <h3 data-en="50% to Start" data-fr="50% pour Commencer" data-es="50% para Empezar" data-zh="50%预付款启动" data-ar="٥٠٪ للبدء" data-hi="शुरू करने के लिए 50%">50% to Start</h3>
+        <p data-en="A 50% deposit secures your project slot. The balance is due upon completion and before launch."
+           data-fr="Un acompte de 50% sécurise votre créneau de projet. Le solde est dû à la livraison et avant le lancement."
+           data-es="Un depósito del 50% asegura tu espacio en el proyecto. El saldo se debe al finalizar y antes del lanzamiento."
+           data-zh="50%的定金确保您的项目位置。余款在完成时且上线前支付。"
+           data-ar="وديعة بنسبة ٥٠٪ تؤمن فتحة مشروعك. الرصيد مستحق عند الاكتمال وقبل الإطلاق."
+           data-hi="50% जमा आपके प्रोजेक्ट स्लॉट को सुरक्षित करता है। शेष राशि पूर्ण होने पर और लॉन्च से पहले देय है।">A 50% deposit secures your project slot. The balance is due upon completion and before launch.</p>
+      </div>
+      <div class="info-card reveal reveal-d2">
+        <div class="info-card-icon">📄</div>
+        <h3 data-en="You Provide the Content" data-fr="Vous Fournissez le Contenu" data-es="Tú Provees el Contenido" data-zh="您提供内容" data-ar="أنت تقدم المحتوى" data-hi="आप सामग्री प्रदान करते हैं">You Provide the Content</h3>
+        <p data-en="Photos, brand assets, and text are your responsibility. We can assist with AI copywriting if needed."
+           data-fr="Les photos, ressources de marque et textes sont votre responsabilité. Nous pouvons aider avec la rédaction IA si nécessaire."
+           data-es="Las fotos, activos de marca y texto son tu responsabilidad. Podemos ayudar con redacción IA si es necesario."
+           data-zh="照片、品牌资产和文字是您的责任。如需要，我们可以协助AI文案写作。"
+           data-ar="الصور وأصول العلامة التجارية والنصوص مسؤوليتك. يمكننا المساعدة في الكتابة بالذكاء الاصطناعي عند الحاجة."
+           data-hi="तस्वीरें, ब्रांड एसेट और टेक्स्ट आपकी जिम्मेदारी है। यदि आवश्यक हो तो हम AI कॉपीराइटिंग में सहायता कर सकते हैं।">Photos, brand assets, and text are your responsibility. We can assist with AI copywriting if needed.</p>
+      </div>
+      <div class="info-card reveal reveal-d3">
+        <div class="info-card-icon">✏️</div>
+        <h3 data-en="Revisions &amp; Modifications" data-fr="Révisions &amp; Modifications" data-es="Revisiones &amp; Modificaciones" data-zh="修订与修改" data-ar="المراجعات والتعديلات" data-hi="संशोधन और परिवर्तन">Revisions &amp; Modifications</h3>
+        <p data-en="Two rounds of revisions are included. Additional changes are billed at an hourly rate agreed upfront."
+           data-fr="Deux séries de révisions sont incluses. Les modifications supplémentaires sont facturées à un taux horaire convenu à l'avance."
+           data-es="Se incluyen dos rondas de revisiones. Los cambios adicionales se facturan a una tarifa por hora acordada de antemano."
+           data-zh="包含两轮修订。额外修改按预先商定的时薪收费。"
+           data-ar="تشمل جولتان من المراجعات. التغييرات الإضافية تُفوتر بسعر ساعي متفق عليه مسبقاً."
+           data-hi="दो दौर की समीक्षाएं शामिल हैं। अतिरिक्त परिवर्तन पहले से सहमत प्रति घंटे की दर पर बिल किए जाते हैं।">Two rounds of revisions are included. Additional changes are billed at an hourly rate agreed upfront.</p>
+      </div>
+      <div class="info-card reveal reveal-d1">
+        <div class="info-card-icon">🌐</div>
+        <h3 data-en="Hosting Included — $15/mo" data-fr="Hébergement Inclus — 15$/mois" data-es="Alojamiento Incluido — $15/mes" data-zh="含托管——每月$15" data-ar="الاستضافة مشمولة — ١٥$/شهر" data-hi="होस्टिंग शामिल — $15/माह">Hosting Included — $15/mo</h3>
+        <p data-en="We handle hosting, domain renewals, and backups so you never worry about the technical side."
+           data-fr="Nous gérons l'hébergement, les renouvellements de domaine et les sauvegardes pour que vous ne vous souciez jamais du côté technique."
+           data-es="Manejamos el alojamiento, las renovaciones de dominio y las copias de seguridad para que nunca te preocupes por el lado técnico."
+           data-zh="我们处理托管、域名续费和备份，您无需担心技术问题。"
+           data-ar="نتولى الاستضافة وتجديد النطاق والنسخ الاحتياطية حتى لا تقلق أبداً بشأن الجانب التقني."
+           data-hi="हम होस्टिंग, डोमेन नवीनीकरण और बैकअप संभालते हैं ताकि आप कभी तकनीकी पक्ष के बारे में चिंता न करें।">We handle hosting, domain renewals, and backups so you never worry about the technical side.</p>
+      </div>
+      <div class="info-card reveal reveal-d2">
+        <div class="info-card-icon">💳</div>
+        <h3 data-en="Payment Methods" data-fr="Moyens de Paiement" data-es="Métodos de Pago" data-zh="付款方式" data-ar="طرق الدفع" data-hi="भुगतान के तरीके">Payment Methods</h3>
+        <p data-en="We accept Stripe, PayPal, Wave, and bank transfer — in USD, EUR, GBP, or XOF (CFA)."
+           data-fr="Nous acceptons Stripe, PayPal, Wave et virement bancaire — en USD, EUR, GBP ou XOF (CFA)."
+           data-es="Aceptamos Stripe, PayPal, Wave y transferencia bancaria — en USD, EUR, GBP o XOF (CFA)."
+           data-zh="我们接受Stripe、PayPal、Wave和银行转账——以美元、欧元、英镑或西非法郎（CFA）。"
+           data-ar="نقبل Stripe وPayPal وWave والتحويل المصرفي — بالدولار واليورو والجنيه الإسترليني والفرنك الأفريقي."
+           data-hi="हम Stripe, PayPal, Wave और बैंक ट्रांसफर स्वीकार करते हैं — USD, EUR, GBP, या XOF (CFA) में।">We accept Stripe, PayPal, Wave, and bank transfer — in USD, EUR, GBP, or XOF (CFA).</p>
+      </div>
+      <div class="info-card reveal reveal-d3">
+        <div class="info-card-icon">⚡</div>
+        <h3 data-en="Express Available" data-fr="Livraison Express Disponible" data-es="Express Disponible" data-zh="急速服务可用" data-ar="الخدمة العاجلة متاحة" data-hi="एक्सप्रेस उपलब्ध">Express Available</h3>
+        <p data-en="Need your site in under 72 hours? We offer rush delivery for an additional fee — just ask."
+           data-fr="Besoin de votre site en moins de 72 heures? Nous proposons une livraison express moyennant un supplément."
+           data-es="¿Necesitas tu sitio en menos de 72 horas? Ofrecemos entrega urgente por una tarifa adicional."
+           data-zh="需要在72小时内完成？我们提供加急交付，额外收费——只需询问。"
+           data-ar="هل تحتاج موقعك في أقل من 72 ساعة؟ نقدم التسليم العاجل بمبلغ إضافي."
+           data-hi="क्या आपको 72 घंटे से कम में साइट चाहिए? हम अतिरिक्त शुल्क पर रश डिलीवरी प्रदान करते हैं।">Need your site in under 72 hours? We offer rush delivery for an additional fee — just ask.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 14 · CONTACT                           -->
+<!-- ═══════════════════════════════════════════════ -->
+<section id="contact" class="bg-dark2">
+  <div class="section-inner">
+    <div class="contact-inner">
+      <div class="reveal">
+        <span class="overline"
+          data-en="Let's Build Together" data-fr="Construisons Ensemble" data-es="Construyamos Juntos" data-zh="一起打造" data-ar="لنبنِ معاً" data-hi="मिलकर बनाते हैं">Let's Build Together</span>
+        <h2 class="section-heading"
+          data-en="Build Your <em>Site</em> With Us" data-fr="Construisons <em>Votre Site</em>" data-es="Construye Tu <em>Sitio</em> Con Nosotros" data-zh="与我们<em>共建</em>您的网站" data-ar="ابنِ <em>موقعك</em> معنا" data-hi="हमारे साथ अपनी <em>साइट</em> बनाएं">Build Your <em>Site</em> With Us</h2>
+        <div class="gold-line center"></div>
+        <p class="section-sub"
+          data-en="Reach out — we'll get back to you within 24 hours and map out your project together."
+          data-fr="Contactez-nous — nous vous répondrons dans les 24 heures et planifierons votre projet ensemble."
+          data-es="Contáctanos — te responderemos en 24 horas y mapearemos tu proyecto juntos."
+          data-zh="联系我们——我们将在24小时内回复，一起规划您的项目。"
+          data-ar="تواصل معنا — سنرد في غضون 24 ساعة ونرسم مشروعك معاً."
+          data-hi="संपर्क करें — हम 24 घंटे में जवाब देंगे और आपके प्रोजेक्ट की योजना मिलकर बनाएंगे।">Reach out — we'll get back to you within 24 hours and map out your project together.</p>
+      </div>
+      <div class="contact-cards reveal">
+        <div class="contact-card">
+          <div class="label" data-en="New York, USA" data-fr="New York, USA" data-es="Nueva York, EE.UU." data-zh="美国纽约" data-ar="نيويورك، الولايات المتحدة" data-hi="न्यूयॉर्क, USA">New York, USA</div>
+          <div class="value">+1 (347) 812-4528</div>
+        </div>
+        <div class="contact-card">
+          <div class="label" data-en="Dakar, Senegal" data-fr="Dakar, Sénégal" data-es="Dakar, Senegal" data-zh="塞内加尔达喀尔" data-ar="داكار، السنغال" data-hi="डकार, सेनेगल">Dakar, Senegal</div>
+          <div class="value">+221 77 452 11 18</div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="contact-detail">
+          <span class="contact-icon">✉</span>
+          <a href="mailto:plumepixxel@gmail.com">plumepixxel@gmail.com</a>
+        </div>
+        <div class="contact-detail">
+          <span class="contact-icon">📸</span>
+          <a href="#" target="_blank">@plumepixx</a>
+        </div>
+        <div style="margin-top:2rem">
+          <a href="mailto:plumepixxel@gmail.com" class="btn btn-gold"
+             data-en="Request Your Project" data-fr="Demander Votre Projet" data-es="Solicitar Su Proyecto" data-zh="申请您的项目" data-ar="اطلب مشروعك" data-hi="अपना प्रोजेक्ट मांगें">Request Your Project</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- FOOTER                                         -->
+<!-- ═══════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-social">@plumepixx</div>
+  <div class="footer-logo">Plume &amp; Pixxel</div>
+  <p style="color:var(--gray);font-size:.9rem;margin-top:.35rem"
+     data-en="Creative Digital Studio · New York · Dakar"
+     data-fr="Studio Créatif Digital · New York · Dakar"
+     data-es="Estudio Creativo Digital · Nueva York · Dakar"
+     data-zh="创意数字工作室 · 纽约 · 达喀尔"
+     data-ar="استوديو إبداعي رقمي · نيويورك · داكار"
+     data-hi="क्रिएटिव डिजिटल स्टूडियो · न्यूयॉर्क · डकार">Creative Digital Studio · New York · Dakar</p>
+  <div class="footer-links">
+    <a href="#services"   data-en="Services"  data-fr="Services"  data-es="Servicios" data-zh="服务"  data-ar="الخدمات" data-hi="सेवाएं">Services</a>
+    <a href="#portfolio"  data-en="Portfolio" data-fr="Portfolio" data-es="Portafolio" data-zh="案例"  data-ar="معرض"    data-hi="पोर्टफोलियो">Portfolio</a>
+    <a href="#about"      data-en="About"     data-fr="À Propos"  data-es="Nosotros"  data-zh="关于"  data-ar="عنا"     data-hi="परिचय">About</a>
+    <a href="#contact"    data-en="Contact"   data-fr="Contact"   data-es="Contacto"  data-zh="联系"  data-ar="تواصل"  data-hi="संपर्क">Contact</a>
+  </div>
+  <p class="footer-copy"
+     data-en="© 2025 Plume &amp; Pixxel. All rights reserved."
+     data-fr="© 2025 Plume &amp; Pixxel. Tous droits réservés."
+     data-es="© 2025 Plume &amp; Pixxel. Todos los derechos reservados."
+     data-zh="© 2025 Plume &amp; Pixxel. 保留所有权利。"
+     data-ar="© 2025 Plume &amp; Pixxel. جميع الحقوق محفوظة."
+     data-hi="© 2025 Plume &amp; Pixxel. सर्वाधिकार सुरक्षित।">© 2025 Plume &amp; Pixxel. All rights reserved.</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                     -->
+<!-- ═══════════════════════════════════════════════ -->
+<script>
+/* ── LANG SWITCHER ────────────────────────────── */
+const LANG_LABELS = {en:'EN',fr:'FR',es:'ES',zh:'ZH',ar:'AR',hi:'HI'};
+const RTL_LANGS = ['ar'];
+let currentLang = localStorage.getItem('pp-lang') || 'en';
+
+function applyLang(lang){
+  currentLang = lang;
+  localStorage.setItem('pp-lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir = RTL_LANGS.includes(lang) ? 'rtl' : 'ltr';
+  document.getElementById('lang-label').textContent = LANG_LABELS[lang];
+  // Update all translated elements
+  document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+    const val = el.getAttribute('data-' + lang);
+    if(val) el.innerHTML = val;
+  });
+  // Mark active button
+  document.querySelectorAll('#lang-dropdown button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+}
+
+// Lang dropdown toggle
+const langBtn = document.getElementById('lang-btn');
+const langDrop = document.getElementById('lang-dropdown');
+langBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  const open = langDrop.classList.toggle('open');
+  langBtn.classList.toggle('open', open);
+  langBtn.setAttribute('aria-expanded', open);
+});
+document.addEventListener('click', () => {
+  langDrop.classList.remove('open');
+  langBtn.classList.remove('open');
+  langBtn.setAttribute('aria-expanded', false);
+});
+langDrop.querySelectorAll('button').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    applyLang(btn.dataset.lang);
+    langDrop.classList.remove('open');
+    langBtn.classList.remove('open');
+  });
+});
+
+// Apply saved language on load
+applyLang(currentLang);
+
+/* ── NAV SCROLL ───────────────────────────────── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+  // progress bar
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress-bar').style.width = (window.scrollY / total * 100) + '%';
+}, {passive:true});
+
+/* ── MOBILE NAV ───────────────────────────────── */
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobile-nav');
+hamburger.addEventListener('click', () => {
+  mobileNav.classList.toggle('open');
+});
+function closeMobileNav(){ mobileNav.classList.remove('open'); }
+
+/* ── SCROLL REVEAL ────────────────────────────── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
