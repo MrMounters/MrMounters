@@ -25,44 +25,87 @@
       linear-gradient(90deg,rgba(79,209,230,0.035) 1px,transparent 1px) 0 0/54px 54px;
   }
   /* Top bar */
-  .pnav{ position:relative; z-index:3; display:flex; align-items:center; justify-content:space-between;
-    padding:1rem 1.5rem; border-bottom:1px solid rgba(79,209,230,0.16); background:rgba(10,20,32,0.85); backdrop-filter:blur(12px); }
-  .pnav-logo{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1rem; }
-  .pnav-logo span{ color:var(--gold); }
-  .pnav-right{ display:flex; align-items:center; gap:1rem; }
-  .pnav-user{ font-family:var(--mono); font-size:0.68rem; color:var(--warm-accent); }
-  .signout{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-accent);
-    background:none; border:1px solid var(--card-border); border-radius:2px; padding:0.45rem 0.85rem; cursor:pointer; transition:border-color .2s,color .2s; }
-  .signout:hover{ border-color:var(--gold); color:var(--gold); }
-  /* Shell */
-  .shell{ position:relative; z-index:1; display:grid; grid-template-columns:218px minmax(0,1fr); max-width:1240px; margin:0 auto; min-height:calc(100vh - 57px); }
-  .side{ border-right:1px solid var(--card-border); padding:1.6rem 0.9rem; display:flex; flex-direction:column; gap:0.2rem; position:sticky; top:0; align-self:start; max-height:100vh; overflow-y:auto; }
-  .side-k{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--warm-muted); padding:0.6rem 0.8rem 0.4rem; }
-  .navitem{ display:flex; align-items:center; gap:0.7rem; padding:0.66rem 0.8rem; border-radius:3px; cursor:pointer;
-    font-size:0.86rem; color:var(--warm-accent); border:1px solid transparent; transition:background .18s,color .18s,border-color .18s; }
-  .navitem svg{ width:16px; height:16px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2; }
-  .navitem:hover{ color:var(--white); background:rgba(79,209,230,0.05); }
-  .navitem.active{ color:var(--gold); background:rgba(79,209,230,0.08); border-color:rgba(79,209,230,0.25); }
-  .main{ padding:2.2rem 2rem 4rem; min-width:0; }
-  .sec{ display:none; animation:fade .4s both; }
+  .pnav{ position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:0.9rem;
+    padding:0.95rem 1.1rem; border-bottom:1px solid rgba(79,209,230,0.16); background:rgba(10,20,32,0.92); backdrop-filter:blur(12px); }
+  .hamb{ display:flex; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:0.25rem; }
+  .hamb span{ width:21px; height:2px; background:var(--white); border-radius:2px; }
+  .pnav-acct{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:0.98rem; flex:1; }
+  .pnav-acct span{ color:var(--gold); }
+  .ic{ background:none; border:none; color:var(--warm-accent); cursor:pointer; padding:0.3rem; position:relative; }
+  .ic svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; }
+  .ic .dot{ position:absolute; top:3px; right:3px; width:7px; height:7px; border-radius:50%; background:var(--gold); }
+
+  /* Slide-out menu (Stripe style) */
+  .menu{ position:fixed; inset:0; z-index:60; background:var(--dark); transform:translateX(-100%);
+    transition:transform 0.32s cubic-bezier(0.16,1,0.3,1); overflow-y:auto; padding:1rem 1.2rem 3rem; }
+  .menu.open{ transform:none; }
+  .menu-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.4rem; }
+  .menu-x{ background:none; border:none; color:var(--white); cursor:pointer; padding:0.3rem; display:flex; }
+  .menu-x svg{ width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2; }
+  .menu-top-ic{ display:flex; gap:0.4rem; }
+  .acct{ display:flex; align-items:center; gap:0.85rem; background:var(--dark3); border:1px solid var(--card-border);
+    border-radius:8px; padding:0.85rem 1rem; margin-bottom:0.4rem; }
+  .acct-logo{ width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg,var(--gold),#2f8aa0);
+    color:var(--dark); display:flex; align-items:center; justify-content:center; font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:0.82rem; flex-shrink:0; }
+  .acct-name{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; display:flex; align-items:center; gap:0.5rem; }
+  .acct-name svg{ width:15px; height:15px; stroke:var(--warm-muted); fill:none; stroke-width:2; }
+  .menu-div{ height:1px; background:var(--card-border); margin:1rem 0; }
+  .m-item{ display:flex; align-items:center; gap:0.9rem; padding:0.85rem 0.55rem; border-radius:6px;
+    color:var(--warm-accent); font-size:1rem; cursor:pointer; text-decoration:none; }
+  .m-item svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+  .m-item:hover{ background:rgba(79,209,230,0.06); color:var(--white); }
+  .m-item.active{ color:var(--gold); font-weight:600; }
+  .m-section{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--warm-muted); padding:1.3rem 0.55rem 0.5rem; }
+
+  /* Content */
+  .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 4rem; }
+  .sec{ display:none; animation:fade 0.4s both; }
   .sec.active{ display:block; }
   @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
   .eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem; }
-  .h1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.9rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
-  .lead{ color:var(--warm-accent); font-size:0.9rem; margin-bottom:1.8rem; }
-  /* Cards & stats */
-  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.6rem; }
+  .h1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.8rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
+  .lead{ color:var(--warm-accent); font-size:0.9rem; margin-bottom:1.6rem; }
+
+  /* Stripe-style dashboard */
+  .today{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:2rem; letter-spacing:-0.02em; }
+  .rule{ height:1px; background:var(--card-border); margin:0.85rem 0 1.5rem; }
+  .metric-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; gap:1rem; }
+  .mdrop{ background:none; border:none; color:var(--warm-accent); font-family:'Archivo',sans-serif; font-size:0.95rem; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:0.35rem; }
+  .mdrop svg{ width:13px; height:13px; stroke:currentColor; fill:none; stroke-width:2.4; }
+  .metric-val{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:2.7rem; letter-spacing:-0.03em; line-height:1; }
+  .metric-time{ color:var(--warm-muted); font-size:0.82rem; margin-top:0.5rem; margin-bottom:1.3rem; }
+  .chart{ display:flex; align-items:flex-end; gap:3px; height:165px; border-bottom:1px solid var(--card-border);
+    background:repeating-linear-gradient(90deg,transparent,transparent 33px,rgba(159,179,200,0.05) 33px,rgba(159,179,200,0.05) 34px); }
+  .chart i{ flex:1; background:linear-gradient(var(--gold),rgba(79,209,230,0.22)); border-radius:2px 2px 0 0; min-height:2px; opacity:0.9; transition:height 0.5s cubic-bezier(0.16,1,0.3,1); }
+  .chart-ax{ display:flex; justify-content:space-between; font-family:var(--mono); font-size:0.62rem; color:var(--warm-muted); margin-top:0.5rem; }
+  .mini-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.3rem; margin:1.8rem 0 1.6rem; }
+  .mini-h{ display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem; gap:0.5rem; }
+  .mini-h span{ font-size:0.88rem; color:var(--warm-accent); font-weight:500; }
+  .mini-v{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1.7rem; letter-spacing:-0.02em; }
+  .mini-d{ font-family:var(--mono); font-size:0.6rem; color:var(--green); margin-top:0.3rem; }
+  .reco{ position:relative; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1.3rem 1.4rem; margin-bottom:1.1rem; }
+  .reco-x{ position:absolute; top:0.9rem; right:1rem; background:none; border:none; color:var(--warm-muted); cursor:pointer; font-size:0.95rem; }
+  .reco-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:0.5rem; }
+  .reco-d{ color:var(--gray); font-size:0.9rem; line-height:1.6; margin-bottom:0.7rem; }
+  .setup{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1.2rem 1.4rem; margin-bottom:1.2rem; }
+  .setup-h{ display:flex; justify-content:space-between; align-items:center; font-weight:600; margin-bottom:0.7rem; }
+  .setup-pct{ font-family:var(--mono); font-size:0.74rem; color:var(--gold); }
+  .setup-bar{ height:6px; border-radius:3px; background:rgba(79,209,230,0.12); overflow:hidden; margin-bottom:0.7rem; }
+  .setup-bar i{ display:block; height:100%; background:var(--gold); }
+  .setup-next{ font-size:0.86rem; color:var(--warm-accent); }
+
+  /* Shared (other sections) */
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin-bottom:1.6rem; }
   .stat{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.2rem 1.3rem; }
   .stat-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; }
   .stat-v{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; }
   .stat-v small{ font-size:0.8rem; color:var(--gray); font-family:'Archivo',sans-serif; font-weight:400; }
   .stat-d{ font-family:var(--mono); font-size:0.6rem; margin-top:0.4rem; color:var(--green); }
   .stat-d.down{ color:#ff8b6b; }
-  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.5rem 1.5rem; margin-bottom:1.2rem; overflow-x:auto; }
+  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.4rem 1.4rem; margin-bottom:1.2rem; overflow-x:auto; }
   .panel-h{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
   .panel-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; }
   .panel-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
-  /* Table */
   table{ width:100%; border-collapse:collapse; font-size:0.84rem; }
   .panel table{ min-width:460px; }
   .nw{ white-space:nowrap; }
@@ -80,7 +123,8 @@
   .btn-p:hover{ background:var(--gold-light); box-shadow:0 4px 18px rgba(79,209,230,0.3); }
   .btn-o{ background:none; border:1px solid var(--card-border); color:var(--warm-accent); }
   .btn-o:hover{ border-color:var(--gold); color:var(--gold); }
-  .link{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.04em; color:var(--gold); text-decoration:none; cursor:pointer; }
+  .link{ font-family:var(--mono); font-size:0.74rem; letter-spacing:0.02em; color:var(--gold); text-decoration:none; cursor:pointer; }
+  .link:hover{ color:var(--gold-light); }
   .ta{ width:100%; background:rgba(226,236,245,0.04); border:1px solid rgba(226,236,245,0.12); border-radius:4px; padding:0.85rem; color:var(--white); font-family:'Archivo',sans-serif; font-size:0.88rem; outline:none; resize:vertical; min-height:96px; margin-bottom:0.7rem; }
   .ta:focus{ border-color:rgba(79,209,230,0.45); }
   .sel{ background:rgba(226,236,245,0.04); border:1px solid rgba(226,236,245,0.12); border-radius:4px; padding:0.6rem 0.7rem; color:var(--white); font-family:'Archivo',sans-serif; font-size:0.84rem; outline:none; }
@@ -89,239 +133,267 @@
   .bar > i{ display:block; height:100%; background:var(--gold); border-radius:3px; }
   .cardrow{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
   .cc{ width:46px; height:30px; border-radius:4px; background:linear-gradient(135deg,#1a3450,#0e2236); border:1px solid var(--card-border); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:0.55rem; color:var(--gold); }
-  .loading{ position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:var(--dark); font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); letter-spacing:0.1em; }
   .muted{ color:var(--warm-muted); font-size:0.8rem; line-height:1.6; }
+  .loading{ position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:var(--dark); font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); letter-spacing:0.1em; }
   .hidden{ display:none !important; }
-  @media (max-width:860px){
-    .shell{ grid-template-columns:56px minmax(0,1fr); }
-    .side{ padding:0.9rem 0.3rem; align-items:center; gap:0.3rem; }
-    .side-k{ display:none; }
-    .navitem{ justify-content:center; padding:0.7rem 0; gap:0; width:42px; }
-    .navitem span{ display:none; }
-    .navitem svg{ width:20px; height:20px; }
-    .main{ padding:1.5rem 0.9rem 3rem; }
-    .pnav{ padding:0.9rem 1rem; }
-    .pnav-logo{ font-size:0.82rem; }
-    .pnav-user{ display:none; }
-  }
+  code{ font-family:var(--mono); font-size:0.78em; color:var(--warm-accent); }
 </style>
 </head>
 <body>
   <div class="loading" id="loading">// authenticating…</div>
 
+  <!-- Top bar -->
   <nav class="pnav">
-    <div class="pnav-logo">John Bert <span>Web Strategy</span></div>
-    <div class="pnav-right">
-      <span class="pnav-user" id="who">—</span>
-      <button class="signout" onclick="signOut()">Sign out</button>
-    </div>
+    <button class="hamb" onclick="openMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="pnav-acct" id="acctName">Demo Client</div>
+    <button class="ic" aria-label="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="dot"></span></button>
+    <button class="ic" aria-label="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></button>
   </nav>
 
-  <div class="shell">
-    <aside class="side" id="side">
-      <div class="side-k">Workspace</div>
-      <div class="navitem active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Overview</span></div>
-      <div class="navitem" data-s="domains" onclick="go('domains')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg><span>Domains</span></div>
-      <div class="navitem" data-s="requests" onclick="go('requests')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Requests</span></div>
-      <div class="navitem" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span>Leads</span></div>
-      <div class="navitem" data-s="ads" onclick="go('ads')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><span>Ad Tracking</span></div>
-      <div class="navitem" data-s="visitors" onclick="go('visitors')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Visitors</span></div>
-      <div class="side-k">Account</div>
-      <div class="navitem" data-s="billing" onclick="go('billing')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Billing</span></div>
-    </aside>
-
-    <main class="main">
-      <!-- OVERVIEW -->
-      <section class="sec active" id="sec-overview">
-        <div class="eyebrow">// Overview</div>
-        <h1 class="h1">Welcome back<span id="hi"></span>.</h1>
-        <p class="lead">Here's how your web presence is performing this month.</p>
-        <div class="stat-grid">
-          <div class="stat"><div class="stat-k">Active Domains</div><div class="stat-v">2</div><div class="stat-d">All healthy</div></div>
-          <div class="stat"><div class="stat-k">Leads · 30d</div><div class="stat-v">47</div><div class="stat-d">▲ 18% vs last</div></div>
-          <div class="stat"><div class="stat-k">Ad ROAS</div><div class="stat-v">6.4<small>×</small></div><div class="stat-d">▲ 0.9×</div></div>
-          <div class="stat"><div class="stat-k">Sessions · 7d</div><div class="stat-v">1,284</div><div class="stat-d">▲ 6%</div></div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Recent activity</div><span class="panel-k">live</span></div>
-          <table>
-            <tr><td><b>New lead</b> — Maria G. via Google Ads</td><td style="text-align:right;color:var(--warm-muted)">2h ago</td></tr>
-            <tr><td><b>Invoice paid</b> — INV-0007 · $294.00</td><td style="text-align:right;color:var(--warm-muted)">Jun 1</td></tr>
-            <tr><td><b>Change request closed</b> — Updated hours on homepage</td><td style="text-align:right;color:var(--warm-muted)">May 28</td></tr>
-            <tr><td><b>Meta campaign</b> — "Summer Promo" went live</td><td style="text-align:right;color:var(--warm-muted)">May 24</td></tr>
-          </table>
-        </div>
-      </section>
-
-      <!-- DOMAINS -->
-      <section class="sec" id="sec-domains">
-        <div class="eyebrow">// Domains</div>
-        <h1 class="h1">Your domains</h1>
-        <p class="lead">Hosting, SSL, and renewal status for every domain we manage for you.</p>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Managed domains</div><button class="btn btn-o" onclick="go('requests')">+ Request a domain</button></div>
-          <table>
-            <thead><tr><th>Domain</th><th>Status</th><th>SSL</th><th>Renews</th><th></th></tr></thead>
-            <tbody>
-              <tr><td><b>yourbusiness.com</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-              <tr><td><b>yourbusiness.net</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-              <tr><td><b>getyourbusiness.com</b></td><td><span class="pill mut">Redirect</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Nov 02, 2026</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="muted">Need a new domain or a transfer? Send a request and we'll handle the setup, DNS, and SSL for you.</p>
-      </section>
-
-      <!-- REQUESTS -->
-      <section class="sec" id="sec-requests">
-        <div class="eyebrow">// Requests</div>
-        <h1 class="h1">Request a change</h1>
-        <p class="lead">Tell us what to update — copy, photos, hours, new pages, anything. We typically reply within hours.</p>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">New request</div></div>
-          <form onsubmit="submitRequest(event)">
-            <textarea class="ta" id="reqText" placeholder="e.g. Update our holiday hours and swap the hero photo for the new one I'll text you…" required></textarea>
-            <div class="cardrow" style="justify-content:space-between">
-              <select class="sel" id="reqPriority"><option>Normal priority</option><option>Urgent</option><option>Whenever you get a chance</option></select>
-              <button class="btn btn-p" type="submit">Send request</button>
-            </div>
-            <div class="ok-msg hidden" id="reqOk">✓ Request received — John will text you shortly.</div>
-          </form>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Recent requests</div></div>
-          <table id="reqTable">
-            <thead><tr><th>#</th><th>Request</th><th>Status</th><th>Updated</th></tr></thead>
-            <tbody>
-              <tr><td>1041</td><td><b>Add a "Book Online" button to the header</b></td><td><span class="pill warn">In progress</span></td><td>Today</td></tr>
-              <tr><td>1038</td><td><b>Update homepage hours</b></td><td><span class="pill ok">Done</span></td><td>May 28</td></tr>
-              <tr><td>1034</td><td><b>New gallery photos (12)</b></td><td><span class="pill ok">Done</span></td><td>May 19</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- LEADS -->
-      <section class="sec" id="sec-leads">
-        <div class="eyebrow">// Lead Tracking</div>
-        <h1 class="h1">Leads</h1>
-        <p class="lead">Every form, call, and text your website captured — with the source that drove it.</p>
-        <div class="stat-grid">
-          <div class="stat"><div class="stat-k">Leads · 30d</div><div class="stat-v">47</div><div class="stat-d">▲ 18%</div></div>
-          <div class="stat"><div class="stat-k">Contacted</div><div class="stat-v">39</div><div class="stat-d">83% rate</div></div>
-          <div class="stat"><div class="stat-k">Won</div><div class="stat-v">14</div><div class="stat-d">▲ 4</div></div>
-          <div class="stat"><div class="stat-k">Cost / lead</div><div class="stat-v">$11<small>.40</small></div><div class="stat-d">▼ $2.10</div></div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Recent leads</div><span class="panel-k">47 total</span></div>
-          <table>
-            <thead><tr><th>Name</th><th>Source</th><th>Channel</th><th>Date</th><th>Status</th></tr></thead>
-            <tbody>
-              <tr><td><b>Maria G.</b></td><td>Google Ads</td><td>Form</td><td>Jun 30</td><td><span class="pill new">New</span></td></tr>
-              <tr><td><b>Devon R.</b></td><td>Organic Search</td><td>Call</td><td>Jun 29</td><td><span class="pill warn">Contacted</span></td></tr>
-              <tr><td><b>Priya S.</b></td><td>Meta Ads</td><td>Text</td><td>Jun 29</td><td><span class="pill ok">Won</span></td></tr>
-              <tr><td><b>Carlos M.</b></td><td>Google Business</td><td>Call</td><td>Jun 28</td><td><span class="pill warn">Contacted</span></td></tr>
-              <tr><td><b>Anna T.</b></td><td>Direct</td><td>Form</td><td>Jun 27</td><td><span class="pill ok">Won</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ADS -->
-      <section class="sec" id="sec-ads">
-        <div class="eyebrow">// Ad Tracking</div>
-        <h1 class="h1">Ad performance</h1>
-        <p class="lead">Live spend and return across your Google and Meta campaigns.</p>
-        <div class="stat-grid">
-          <div class="stat"><div class="stat-k">Spend · 30d</div><div class="stat-v">$2,140</div><div class="stat-d">on budget</div></div>
-          <div class="stat"><div class="stat-k">Conversions</div><div class="stat-v">61</div><div class="stat-d">▲ 22%</div></div>
-          <div class="stat"><div class="stat-k">Blended ROAS</div><div class="stat-v">6.4<small>×</small></div><div class="stat-d">▲ 0.9×</div></div>
-          <div class="stat"><div class="stat-k">Revenue</div><div class="stat-v">$13.7<small>k</small></div><div class="stat-d">▲ 31%</div></div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Campaigns</div><span class="panel-k">2 platforms</span></div>
-          <table>
-            <thead><tr><th>Campaign</th><th>Platform</th><th>Spend</th><th>Conv.</th><th>ROAS</th></tr></thead>
-            <tbody>
-              <tr><td><b>Search — Services</b></td><td>Google Ads</td><td>$980</td><td>28</td><td><b style="color:var(--gold)">7.1×</b></td></tr>
-              <tr><td><b>Local — Map Pack</b></td><td>Google Ads</td><td>$420</td><td>16</td><td><b style="color:var(--gold)">8.3×</b></td></tr>
-              <tr><td><b>Summer Promo</b></td><td>Meta Ads</td><td>$520</td><td>12</td><td><b style="color:var(--gold)">4.6×</b></td></tr>
-              <tr><td><b>Retargeting</b></td><td>Meta Ads</td><td>$220</td><td>5</td><td><b style="color:var(--gold)">5.2×</b></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- VISITORS (Microsoft Clarity) -->
-      <section class="sec" id="sec-visitors">
-        <div class="eyebrow">// Visitor Sessions · Microsoft Clarity</div>
-        <h1 class="h1">Visitor behavior</h1>
-        <p class="lead">Session recordings, heatmaps, and friction signals — powered by Microsoft Clarity.</p>
-        <div class="stat-grid">
-          <div class="stat"><div class="stat-k">Sessions · 7d</div><div class="stat-v" id="clSessions">1,284</div><div class="stat-d">▲ 6%</div></div>
-          <div class="stat"><div class="stat-k">Recordings</div><div class="stat-v" id="clRecordings">912</div><div class="stat-d">watchable</div></div>
-          <div class="stat"><div class="stat-k">Dead clicks</div><div class="stat-v" id="clDead">3.1<small>%</small></div><div class="stat-d down">▲ 0.4%</div></div>
-          <div class="stat"><div class="stat-k">Rage clicks</div><div class="stat-v" id="clRage">0.8<small>%</small></div><div class="stat-d">▼ 0.2%</div></div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Top pages by engagement</div><span class="panel-k">avg scroll depth</span></div>
-          <table>
-            <tbody>
-              <tr><td style="width:40%"><b>/ (Home)</b></td><td style="width:45%"><div class="bar"><i style="width:88%"></i></div></td><td style="text-align:right">88%</td></tr>
-              <tr><td><b>/pricing</b></td><td><div class="bar"><i style="width:72%"></i></div></td><td style="text-align:right">72%</td></tr>
-              <tr><td><b>/portfolio</b></td><td><div class="bar"><i style="width:64%"></i></div></td><td style="text-align:right">64%</td></tr>
-              <tr><td><b>/contact</b></td><td><div class="bar"><i style="width:53%"></i></div></td><td style="text-align:right">53%</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Session recordings</div><a class="link" id="clarityLink" href="https://clarity.microsoft.com/" target="_blank" rel="noopener">Open in Microsoft Clarity ↗</a></div>
-          <table>
-            <thead><tr><th>Visitor</th><th>Device</th><th>Pages</th><th>Duration</th><th>Signal</th></tr></thead>
-            <tbody>
-              <tr><td><b>#a91f · Phoenix, AZ</b></td><td>iPhone</td><td>5</td><td>3m 12s</td><td><span class="pill ok">Converted</span></td></tr>
-              <tr><td><b>#7c20 · Mesa, AZ</b></td><td>Desktop</td><td>3</td><td>1m 48s</td><td><span class="pill new">Engaged</span></td></tr>
-              <tr><td><b>#5e8b · Tempe, AZ</b></td><td>Android</td><td>2</td><td>0m 41s</td><td><span class="pill warn">Rage click</span></td></tr>
-              <tr><td><b>#3d11 · Scottsdale</b></td><td>iPad</td><td>6</td><td>4m 05s</td><td><span class="pill ok">Converted</span></td></tr>
-            </tbody>
-          </table>
-          <p class="muted" style="margin-top:1rem">Demo data. Live numbers populate once Clarity is connected — see <code>fetchClarityInsights()</code> in this file for the Data Export API wiring.</p>
-        </div>
-      </section>
-
-      <!-- BILLING -->
-      <section class="sec" id="sec-billing">
-        <div class="eyebrow">// Billing</div>
-        <h1 class="h1">Payment &amp; invoices</h1>
-        <p class="lead">Your plan, payment method, and invoice history.</p>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Payment method</div><button class="btn btn-o" onclick="toast('updPay')">Update</button></div>
-          <div class="cardrow">
-            <div class="cc">VISA</div>
-            <div><div><b>Visa ending 4242</b></div><div class="muted">Expires 08 / 27 · next charge $294.00 on Jul 1, 2026</div></div>
-          </div>
-          <div class="ok-msg hidden" id="updPay">✓ We'll text you a secure link to update your card.</div>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Plan</div><span class="pill new">Monthly · $294/mo</span></div>
-          <p class="muted">Custom website, hosting, ongoing edits, security &amp; backups, priority support, and a free refresh every 12 months. Cancel anytime.</p>
-        </div>
-        <div class="panel">
-          <div class="panel-h"><div class="panel-t">Invoices</div></div>
-          <table>
-            <thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
-            <tbody>
-              <tr><td><b>INV-0007</b></td><td>Jun 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
-              <tr><td><b>INV-0006</b></td><td>May 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
-              <tr><td><b>INV-0005</b></td><td>Apr 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
-              <tr><td><b>INV-0004</b></td><td>Mar 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
-            </tbody>
-          </table>
-          <div class="ok-msg hidden" id="dl">✓ Demo invoice — your real invoices download here once billing is connected.</div>
-        </div>
-      </section>
-    </main>
+  <!-- Slide-out menu -->
+  <div class="menu" id="menu">
+    <div class="menu-top">
+      <button class="menu-x" onclick="closeMenu()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      <div class="menu-top-ic">
+        <button class="ic" aria-label="Help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button>
+        <button class="ic" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H1a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 2.6 7a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H7a1.6 1.6 0 0 0 1-1.5V1a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V7a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></button>
+      </div>
+    </div>
+    <div class="acct">
+      <div class="acct-logo">JB</div>
+      <div class="acct-name" id="acctName2">Demo Client <svg viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></div>
+    </div>
+    <div class="menu-div"></div>
+    <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
+    <a class="m-item" data-s="domains" onclick="go('domains')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>Domains</a>
+    <a class="m-item" data-s="requests" onclick="go('requests')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Requests</a>
+    <div class="m-section">Insights</div>
+    <a class="m-item" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Leads</a>
+    <a class="m-item" data-s="ads" onclick="go('ads')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>Ad Tracking</a>
+    <a class="m-item" data-s="visitors" onclick="go('visitors')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Visitors</a>
+    <div class="m-section">Account</div>
+    <a class="m-item" data-s="billing" onclick="go('billing')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Billing</a>
+    <a class="m-item" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sign out</a>
   </div>
+
+  <main class="wrap">
+    <!-- OVERVIEW (Stripe-style "Today") -->
+    <section class="sec active" id="sec-overview">
+      <h1 class="today">Today</h1>
+      <div class="rule"></div>
+
+      <div class="metric-head">
+        <button class="mdrop">Visitor sessions <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+        <button class="mdrop">Today <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+      <div class="metric-val">1,284</div>
+      <div class="metric-time">Updated 1:05 PM</div>
+      <div class="chart" id="chart"></div>
+      <div class="chart-ax"><span>12:00 AM</span><span>11:59 PM</span></div>
+
+      <div class="mini-grid">
+        <div class="mini">
+          <div class="mini-h"><span>Ad spend · 30d</span><a class="link" onclick="go('ads')">View</a></div>
+          <div class="mini-v">$2,140</div>
+          <div class="mini-d">6.4× ROAS</div>
+        </div>
+        <div class="mini">
+          <div class="mini-h"><span>Leads · 30d</span><a class="link" onclick="go('leads')">View</a></div>
+          <div class="mini-v">47</div>
+          <div class="mini-d">▲ 18%</div>
+        </div>
+      </div>
+
+      <div class="reco" id="reco">
+        <button class="reco-x" onclick="document.getElementById('reco').remove()" aria-label="Dismiss">✕</button>
+        <div class="reco-t">Recommendations</div>
+        <p class="reco-d">Your Meta retargeting campaign is beating its ROAS target — shifting ~15% more budget could lift revenue without raising your cost per lead.</p>
+        <a class="link" onclick="go('ads')">Learn more</a>
+      </div>
+
+      <div class="setup">
+        <div class="setup-h"><span>Setup guide</span><span class="setup-pct">60%</span></div>
+        <div class="setup-bar"><i style="width:60%"></i></div>
+        <div class="setup-next">Next: <a class="link" onclick="go('visitors')">Connect Microsoft Clarity</a></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Recent activity</div><span class="panel-k">live</span></div>
+        <table>
+          <tr><td><b>New lead</b> — Maria G. via Google Ads</td><td class="nw" style="text-align:right;color:var(--warm-muted)">2h ago</td></tr>
+          <tr><td><b>Invoice paid</b> — INV-0007 · $294.00</td><td class="nw" style="text-align:right;color:var(--warm-muted)">Jun 1</td></tr>
+          <tr><td><b>Change request closed</b> — Updated homepage hours</td><td class="nw" style="text-align:right;color:var(--warm-muted)">May 28</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- DOMAINS -->
+    <section class="sec" id="sec-domains">
+      <div class="eyebrow">// Domains</div>
+      <h1 class="h1">Your domains</h1>
+      <p class="lead">Hosting, SSL, and renewal status for every domain we manage for you.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Managed domains</div><button class="btn btn-o" onclick="go('requests')">+ Request a domain</button></div>
+        <table>
+          <thead><tr><th>Domain</th><th>Status</th><th>SSL</th><th>Renews</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><b>yourbusiness.com</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+            <tr><td><b>yourbusiness.net</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+            <tr><td><b>getyourbusiness.com</b></td><td><span class="pill mut">Redirect</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Nov 02, 2026</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Need a new domain or a transfer? Send a request and we'll handle the setup, DNS, and SSL for you.</p>
+    </section>
+
+    <!-- REQUESTS -->
+    <section class="sec" id="sec-requests">
+      <div class="eyebrow">// Requests</div>
+      <h1 class="h1">Request a change</h1>
+      <p class="lead">Tell us what to update — copy, photos, hours, new pages, anything. We typically reply within hours.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">New request</div></div>
+        <form onsubmit="submitRequest(event)">
+          <textarea class="ta" id="reqText" placeholder="e.g. Update our holiday hours and swap the hero photo for the new one I'll text you…" required></textarea>
+          <div class="cardrow" style="justify-content:space-between">
+            <select class="sel" id="reqPriority"><option>Normal priority</option><option>Urgent</option><option>Whenever you get a chance</option></select>
+            <button class="btn btn-p" type="submit">Send request</button>
+          </div>
+          <div class="ok-msg hidden" id="reqOk">✓ Request received — John will text you shortly.</div>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Recent requests</div></div>
+        <table id="reqTable">
+          <thead><tr><th>#</th><th>Request</th><th>Status</th><th>Updated</th></tr></thead>
+          <tbody>
+            <tr><td>1041</td><td><b>Add a "Book Online" button to the header</b></td><td><span class="pill warn">In progress</span></td><td class="nw">Today</td></tr>
+            <tr><td>1038</td><td><b>Update homepage hours</b></td><td><span class="pill ok">Done</span></td><td class="nw">May 28</td></tr>
+            <tr><td>1034</td><td><b>New gallery photos (12)</b></td><td><span class="pill ok">Done</span></td><td class="nw">May 19</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LEADS -->
+    <section class="sec" id="sec-leads">
+      <div class="eyebrow">// Lead Tracking</div>
+      <h1 class="h1">Leads</h1>
+      <p class="lead">Every form, call, and text your website captured — with the source that drove it.</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-k">Leads · 30d</div><div class="stat-v">47</div><div class="stat-d">▲ 18%</div></div>
+        <div class="stat"><div class="stat-k">Contacted</div><div class="stat-v">39</div><div class="stat-d">83% rate</div></div>
+        <div class="stat"><div class="stat-k">Won</div><div class="stat-v">14</div><div class="stat-d">▲ 4</div></div>
+        <div class="stat"><div class="stat-k">Cost / lead</div><div class="stat-v">$11<small>.40</small></div><div class="stat-d">▼ $2.10</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Recent leads</div><span class="panel-k">47 total</span></div>
+        <table>
+          <thead><tr><th>Name</th><th>Source</th><th>Channel</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><b>Maria G.</b></td><td>Google Ads</td><td>Form</td><td class="nw">Jun 30</td><td><span class="pill new">New</span></td></tr>
+            <tr><td><b>Devon R.</b></td><td>Organic Search</td><td>Call</td><td class="nw">Jun 29</td><td><span class="pill warn">Contacted</span></td></tr>
+            <tr><td><b>Priya S.</b></td><td>Meta Ads</td><td>Text</td><td class="nw">Jun 29</td><td><span class="pill ok">Won</span></td></tr>
+            <tr><td><b>Carlos M.</b></td><td>Google Business</td><td>Call</td><td class="nw">Jun 28</td><td><span class="pill warn">Contacted</span></td></tr>
+            <tr><td><b>Anna T.</b></td><td>Direct</td><td>Form</td><td class="nw">Jun 27</td><td><span class="pill ok">Won</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADS -->
+    <section class="sec" id="sec-ads">
+      <div class="eyebrow">// Ad Tracking</div>
+      <h1 class="h1">Ad performance</h1>
+      <p class="lead">Live spend and return across your Google and Meta campaigns.</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-k">Spend · 30d</div><div class="stat-v">$2,140</div><div class="stat-d">on budget</div></div>
+        <div class="stat"><div class="stat-k">Conversions</div><div class="stat-v">61</div><div class="stat-d">▲ 22%</div></div>
+        <div class="stat"><div class="stat-k">Blended ROAS</div><div class="stat-v">6.4<small>×</small></div><div class="stat-d">▲ 0.9×</div></div>
+        <div class="stat"><div class="stat-k">Revenue</div><div class="stat-v">$13.7<small>k</small></div><div class="stat-d">▲ 31%</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Campaigns</div><span class="panel-k">2 platforms</span></div>
+        <table>
+          <thead><tr><th>Campaign</th><th>Platform</th><th>Spend</th><th>Conv.</th><th>ROAS</th></tr></thead>
+          <tbody>
+            <tr><td><b>Search — Services</b></td><td>Google Ads</td><td>$980</td><td>28</td><td><b style="color:var(--gold)">7.1×</b></td></tr>
+            <tr><td><b>Local — Map Pack</b></td><td>Google Ads</td><td>$420</td><td>16</td><td><b style="color:var(--gold)">8.3×</b></td></tr>
+            <tr><td><b>Summer Promo</b></td><td>Meta Ads</td><td>$520</td><td>12</td><td><b style="color:var(--gold)">4.6×</b></td></tr>
+            <tr><td><b>Retargeting</b></td><td>Meta Ads</td><td>$220</td><td>5</td><td><b style="color:var(--gold)">5.2×</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VISITORS -->
+    <section class="sec" id="sec-visitors">
+      <div class="eyebrow">// Visitor Sessions · Microsoft Clarity</div>
+      <h1 class="h1">Visitor behavior</h1>
+      <p class="lead">Session recordings, heatmaps, and friction signals — powered by Microsoft Clarity.</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-k">Sessions · 7d</div><div class="stat-v" id="clSessions">1,284</div><div class="stat-d">▲ 6%</div></div>
+        <div class="stat"><div class="stat-k">Recordings</div><div class="stat-v" id="clRecordings">912</div><div class="stat-d">watchable</div></div>
+        <div class="stat"><div class="stat-k">Dead clicks</div><div class="stat-v" id="clDead">3.1<small>%</small></div><div class="stat-d down">▲ 0.4%</div></div>
+        <div class="stat"><div class="stat-k">Rage clicks</div><div class="stat-v" id="clRage">0.8<small>%</small></div><div class="stat-d">▼ 0.2%</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Top pages by engagement</div><span class="panel-k">avg scroll depth</span></div>
+        <table>
+          <tbody>
+            <tr><td style="width:40%"><b>/ (Home)</b></td><td style="width:45%"><div class="bar"><i style="width:88%"></i></div></td><td style="text-align:right">88%</td></tr>
+            <tr><td><b>/pricing</b></td><td><div class="bar"><i style="width:72%"></i></div></td><td style="text-align:right">72%</td></tr>
+            <tr><td><b>/portfolio</b></td><td><div class="bar"><i style="width:64%"></i></div></td><td style="text-align:right">64%</td></tr>
+            <tr><td><b>/contact</b></td><td><div class="bar"><i style="width:53%"></i></div></td><td style="text-align:right">53%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Session recordings</div><a class="link" id="clarityLink" href="https://clarity.microsoft.com/" target="_blank" rel="noopener">Open in Clarity ↗</a></div>
+        <table>
+          <thead><tr><th>Visitor</th><th>Device</th><th>Pages</th><th>Duration</th><th>Signal</th></tr></thead>
+          <tbody>
+            <tr><td><b>#a91f · Phoenix</b></td><td>iPhone</td><td>5</td><td class="nw">3m 12s</td><td><span class="pill ok">Converted</span></td></tr>
+            <tr><td><b>#7c20 · Mesa</b></td><td>Desktop</td><td>3</td><td class="nw">1m 48s</td><td><span class="pill new">Engaged</span></td></tr>
+            <tr><td><b>#5e8b · Tempe</b></td><td>Android</td><td>2</td><td class="nw">0m 41s</td><td><span class="pill warn">Rage click</span></td></tr>
+            <tr><td><b>#3d11 · Scottsdale</b></td><td>iPad</td><td>6</td><td class="nw">4m 05s</td><td><span class="pill ok">Converted</span></td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="margin-top:1rem">Demo data. Live numbers populate once Clarity is connected — see <code>fetchClarityInsights()</code> in this file for the Data Export API wiring.</p>
+      </div>
+    </section>
+
+    <!-- BILLING -->
+    <section class="sec" id="sec-billing">
+      <div class="eyebrow">// Billing</div>
+      <h1 class="h1">Payment &amp; invoices</h1>
+      <p class="lead">Your plan, payment method, and invoice history.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Payment method</div><button class="btn btn-o" onclick="toast('updPay')">Update</button></div>
+        <div class="cardrow">
+          <div class="cc">VISA</div>
+          <div><div><b>Visa ending 4242</b></div><div class="muted">Expires 08 / 27 · next charge $294.00 on Jul 1, 2026</div></div>
+        </div>
+        <div class="ok-msg hidden" id="updPay">✓ We'll text you a secure link to update your card.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Plan</div><span class="pill new">Monthly · $294/mo</span></div>
+        <p class="muted">Custom website, hosting, ongoing edits, security &amp; backups, priority support, and a free refresh every 12 months. Cancel anytime.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Invoices</div></div>
+        <table>
+          <thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><b>INV-0007</b></td><td class="nw">Jun 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+            <tr><td><b>INV-0006</b></td><td class="nw">May 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+            <tr><td><b>INV-0005</b></td><td class="nw">Apr 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+          </tbody>
+        </table>
+        <div class="ok-msg hidden" id="dl">✓ Demo invoice — your real invoices download here once billing is connected.</div>
+      </div>
+    </section>
+  </main>
 
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -332,6 +404,8 @@
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
 
     function goLogin(){ window.location.href = 'login.html'; }
+    function openMenu(){ document.getElementById('menu').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeMenu(){ document.getElementById('menu').classList.remove('open'); document.body.style.overflow = ''; }
 
     async function init(){
       let name = null;
@@ -344,22 +418,28 @@
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
         sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
-      } else {
-        goLogin(); return;
-      }
-      document.getElementById('who').textContent = name;
-      const first = String(name).split('@')[0].split(' ')[0];
-      document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
+      } else { goLogin(); return; }
+
+      document.getElementById('acctName').textContent = name;
+      document.getElementById('acctName2').childNodes[0].textContent = name + ' ';
       document.getElementById('loading').classList.add('hidden');
+      renderChart();
       fetchClarityInsights();
     }
 
+    function renderChart(){
+      const h = [10,16,9,20,14,26,22,34,30,42,38,52,46,60,55,72,64,80,70,58,66,50,44,36,30,24,18,12];
+      document.getElementById('chart').innerHTML = h.map(v => '<i style="height:0%" data-h="' + v + '"></i>').join('');
+      requestAnimationFrame(() => document.querySelectorAll('.chart i').forEach(b => b.style.height = b.dataset.h + '%'));
+    }
+
     function go(s){
-      document.querySelectorAll('.navitem').forEach(n => n.classList.toggle('active', n.dataset.s === s));
+      document.querySelectorAll('.m-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
       document.querySelectorAll('.sec').forEach(sec => sec.classList.toggle('active', sec.id === 'sec-' + s));
+      closeMenu();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function toast(id){ const el = document.getElementById(id); if (el){ el.classList.remove('hidden'); } }
+    function toast(id){ const el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
     function submitRequest(e){
       e.preventDefault();
       const txt = document.getElementById('reqText').value.trim();
@@ -368,7 +448,7 @@
       const tb = document.querySelector('#reqTable tbody');
       const id = 1042 + tb.children.length - 3;
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + id + '</td><td><b>' + txt.replace(/</g,'&lt;').slice(0,60) + '</b></td><td><span class="pill new">Received</span></td><td>Just now</td>';
+      tr.innerHTML = '<td>' + id + '</td><td><b>' + txt.replace(/</g,'&lt;').slice(0,60) + '</b></td><td><span class="pill new">Received</span></td><td class="nw">Just now</td>';
       tb.prepend(tr);
       document.getElementById('reqText').value = '';
     }
@@ -379,29 +459,23 @@
     }
 
     /* ── Microsoft Clarity ──────────────────────────────────────────────
-       1) Install tracking: in Clarity → Settings → Setup, copy your project
-          ID and uncomment the snippet below (replace CLARITY_PROJECT_ID).
-       2) Live metrics: the Clarity Data Export API needs a Bearer token that
-          must stay server-side. Create a serverless proxy (e.g. Vercel
-          /api/clarity) that calls
-          https://www.clarity.ms/export-data/api/v1/project-live-insights
-          with your token, then this function swaps the demo numbers for real
-          ones. Without that, the cards above show representative demo data. */
+       Live metrics: the Clarity Data Export API needs a Bearer token that
+       must stay server-side. Add a serverless proxy (e.g. Vercel /api/clarity)
+       that calls the Clarity project-live-insights endpoint with your token,
+       and this function swaps the demo numbers for real ones. */
     async function fetchClarityInsights(){
-      const PROXY = '/api/clarity';            // your serverless endpoint (optional)
       try {
-        const r = await fetch(PROXY, { method: 'GET' });
-        if (!r.ok) return;                      // not set up yet → keep demo data
+        const r = await fetch('/api/clarity', { method: 'GET' });
+        if (!r.ok) return;
         const d = await r.json();
         if (d.sessions)   document.getElementById('clSessions').textContent   = d.sessions.toLocaleString();
         if (d.recordings) document.getElementById('clRecordings').textContent = d.recordings.toLocaleString();
         if (d.deadClicks) document.getElementById('clDead').innerHTML          = d.deadClicks + '<small>%</small>';
         if (d.rageClicks) document.getElementById('clRage').innerHTML          = d.rageClicks + '<small>%</small>';
-      } catch (_) { /* offline / not configured → demo data stays */ }
+      } catch (_) {}
     }
 
-    /* Clarity tracking snippet — uncomment and add your project ID to start
-       collecting real visitor sessions on this portal:
+    /* Clarity tracking snippet — uncomment + add your project ID to collect real sessions:
     (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
       t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
       y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
