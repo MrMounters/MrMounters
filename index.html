@@ -15,7 +15,7 @@
 <meta name="twitter:image" content="og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=Archivo:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@600;700;800&family=Archivo:wght@300;400;500;600;700&family=Caveat:wght@600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Blueprint / Build identity — names kept; values re-pitched */
@@ -803,6 +803,13 @@
     text-transform: uppercase; padding: 0.28rem 0.6rem; border-radius: 2px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.45);
   }
+  /* Handwritten "grab your free copy" cue + curling arrow into the cover */
+  .lm-grab { position: relative; width: 200px; max-width: 100%; margin-bottom: 0.1rem; }
+  .lm-grab-text {
+    font-family: 'Caveat', cursive; font-weight: 700; font-size: 1.65rem; line-height: 1.05;
+    color: var(--gold); display: inline-block; transform: rotate(-3deg); padding-left: 0.4rem;
+  }
+  .lm-grab-arrow { display: block; width: 58px; height: 48px; color: var(--gold); margin: -4px 0 -10px 24px; }
 
   /* ── CERTIFICATIONS ──────────────────────────── */
   .certs-band { background: var(--dark); padding: 2.8rem 4%; border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
@@ -1128,6 +1135,13 @@
 <div class="lead-magnet-band">
   <div class="lead-magnet-inner">
     <div class="lm-visual reveal">
+      <div class="lm-grab">
+        <span class="lm-grab-text">Grab your free copy</span>
+        <svg class="lm-grab-arrow" viewBox="0 0 92 78" aria-hidden="true">
+          <path d="M84 9 C 46 0, 8 16, 20 58" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M9 45 L20 60 L35 52" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <a href="#" onclick="handlePdfDownload(event)" class="lm-cover-wrap" aria-label="Download the free Website Audit Checklist PDF">
         <img src="audit-cover.jpg" alt="Website Audit Checklist — free PDF" class="lm-cover" loading="lazy">
         <span class="lm-cover-tag">PDF · Free</span>
@@ -1144,7 +1158,7 @@
         <li>What your hero section should say — and what kills conversions instantly</li>
       </ul>
       <div class="lm-actions">
-        <a href="#" onclick="handlePdfDownload(event)" class="btn-primary magnetic">Download Free Guide</a>
+        <a href="#" onclick="handlePdfDownload(event)" class="btn-primary magnetic">↓ Get Your Free Copy</a>
         <span class="lm-disclaimer">Free. Takes 10 seconds.</span>
       </div>
     </div>
