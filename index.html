@@ -13,9 +13,6 @@
 <meta name="twitter:title" content="John Bert Web Strategy — Websites That Win Customers">
 <meta name="twitter:description" content="Phoenix, AZ's premier web strategy partner. Custom websites in 5–7 business days.">
 <meta name="twitter:image" content="og-image.png">
-<script>
-(function(){var t=localStorage.getItem('jb-theme'),l=window.matchMedia('(prefers-color-scheme: light)').matches;if(t==='light'||(t===null&&l))document.documentElement.setAttribute('data-theme','light');})();
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -38,93 +35,6 @@
     --glow-strong: 0 0 30px rgba(201,168,76,0.22), 0 0 60px rgba(201,168,76,0.1);
     --card-shadow-hover: 0 22px 60px rgba(0,0,0,0.6), 0 0 30px rgba(245,240,232,0.03);
   }
-
-  /* ── LIGHT THEME ────────────────────────────────── */
-  [data-theme="light"] {
-    --dark: #F8F6F2;
-    --dark2: #EDEAE5;
-    --dark3: #FFFFFF;
-    --dark4: #F2F0EC;
-    --white: #1A1916;
-    --gray: #5C5750;
-    --gray-light: #3E3C38;
-    --warm-muted: #7C756A;
-    --warm-accent: #5E5750;
-    --border: rgba(201,168,76,0.22);
-    --card-border: rgba(0,0,0,0.09);
-    --card-border-hover: rgba(0,0,0,0.18);
-    --glow-strong: 0 0 30px rgba(201,168,76,0.14), 0 0 60px rgba(201,168,76,0.06);
-    --card-shadow-hover: 0 22px 60px rgba(0,0,0,0.1), 0 0 0 1px rgba(201,168,76,0.1);
-  }
-  [data-theme="light"] body { background: var(--dark); color: var(--white); }
-  [data-theme="light"] body::after { opacity: 0.016; mix-blend-mode: multiply; }
-  [data-theme="light"] nav { background: rgba(248,246,242,0.92); }
-  [data-theme="light"] nav.scrolled { background: rgba(248,246,242,0.99); }
-  [data-theme="light"] .browser-chrome { background: #E2DED9; border-bottom-color: rgba(0,0,0,0.06); }
-  [data-theme="light"] .browser-bar { background: #D6D2CC; color: #999; }
-  [data-theme="light"] .mobile-nav { background: rgba(248,246,242,0.98); }
-  [data-theme="light"] .mobile-nav a { color: var(--white); }
-  [data-theme="light"] #pageLoader { background: var(--dark); }
-  [data-theme="light"] .hero-sub { color: #4A4840; }
-  [data-theme="light"] .hero-bg {
-    background:
-      radial-gradient(ellipse 70% 55% at 72% 35%, rgba(201,168,76,0.08) 0%, transparent 65%),
-      radial-gradient(ellipse 50% 40% at 12% 80%, rgba(120,90,38,0.04) 0%, transparent 55%),
-      radial-gradient(ellipse 120% 50% at 50% 115%, rgba(238,234,228,0.95) 0%, transparent 55%);
-  }
-  [data-theme="light"] .hero-spotlight { background: radial-gradient(ellipse 55% 45% at 58% 42%, rgba(201,168,76,0.05) 0%, rgba(201,168,76,0.015) 45%, transparent 72%); }
-  [data-theme="light"] .section-sub { color: #58524C; }
-  [data-theme="light"] .ticker-band { background: var(--dark2); }
-  [data-theme="light"] .ticker-band::before { background: linear-gradient(to right, var(--dark2), transparent); }
-  [data-theme="light"] .ticker-band::after  { background: linear-gradient(to left, var(--dark2), transparent); }
-  [data-theme="light"] .guarantee-band { background: rgba(0,0,0,0.025); border-color: rgba(0,0,0,0.06); }
-  [data-theme="light"] .certs-band { background: var(--dark); }
-  [data-theme="light"] .comparison-section { background: var(--dark2); }
-  [data-theme="light"] .comparison-table td.row-label { color: #6A6258; }
-  [data-theme="light"] #faq { background: var(--dark2); }
-  [data-theme="light"] .faq-question { color: var(--white); }
-  [data-theme="light"] .faq-answer { color: var(--gray); }
-  [data-theme="light"] .faq-item { border-bottom-color: rgba(0,0,0,0.1); }
-  [data-theme="light"] .cta-band { background: linear-gradient(135deg,rgba(201,168,76,0.1) 0%,rgba(201,168,76,0.03) 50%,rgba(201,168,76,0.07) 100%); }
-  [data-theme="light"] .book-band { background: var(--dark2); border-top-color: rgba(0,0,0,0.07); }
-  [data-theme="light"] footer { background: var(--dark2); border-top-color: rgba(0,0,0,0.07); }
-  [data-theme="light"] .footer-bottom { color: #A8A29C; border-top-color: rgba(0,0,0,0.07); }
-  [data-theme="light"] .lm-doc { background: #fff; border-color: rgba(201,168,76,0.32); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
-  [data-theme="light"] .lm-doc-back { background: var(--dark4); }
-  [data-theme="light"] .lm-line { background: rgba(0,0,0,0.1); }
-  [data-theme="light"] .lm-chk-bar { background: rgba(0,0,0,0.1); }
-  [data-theme="light"] .lm-chk-empty { border-color: rgba(0,0,0,0.2); }
-  [data-theme="light"] .lm-modal-card { background: #fff; }
-  [data-theme="light"] .lm-input { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.14); color: var(--white); }
-  [data-theme="light"] .lm-input::placeholder { color: var(--warm-muted); }
-  [data-theme="light"] .lm-sms-legal { color: #B0AAA4; }
-  [data-theme="light"] .lm-sms-legal strong { color: #888; }
-  [data-theme="light"] .lm-skip { color: #C0BAB4; }
-  [data-theme="light"] #cookieBanner { background: rgba(250,248,245,0.97); border-top-color: rgba(201,168,76,0.2); }
-  [data-theme="light"] .cb-text { color: #6A6258; }
-  [data-theme="light"] .cb-decline { border-color: rgba(0,0,0,0.15); color: var(--warm-muted); }
-  [data-theme="light"] .cb-decline:hover { border-color: rgba(0,0,0,0.25); }
-
-  /* ── THEME TOGGLE ───────────────────────────────── */
-  .theme-toggle {
-    display: flex; align-items: center; background: none; border: none;
-    cursor: pointer; padding: 0.3rem; border-radius: 20px; position: relative; z-index: 210;
-    margin-right: 0.2rem; flex-shrink: 0;
-  }
-  .tt-track {
-    width: 40px; height: 22px; border-radius: 11px; position: relative;
-    background: rgba(245,240,232,0.1); border: 1px solid rgba(245,240,232,0.14);
-    transition: background 0.3s, border-color 0.3s;
-  }
-  [data-theme="light"] .tt-track { background: rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.15); }
-  .tt-thumb {
-    position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
-    border-radius: 50%; background: var(--gold);
-    transition: transform 0.32s cubic-bezier(0.22,1,0.36,1), background 0.2s;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 9px; line-height: 1;
-  }
-  [data-theme="light"] .tt-thumb { transform: translateX(18px); }
 
   /* ── COOKIE CONSENT ─────────────────────────────── */
   #cookieBanner {
@@ -909,13 +819,6 @@
     <a href="#services">Services</a>
     <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
   </div>
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
-    <div class="tt-track">
-      <div class="tt-thumb" id="ttThumb">
-        <span id="ttIcon">🌙</span>
-      </div>
-    </div>
-  </button>
   <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
@@ -1515,26 +1418,6 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 // ── STAGGERED GRID ───────────────────────────────
 const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
 document.querySelectorAll('.portfolio-grid,.services-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
-
-// ── THEME TOGGLE ─────────────────────────────────
-(function() {
-  const btn = document.getElementById('themeToggle');
-  const icon = document.getElementById('ttIcon');
-  function isLight() { return document.documentElement.getAttribute('data-theme') === 'light'; }
-  function syncIcon() { icon.textContent = isLight() ? '☀️' : '🌙'; }
-  syncIcon();
-  btn.addEventListener('click', () => {
-    const light = !isLight();
-    if (light) {
-      document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('jb-theme', 'light');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('jb-theme', 'dark');
-    }
-    syncIcon();
-  });
-})();
 
 // ── COOKIE CONSENT ───────────────────────────────
 (function() {
