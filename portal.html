@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Client Portal — John Bert Web Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800&family=Archivo:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#4FD1E6; --gold-light:#8AE9F7; --dark:#0A1420; --dark2:#0C1826; --dark3:#11253A; --dark4:#16304A;
+    --white:#EEF4FA; --gray:#7E93A8; --warm-muted:#6B8198; --warm-accent:#9FB6CC;
+    --card-border:rgba(159,179,200,0.14); --mono:'Space Mono',monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{ font-family:'Archivo',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      linear-gradient(rgba(79,209,230,0.04) 1px,transparent 1px) 0 0/52px 52px,
+      linear-gradient(90deg,rgba(79,209,230,0.04) 1px,transparent 1px) 0 0/52px 52px;
+  }
+  .pnav{
+    position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between;
+    padding:1.1rem 5%; border-bottom:1px solid rgba(79,209,230,0.16); background:rgba(10,20,32,0.8);
+    backdrop-filter:blur(12px);
+  }
+  .pnav-logo{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1.05rem; }
+  .pnav-logo span{ color:var(--gold); }
+  .signout{
+    font-family:var(--mono); font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--warm-accent); background:none; border:1px solid var(--card-border); border-radius:2px;
+    padding:0.5rem 0.95rem; cursor:pointer; transition:border-color 0.2s,color 0.2s;
+  }
+  .signout:hover{ border-color:var(--gold); color:var(--gold); }
+  .wrap{ position:relative; z-index:1; max-width:980px; margin:0 auto; padding:3.5rem 5% 5rem; }
+  .eyebrow{ font-family:var(--mono); font-size:0.64rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.7rem; }
+  .ph1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:clamp(2rem,4vw,3rem); letter-spacing:-0.02em; margin-bottom:0.5rem; }
+  .psub{ color:var(--warm-accent); font-size:0.95rem; margin-bottom:2.6rem; }
+  .psub b{ color:var(--white); font-weight:600; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.2rem; }
+  .card{
+    position:relative; background:var(--dark3); border:1px solid var(--card-border); border-radius:3px;
+    padding:1.8rem; transition:border-color 0.25s, box-shadow 0.3s;
+  }
+  .card:hover{ border-color:rgba(79,209,230,0.34); box-shadow:0 18px 50px rgba(0,0,0,0.4); }
+  .card-k{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.9rem; }
+  .card-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:0.5rem; }
+  .card-d{ color:var(--gray); font-size:0.86rem; line-height:1.7; }
+  .card-link{ display:inline-block; margin-top:1.1rem; font-family:var(--mono); font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); text-decoration:none; }
+  .card-link:hover{ color:var(--gold-light); }
+  .loading{ position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:var(--dark); font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); letter-spacing:0.1em; }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+  <div class="loading" id="loading">// authenticating…</div>
+
+  <nav class="pnav">
+    <div class="pnav-logo">John Bert <span>Web Strategy</span></div>
+    <button class="signout" onclick="signOut()">Sign out</button>
+  </nav>
+
+  <div class="wrap">
+    <div class="eyebrow">// Client Portal</div>
+    <h1 class="ph1">Welcome back.</h1>
+    <p class="psub">Signed in as <b id="who">—</b></p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-k">01 · Project</div>
+        <div class="card-t">Your Website</div>
+        <div class="card-d">Live status, staging links, and the latest build of your site — all in one place.</div>
+        <a href="#" class="card-link" onclick="return false;">View project →</a>
+      </div>
+      <div class="card">
+        <div class="card-k">02 · Files</div>
+        <div class="card-t">Assets &amp; Deliverables</div>
+        <div class="card-d">Logos, brand files, copy docs, and exports we've shared with you.</div>
+        <a href="#" class="card-link" onclick="return false;">Open files →</a>
+      </div>
+      <div class="card">
+        <div class="card-k">03 · Billing</div>
+        <div class="card-t">Invoices</div>
+        <div class="card-d">Your plan, payment history, and downloadable invoices.</div>
+        <a href="#" class="card-link" onclick="return false;">View billing →</a>
+      </div>
+      <div class="card">
+        <div class="card-k">04 · Support</div>
+        <div class="card-t">Request a Change</div>
+        <div class="card-d">Need an edit or have a question? Text us and we'll jump on it.</div>
+        <a href="sms:4805890098?&body=Hi%20John%2C%20a%20quick%20request%20on%20my%20site:" class="card-link">Text support →</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
+    const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
+    let sb = null;
+
+    function goLogin(){ window.location.href = 'login.html'; }
+
+    async function init(){
+      if (!configured || !window.supabase){
+        // Nothing to authenticate against yet — send them to the login page.
+        document.getElementById('loading').textContent = '// auth not configured';
+        setTimeout(goLogin, 800); return;
+      }
+      sb = window.supabase.createClient(URL_, KEY_);
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session){ goLogin(); return; }
+      const u = session.user;
+      const name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
+      document.getElementById('who').textContent = name;
+      document.getElementById('loading').classList.add('hidden');
+      sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+    }
+    async function signOut(){
+      if (sb) await sb.auth.signOut();
+      goLogin();
+    }
+    init();
+  </script>
+</body>
+</html>

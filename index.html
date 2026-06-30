@@ -178,6 +178,17 @@
     transition: background 0.2s, box-shadow 0.2s, transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94) !important;
   }
   .nav-cta:hover { background: var(--gold-light) !important; box-shadow: 0 0 20px rgba(79,209,230,0.35) !important; color: var(--dark) !important; }
+  .nav-links { margin-left: auto; }
+  .nav-tools { display: flex; align-items: center; gap: 0.9rem; margin-left: 1.4rem; position: relative; z-index: 210; }
+  .nav-login {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--white); text-decoration: none; border: 1px solid var(--card-border-hover);
+    padding: 0.5rem 0.85rem; border-radius: 2px; cursor: none; white-space: nowrap;
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+  }
+  .nav-login:hover { border-color: var(--gold); color: var(--gold); background: rgba(79,209,230,0.06); }
+  .nav-login svg { width: 15px; height: 15px; }
   .nav-hamburger {
     display: none; flex-direction: column; justify-content: center;
     gap: 5px; background: none; border: none; cursor: none;
@@ -857,6 +868,9 @@
     .guarantee-inner { flex-direction:column; gap:1.5rem; }
     .float-cta { bottom:1.2rem; right:1.2rem; padding:0.75rem 1.1rem; font-size:0.76rem; }
     .bp-panel { display: none; }
+    .nav-login-label { display: none; }
+    .nav-login { padding: 0.5rem 0.6rem; }
+    .nav-tools { gap: 0.6rem; margin-left: 0.8rem; }
   }
 
   /* ════════════════════════════════════════════════
@@ -1039,9 +1053,15 @@
     <a href="#services">Services</a>
     <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
   </div>
-  <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
-    <span></span><span></span><span></span>
-  </button>
+  <div class="nav-tools">
+    <a href="login.html" class="nav-login" aria-label="Client login">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>
+      <span class="nav-login-label">Client Login</span>
+    </a>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </nav>
 
 <!-- MOBILE NAV -->
@@ -1051,6 +1071,7 @@
   <a href="#how" class="mobile-link">How It Works</a>
   <a href="#services" class="mobile-link">Services</a>
   <a href="#faq" class="mobile-link">FAQ</a>
+  <a href="login.html" class="mobile-link">Client Login</a>
   <a href="sms:4805890098?&body=Hi%20John%2C%20I%20would%20like%20to%20know%20about%20your%20services!" class="mobile-cta">Text Us Now</a>
 </div>
 
