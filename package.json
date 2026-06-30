@@ -1,0 +1,8 @@
+{
+  "name": "johnbert-web-strategy",
+  "private": true,
+  "description": "Marketing site + client/rep portals. Static, with optional Vercel serverless functions for the Twilio dialer.",
+  "dependencies": {
+    "twilio": "^5.3.0"
+  }
+}

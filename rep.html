@@ -92,6 +92,23 @@
   .deal{ background:var(--dark3); border:1px solid var(--card-border); border-radius:4px; padding:0.5rem 0.55rem; margin-bottom:0.45rem; font-size:0.74rem; }
   .deal b{ color:var(--white); display:block; font-size:0.76rem; }
   .deal span{ color:var(--gold); font-family:var(--mono); font-size:0.64rem; }
+  .deal{ touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; }
+  .deal:active{ cursor:grabbing; }
+  .stage-body{ min-height:30px; }
+  .deal.drag-ghost{ opacity:0.96; box-shadow:0 14px 34px rgba(0,0,0,0.55); transform:rotate(-2deg); }
+  .stage.drop-hover{ border-color:var(--gold); background:rgba(79,209,230,0.09); }
+  /* Dialer */
+  .dialer{ max-width:300px; margin:0 auto; }
+  .dial-num{ width:100%; background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.85rem; color:var(--white); font-family:var(--mono); font-size:1.35rem; text-align:center; letter-spacing:0.04em; margin-bottom:0.8rem; outline:none; }
+  .dial-num:focus{ border-color:rgba(79,209,230,0.45); }
+  .dial-status{ text-align:center; font-family:var(--mono); font-size:0.66rem; color:var(--warm-muted); margin-bottom:0.9rem; }
+  .dial-status b{ color:var(--gold); }
+  .keypad{ display:grid; grid-template-columns:repeat(3,1fr); gap:0.55rem; margin-bottom:0.9rem; }
+  .key{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:0.8rem; font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; color:var(--white); cursor:pointer; transition:background .15s,border-color .15s; }
+  .key:hover{ background:var(--dark4); border-color:rgba(79,209,230,0.3); }
+  .dial-actions{ display:flex; gap:0.6rem; }
+  .dial-call{ flex:1; background:var(--green); color:#06210f; border:none; border-radius:8px; padding:0.9rem; font-family:var(--mono); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; }
+  .dial-end{ flex:1; background:var(--red); color:#2a0a04; border:none; border-radius:8px; padding:0.9rem; font-family:var(--mono); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; }
   /* Knowledge base document */
   .kb-list{ display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.4rem; }
   .kb-doc{ display:flex; align-items:center; gap:0.9rem; background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1rem 1.1rem; cursor:pointer; transition:border-color .2s; text-align:left; width:100%; }
@@ -143,6 +160,7 @@
     <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
     <div class="m-section">Sell</div>
     <a class="m-item" data-s="pipeline" onclick="go('pipeline')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>Pipeline &amp; Deals</a>
+    <a class="m-item" data-s="dialer" onclick="go('dialer')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Dialer</a>
     <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
     <div class="m-section">Resources</div>
     <a class="m-item" data-s="kb" onclick="go('kb')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Knowledge Base</a>
@@ -219,17 +237,14 @@
       </div>
 
       <div class="panel">
-        <div class="panel-h"><div class="panel-t">Pipeline</div><span class="panel-k" id="pipeCount">7 open</span></div>
+        <div class="panel-h"><div class="panel-t">Pipeline</div><span class="panel-k" id="pipeCount">— open</span></div>
+        <p class="muted" style="margin-bottom:0.9rem">Drag a deal between stages — changes save automatically.</p>
         <div class="pipe">
-          <div class="stage" id="st-New"><div class="stage-h"><span>New</span><span class="ct">2</span></div>
-            <div class="deal"><b>Maria Gomez</b><span>$3.5k</span></div><div class="deal"><b>Devon Reed</b><span>$8k</span></div></div>
-          <div class="stage" id="st-Contacted"><div class="stage-h"><span>Contacted</span><span class="ct">2</span></div>
-            <div class="deal"><b>Priya Shah</b><span>$2.9k</span></div><div class="deal"><b>Carlos M.</b><span>$5k</span></div></div>
-          <div class="stage" id="st-Quoted"><div class="stage-h"><span>Quoted</span><span class="ct">1</span></div>
-            <div class="deal"><b>Sunrise Cafe</b><span>$12k</span></div></div>
-          <div class="stage" id="st-Won"><div class="stage-h"><span>Won</span><span class="ct">2</span></div>
-            <div class="deal"><b>RedD LLC</b><span>$9k</span></div><div class="deal"><b>KATO</b><span>$3.5k</span></div></div>
-          <div class="stage" id="st-Lost"><div class="stage-h"><span>Lost</span><span class="ct">0</span></div></div>
+          <div class="stage" data-stage="New" id="st-New"><div class="stage-h"><span>New</span><span class="ct">0</span></div><div class="stage-body" id="body-New"></div></div>
+          <div class="stage" data-stage="Contacted" id="st-Contacted"><div class="stage-h"><span>Contacted</span><span class="ct">0</span></div><div class="stage-body" id="body-Contacted"></div></div>
+          <div class="stage" data-stage="Quoted" id="st-Quoted"><div class="stage-h"><span>Quoted</span><span class="ct">0</span></div><div class="stage-body" id="body-Quoted"></div></div>
+          <div class="stage" data-stage="Won" id="st-Won"><div class="stage-h"><span>Won</span><span class="ct">0</span></div><div class="stage-body" id="body-Won"></div></div>
+          <div class="stage" data-stage="Lost" id="st-Lost"><div class="stage-h"><span>Lost</span><span class="ct">0</span></div><div class="stage-body" id="body-Lost"></div></div>
         </div>
       </div>
 
@@ -237,14 +252,44 @@
         <div class="panel-h"><div class="panel-t">Deal tracker</div></div>
         <table id="dealTable">
           <thead><tr><th>Client</th><th>Service</th><th>Value</th><th>Stage</th><th>Updated</th></tr></thead>
+          <tbody id="dealBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DIALER -->
+    <section class="sec" id="sec-dialer">
+      <div class="eyebrow">// Dialer</div>
+      <h1 class="h1">Dialer</h1>
+      <p class="lead">Call leads straight from the portal. Great for working a Google Maps list.</p>
+      <div class="panel">
+        <div class="dialer">
+          <div class="dial-status" id="dialStatus">Tap a number, then Call</div>
+          <input class="dial-num" id="dialNum" placeholder="+1 (480) 000-0000" inputmode="tel">
+          <div class="keypad">
+            <button class="key" onclick="press('1')">1</button><button class="key" onclick="press('2')">2</button><button class="key" onclick="press('3')">3</button>
+            <button class="key" onclick="press('4')">4</button><button class="key" onclick="press('5')">5</button><button class="key" onclick="press('6')">6</button>
+            <button class="key" onclick="press('7')">7</button><button class="key" onclick="press('8')">8</button><button class="key" onclick="press('9')">9</button>
+            <button class="key" onclick="press('*')">*</button><button class="key" onclick="press('0')">0</button><button class="key" onclick="press('#')">#</button>
+          </div>
+          <div class="dial-actions">
+            <button class="dial-call" id="callBtn" onclick="startCall()">Call</button>
+            <button class="dial-end hidden" id="endBtn" onclick="endCall()">End</button>
+            <button class="key" style="flex:0 0 56px" onclick="press('back')" aria-label="Backspace">⌫</button>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Quick dial · today's list</div><span class="panel-k">Maps prospects</span></div>
+        <table>
           <tbody>
-            <tr><td><b>Sunrise Cafe</b></td><td>Website — Monthly</td><td>$12,000</td><td><span class="pill warn">Quoted</span></td><td class="nw">Today</td></tr>
-            <tr><td><b>Devon Reed</b></td><td>AI Voice Agent</td><td>$8,000</td><td><span class="pill new">New</span></td><td class="nw">Today</td></tr>
-            <tr><td><b>Priya Shah</b></td><td>Ad Campaigns</td><td>$2,900</td><td><span class="pill warn">Contacted</span></td><td class="nw">Yesterday</td></tr>
-            <tr><td><b>RedD LLC</b></td><td>Website — One-time</td><td>$9,000</td><td><span class="pill ok">Won</span></td><td class="nw">Jun 28</td></tr>
+            <tr><td><b>Valley Law Group</b><div class="muted">Attorney · Phoenix</div></td><td style="text-align:right"><a class="link" onclick="quickDial('+16025550148')">(602) 555-0148 ↗</a></td></tr>
+            <tr><td><b>Cactus Dental</b><div class="muted">Dentist · Mesa</div></td><td style="text-align:right"><a class="link" onclick="quickDial('+14805550192')">(480) 555-0192 ↗</a></td></tr>
+            <tr><td><b>Sun City HVAC</b><div class="muted">HVAC · Glendale</div></td><td style="text-align:right"><a class="link" onclick="quickDial('+16235550173')">(623) 555-0173 ↗</a></td></tr>
           </tbody>
         </table>
       </div>
+      <p class="muted" id="dialerNote">In-browser calling activates when Twilio is connected (see <code>/api/twilio-token</code>). Until then, Call opens your phone's dialer.</p>
     </section>
 
     <!-- COMMISSIONS -->
@@ -287,14 +332,70 @@
       <div class="eyebrow">// Knowledge Base</div>
       <h1 class="h1">Knowledge base</h1>
       <p class="lead">Everything you need to pitch, handle objections, and close.</p>
-      <div class="kb-list">
-        <button class="kb-doc" onclick="openDoc()">
+      <div class="kb-list" id="kbList">
+        <button class="kb-doc" onclick="openDoc('leads')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          <div><div class="kb-doc-t">How to Find Unlimited Free Leads</div><div class="kb-doc-d">7 zero-cost ways to fill your pipeline today · 5 min read</div></div>
+        </button>
+        <button class="kb-doc" onclick="openDoc('playbook')">
           <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
           <div><div class="kb-doc-t">The Field Playbook — How to Sell &amp; Close</div><div class="kb-doc-d">Pitch, pricing, objection handling, and how to submit a deal · 6 min read</div></div>
         </button>
       </div>
 
-      <div class="doc hidden" id="docReader">
+      <!-- LESSON: Unlimited Free Leads -->
+      <div class="doc hidden" id="doc-leads">
+        <div class="kb-eyebrow">// Lesson 1 · Prospecting</div>
+        <h2>How to Find Unlimited Free Leads</h2>
+        <p>You never need to pay for a lead. Every business in your city is a prospect, and most have a website that's costing them customers. Here's how to find them — free — and walk in with proof they need you.</p>
+
+        <h3>1. Friends &amp; associates who own a business</h3>
+        <p>Start with your warm network — the fastest yeses you'll ever get. List everyone you know who owns or runs a business. Then <strong>look each one up and audit them before you reach out</strong>:</p>
+        <ul>
+          <li>Pull up their website on your phone. Time how long it takes to load — over 3 seconds is a problem.</li>
+          <li>Run an <strong>error check</strong>: broken links, no mobile version, no click-to-call, contact form that doesn't work, expired SSL ("Not secure" in the address bar), outdated info.</li>
+          <li>Google their business name + "reviews" and check their Google Business Profile — missing photos, few reviews, no website link = easy wins.</li>
+          <li>Free audit tools: PageSpeed Insights (speed), Google's Mobile-Friendly check, and the free Website Audit Checklist PDF on our site.</li>
+        </ul>
+        <p>Then reach out with a <strong>specific</strong> observation, not a pitch: <em>"Hey — was on your site and noticed it's not loading the contact button on mobile. That's costing you calls. Want me to fix it?"</em></p>
+
+        <h3>2. Google Maps cold calling</h3>
+        <p>This is an unlimited well. Open Google Maps and search a niche + city, e.g. <strong>"attorney in New York,"</strong> <strong>"roofer in Mesa,"</strong> <strong>"dentist in Scottsdale."</strong> You get a list of dozens of businesses with phone numbers.</p>
+        <ul>
+          <li>Click each one. <strong>No website listed</strong>? Perfect — they need everything.</li>
+          <li>Has a website? Open it and audit it live (see step 1) so you have a reason to call.</li>
+          <li>Use the portal <strong>Dialer</strong> to call straight down the list. Add each conversation to your pipeline.</li>
+          <li>Opener: <em>"Hi, I help [niche] in [city] get more customers from their website — I noticed yours [specific issue]. Got 60 seconds?"</em></li>
+        </ul>
+
+        <h3>3. Google Business Profiles with no website</h3>
+        <p>On Maps, filter for businesses whose profile has a phone but <strong>no website link</strong>. They're already paying for visibility and have nowhere to send people. Highest-intent, lowest-effort close.</p>
+
+        <h3>4. Facebook groups &amp; Nextdoor</h3>
+        <p>Local "[City] small business owners" groups and Nextdoor recommendations are full of owners. Watch for "anyone know a good web person?" posts — and for businesses posting with no link in their bio.</p>
+
+        <h3>5. Networking: BNI, Chamber, meetups</h3>
+        <p>One BNI or Chamber of Commerce meeting is a room full of business owners who refer each other. Become the "web/marketing person" in two or three groups and referrals never stop.</p>
+
+        <h3>6. Drive-by &amp; service trucks</h3>
+        <p>Bandit signs, truck wraps, and storefronts are advertised phone numbers. Snap a photo, look them up that night, audit, and call. Local + visible = they're spending on marketing already.</p>
+
+        <h3>7. Bad reviews &amp; old sites on review platforms</h3>
+        <p>Yelp, Angi, and Google listings with dated or broken sites are prospects who already invest in being found. A quick audit gives you a reason to reach out with value first.</p>
+
+        <h3>The system</h3>
+        <ol>
+          <li><strong>Build a list</strong> (network → Maps niche/city → no-website profiles).</li>
+          <li><strong>Audit before you reach out</strong> — speed, mobile, click-to-call, SSL, reviews.</li>
+          <li><strong>Lead with the problem</strong> you found, not the pitch.</li>
+          <li><strong>Dial</strong> the list from the portal and <strong>log every deal</strong> in your pipeline.</li>
+        </ol>
+        <p>Do 20 audited calls a day and you'll never have an empty pipeline. <strong>Pro tip:</strong> send the free Website Audit Checklist as your follow-up — it does the selling for you.</p>
+
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to knowledge base</button>
+      </div>
+
+      <div class="doc hidden" id="doc-playbook">
         <div class="kb-eyebrow">// Playbook · v1</div>
         <h2>The Field Playbook</h2>
         <p>This is the only doc you need to start closing. Read it once, keep it open on calls.</p>
@@ -397,12 +498,15 @@
     </section>
   </main>
 
+  <script src="https://sdk.twilio.com/js/voice/releases/2.11.1/twilio.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
-    let sb = null;
+    let sb = null, session = null;
+    const STAGES = ['New','Contacted','Quoted','Won','Lost'];
+    let deals = [];
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
 
     function goLogin(){ window.location.href = 'login.html?next=rep.html'; }
@@ -414,7 +518,8 @@
       if (demo){ name = demo.name || demo.email; }
       else if (configured && window.supabase){
         sb = window.supabase.createClient(URL_, KEY_);
-        const { data: { session } } = await sb.auth.getSession();
+        const { data } = await sb.auth.getSession();
+        session = data.session;
         if (!session){ goLogin(); return; }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
@@ -425,6 +530,8 @@
       const first = String(name).split('@')[0].split(' ')[0];
       document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
       document.getElementById('loading').classList.add('hidden');
+      await loadDeals();
+      initTwilio();
     }
 
     function go(s){
@@ -434,59 +541,197 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Deal entry → pipeline + tracker
-    function addDeal(e){
+    // ── DEAL DATA + PIPELINE (drag-and-drop, persisted) ──
+    const seed = [
+      { id:'d1', contact:'Sunrise Cafe', business:'Sunrise Cafe', service:'Website — Monthly',  value:12000, stage:'Quoted',    updated:'Today' },
+      { id:'d2', contact:'Devon Reed',   business:'Devon Reed',   service:'AI Voice Agent',      value:8000,  stage:'New',       updated:'Today' },
+      { id:'d3', contact:'Priya Shah',   business:'Priya Shah',   service:'Ad Campaigns',        value:2900,  stage:'Contacted', updated:'Yesterday' },
+      { id:'d4', contact:'Maria Gomez',  business:'Desert Home',  service:'Website — Monthly',   value:3500,  stage:'New',       updated:'Today' },
+      { id:'d5', contact:'Carlos M.',    business:'Carlos M.',    service:'AI Chat & SMS',       value:5000,  stage:'Contacted', updated:'Jun 27' },
+      { id:'d6', contact:'RedD LLC',     business:'RedD LLC',     service:'Website — One-time',  value:9000,  stage:'Won',       updated:'Jun 28' },
+      { id:'d7', contact:'KATO',         business:'KATO',         service:'Website — One-time',  value:3500,  stage:'Won',       updated:'Jun 20' }
+    ];
+    function saveLocal(){ localStorage.setItem('jb-rep-deals', JSON.stringify(deals)); }
+    async function loadDeals(){
+      if (sb && session){
+        const { data } = await sb.from('deals').select('*').order('updated_at', { ascending:false });
+        deals = (data || []).map(r => ({ id:r.id, contact:r.contact, business:r.business, service:r.service, value:Number(r.value)||0, stage:r.stage, notes:r.notes, updated:'synced' }));
+      } else {
+        const ls = localStorage.getItem('jb-rep-deals');
+        deals = ls ? JSON.parse(ls) : seed.slice();
+        if (!ls) saveLocal();
+      }
+      renderDeals();
+    }
+    async function persistAdd(d){
+      if (sb && session){
+        const { data } = await sb.from('deals').insert({ contact:d.contact, business:d.business, service:d.service, value:d.value, stage:d.stage, notes:d.notes }).select().single();
+        if (data){ d.id = data.id; renderDeals(); }
+      } else { saveLocal(); }
+    }
+    async function persistUpdate(d){
+      if (sb && session){ await sb.from('deals').update({ stage:d.stage }).eq('id', d.id); }
+      else { saveLocal(); }
+    }
+    function pill(s){ return { New:'new', Contacted:'warn', Quoted:'warn', Won:'ok', Lost:'lost' }[s] || 'new'; }
+    function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString() : '—'; }
+    function moneyShort(v){ v = Number(v)||0; return v >= 1000 ? '$' + (Math.round(v/100)/10) + 'k' : (v ? '$' + v : '—'); }
+    function esc(s){ return String(s||'').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+    function renderDeals(){
+      STAGES.forEach(s => {
+        const body = document.getElementById('body-' + s); if (!body) return;
+        body.innerHTML = '';
+        const items = deals.filter(d => d.stage === s);
+        const ct = document.querySelector('#st-' + s + ' .ct'); if (ct) ct.textContent = items.length;
+        items.forEach(d => body.appendChild(makeCard(d)));
+      });
+      const tb = document.getElementById('dealBody');
+      if (tb){ tb.innerHTML = '';
+        deals.forEach(d => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td><b>' + esc(d.contact) + '</b></td><td>' + esc(d.service) + '</td><td>' + money(d.value) +
+            '</td><td><span class="pill ' + pill(d.stage) + '">' + d.stage + '</span></td><td class="nw">' + esc(d.updated || '—') + '</td>';
+          tb.appendChild(tr);
+        });
+      }
+      const open = deals.filter(d => d.stage !== 'Won' && d.stage !== 'Lost').length;
+      const pc = document.getElementById('pipeCount'); if (pc) pc.textContent = open + ' open';
+    }
+    function makeCard(d){
+      const el = document.createElement('div');
+      el.className = 'deal'; el.dataset.id = d.id;
+      el.innerHTML = '<b>' + esc(d.business || d.contact) + '</b><span>' + moneyShort(d.value) + '</span>';
+      attachDrag(el);
+      return el;
+    }
+    function stageUnder(x, y){ const e = document.elementFromPoint(x, y); return e ? e.closest('.stage') : null; }
+    function moveDeal(id, stage){
+      const d = deals.find(x => String(x.id) === String(id));
+      if (!d || d.stage === stage) return;
+      d.stage = stage; d.updated = 'Just now';
+      renderDeals(); persistUpdate(d);
+    }
+    function attachDrag(el){
+      el.addEventListener('pointerdown', e => {
+        if (e.button > 0) return;
+        const id = el.dataset.id, sx = e.clientX, sy = e.clientY;
+        let moved = false, ghost = null;
+        function mv(ev){
+          if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 7) return;
+          if (!moved){
+            moved = true;
+            ghost = el.cloneNode(true); ghost.classList.add('drag-ghost');
+            ghost.style.position = 'fixed'; ghost.style.zIndex = '999'; ghost.style.pointerEvents = 'none';
+            ghost.style.width = el.offsetWidth + 'px';
+            document.body.appendChild(ghost); el.style.opacity = '0.35';
+          }
+          ghost.style.left = (ev.clientX - el.offsetWidth / 2) + 'px';
+          ghost.style.top = (ev.clientY - 16) + 'px';
+          const st = stageUnder(ev.clientX, ev.clientY);
+          document.querySelectorAll('.stage').forEach(s => s.classList.toggle('drop-hover', s === st));
+        }
+        function up(ev){
+          document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up);
+          el.style.opacity = ''; if (ghost) ghost.remove();
+          document.querySelectorAll('.stage').forEach(s => s.classList.remove('drop-hover'));
+          if (moved){ const st = stageUnder(ev.clientX, ev.clientY); if (st) moveDeal(id, st.dataset.stage); }
+        }
+        document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
+      });
+    }
+    async function addDeal(e){
       e.preventDefault();
       const contact = document.getElementById('dContact').value.trim();
       if (!contact) return;
-      const biz = document.getElementById('dBiz').value.trim();
-      const service = document.getElementById('dService').value.split(' (')[0];
-      const valNum = parseInt(document.getElementById('dValue').value, 10) || 0;
-      const val = valNum ? '$' + valNum.toLocaleString() : '—';
-      const stage = document.getElementById('dStage').value;
-      const pillCls = { New:'new', Contacted:'warn', Quoted:'warn', Won:'ok', Lost:'lost' }[stage] || 'new';
-
-      // tracker row
-      const tb = document.querySelector('#dealTable tbody');
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td><b>' + esc(contact) + '</b></td><td>' + esc(service) + '</td><td>' + val +
-        '</td><td><span class="pill ' + pillCls + '">' + stage + '</span></td><td class="nw">Just now</td>';
-      tb.prepend(tr);
-
-      // pipeline card
-      const stage_el = document.getElementById('st-' + stage);
-      if (stage_el){
-        const card = document.createElement('div');
-        card.className = 'deal';
-        card.innerHTML = '<b>' + esc(biz || contact) + '</b><span>' + (valNum ? '$' + (valNum/1000) + 'k' : '—') + '</span>';
-        stage_el.appendChild(card);
-        const ct = stage_el.querySelector('.ct'); ct.textContent = (parseInt(ct.textContent,10)||0) + 1;
-      }
+      const d = {
+        id: 'local-' + Date.now(),
+        contact,
+        business: document.getElementById('dBiz').value.trim(),
+        service: document.getElementById('dService').value.split(' (')[0],
+        value: parseInt(document.getElementById('dValue').value, 10) || 0,
+        stage: document.getElementById('dStage').value,
+        notes: document.getElementById('dNotes').value.trim(),
+        updated: 'Just now'
+      };
+      deals.unshift(d); renderDeals();
       document.getElementById('dealOk').classList.remove('hidden');
       ['dContact','dBiz','dValue','dNotes'].forEach(id => document.getElementById(id).value = '');
+      await persistAdd(d);
     }
-    function esc(s){ return String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
 
-    // Knowledge base doc
-    function openDoc(){ document.getElementById('docReader').classList.remove('hidden'); document.querySelector('.kb-list').classList.add('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
-    function closeDoc(){ document.getElementById('docReader').classList.add('hidden'); document.querySelector('.kb-list').classList.remove('hidden'); }
+    // Knowledge base docs
+    function openDoc(which){
+      document.getElementById('kbList').classList.add('hidden');
+      document.querySelectorAll('#sec-kb .doc').forEach(d => d.classList.add('hidden'));
+      const el = document.getElementById('doc-' + which); if (el) el.classList.remove('hidden');
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+    function closeDoc(){
+      document.getElementById('kbList').classList.remove('hidden');
+      document.querySelectorAll('#sec-kb .doc').forEach(d => d.classList.add('hidden'));
+    }
+
+    // ── DIALER (Twilio in-browser calling, with tel: fallback) ──
+    let device = null, twilioReady = false, activeCall = null;
+    async function initTwilio(){
+      if (!window.Twilio || !window.Twilio.Device) return;
+      try {
+        const r = await fetch('/api/twilio-token');
+        if (!r.ok) return;
+        const { token } = await r.json();
+        if (!token) return;
+        device = new Twilio.Device(token, { logLevel: 'error' });
+        twilioReady = true;
+        const st = document.getElementById('dialStatus'); if (st) st.innerHTML = 'In-browser calling <b>ready</b>';
+        const note = document.getElementById('dialerNote'); if (note) note.textContent = 'In-browser calling is active — calls route through Twilio.';
+      } catch (_) {}
+    }
+    function press(k){
+      const inp = document.getElementById('dialNum');
+      if (k === 'back'){ inp.value = inp.value.slice(0, -1); return; }
+      inp.value += k;
+    }
+    function quickDial(num){ document.getElementById('dialNum').value = num; go('dialer'); setTimeout(startCall, 200); }
+    function startCall(){
+      const num = document.getElementById('dialNum').value.trim(); if (!num) return;
+      if (twilioReady && device){
+        document.getElementById('dialStatus').innerHTML = 'Calling <b>' + esc(num) + '</b>…';
+        activeCall = device.connect({ params: { To: num } });
+        document.getElementById('callBtn').classList.add('hidden');
+        document.getElementById('endBtn').classList.remove('hidden');
+        if (activeCall && activeCall.on){ activeCall.on('disconnect', resetCall); activeCall.on('error', resetCall); }
+      } else {
+        window.location.href = 'tel:' + num.replace(/[^\d+]/g, '');
+      }
+    }
+    function endCall(){ if (activeCall && activeCall.disconnect) activeCall.disconnect(); resetCall(); }
+    function resetCall(){
+      activeCall = null;
+      document.getElementById('callBtn').classList.remove('hidden');
+      document.getElementById('endBtn').classList.add('hidden');
+      document.getElementById('dialStatus').innerHTML = twilioReady ? 'In-browser calling <b>ready</b>' : 'Tap a number, then Call';
+    }
 
     // Compliance docs
-    function sign(which){
+    async function sign(which){
       const map = { nda:['ndaName','ndaOk','ndaStatus'], nc:['ncName','ncOk','ncStatus'] }[which];
       const name = document.getElementById(map[0]).value.trim();
       if (!name){ document.getElementById(map[0]).focus(); return; }
       document.getElementById(map[1]).classList.remove('hidden');
       const st = document.getElementById(map[2]); st.textContent = 'Signed'; st.className = 'pill ok';
+      if (sb && session){ try { await sb.from('agreements').insert({ doc_type: which === 'nc' ? 'non_compete' : 'nda', signed_name: name }); } catch (_) {} }
     }
     function pickFile(){
       const f = document.getElementById('taxFile').files[0];
       document.getElementById('taxFileName').textContent = f ? f.name : 'No file selected';
     }
-    function uploadTax(){
+    async function uploadTax(){
       const f = document.getElementById('taxFile').files[0];
       if (!f){ document.getElementById('taxFileName').textContent = 'Choose a file first'; return; }
-      // Demo only. Real upload: sb.storage.from('rep-docs').upload(`${user.id}/w9-${f.name}`, f)
+      if (sb && session){
+        try { await sb.storage.from('rep-docs').upload(session.user.id + '/w9-' + Date.now() + '-' + f.name, f, { upsert:true }); } catch (_) {}
+      }
       document.getElementById('taxOk').classList.remove('hidden');
       const st = document.getElementById('taxStatus'); st.textContent = 'Uploaded'; st.className = 'pill ok';
     }
