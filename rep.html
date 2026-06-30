@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Sales Rep Portal — John Bert Web Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Expanded:wght@700;800&family=Archivo:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#4FD1E6; --gold-light:#8AE9F7; --dark:#0A1420; --dark2:#0C1826; --dark3:#11253A; --dark4:#16304A;
+    --white:#EEF4FA; --gray:#7E93A8; --warm-muted:#6B8198; --warm-accent:#9FB6CC;
+    --card-border:rgba(159,179,200,0.14); --mono:'Space Mono',monospace;
+    --green:#5FD08A; --amber:#F5B43C; --red:#ff8b6b;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{ font-family:'Archivo',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
+  a{ color:inherit; }
+  body::before{ content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:linear-gradient(rgba(79,209,230,0.035) 1px,transparent 1px) 0 0/54px 54px,linear-gradient(90deg,rgba(79,209,230,0.035) 1px,transparent 1px) 0 0/54px 54px; }
+  .pnav{ position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:0.9rem; padding:0.95rem 1.1rem;
+    border-bottom:1px solid rgba(79,209,230,0.16); background:rgba(10,20,32,0.92); backdrop-filter:blur(12px); }
+  .hamb{ display:flex; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:0.25rem; }
+  .hamb span{ width:21px; height:2px; background:var(--white); border-radius:2px; }
+  .pnav-acct{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:0.98rem; flex:1; }
+  .pnav-tag{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(79,209,230,0.3); border-radius:20px; padding:0.25rem 0.6rem; }
+  .menu{ position:fixed; inset:0; z-index:60; background:var(--dark); transform:translateX(-100%); transition:transform 0.32s cubic-bezier(0.16,1,0.3,1); overflow-y:auto; padding:1rem 1.2rem 3rem; }
+  .menu.open{ transform:none; }
+  .menu-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.4rem; }
+  .menu-x{ background:none; border:none; color:var(--white); cursor:pointer; padding:0.3rem; display:flex; }
+  .menu-x svg{ width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:2; }
+  .acct{ display:flex; align-items:center; gap:0.85rem; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:0.85rem 1rem; }
+  .acct-logo{ width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg,var(--gold),#2f8aa0); color:var(--dark); display:flex; align-items:center; justify-content:center; font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:0.82rem; flex-shrink:0; }
+  .acct-name{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; }
+  .acct-sub{ font-size:0.72rem; color:var(--warm-muted); margin-top:0.1rem; }
+  .menu-div{ height:1px; background:var(--card-border); margin:1rem 0; }
+  .m-item{ display:flex; align-items:center; gap:0.9rem; padding:0.85rem 0.55rem; border-radius:6px; color:var(--warm-accent); font-size:1rem; cursor:pointer; text-decoration:none; }
+  .m-item svg{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+  .m-item:hover{ background:rgba(79,209,230,0.06); color:var(--white); }
+  .m-item.active{ color:var(--gold); font-weight:600; }
+  .m-section{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--warm-muted); padding:1.3rem 0.55rem 0.5rem; }
+  .wrap{ position:relative; z-index:1; max-width:820px; margin:0 auto; padding:1.6rem 1.2rem 4rem; }
+  .sec{ display:none; animation:fade 0.4s both; }
+  .sec.active{ display:block; }
+  @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem; }
+  .h1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.8rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
+  .lead{ color:var(--warm-accent); font-size:0.9rem; margin-bottom:1.6rem; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; margin-bottom:1.6rem; }
+  .stat{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.2rem 1.3rem; }
+  .stat-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; }
+  .stat-v{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; }
+  .stat-v small{ font-size:0.8rem; color:var(--gray); font-family:'Archivo',sans-serif; font-weight:400; }
+  .stat-d{ font-family:var(--mono); font-size:0.6rem; margin-top:0.4rem; color:var(--green); }
+  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.4rem; margin-bottom:1.2rem; overflow-x:auto; }
+  .panel-h{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
+  .panel-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; }
+  .panel-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
+  table{ width:100%; border-collapse:collapse; font-size:0.84rem; }
+  .panel table{ min-width:480px; }
+  .nw{ white-space:nowrap; }
+  th{ text-align:left; font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); padding:0.5rem 0.6rem; border-bottom:1px solid var(--card-border); font-weight:400; }
+  td{ padding:0.7rem 0.6rem; border-bottom:1px solid rgba(159,179,200,0.07); color:var(--gray); vertical-align:middle; }
+  td b{ color:var(--white); font-weight:600; }
+  tr:last-child td{ border-bottom:none; }
+  .pill{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.2rem 0.55rem; border-radius:20px; white-space:nowrap; }
+  .pill.ok{ color:var(--green); background:rgba(95,208,138,0.1); border:1px solid rgba(95,208,138,0.3); }
+  .pill.warn{ color:var(--amber); background:rgba(245,180,60,0.1); border:1px solid rgba(245,180,60,0.3); }
+  .pill.new{ color:var(--gold); background:rgba(79,209,230,0.1); border:1px solid rgba(79,209,230,0.3); }
+  .pill.mut{ color:var(--warm-muted); background:rgba(159,179,200,0.08); border:1px solid var(--card-border); }
+  .pill.lost{ color:var(--red); background:rgba(255,139,107,0.1); border:1px solid rgba(255,139,107,0.3); }
+  .btn{ font-family:var(--mono); font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.6rem 1.05rem; border-radius:2px; cursor:pointer; border:none; transition:background .2s,box-shadow .2s,border-color .2s,color .2s; text-decoration:none; display:inline-block; }
+  .btn-p{ background:var(--gold); color:var(--dark); font-weight:700; }
+  .btn-p:hover{ background:var(--gold-light); box-shadow:0 4px 18px rgba(79,209,230,0.3); }
+  .btn-o{ background:none; border:1px solid var(--card-border); color:var(--warm-accent); }
+  .btn-o:hover{ border-color:var(--gold); color:var(--gold); }
+  .link{ font-family:var(--mono); font-size:0.74rem; color:var(--gold); text-decoration:none; cursor:pointer; }
+  /* Deal-entry form */
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-bottom:0.9rem; }
+  .fld{ display:flex; flex-direction:column; gap:0.3rem; }
+  .fld.full{ grid-column:1 / -1; }
+  .fld label{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); }
+  .inp, .sel, .ta{ width:100%; background:rgba(226,236,245,0.04); border:1px solid rgba(226,236,245,0.12); border-radius:4px; padding:0.7rem 0.8rem; color:var(--white); font-family:'Archivo',sans-serif; font-size:0.88rem; outline:none; transition:border-color .2s; }
+  .inp:focus, .sel:focus, .ta:focus{ border-color:rgba(79,209,230,0.45); }
+  .ta{ resize:vertical; min-height:70px; }
+  .ok-msg{ font-family:var(--mono); font-size:0.7rem; color:var(--green); margin-top:0.6rem; }
+  .pipe{ display:grid; grid-template-columns:repeat(5,1fr); gap:0.6rem; min-width:640px; }
+  .stage{ background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.7rem; }
+  .stage-h{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; display:flex; justify-content:space-between; }
+  .deal{ background:var(--dark3); border:1px solid var(--card-border); border-radius:4px; padding:0.5rem 0.55rem; margin-bottom:0.45rem; font-size:0.74rem; }
+  .deal b{ color:var(--white); display:block; font-size:0.76rem; }
+  .deal span{ color:var(--gold); font-family:var(--mono); font-size:0.64rem; }
+  /* Knowledge base document */
+  .kb-list{ display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.4rem; }
+  .kb-doc{ display:flex; align-items:center; gap:0.9rem; background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1rem 1.1rem; cursor:pointer; transition:border-color .2s; text-align:left; width:100%; }
+  .kb-doc:hover{ border-color:rgba(79,209,230,0.34); }
+  .kb-doc svg{ width:22px; height:22px; stroke:var(--gold); fill:none; stroke-width:1.8; flex-shrink:0; }
+  .kb-doc-t{ font-weight:600; color:var(--white); font-size:0.92rem; }
+  .kb-doc-d{ font-size:0.76rem; color:var(--warm-muted); margin-top:0.15rem; }
+  .doc{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1.8rem; }
+  .doc h2{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.3rem; margin:1.6rem 0 0.6rem; letter-spacing:-0.01em; }
+  .doc h2:first-child{ margin-top:0; }
+  .doc h3{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:0.98rem; color:var(--gold); margin:1.2rem 0 0.4rem; }
+  .doc p, .doc li{ color:var(--gray-light,#A9BACE); font-size:0.9rem; line-height:1.75; }
+  .doc ul, .doc ol{ margin:0.5rem 0 0.5rem 1.2rem; }
+  .doc li{ margin-bottom:0.35rem; }
+  .doc strong{ color:var(--white); font-weight:600; }
+  .doc .kb-eyebrow{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+  /* Signature / compliance docs */
+  .legal{ max-height:220px; overflow-y:auto; background:var(--dark4); border:1px solid var(--card-border); border-radius:4px; padding:1rem 1.1rem; font-size:0.8rem; line-height:1.65; color:var(--gray); margin-bottom:0.9rem; }
+  .legal p{ margin-bottom:0.7rem; }
+  .sign-row{ display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
+  .upload{ display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; }
+  .file-btn{ position:relative; overflow:hidden; }
+  .file-btn input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .file-name{ font-family:var(--mono); font-size:0.72rem; color:var(--warm-accent); }
+  .muted{ color:var(--warm-muted); font-size:0.8rem; line-height:1.6; }
+  .loading{ position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:var(--dark); font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); letter-spacing:0.1em; }
+  .hidden{ display:none !important; }
+  @media (max-width:560px){ .form-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+  <div class="loading" id="loading">// authenticating…</div>
+
+  <nav class="pnav">
+    <button class="hamb" onclick="openMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="pnav-acct" id="acctName">Sales Rep</div>
+    <span class="pnav-tag">Rep Portal</span>
+  </nav>
+
+  <div class="menu" id="menu">
+    <div class="menu-top">
+      <button class="menu-x" onclick="closeMenu()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="acct">
+      <div class="acct-logo">JB</div>
+      <div><div class="acct-name" id="acctName2">Sales Rep</div><div class="acct-sub">Independent Sales Representative</div></div>
+    </div>
+    <div class="menu-div"></div>
+    <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
+    <div class="m-section">Sell</div>
+    <a class="m-item" data-s="pipeline" onclick="go('pipeline')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>Pipeline &amp; Deals</a>
+    <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
+    <div class="m-section">Resources</div>
+    <a class="m-item" data-s="kb" onclick="go('kb')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Knowledge Base</a>
+    <a class="m-item" data-s="docs" onclick="go('docs')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Documents &amp; Onboarding</a>
+    <div class="menu-div"></div>
+    <a class="m-item" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sign out</a>
+  </div>
+
+  <main class="wrap">
+    <!-- OVERVIEW -->
+    <section class="sec active" id="sec-overview">
+      <div class="eyebrow">// Today</div>
+      <h1 class="h1">Welcome back<span id="hi"></span>.</h1>
+      <p class="lead">Your numbers this month. Keep the pipeline full.</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-k">Commission · MTD</div><div class="stat-v">$3,180</div><div class="stat-d">▲ 24%</div></div>
+        <div class="stat"><div class="stat-k">Open deals</div><div class="stat-v">7</div><div class="stat-d">$31k pipeline</div></div>
+        <div class="stat"><div class="stat-k">Closed · MTD</div><div class="stat-v">4</div><div class="stat-d">▲ 1</div></div>
+        <div class="stat"><div class="stat-k">Close rate</div><div class="stat-v">36<small>%</small></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Quick actions</div></div>
+        <div class="sign-row">
+          <button class="btn btn-p" onclick="go('pipeline')">+ Enter a deal</button>
+          <button class="btn btn-o" onclick="go('kb')">Open the playbook</button>
+          <button class="btn btn-o" onclick="go('docs')">Finish onboarding</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Leaderboard</div><span class="panel-k">this month</span></div>
+        <table>
+          <tbody>
+            <tr><td><b>1 · Jordan P.</b></td><td style="text-align:right"><b>$6,420</b></td></tr>
+            <tr><td><b>2 · You</b></td><td style="text-align:right"><b style="color:var(--gold)">$3,180</b></td></tr>
+            <tr><td><b>3 · Sam R.</b></td><td style="text-align:right">$2,910</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PIPELINE & DEALS (core) -->
+    <section class="sec" id="sec-pipeline">
+      <div class="eyebrow">// Sell</div>
+      <h1 class="h1">Pipeline &amp; deals</h1>
+      <p class="lead">Enter every new deal and move it down the pipeline to closed-won.</p>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Enter a deal</div></div>
+        <form onsubmit="addDeal(event)">
+          <div class="form-grid">
+            <div class="fld"><label>Client / contact</label><input class="inp" id="dContact" placeholder="Maria Gomez" required></div>
+            <div class="fld"><label>Business</label><input class="inp" id="dBiz" placeholder="Desert Home Services"></div>
+            <div class="fld"><label>Service</label>
+              <select class="sel" id="dService">
+                <option>Website — Monthly ($294/mo)</option>
+                <option>Website — One-time ($3,500)</option>
+                <option>App Development ($5,000+)</option>
+                <option>Ad Campaigns ($100/wk + 10%)</option>
+                <option>AI Voice Agent ($497/mo)</option>
+                <option>AI Chat &amp; SMS ($297/mo)</option>
+                <option>Buy-Intent Data ($697/mo)</option>
+                <option>Reputation / Email / SMS</option>
+              </select>
+            </div>
+            <div class="fld"><label>Deal value ($)</label><input class="inp" id="dValue" type="number" placeholder="3500" inputmode="numeric"></div>
+            <div class="fld full"><label>Stage</label>
+              <select class="sel" id="dStage"><option>New</option><option>Contacted</option><option>Quoted</option><option>Won</option><option>Lost</option></select>
+            </div>
+            <div class="fld full"><label>Notes</label><textarea class="ta" id="dNotes" placeholder="Where they came from, what they need, next step…"></textarea></div>
+          </div>
+          <button class="btn btn-p" type="submit">+ Add deal to pipeline</button>
+          <div class="ok-msg hidden" id="dealOk">✓ Deal added to your pipeline.</div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Pipeline</div><span class="panel-k" id="pipeCount">7 open</span></div>
+        <div class="pipe">
+          <div class="stage" id="st-New"><div class="stage-h"><span>New</span><span class="ct">2</span></div>
+            <div class="deal"><b>Maria Gomez</b><span>$3.5k</span></div><div class="deal"><b>Devon Reed</b><span>$8k</span></div></div>
+          <div class="stage" id="st-Contacted"><div class="stage-h"><span>Contacted</span><span class="ct">2</span></div>
+            <div class="deal"><b>Priya Shah</b><span>$2.9k</span></div><div class="deal"><b>Carlos M.</b><span>$5k</span></div></div>
+          <div class="stage" id="st-Quoted"><div class="stage-h"><span>Quoted</span><span class="ct">1</span></div>
+            <div class="deal"><b>Sunrise Cafe</b><span>$12k</span></div></div>
+          <div class="stage" id="st-Won"><div class="stage-h"><span>Won</span><span class="ct">2</span></div>
+            <div class="deal"><b>RedD LLC</b><span>$9k</span></div><div class="deal"><b>KATO</b><span>$3.5k</span></div></div>
+          <div class="stage" id="st-Lost"><div class="stage-h"><span>Lost</span><span class="ct">0</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Deal tracker</div></div>
+        <table id="dealTable">
+          <thead><tr><th>Client</th><th>Service</th><th>Value</th><th>Stage</th><th>Updated</th></tr></thead>
+          <tbody>
+            <tr><td><b>Sunrise Cafe</b></td><td>Website — Monthly</td><td>$12,000</td><td><span class="pill warn">Quoted</span></td><td class="nw">Today</td></tr>
+            <tr><td><b>Devon Reed</b></td><td>AI Voice Agent</td><td>$8,000</td><td><span class="pill new">New</span></td><td class="nw">Today</td></tr>
+            <tr><td><b>Priya Shah</b></td><td>Ad Campaigns</td><td>$2,900</td><td><span class="pill warn">Contacted</span></td><td class="nw">Yesterday</td></tr>
+            <tr><td><b>RedD LLC</b></td><td>Website — One-time</td><td>$9,000</td><td><span class="pill ok">Won</span></td><td class="nw">Jun 28</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- COMMISSIONS -->
+    <section class="sec" id="sec-commissions">
+      <div class="eyebrow">// Earnings</div>
+      <h1 class="h1">Commissions</h1>
+      <p class="lead">How you get paid, and what you've earned.</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-k">Paid · YTD</div><div class="stat-v">$18.4<small>k</small></div></div>
+        <div class="stat"><div class="stat-k">Pending</div><div class="stat-v">$1,240</div><div class="stat-d">next payout Jul 15</div></div>
+        <div class="stat"><div class="stat-k">Avg / deal</div><div class="stat-v">$640</div></div>
+        <div class="stat"><div class="stat-k">Residuals</div><div class="stat-v">$820<small>/mo</small></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Commission structure</div></div>
+        <table>
+          <tbody>
+            <tr><td><b>One-time website ($3,500)</b></td><td style="text-align:right"><b>15%</b> on close</td></tr>
+            <tr><td><b>Monthly plans &amp; services</b></td><td style="text-align:right"><b>First month</b> + <b>5%</b> residual / 12 mo</td></tr>
+            <tr><td><b>High-ticket (Voice, Intent, App)</b></td><td style="text-align:right"><b>20%</b> first month + setup share</td></tr>
+            <tr><td><b>Quarterly bonus</b></td><td style="text-align:right">$1,000 at <b>10 closed</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Payout history</div></div>
+        <table>
+          <thead><tr><th>Date</th><th>Deals</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="nw">Jun 15, 2026</td><td>5</td><td>$3,180</td><td><span class="pill ok">Paid</span></td></tr>
+            <tr><td class="nw">May 15, 2026</td><td>4</td><td>$2,560</td><td><span class="pill ok">Paid</span></td></tr>
+            <tr><td class="nw">Apr 15, 2026</td><td>6</td><td>$3,940</td><td><span class="pill ok">Paid</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- KNOWLEDGE BASE -->
+    <section class="sec" id="sec-kb">
+      <div class="eyebrow">// Knowledge Base</div>
+      <h1 class="h1">Knowledge base</h1>
+      <p class="lead">Everything you need to pitch, handle objections, and close.</p>
+      <div class="kb-list">
+        <button class="kb-doc" onclick="openDoc()">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
+          <div><div class="kb-doc-t">The Field Playbook — How to Sell &amp; Close</div><div class="kb-doc-d">Pitch, pricing, objection handling, and how to submit a deal · 6 min read</div></div>
+        </button>
+      </div>
+
+      <div class="doc hidden" id="docReader">
+        <div class="kb-eyebrow">// Playbook · v1</div>
+        <h2>The Field Playbook</h2>
+        <p>This is the only doc you need to start closing. Read it once, keep it open on calls.</p>
+
+        <h3>1. Who we are</h3>
+        <p>John Bert Web Strategy builds <strong>custom websites, apps, and ad campaigns</strong> for local businesses in the Phoenix area, and runs the marketing engine on top — AI voice &amp; chat agents, lead &amp; visitor tracking, email/SMS, reputation, and buy-intent data. We deliver fast (5–7 days for sites) and we're a real human who picks up. That's the wedge.</p>
+
+        <h3>2. Who to sell to</h3>
+        <p>Local service businesses that live or die on the phone ringing: home services (HVAC, plumbing, roofing, landscaping), contractors, clinics, restaurants, gyms, med-spas. If they're spending on ads or have an ugly/slow site, they're a fit.</p>
+
+        <h3>3. The offer &amp; pricing</h3>
+        <ul>
+          <li><strong>Website</strong> — $294/mo (hosting, edits, support) or $3,500 one-time.</li>
+          <li><strong>App development</strong> — from $5,000, scoped per project.</li>
+          <li><strong>Ad campaigns</strong> — $100/wk + 10% of spend, 3-month min, money-back guarantee.</li>
+          <li><strong>AI Voice Agent</strong> — from $497/mo. Answers &amp; books every call, 24/7.</li>
+          <li><strong>AI Chat &amp; SMS</strong> — from $297/mo. Speed-to-lead + missed-call text-back.</li>
+          <li><strong>Buy-Intent Data</strong> — from $697/mo. Know who's in-market before they call.</li>
+        </ul>
+
+        <h3>4. Discovery questions</h3>
+        <ol>
+          <li>"How are customers finding you right now?"</li>
+          <li>"When a call comes in after hours, what happens to it?"</li>
+          <li>"What's a new customer worth to you?"</li>
+          <li>"If we filled your calendar without you lifting a finger, what would that be worth?"</li>
+        </ol>
+
+        <h3>5. The pitch (30 seconds)</h3>
+        <p>"Most local businesses lose customers to a slow website and missed calls. We fix both — a custom site in about a week, plus an AI that answers every call and texts every lead back in seconds. You only pay for what works, and there's a money-back guarantee on ads. Want me to show you what it'd look like for your business?"</p>
+
+        <h3>6. Objection handling</h3>
+        <ul>
+          <li><strong>"Too expensive."</strong> → "One saved job a month covers it. The voice agent alone catches calls you're losing today."</li>
+          <li><strong>"I already have a website."</strong> → "Great — is it bringing you calls? Let's audit it free and see where it's leaking customers."</li>
+          <li><strong>"I need to think about it."</strong> → "Totally fair. What's the one thing you'd need to see to feel confident?"</li>
+          <li><strong>"I'm too busy."</strong> → "That's exactly why this exists — we do all of it, you just answer the booked jobs."</li>
+        </ul>
+
+        <h3>7. How to submit a deal</h3>
+        <p>Go to <strong>Pipeline &amp; Deals → Enter a deal</strong>. Add the contact, business, service, and value, set the stage, and hit <strong>Add deal</strong>. Keep it updated as it moves — that's how you get paid.</p>
+
+        <h3>8. How you get paid</h3>
+        <p>See <strong>Commissions</strong> for the full structure: 15% on one-time sites, first month + 5% residual on monthly services, 20% + setup share on high-ticket. Quarterly bonus at 10 closed deals.</p>
+
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to knowledge base</button>
+      </div>
+    </section>
+
+    <!-- DOCUMENTS & ONBOARDING -->
+    <section class="sec" id="sec-docs">
+      <div class="eyebrow">// Onboarding</div>
+      <h1 class="h1">Documents &amp; onboarding</h1>
+      <p class="lead">Get set up to sell: sign your agreements and upload your tax form.</p>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">1 · Non-Disclosure Agreement (NDA)</div><span class="pill warn" id="ndaStatus">Action needed</span></div>
+        <div class="legal">
+          <p><strong>Mutual Non-Disclosure Agreement.</strong> This Agreement is entered into between John Bert Web Strategy ("Company") and the undersigned Sales Representative ("Representative").</p>
+          <p><strong>1. Confidential Information.</strong> Representative agrees to hold in strict confidence all client lists, pricing, lead data, proprietary processes, and business information disclosed by the Company, and to use such information solely to perform sales activities on the Company's behalf.</p>
+          <p><strong>2. Non-Use.</strong> Representative shall not use, copy, or disclose Confidential Information for any purpose outside this engagement, nor after it ends.</p>
+          <p><strong>3. Return of Materials.</strong> Upon request or termination, Representative will return or destroy all Confidential Information.</p>
+          <p><strong>4. Term.</strong> These obligations survive for three (3) years following the end of the engagement.</p>
+        </div>
+        <div class="sign-row">
+          <input class="inp" id="ndaName" placeholder="Type your full legal name to sign" style="max-width:280px">
+          <button class="btn btn-p" onclick="sign('nda')">Sign NDA</button>
+        </div>
+        <div class="ok-msg hidden" id="ndaOk">✓ NDA signed and on file.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">2 · Non-Compete Agreement</div><span class="pill warn" id="ncStatus">Action needed</span></div>
+        <div class="legal">
+          <p><strong>Non-Compete &amp; Non-Solicitation Agreement.</strong> In consideration of the engagement and commissions paid, Representative agrees as follows.</p>
+          <p><strong>1. Non-Compete.</strong> During the engagement and for twelve (12) months after, Representative will not directly offer competing website, app, or marketing-agency services to clients introduced through or served by the Company within the Company's market area, to the extent permitted by applicable law.</p>
+          <p><strong>2. Non-Solicitation.</strong> Representative will not solicit the Company's clients, prospects in the active pipeline, or other representatives for a competing venture during the same period.</p>
+          <p><strong>3. Reasonableness.</strong> The parties agree these restrictions are reasonable in scope, geography, and duration. If any part is found unenforceable, it shall be modified to the minimum extent necessary.</p>
+          <p class="muted" style="margin-top:0.4rem">Note: non-compete enforceability varies by state — this is a demo template, not legal advice.</p>
+        </div>
+        <div class="sign-row">
+          <input class="inp" id="ncName" placeholder="Type your full legal name to sign" style="max-width:280px">
+          <button class="btn btn-p" onclick="sign('nc')">Sign Non-Compete</button>
+        </div>
+        <div class="ok-msg hidden" id="ncOk">✓ Non-compete signed and on file.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">3 · Upload your 1099 / W-9</div><span class="pill warn" id="taxStatus">Action needed</span></div>
+        <p class="muted" style="margin-bottom:0.9rem">As an independent contractor you're paid via 1099. Upload your completed <strong>W-9</strong> (so we can issue your 1099) — PDF, JPG, or PNG.</p>
+        <div class="upload">
+          <label class="btn btn-o file-btn">Choose file<input type="file" id="taxFile" accept=".pdf,.jpg,.jpeg,.png" onchange="pickFile()"></label>
+          <span class="file-name" id="taxFileName">No file selected</span>
+          <button class="btn btn-p" onclick="uploadTax()">Upload</button>
+        </div>
+        <div class="ok-msg hidden" id="taxOk">✓ Tax form uploaded securely.</div>
+      </div>
+
+      <p class="muted">Once all three are complete, you're cleared to start submitting deals. Questions? Text John at (480) 589-0098.</p>
+    </section>
+  </main>
+
+  <script src="auth-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
+    const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
+    let sb = null;
+    const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
+
+    function goLogin(){ window.location.href = 'login.html?next=rep.html'; }
+    function openMenu(){ document.getElementById('menu').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeMenu(){ document.getElementById('menu').classList.remove('open'); document.body.style.overflow = ''; }
+
+    async function init(){
+      let name = null;
+      if (demo){ name = demo.name || demo.email; }
+      else if (configured && window.supabase){
+        sb = window.supabase.createClient(URL_, KEY_);
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session){ goLogin(); return; }
+        const u = session.user;
+        name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
+        sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+      } else { goLogin(); return; }
+      document.getElementById('acctName').textContent = name;
+      document.getElementById('acctName2').textContent = name;
+      const first = String(name).split('@')[0].split(' ')[0];
+      document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
+      document.getElementById('loading').classList.add('hidden');
+    }
+
+    function go(s){
+      document.querySelectorAll('.m-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
+      document.querySelectorAll('.sec').forEach(sec => sec.classList.toggle('active', sec.id === 'sec-' + s));
+      closeMenu();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Deal entry → pipeline + tracker
+    function addDeal(e){
+      e.preventDefault();
+      const contact = document.getElementById('dContact').value.trim();
+      if (!contact) return;
+      const biz = document.getElementById('dBiz').value.trim();
+      const service = document.getElementById('dService').value.split(' (')[0];
+      const valNum = parseInt(document.getElementById('dValue').value, 10) || 0;
+      const val = valNum ? '$' + valNum.toLocaleString() : '—';
+      const stage = document.getElementById('dStage').value;
+      const pillCls = { New:'new', Contacted:'warn', Quoted:'warn', Won:'ok', Lost:'lost' }[stage] || 'new';
+
+      // tracker row
+      const tb = document.querySelector('#dealTable tbody');
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td><b>' + esc(contact) + '</b></td><td>' + esc(service) + '</td><td>' + val +
+        '</td><td><span class="pill ' + pillCls + '">' + stage + '</span></td><td class="nw">Just now</td>';
+      tb.prepend(tr);
+
+      // pipeline card
+      const stage_el = document.getElementById('st-' + stage);
+      if (stage_el){
+        const card = document.createElement('div');
+        card.className = 'deal';
+        card.innerHTML = '<b>' + esc(biz || contact) + '</b><span>' + (valNum ? '$' + (valNum/1000) + 'k' : '—') + '</span>';
+        stage_el.appendChild(card);
+        const ct = stage_el.querySelector('.ct'); ct.textContent = (parseInt(ct.textContent,10)||0) + 1;
+      }
+      document.getElementById('dealOk').classList.remove('hidden');
+      ['dContact','dBiz','dValue','dNotes'].forEach(id => document.getElementById(id).value = '');
+    }
+    function esc(s){ return String(s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+    // Knowledge base doc
+    function openDoc(){ document.getElementById('docReader').classList.remove('hidden'); document.querySelector('.kb-list').classList.add('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
+    function closeDoc(){ document.getElementById('docReader').classList.add('hidden'); document.querySelector('.kb-list').classList.remove('hidden'); }
+
+    // Compliance docs
+    function sign(which){
+      const map = { nda:['ndaName','ndaOk','ndaStatus'], nc:['ncName','ncOk','ncStatus'] }[which];
+      const name = document.getElementById(map[0]).value.trim();
+      if (!name){ document.getElementById(map[0]).focus(); return; }
+      document.getElementById(map[1]).classList.remove('hidden');
+      const st = document.getElementById(map[2]); st.textContent = 'Signed'; st.className = 'pill ok';
+    }
+    function pickFile(){
+      const f = document.getElementById('taxFile').files[0];
+      document.getElementById('taxFileName').textContent = f ? f.name : 'No file selected';
+    }
+    function uploadTax(){
+      const f = document.getElementById('taxFile').files[0];
+      if (!f){ document.getElementById('taxFileName').textContent = 'Choose a file first'; return; }
+      // Demo only. Real upload: sb.storage.from('rep-docs').upload(`${user.id}/w9-${f.name}`, f)
+      document.getElementById('taxOk').classList.remove('hidden');
+      const st = document.getElementById('taxStatus'); st.textContent = 'Uploaded'; st.className = 'pill ok';
+    }
+    async function signOut(){
+      localStorage.removeItem('jb-demo-session');
+      if (sb) await sb.auth.signOut();
+      goLogin();
+    }
+
+    init();
+  </script>
+</body>
+</html>

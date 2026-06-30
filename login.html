@@ -155,6 +155,7 @@
 
     <div class="auth-status" id="status"></div>
     <a href="index.html" class="auth-back">← Back to johnbertweb.com</a>
+    <a href="login.html?next=rep.html" class="auth-back" style="margin-left:1.2rem;">Sales rep? Log in here →</a>
   </div>
 
   <script src="auth-config.js"></script>
@@ -162,7 +163,8 @@
   <script>
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
-    const PORTAL = 'portal.html';
+    const NEXT = new URLSearchParams(location.search).get('next');
+    const PORTAL = (NEXT === 'rep.html') ? 'rep.html' : 'portal.html';
     const DEMO_EMAIL = 'user@user.com', DEMO_PASS = 'password1';
     let sb = null, signupMode = false;
 
