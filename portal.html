@@ -35,8 +35,8 @@
     background:none; border:1px solid var(--card-border); border-radius:2px; padding:0.45rem 0.85rem; cursor:pointer; transition:border-color .2s,color .2s; }
   .signout:hover{ border-color:var(--gold); color:var(--gold); }
   /* Shell */
-  .shell{ position:relative; z-index:1; display:grid; grid-template-columns:218px 1fr; max-width:1240px; margin:0 auto; min-height:calc(100vh - 57px); }
-  .side{ border-right:1px solid var(--card-border); padding:1.6rem 0.9rem; display:flex; flex-direction:column; gap:0.2rem; }
+  .shell{ position:relative; z-index:1; display:grid; grid-template-columns:218px minmax(0,1fr); max-width:1240px; margin:0 auto; min-height:calc(100vh - 57px); }
+  .side{ border-right:1px solid var(--card-border); padding:1.6rem 0.9rem; display:flex; flex-direction:column; gap:0.2rem; position:sticky; top:0; align-self:start; max-height:100vh; overflow-y:auto; }
   .side-k{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--warm-muted); padding:0.6rem 0.8rem 0.4rem; }
   .navitem{ display:flex; align-items:center; gap:0.7rem; padding:0.66rem 0.8rem; border-radius:3px; cursor:pointer;
     font-size:0.86rem; color:var(--warm-accent); border:1px solid transparent; transition:background .18s,color .18s,border-color .18s; }
@@ -58,12 +58,14 @@
   .stat-v small{ font-size:0.8rem; color:var(--gray); font-family:'Archivo',sans-serif; font-weight:400; }
   .stat-d{ font-family:var(--mono); font-size:0.6rem; margin-top:0.4rem; color:var(--green); }
   .stat-d.down{ color:#ff8b6b; }
-  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.5rem 1.5rem; margin-bottom:1.2rem; }
+  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.5rem 1.5rem; margin-bottom:1.2rem; overflow-x:auto; }
   .panel-h{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
   .panel-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; }
   .panel-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
   /* Table */
   table{ width:100%; border-collapse:collapse; font-size:0.84rem; }
+  .panel table{ min-width:460px; }
+  .nw{ white-space:nowrap; }
   th{ text-align:left; font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); padding:0.5rem 0.6rem; border-bottom:1px solid var(--card-border); font-weight:400; }
   td{ padding:0.7rem 0.6rem; border-bottom:1px solid rgba(159,179,200,0.07); color:var(--gray); vertical-align:middle; }
   td b{ color:var(--white); font-weight:600; }
@@ -91,12 +93,16 @@
   .muted{ color:var(--warm-muted); font-size:0.8rem; line-height:1.6; }
   .hidden{ display:none !important; }
   @media (max-width:860px){
-    .shell{ grid-template-columns:1fr; }
-    .side{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--card-border); padding:0.7rem; gap:0.4rem; }
+    .shell{ grid-template-columns:56px minmax(0,1fr); }
+    .side{ padding:0.9rem 0.3rem; align-items:center; gap:0.3rem; }
     .side-k{ display:none; }
-    .navitem{ white-space:nowrap; }
-    .navitem svg{ width:17px; height:17px; }
-    .main{ padding:1.6rem 1.1rem 3rem; }
+    .navitem{ justify-content:center; padding:0.7rem 0; gap:0; width:42px; }
+    .navitem span{ display:none; }
+    .navitem svg{ width:20px; height:20px; }
+    .main{ padding:1.5rem 0.9rem 3rem; }
+    .pnav{ padding:0.9rem 1rem; }
+    .pnav-logo{ font-size:0.82rem; }
+    .pnav-user{ display:none; }
   }
 </style>
 </head>
@@ -157,9 +163,9 @@
           <table>
             <thead><tr><th>Domain</th><th>Status</th><th>SSL</th><th>Renews</th><th></th></tr></thead>
             <tbody>
-              <tr><td><b>yourbusiness.com</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td>Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-              <tr><td><b>yourbusiness.net</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td>Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-              <tr><td><b>getyourbusiness.com</b></td><td><span class="pill mut">Redirect</span></td><td><span class="pill ok">Valid</span></td><td>Nov 02, 2026</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+              <tr><td><b>yourbusiness.com</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+              <tr><td><b>yourbusiness.net</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+              <tr><td><b>getyourbusiness.com</b></td><td><span class="pill mut">Redirect</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Nov 02, 2026</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
             </tbody>
           </table>
         </div>
