@@ -33,11 +33,12 @@
     border-radius:6px; padding:2.6rem 2.2rem;
     box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(79,209,230,0.05);
   }
-  .auth-logo{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1.15rem; letter-spacing:-0.01em; margin-bottom:1.6rem; }
+  .auth-logo{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1.15rem; letter-spacing:-0.01em; margin-bottom:1.4rem; }
   .auth-logo span{ color:var(--gold); }
   .auth-eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
   .auth-h1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; margin-bottom:0.4rem; }
-  .auth-lead{ font-size:0.86rem; color:var(--warm-accent); line-height:1.6; margin-bottom:1.7rem; }
+  .auth-lead{ font-size:0.86rem; color:var(--warm-accent); line-height:1.6; margin-bottom:1.5rem; }
+  .demo-note{ font-family:var(--mono); font-size:0.66rem; color:var(--gold); background:rgba(79,209,230,0.07); border:1px solid rgba(79,209,230,0.25); border-radius:3px; padding:0.65rem 0.8rem; margin-bottom:1.4rem; line-height:1.5; }
   .prov{
     width:100%; display:flex; align-items:center; justify-content:center; gap:0.7rem;
     background:var(--dark4); border:1px solid var(--card-border); color:var(--white);
@@ -51,8 +52,7 @@
   .auth-divider::before,.auth-divider::after{ content:''; height:1px; flex:1; background:var(--card-border); }
   .auth-divider span{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--warm-muted); }
   .auth-tabs{ display:flex; gap:0.3rem; background:var(--dark4); border:1px solid var(--card-border); border-radius:3px; padding:0.3rem; margin-bottom:1rem; }
-  .auth-tab{ flex:1; font-family:var(--mono); font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-muted); background:none; border:none; padding:0.6rem; cursor:pointer; border-radius:2px; transition:color 0.2s, background 0.2s; display:flex; align-items:center; justify-content:center; gap:0.4rem; }
-  .auth-tab svg{ width:14px; height:14px; }
+  .auth-tab{ flex:1; font-family:var(--mono); font-size:0.62rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--warm-muted); background:none; border:none; padding:0.6rem 0.3rem; cursor:pointer; border-radius:2px; transition:color 0.2s, background 0.2s; }
   .auth-tab.active{ color:var(--dark); background:var(--gold); font-weight:700; }
   .auth-input{
     width:100%; background:rgba(226,236,245,0.04); border:1px solid rgba(226,236,245,0.12);
@@ -67,13 +67,15 @@
     letter-spacing:0.1em; text-transform:uppercase; transition:background 0.2s, box-shadow 0.2s;
   }
   .auth-btn:hover{ background:var(--gold-light); box-shadow:0 6px 24px rgba(79,209,230,0.35); }
+  .auth-row{ display:flex; justify-content:space-between; align-items:center; margin:-0.1rem 0 0.7rem; }
+  .auth-link{ font-family:var(--mono); font-size:0.64rem; letter-spacing:0.04em; color:var(--warm-accent); background:none; border:none; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
+  .auth-link:hover{ color:var(--gold); }
   .auth-hint{ font-family:var(--mono); font-size:0.62rem; color:var(--warm-muted); margin:0.55rem 0 0; line-height:1.5; }
   .auth-status{ font-size:0.78rem; line-height:1.5; margin-top:1rem; min-height:1.1em; text-align:center; color:var(--warm-accent); }
   .auth-status.ok{ color:var(--gold); }
   .auth-status.err{ color:#ff8b6b; }
   .auth-back{ display:inline-block; margin-top:1.6rem; font-family:var(--mono); font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); text-decoration:none; transition:color 0.2s; }
   .auth-back:hover{ color:var(--white); }
-  .auth-legal{ font-size:0.68rem; color:var(--warm-muted); line-height:1.55; margin-top:1.3rem; }
   .hidden{ display:none !important; }
 </style>
 </head>
@@ -81,8 +83,10 @@
   <div class="auth-card">
     <div class="auth-logo">John Bert <span>Web Strategy</span></div>
     <div class="auth-eyebrow">// Client Portal</div>
-    <h1 class="auth-h1">Sign in</h1>
-    <p class="auth-lead">Access your projects, files, and support. New here? Any method below creates your account automatically.</p>
+    <h1 class="auth-h1" id="authTitle">Sign in</h1>
+    <p class="auth-lead" id="authLead">Access your domains, leads, ad performance, invoices, and visitor analytics.</p>
+
+    <div class="demo-note">Demo account is pre-filled below — just hit <strong>Sign in</strong> to explore the portal.<br>user@user.com&nbsp;·&nbsp;password1</div>
 
     <!-- OAuth providers -->
     <button class="prov" onclick="oauth('google')">
@@ -110,28 +114,35 @@
       Continue with Microsoft
     </button>
 
-    <div class="auth-divider"><span>or</span></div>
+    <div class="auth-divider"><span>or with email</span></div>
 
-    <!-- Email / Phone toggle -->
+    <!-- Method tabs -->
     <div class="auth-tabs" role="tablist">
-      <button class="auth-tab active" data-t="email" onclick="authTab('email')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        Magic Link
-      </button>
-      <button class="auth-tab" data-t="phone" onclick="authTab('phone')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
-        Text Code
-      </button>
+      <button class="auth-tab active" data-t="password" onclick="authTab('password')">Password</button>
+      <button class="auth-tab" data-t="magic" onclick="authTab('magic')">Magic Link</button>
+      <button class="auth-tab" data-t="phone" onclick="authTab('phone')">Text Code</button>
     </div>
 
-    <!-- Email / magic link -->
-    <form id="panel-email" onsubmit="sendMagic(event)">
-      <input type="email" id="email" class="auth-input" placeholder="you@business.com" required autocomplete="email">
-      <button type="submit" class="auth-btn">Email me a sign-in link</button>
-      <p class="auth-hint">We'll email you a secure link — no password to remember.</p>
+    <!-- Email + password (demo) -->
+    <form id="panel-password" onsubmit="signInPassword(event)">
+      <input type="email" id="pwEmail" class="auth-input" placeholder="you@business.com" value="user@user.com" required autocomplete="email">
+      <input type="password" id="pwPass" class="auth-input" placeholder="Password" value="password1" required autocomplete="current-password">
+      <div class="auth-row">
+        <span></span>
+        <button type="button" class="auth-link" id="toggleMode" onclick="toggleMode()">Create an account</button>
+      </div>
+      <button type="submit" class="auth-btn" id="pwBtn">Sign in</button>
+      <p class="auth-hint">Demo login: <strong>user@user.com</strong> / <strong>password1</strong></p>
     </form>
 
-    <!-- Phone / SMS OTP -->
+    <!-- Magic link -->
+    <form id="panel-magic" class="hidden" onsubmit="sendMagic(event)">
+      <input type="email" id="email" class="auth-input" placeholder="you@business.com" autocomplete="email">
+      <button type="submit" class="auth-btn">Email me a sign-in link</button>
+      <p class="auth-hint">We'll email you a secure link — no password needed.</p>
+    </form>
+
+    <!-- Phone / SMS -->
     <form id="panel-phone" class="hidden" onsubmit="sendSms(event)">
       <input type="tel" id="phone" class="auth-input" placeholder="+1 (480) 000-0000" autocomplete="tel">
       <div id="smsCodeRow" class="hidden">
@@ -139,13 +150,11 @@
         <button type="button" class="auth-btn" onclick="verifySms(event)">Verify &amp; sign in</button>
       </div>
       <button type="submit" id="smsSendBtn" class="auth-btn">Text me a code</button>
-      <p class="auth-hint">Use international format, e.g. +14805890098. Standard message rates apply.</p>
+      <p class="auth-hint">International format, e.g. +14805890098. Message rates apply.</p>
     </form>
 
     <div class="auth-status" id="status"></div>
-
     <a href="index.html" class="auth-back">← Back to johnbertweb.com</a>
-    <p class="auth-legal">By continuing you agree to our terms and acknowledge our privacy practices. This portal is for John Bert Web Strategy clients.</p>
   </div>
 
   <script src="auth-config.js"></script>
@@ -153,40 +162,67 @@
   <script>
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
-    const PORTAL = window.location.origin + '/portal.html';
-    let sb = null;
+    const PORTAL = 'portal.html';
+    const DEMO_EMAIL = 'user@user.com', DEMO_PASS = 'password1';
+    let sb = null, signupMode = false;
+
     if (configured && window.supabase) {
       sb = window.supabase.createClient(URL_, KEY_);
       sb.auth.getSession().then(({ data }) => { if (data.session) window.location.href = PORTAL; });
     }
+    // already in a demo session? go straight in
+    if (localStorage.getItem('jb-demo-session')) window.location.href = PORTAL;
+
     function msg(t, k){ const m = document.getElementById('status'); m.textContent = t; m.className = 'auth-status ' + (k || ''); }
-    function guard(){
-      if (!window.supabase){ msg('Could not load the auth library. Check your connection and refresh.', 'err'); return false; }
-      if (!configured){ msg('Auth isn’t connected yet — add your Supabase URL and anon key in auth-config.js.', 'err'); return false; }
-      return true;
-    }
     function authTab(which){
       document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.t === which));
-      document.getElementById('panel-email').classList.toggle('hidden', which !== 'email');
+      document.getElementById('panel-password').classList.toggle('hidden', which !== 'password');
+      document.getElementById('panel-magic').classList.toggle('hidden', which !== 'magic');
       document.getElementById('panel-phone').classList.toggle('hidden', which !== 'phone');
       msg('');
     }
+    function toggleMode(){
+      signupMode = !signupMode;
+      document.getElementById('pwBtn').textContent = signupMode ? 'Create account' : 'Sign in';
+      document.getElementById('toggleMode').textContent = signupMode ? 'Have an account? Sign in' : 'Create an account';
+      document.getElementById('authTitle').textContent = signupMode ? 'Create your account' : 'Sign in';
+    }
+    function startDemo(email){
+      localStorage.setItem('jb-demo-session', JSON.stringify({ email: email || DEMO_EMAIL, name: 'Demo Client', at: Date.now() }));
+      window.location.href = PORTAL;
+    }
+    async function signInPassword(e){
+      e.preventDefault();
+      const email = document.getElementById('pwEmail').value.trim();
+      const pass = document.getElementById('pwPass').value;
+      // Demo account always works, with or without Supabase
+      if (email.toLowerCase() === DEMO_EMAIL && pass === DEMO_PASS){ return startDemo(email); }
+      if (configured && sb){
+        msg(signupMode ? 'Creating account…' : 'Signing in…');
+        const fn = signupMode ? sb.auth.signUp({ email, password: pass }) : sb.auth.signInWithPassword({ email, password: pass });
+        const { error } = await fn;
+        if (error) return msg(error.message, 'err');
+        if (signupMode) return msg('Account created — check your email to confirm, then sign in.', 'ok');
+        window.location.href = PORTAL; return;
+      }
+      msg('Use the demo login: user@user.com / password1', 'err');
+    }
     async function oauth(provider){
-      if (!guard()) return;
-      msg('Redirecting…');
-      const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: PORTAL } });
-      if (error) msg(error.message, 'err');
+      if (configured && sb){ const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin + '/' + PORTAL } }); if (error) msg(error.message, 'err'); return; }
+      msg('Social sign-in activates once Supabase is connected. Try the demo login below.', '');
     }
     async function sendMagic(e){
-      e.preventDefault(); if (!guard()) return;
+      e.preventDefault();
+      if (!(configured && sb)) return msg('Magic links activate once Supabase is connected. Try the demo password login.', '');
       const email = document.getElementById('email').value.trim();
       msg('Sending…');
-      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: PORTAL } });
+      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/' + PORTAL } });
       if (error) return msg(error.message, 'err');
       msg('Check your email — we sent you a secure sign-in link.', 'ok');
     }
     async function sendSms(e){
-      e.preventDefault(); if (!guard()) return;
+      e.preventDefault();
+      if (!(configured && sb)) return msg('SMS codes activate once Supabase + an SMS provider are connected.', '');
       const phone = document.getElementById('phone').value.trim();
       if (!phone) return msg('Enter your phone number first.', 'err');
       msg('Texting a code…');
@@ -196,15 +232,14 @@
       document.getElementById('smsSendBtn').classList.add('hidden');
       msg('We texted you a 6-digit code.', 'ok');
     }
-    async function verifySms(e){
-      if (e) e.preventDefault(); if (!guard()) return;
+    async function verifySms(){
+      if (!(configured && sb)) return;
       const phone = document.getElementById('phone').value.trim();
       const token = document.getElementById('smsCode').value.trim();
       const { error } = await sb.auth.verifyOtp({ phone, token, type: 'sms' });
       if (error) return msg(error.message, 'err');
       window.location.href = PORTAL;
     }
-    if (!configured) msg('Demo mode — connect Supabase in auth-config.js to enable sign-in.', '');
   </script>
 </body>
 </html>

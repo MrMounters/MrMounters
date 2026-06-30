@@ -13,46 +13,91 @@
     --gold:#4FD1E6; --gold-light:#8AE9F7; --dark:#0A1420; --dark2:#0C1826; --dark3:#11253A; --dark4:#16304A;
     --white:#EEF4FA; --gray:#7E93A8; --warm-muted:#6B8198; --warm-accent:#9FB6CC;
     --card-border:rgba(159,179,200,0.14); --mono:'Space Mono',monospace;
+    --green:#5FD08A; --amber:#F5B43C;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{ font-family:'Archivo',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
+  a{ color:inherit; }
   body::before{
     content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
-      linear-gradient(rgba(79,209,230,0.04) 1px,transparent 1px) 0 0/52px 52px,
-      linear-gradient(90deg,rgba(79,209,230,0.04) 1px,transparent 1px) 0 0/52px 52px;
+      linear-gradient(rgba(79,209,230,0.035) 1px,transparent 1px) 0 0/54px 54px,
+      linear-gradient(90deg,rgba(79,209,230,0.035) 1px,transparent 1px) 0 0/54px 54px;
   }
-  .pnav{
-    position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between;
-    padding:1.1rem 5%; border-bottom:1px solid rgba(79,209,230,0.16); background:rgba(10,20,32,0.8);
-    backdrop-filter:blur(12px);
-  }
-  .pnav-logo{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1.05rem; }
+  /* Top bar */
+  .pnav{ position:relative; z-index:3; display:flex; align-items:center; justify-content:space-between;
+    padding:1rem 1.5rem; border-bottom:1px solid rgba(79,209,230,0.16); background:rgba(10,20,32,0.85); backdrop-filter:blur(12px); }
+  .pnav-logo{ font-family:'Archivo Expanded',sans-serif; font-weight:800; font-size:1rem; }
   .pnav-logo span{ color:var(--gold); }
-  .signout{
-    font-family:var(--mono); font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase;
-    color:var(--warm-accent); background:none; border:1px solid var(--card-border); border-radius:2px;
-    padding:0.5rem 0.95rem; cursor:pointer; transition:border-color 0.2s,color 0.2s;
-  }
+  .pnav-right{ display:flex; align-items:center; gap:1rem; }
+  .pnav-user{ font-family:var(--mono); font-size:0.68rem; color:var(--warm-accent); }
+  .signout{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-accent);
+    background:none; border:1px solid var(--card-border); border-radius:2px; padding:0.45rem 0.85rem; cursor:pointer; transition:border-color .2s,color .2s; }
   .signout:hover{ border-color:var(--gold); color:var(--gold); }
-  .wrap{ position:relative; z-index:1; max-width:980px; margin:0 auto; padding:3.5rem 5% 5rem; }
-  .eyebrow{ font-family:var(--mono); font-size:0.64rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.7rem; }
-  .ph1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:clamp(2rem,4vw,3rem); letter-spacing:-0.02em; margin-bottom:0.5rem; }
-  .psub{ color:var(--warm-accent); font-size:0.95rem; margin-bottom:2.6rem; }
-  .psub b{ color:var(--white); font-weight:600; }
-  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.2rem; }
-  .card{
-    position:relative; background:var(--dark3); border:1px solid var(--card-border); border-radius:3px;
-    padding:1.8rem; transition:border-color 0.25s, box-shadow 0.3s;
-  }
-  .card:hover{ border-color:rgba(79,209,230,0.34); box-shadow:0 18px 50px rgba(0,0,0,0.4); }
-  .card-k{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.9rem; }
-  .card-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.1rem; margin-bottom:0.5rem; }
-  .card-d{ color:var(--gray); font-size:0.86rem; line-height:1.7; }
-  .card-link{ display:inline-block; margin-top:1.1rem; font-family:var(--mono); font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gold); text-decoration:none; }
-  .card-link:hover{ color:var(--gold-light); }
+  /* Shell */
+  .shell{ position:relative; z-index:1; display:grid; grid-template-columns:218px 1fr; max-width:1240px; margin:0 auto; min-height:calc(100vh - 57px); }
+  .side{ border-right:1px solid var(--card-border); padding:1.6rem 0.9rem; display:flex; flex-direction:column; gap:0.2rem; }
+  .side-k{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--warm-muted); padding:0.6rem 0.8rem 0.4rem; }
+  .navitem{ display:flex; align-items:center; gap:0.7rem; padding:0.66rem 0.8rem; border-radius:3px; cursor:pointer;
+    font-size:0.86rem; color:var(--warm-accent); border:1px solid transparent; transition:background .18s,color .18s,border-color .18s; }
+  .navitem svg{ width:16px; height:16px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:2; }
+  .navitem:hover{ color:var(--white); background:rgba(79,209,230,0.05); }
+  .navitem.active{ color:var(--gold); background:rgba(79,209,230,0.08); border-color:rgba(79,209,230,0.25); }
+  .main{ padding:2.2rem 2rem 4rem; min-width:0; }
+  .sec{ display:none; animation:fade .4s both; }
+  .sec.active{ display:block; }
+  @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem; }
+  .h1{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.9rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
+  .lead{ color:var(--warm-accent); font-size:0.9rem; margin-bottom:1.8rem; }
+  /* Cards & stats */
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.6rem; }
+  .stat{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.2rem 1.3rem; }
+  .stat-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; }
+  .stat-v{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; }
+  .stat-v small{ font-size:0.8rem; color:var(--gray); font-family:'Archivo',sans-serif; font-weight:400; }
+  .stat-d{ font-family:var(--mono); font-size:0.6rem; margin-top:0.4rem; color:var(--green); }
+  .stat-d.down{ color:#ff8b6b; }
+  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.5rem 1.5rem; margin-bottom:1.2rem; }
+  .panel-h{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
+  .panel-t{ font-family:'Archivo Expanded',sans-serif; font-weight:700; font-size:1.05rem; }
+  .panel-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
+  /* Table */
+  table{ width:100%; border-collapse:collapse; font-size:0.84rem; }
+  th{ text-align:left; font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); padding:0.5rem 0.6rem; border-bottom:1px solid var(--card-border); font-weight:400; }
+  td{ padding:0.7rem 0.6rem; border-bottom:1px solid rgba(159,179,200,0.07); color:var(--gray); vertical-align:middle; }
+  td b{ color:var(--white); font-weight:600; }
+  tr:last-child td{ border-bottom:none; }
+  .pill{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.2rem 0.55rem; border-radius:20px; white-space:nowrap; }
+  .pill.ok{ color:var(--green); background:rgba(95,208,138,0.1); border:1px solid rgba(95,208,138,0.3); }
+  .pill.warn{ color:var(--amber); background:rgba(245,180,60,0.1); border:1px solid rgba(245,180,60,0.3); }
+  .pill.new{ color:var(--gold); background:rgba(79,209,230,0.1); border:1px solid rgba(79,209,230,0.3); }
+  .pill.mut{ color:var(--warm-muted); background:rgba(159,179,200,0.08); border:1px solid var(--card-border); }
+  .btn{ font-family:var(--mono); font-size:0.68rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.55rem 1rem; border-radius:2px; cursor:pointer; border:none; transition:background .2s,box-shadow .2s,border-color .2s,color .2s; }
+  .btn-p{ background:var(--gold); color:var(--dark); font-weight:700; }
+  .btn-p:hover{ background:var(--gold-light); box-shadow:0 4px 18px rgba(79,209,230,0.3); }
+  .btn-o{ background:none; border:1px solid var(--card-border); color:var(--warm-accent); }
+  .btn-o:hover{ border-color:var(--gold); color:var(--gold); }
+  .link{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.04em; color:var(--gold); text-decoration:none; cursor:pointer; }
+  .ta{ width:100%; background:rgba(226,236,245,0.04); border:1px solid rgba(226,236,245,0.12); border-radius:4px; padding:0.85rem; color:var(--white); font-family:'Archivo',sans-serif; font-size:0.88rem; outline:none; resize:vertical; min-height:96px; margin-bottom:0.7rem; }
+  .ta:focus{ border-color:rgba(79,209,230,0.45); }
+  .sel{ background:rgba(226,236,245,0.04); border:1px solid rgba(226,236,245,0.12); border-radius:4px; padding:0.6rem 0.7rem; color:var(--white); font-family:'Archivo',sans-serif; font-size:0.84rem; outline:none; }
+  .ok-msg{ font-family:var(--mono); font-size:0.7rem; color:var(--green); margin-top:0.7rem; }
+  .bar{ height:6px; border-radius:3px; background:rgba(79,209,230,0.12); overflow:hidden; }
+  .bar > i{ display:block; height:100%; background:var(--gold); border-radius:3px; }
+  .cardrow{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .cc{ width:46px; height:30px; border-radius:4px; background:linear-gradient(135deg,#1a3450,#0e2236); border:1px solid var(--card-border); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:0.55rem; color:var(--gold); }
   .loading{ position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center; background:var(--dark); font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); letter-spacing:0.1em; }
+  .muted{ color:var(--warm-muted); font-size:0.8rem; line-height:1.6; }
   .hidden{ display:none !important; }
+  @media (max-width:860px){
+    .shell{ grid-template-columns:1fr; }
+    .side{ flex-direction:row; overflow-x:auto; border-right:none; border-bottom:1px solid var(--card-border); padding:0.7rem; gap:0.4rem; }
+    .side-k{ display:none; }
+    .navitem{ white-space:nowrap; }
+    .navitem svg{ width:17px; height:17px; }
+    .main{ padding:1.6rem 1.1rem 3rem; }
+  }
 </style>
 </head>
 <body>
@@ -60,40 +105,216 @@
 
   <nav class="pnav">
     <div class="pnav-logo">John Bert <span>Web Strategy</span></div>
-    <button class="signout" onclick="signOut()">Sign out</button>
+    <div class="pnav-right">
+      <span class="pnav-user" id="who">—</span>
+      <button class="signout" onclick="signOut()">Sign out</button>
+    </div>
   </nav>
 
-  <div class="wrap">
-    <div class="eyebrow">// Client Portal</div>
-    <h1 class="ph1">Welcome back.</h1>
-    <p class="psub">Signed in as <b id="who">—</b></p>
+  <div class="shell">
+    <aside class="side" id="side">
+      <div class="side-k">Workspace</div>
+      <div class="navitem active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Overview</span></div>
+      <div class="navitem" data-s="domains" onclick="go('domains')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg><span>Domains</span></div>
+      <div class="navitem" data-s="requests" onclick="go('requests')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Requests</span></div>
+      <div class="navitem" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg><span>Leads</span></div>
+      <div class="navitem" data-s="ads" onclick="go('ads')"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><span>Ad Tracking</span></div>
+      <div class="navitem" data-s="visitors" onclick="go('visitors')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>Visitors</span></div>
+      <div class="side-k">Account</div>
+      <div class="navitem" data-s="billing" onclick="go('billing')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span>Billing</span></div>
+    </aside>
 
-    <div class="grid">
-      <div class="card">
-        <div class="card-k">01 · Project</div>
-        <div class="card-t">Your Website</div>
-        <div class="card-d">Live status, staging links, and the latest build of your site — all in one place.</div>
-        <a href="#" class="card-link" onclick="return false;">View project →</a>
-      </div>
-      <div class="card">
-        <div class="card-k">02 · Files</div>
-        <div class="card-t">Assets &amp; Deliverables</div>
-        <div class="card-d">Logos, brand files, copy docs, and exports we've shared with you.</div>
-        <a href="#" class="card-link" onclick="return false;">Open files →</a>
-      </div>
-      <div class="card">
-        <div class="card-k">03 · Billing</div>
-        <div class="card-t">Invoices</div>
-        <div class="card-d">Your plan, payment history, and downloadable invoices.</div>
-        <a href="#" class="card-link" onclick="return false;">View billing →</a>
-      </div>
-      <div class="card">
-        <div class="card-k">04 · Support</div>
-        <div class="card-t">Request a Change</div>
-        <div class="card-d">Need an edit or have a question? Text us and we'll jump on it.</div>
-        <a href="sms:4805890098?&body=Hi%20John%2C%20a%20quick%20request%20on%20my%20site:" class="card-link">Text support →</a>
-      </div>
-    </div>
+    <main class="main">
+      <!-- OVERVIEW -->
+      <section class="sec active" id="sec-overview">
+        <div class="eyebrow">// Overview</div>
+        <h1 class="h1">Welcome back<span id="hi"></span>.</h1>
+        <p class="lead">Here's how your web presence is performing this month.</p>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-k">Active Domains</div><div class="stat-v">2</div><div class="stat-d">All healthy</div></div>
+          <div class="stat"><div class="stat-k">Leads · 30d</div><div class="stat-v">47</div><div class="stat-d">▲ 18% vs last</div></div>
+          <div class="stat"><div class="stat-k">Ad ROAS</div><div class="stat-v">6.4<small>×</small></div><div class="stat-d">▲ 0.9×</div></div>
+          <div class="stat"><div class="stat-k">Sessions · 7d</div><div class="stat-v">1,284</div><div class="stat-d">▲ 6%</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Recent activity</div><span class="panel-k">live</span></div>
+          <table>
+            <tr><td><b>New lead</b> — Maria G. via Google Ads</td><td style="text-align:right;color:var(--warm-muted)">2h ago</td></tr>
+            <tr><td><b>Invoice paid</b> — INV-0007 · $294.00</td><td style="text-align:right;color:var(--warm-muted)">Jun 1</td></tr>
+            <tr><td><b>Change request closed</b> — Updated hours on homepage</td><td style="text-align:right;color:var(--warm-muted)">May 28</td></tr>
+            <tr><td><b>Meta campaign</b> — "Summer Promo" went live</td><td style="text-align:right;color:var(--warm-muted)">May 24</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- DOMAINS -->
+      <section class="sec" id="sec-domains">
+        <div class="eyebrow">// Domains</div>
+        <h1 class="h1">Your domains</h1>
+        <p class="lead">Hosting, SSL, and renewal status for every domain we manage for you.</p>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Managed domains</div><button class="btn btn-o" onclick="go('requests')">+ Request a domain</button></div>
+          <table>
+            <thead><tr><th>Domain</th><th>Status</th><th>SSL</th><th>Renews</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><b>yourbusiness.com</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td>Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+              <tr><td><b>yourbusiness.net</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td>Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+              <tr><td><b>getyourbusiness.com</b></td><td><span class="pill mut">Redirect</span></td><td><span class="pill ok">Valid</span></td><td>Nov 02, 2026</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted">Need a new domain or a transfer? Send a request and we'll handle the setup, DNS, and SSL for you.</p>
+      </section>
+
+      <!-- REQUESTS -->
+      <section class="sec" id="sec-requests">
+        <div class="eyebrow">// Requests</div>
+        <h1 class="h1">Request a change</h1>
+        <p class="lead">Tell us what to update — copy, photos, hours, new pages, anything. We typically reply within hours.</p>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">New request</div></div>
+          <form onsubmit="submitRequest(event)">
+            <textarea class="ta" id="reqText" placeholder="e.g. Update our holiday hours and swap the hero photo for the new one I'll text you…" required></textarea>
+            <div class="cardrow" style="justify-content:space-between">
+              <select class="sel" id="reqPriority"><option>Normal priority</option><option>Urgent</option><option>Whenever you get a chance</option></select>
+              <button class="btn btn-p" type="submit">Send request</button>
+            </div>
+            <div class="ok-msg hidden" id="reqOk">✓ Request received — John will text you shortly.</div>
+          </form>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Recent requests</div></div>
+          <table id="reqTable">
+            <thead><tr><th>#</th><th>Request</th><th>Status</th><th>Updated</th></tr></thead>
+            <tbody>
+              <tr><td>1041</td><td><b>Add a "Book Online" button to the header</b></td><td><span class="pill warn">In progress</span></td><td>Today</td></tr>
+              <tr><td>1038</td><td><b>Update homepage hours</b></td><td><span class="pill ok">Done</span></td><td>May 28</td></tr>
+              <tr><td>1034</td><td><b>New gallery photos (12)</b></td><td><span class="pill ok">Done</span></td><td>May 19</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- LEADS -->
+      <section class="sec" id="sec-leads">
+        <div class="eyebrow">// Lead Tracking</div>
+        <h1 class="h1">Leads</h1>
+        <p class="lead">Every form, call, and text your website captured — with the source that drove it.</p>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-k">Leads · 30d</div><div class="stat-v">47</div><div class="stat-d">▲ 18%</div></div>
+          <div class="stat"><div class="stat-k">Contacted</div><div class="stat-v">39</div><div class="stat-d">83% rate</div></div>
+          <div class="stat"><div class="stat-k">Won</div><div class="stat-v">14</div><div class="stat-d">▲ 4</div></div>
+          <div class="stat"><div class="stat-k">Cost / lead</div><div class="stat-v">$11<small>.40</small></div><div class="stat-d">▼ $2.10</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Recent leads</div><span class="panel-k">47 total</span></div>
+          <table>
+            <thead><tr><th>Name</th><th>Source</th><th>Channel</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><b>Maria G.</b></td><td>Google Ads</td><td>Form</td><td>Jun 30</td><td><span class="pill new">New</span></td></tr>
+              <tr><td><b>Devon R.</b></td><td>Organic Search</td><td>Call</td><td>Jun 29</td><td><span class="pill warn">Contacted</span></td></tr>
+              <tr><td><b>Priya S.</b></td><td>Meta Ads</td><td>Text</td><td>Jun 29</td><td><span class="pill ok">Won</span></td></tr>
+              <tr><td><b>Carlos M.</b></td><td>Google Business</td><td>Call</td><td>Jun 28</td><td><span class="pill warn">Contacted</span></td></tr>
+              <tr><td><b>Anna T.</b></td><td>Direct</td><td>Form</td><td>Jun 27</td><td><span class="pill ok">Won</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ADS -->
+      <section class="sec" id="sec-ads">
+        <div class="eyebrow">// Ad Tracking</div>
+        <h1 class="h1">Ad performance</h1>
+        <p class="lead">Live spend and return across your Google and Meta campaigns.</p>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-k">Spend · 30d</div><div class="stat-v">$2,140</div><div class="stat-d">on budget</div></div>
+          <div class="stat"><div class="stat-k">Conversions</div><div class="stat-v">61</div><div class="stat-d">▲ 22%</div></div>
+          <div class="stat"><div class="stat-k">Blended ROAS</div><div class="stat-v">6.4<small>×</small></div><div class="stat-d">▲ 0.9×</div></div>
+          <div class="stat"><div class="stat-k">Revenue</div><div class="stat-v">$13.7<small>k</small></div><div class="stat-d">▲ 31%</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Campaigns</div><span class="panel-k">2 platforms</span></div>
+          <table>
+            <thead><tr><th>Campaign</th><th>Platform</th><th>Spend</th><th>Conv.</th><th>ROAS</th></tr></thead>
+            <tbody>
+              <tr><td><b>Search — Services</b></td><td>Google Ads</td><td>$980</td><td>28</td><td><b style="color:var(--gold)">7.1×</b></td></tr>
+              <tr><td><b>Local — Map Pack</b></td><td>Google Ads</td><td>$420</td><td>16</td><td><b style="color:var(--gold)">8.3×</b></td></tr>
+              <tr><td><b>Summer Promo</b></td><td>Meta Ads</td><td>$520</td><td>12</td><td><b style="color:var(--gold)">4.6×</b></td></tr>
+              <tr><td><b>Retargeting</b></td><td>Meta Ads</td><td>$220</td><td>5</td><td><b style="color:var(--gold)">5.2×</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VISITORS (Microsoft Clarity) -->
+      <section class="sec" id="sec-visitors">
+        <div class="eyebrow">// Visitor Sessions · Microsoft Clarity</div>
+        <h1 class="h1">Visitor behavior</h1>
+        <p class="lead">Session recordings, heatmaps, and friction signals — powered by Microsoft Clarity.</p>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-k">Sessions · 7d</div><div class="stat-v" id="clSessions">1,284</div><div class="stat-d">▲ 6%</div></div>
+          <div class="stat"><div class="stat-k">Recordings</div><div class="stat-v" id="clRecordings">912</div><div class="stat-d">watchable</div></div>
+          <div class="stat"><div class="stat-k">Dead clicks</div><div class="stat-v" id="clDead">3.1<small>%</small></div><div class="stat-d down">▲ 0.4%</div></div>
+          <div class="stat"><div class="stat-k">Rage clicks</div><div class="stat-v" id="clRage">0.8<small>%</small></div><div class="stat-d">▼ 0.2%</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Top pages by engagement</div><span class="panel-k">avg scroll depth</span></div>
+          <table>
+            <tbody>
+              <tr><td style="width:40%"><b>/ (Home)</b></td><td style="width:45%"><div class="bar"><i style="width:88%"></i></div></td><td style="text-align:right">88%</td></tr>
+              <tr><td><b>/pricing</b></td><td><div class="bar"><i style="width:72%"></i></div></td><td style="text-align:right">72%</td></tr>
+              <tr><td><b>/portfolio</b></td><td><div class="bar"><i style="width:64%"></i></div></td><td style="text-align:right">64%</td></tr>
+              <tr><td><b>/contact</b></td><td><div class="bar"><i style="width:53%"></i></div></td><td style="text-align:right">53%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Session recordings</div><a class="link" id="clarityLink" href="https://clarity.microsoft.com/" target="_blank" rel="noopener">Open in Microsoft Clarity ↗</a></div>
+          <table>
+            <thead><tr><th>Visitor</th><th>Device</th><th>Pages</th><th>Duration</th><th>Signal</th></tr></thead>
+            <tbody>
+              <tr><td><b>#a91f · Phoenix, AZ</b></td><td>iPhone</td><td>5</td><td>3m 12s</td><td><span class="pill ok">Converted</span></td></tr>
+              <tr><td><b>#7c20 · Mesa, AZ</b></td><td>Desktop</td><td>3</td><td>1m 48s</td><td><span class="pill new">Engaged</span></td></tr>
+              <tr><td><b>#5e8b · Tempe, AZ</b></td><td>Android</td><td>2</td><td>0m 41s</td><td><span class="pill warn">Rage click</span></td></tr>
+              <tr><td><b>#3d11 · Scottsdale</b></td><td>iPad</td><td>6</td><td>4m 05s</td><td><span class="pill ok">Converted</span></td></tr>
+            </tbody>
+          </table>
+          <p class="muted" style="margin-top:1rem">Demo data. Live numbers populate once Clarity is connected — see <code>fetchClarityInsights()</code> in this file for the Data Export API wiring.</p>
+        </div>
+      </section>
+
+      <!-- BILLING -->
+      <section class="sec" id="sec-billing">
+        <div class="eyebrow">// Billing</div>
+        <h1 class="h1">Payment &amp; invoices</h1>
+        <p class="lead">Your plan, payment method, and invoice history.</p>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Payment method</div><button class="btn btn-o" onclick="toast('updPay')">Update</button></div>
+          <div class="cardrow">
+            <div class="cc">VISA</div>
+            <div><div><b>Visa ending 4242</b></div><div class="muted">Expires 08 / 27 · next charge $294.00 on Jul 1, 2026</div></div>
+          </div>
+          <div class="ok-msg hidden" id="updPay">✓ We'll text you a secure link to update your card.</div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Plan</div><span class="pill new">Monthly · $294/mo</span></div>
+          <p class="muted">Custom website, hosting, ongoing edits, security &amp; backups, priority support, and a free refresh every 12 months. Cancel anytime.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Invoices</div></div>
+          <table>
+            <thead><tr><th>Invoice</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><b>INV-0007</b></td><td>Jun 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+              <tr><td><b>INV-0006</b></td><td>May 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+              <tr><td><b>INV-0005</b></td><td>Apr 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+              <tr><td><b>INV-0004</b></td><td>Mar 1, 2026</td><td>$294.00</td><td><span class="pill ok">Paid</span></td><td style="text-align:right"><a class="link" onclick="toast('dl');return false" href="#">Download</a></td></tr>
+            </tbody>
+          </table>
+          <div class="ok-msg hidden" id="dl">✓ Demo invoice — your real invoices download here once billing is connected.</div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="auth-config.js"></script>
@@ -102,28 +323,85 @@
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
     let sb = null;
+    const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
 
     function goLogin(){ window.location.href = 'login.html'; }
 
     async function init(){
-      if (!configured || !window.supabase){
-        // Nothing to authenticate against yet — send them to the login page.
-        document.getElementById('loading').textContent = '// auth not configured';
-        setTimeout(goLogin, 800); return;
+      let name = null;
+      if (demo){
+        name = demo.name || demo.email;
+      } else if (configured && window.supabase){
+        sb = window.supabase.createClient(URL_, KEY_);
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session){ goLogin(); return; }
+        const u = session.user;
+        name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
+        sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+      } else {
+        goLogin(); return;
       }
-      sb = window.supabase.createClient(URL_, KEY_);
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session){ goLogin(); return; }
-      const u = session.user;
-      const name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
       document.getElementById('who').textContent = name;
+      const first = String(name).split('@')[0].split(' ')[0];
+      document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
       document.getElementById('loading').classList.add('hidden');
-      sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+      fetchClarityInsights();
+    }
+
+    function go(s){
+      document.querySelectorAll('.navitem').forEach(n => n.classList.toggle('active', n.dataset.s === s));
+      document.querySelectorAll('.sec').forEach(sec => sec.classList.toggle('active', sec.id === 'sec-' + s));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function toast(id){ const el = document.getElementById(id); if (el){ el.classList.remove('hidden'); } }
+    function submitRequest(e){
+      e.preventDefault();
+      const txt = document.getElementById('reqText').value.trim();
+      if (!txt) return;
+      document.getElementById('reqOk').classList.remove('hidden');
+      const tb = document.querySelector('#reqTable tbody');
+      const id = 1042 + tb.children.length - 3;
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + id + '</td><td><b>' + txt.replace(/</g,'&lt;').slice(0,60) + '</b></td><td><span class="pill new">Received</span></td><td>Just now</td>';
+      tb.prepend(tr);
+      document.getElementById('reqText').value = '';
     }
     async function signOut(){
+      localStorage.removeItem('jb-demo-session');
       if (sb) await sb.auth.signOut();
       goLogin();
     }
+
+    /* ── Microsoft Clarity ──────────────────────────────────────────────
+       1) Install tracking: in Clarity → Settings → Setup, copy your project
+          ID and uncomment the snippet below (replace CLARITY_PROJECT_ID).
+       2) Live metrics: the Clarity Data Export API needs a Bearer token that
+          must stay server-side. Create a serverless proxy (e.g. Vercel
+          /api/clarity) that calls
+          https://www.clarity.ms/export-data/api/v1/project-live-insights
+          with your token, then this function swaps the demo numbers for real
+          ones. Without that, the cards above show representative demo data. */
+    async function fetchClarityInsights(){
+      const PROXY = '/api/clarity';            // your serverless endpoint (optional)
+      try {
+        const r = await fetch(PROXY, { method: 'GET' });
+        if (!r.ok) return;                      // not set up yet → keep demo data
+        const d = await r.json();
+        if (d.sessions)   document.getElementById('clSessions').textContent   = d.sessions.toLocaleString();
+        if (d.recordings) document.getElementById('clRecordings').textContent = d.recordings.toLocaleString();
+        if (d.deadClicks) document.getElementById('clDead').innerHTML          = d.deadClicks + '<small>%</small>';
+        if (d.rageClicks) document.getElementById('clRage').innerHTML          = d.rageClicks + '<small>%</small>';
+      } catch (_) { /* offline / not configured → demo data stays */ }
+    }
+
+    /* Clarity tracking snippet — uncomment and add your project ID to start
+       collecting real visitor sessions on this portal:
+    (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window,document,"clarity","script","CLARITY_PROJECT_ID");
+    */
+
     init();
   </script>
 </body>
