@@ -513,6 +513,47 @@
   .pricing-features { list-style:none; margin-bottom:2rem; }
   .pricing-features li { padding:0.55rem 0; border-bottom:1px solid rgba(226,236,245,0.05); font-family:'Archivo',sans-serif; font-size:0.87rem; color:#bbb; display:flex; align-items:center; gap:0.7rem; font-weight:300; }
   .pricing-features li::before { content:'✓'; color:var(--warm-accent); font-weight:700; flex-shrink:0; }
+  /* Pricing tabs — Web Dev / App Dev / Ad Campaigns */
+  .pricing-tabs {
+    display: inline-flex; gap: 0.3rem; margin-bottom: 2.4rem; flex-wrap: wrap;
+    border: 1px solid var(--card-border); border-radius: 3px;
+    padding: 0.35rem; background: var(--dark3); max-width: 100%;
+  }
+  .pricing-tab {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--warm-muted); background: none; border: none;
+    padding: 0.7rem 1.15rem; cursor: none; border-radius: 2px; white-space: nowrap;
+    transition: color 0.2s, background 0.2s;
+  }
+  .pricing-tab:hover { color: var(--white); }
+  .pricing-tab.active { color: var(--dark); background: var(--gold); font-weight: 700; }
+  .pricing-panel { display: none; }
+  .pricing-panel.active { display: block; animation: fadeUp 0.5s both; }
+  .pricing-single { display: flex; justify-content: center; }
+  .pricing-single .pricing-card { max-width: 440px; width: 100%; }
+  .pricing-card.accent {
+    border-color: rgba(79,209,230,0.32);
+    background: linear-gradient(150deg, rgba(79,209,230,0.07), var(--dark3) 55%);
+    box-shadow: var(--glow-strong);
+  }
+  .pricing-card.accent:hover { border-color: rgba(79,209,230,0.52); }
+  .pc-badge {
+    position: absolute; top: -1px; right: 2rem; background: var(--gold); color: var(--dark);
+    font-family: var(--mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em;
+    padding: 0.28rem 0.8rem; text-transform: uppercase;
+  }
+  .price-plus { font-size: 1.7rem; vertical-align: top; color: var(--gold); margin-left: 0.05rem; }
+  .price-per { font-size: 1.3rem; font-family: 'Archivo', sans-serif; font-weight: 300; color: var(--gray); }
+  .price-secondary { font-family: var(--mono); font-size: 0.86rem; color: var(--gold); margin-bottom: 0.55rem; }
+  .roas-band {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    background: rgba(79,209,230,0.06); border: 1px solid rgba(79,209,230,0.22);
+    border-radius: 2px; padding: 0.85rem 1rem; margin-bottom: 1.5rem;
+  }
+  .roas-num { font-family: 'Archivo Expanded', sans-serif; font-weight: 700; font-size: 1.45rem; color: var(--gold); letter-spacing: -0.02em; }
+  .roas-label { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-muted); }
+  .pricing-foot { margin-top: 1.5rem; color: var(--warm-muted); font-size: 0.8rem; font-family: var(--mono); }
+  .pricing-foot a { color: var(--warm-accent); text-decoration: none; }
 
   /* ── BOOK A CALL ────────────────────────────── */
   .book-band { background:var(--dark2); padding:5rem 4%; border-top:1px solid var(--card-border); text-align:center; position:relative; overflow:hidden; }
@@ -1020,7 +1061,7 @@
     <div><div class="hero-stat-num" data-target="7" data-prefix="5–">5–7</div><div class="hero-stat-label">Business Day Delivery</div></div>
     <div><div class="hero-stat-num" data-target="40" data-suffix="+">40+</div><div class="hero-stat-label">Active Clients</div></div>
     <div><div class="hero-stat-num" data-target="100" data-suffix="%">100%</div><div class="hero-stat-label">Custom Design</div></div>
-    <div><div class="hero-stat-num">480</div><div class="hero-stat-label">589-0098 — Text or Call</div></div>
+    <div><div class="hero-stat-num" style="color:var(--gold);">∞</div><div class="hero-stat-label">Scaling Growth Potential</div></div>
   </div>
 </section>
 
@@ -1229,28 +1270,77 @@
   <div class="glow-accent"></div>
   <div class="section-eyebrow">Pricing</div>
   <h2 class="section-title">Simple. Transparent.<br><em>No Surprises.</em></h2>
-  <p class="section-sub">Two ways to get a world-class website. Both include a 30-minute consultation and delivery in 5–7 business days.</p>
-  <div class="pricing-grid reveal">
-    <div class="pricing-card tilt-card">
-      <div class="pricing-label">One-Time</div>
-      <div class="pricing-price"><sup>$</sup>3,500</div>
-      <div class="pricing-period">One-time payment. Yours forever.</div>
-      <ul class="pricing-features">
-        <li>Custom design built for your brand</li><li>30-minute strategy consultation</li><li>5–7 business day delivery</li><li>Unlimited revision rounds</li><li>Mobile responsive &amp; fast</li><li>Contact forms &amp; Google Maps</li><li>You own the site outright</li>
-      </ul>
-      <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline magnetic" style="display:block;text-align:center;">Text to Get Started</a>
-    </div>
-    <div class="pricing-card featured tilt-card">
-      <div class="pricing-label">Monthly Plan</div>
-      <div class="pricing-price"><sup>$</sup>294<span style="font-size:1.4rem;font-family:'Archivo',sans-serif;font-weight:300;">/mo</span></div>
-      <div class="pricing-period">Cancel anytime. No contracts.</div>
-      <ul class="pricing-features">
-        <li>Everything in One-Time, plus:</li><li>Free hosting included</li><li>Free website refresh every 12 months</li><li>Ongoing edits &amp; updates</li><li>Priority support</li><li>Security &amp; backups managed</li><li>Cancel anytime, no penalty</li>
-      </ul>
-      <a href="sms:4805890098?body=I'm interested in the monthly website plan at $294/mo" class="btn-primary magnetic" style="display:block;text-align:center;">Text to Get Started</a>
-    </div>
+  <p class="section-sub">Three ways we grow your business — websites, apps, and ad campaigns. Pick a track below.</p>
+
+  <div class="pricing-tabs" role="tablist" aria-label="Pricing tracks">
+    <button class="pricing-tab active" role="tab" aria-selected="true" onclick="switchPricing(0)">01 · Web Dev</button>
+    <button class="pricing-tab" role="tab" aria-selected="false" onclick="switchPricing(1)">02 · App Dev</button>
+    <button class="pricing-tab" role="tab" aria-selected="false" onclick="switchPricing(2)">03 · Ad Campaigns</button>
   </div>
-  <p style="margin-top:1.5rem;color:#444;font-size:0.82rem;font-family:'Archivo',sans-serif;">Questions? Text or call <a href="tel:4805890098" style="color:var(--warm-accent);text-decoration:none;">(480) 589-0098</a> — we respond fast.</p>
+
+  <!-- Tab 1: Web Development -->
+  <div class="pricing-panel active" id="ppanel0" role="tabpanel">
+    <div class="pricing-grid reveal">
+      <div class="pricing-card tilt-card">
+        <div class="pricing-label">One-Time</div>
+        <div class="pricing-price"><sup>$</sup>3,500</div>
+        <div class="pricing-period">One-time payment. Yours forever.</div>
+        <ul class="pricing-features">
+          <li>Custom design built for your brand</li><li>30-minute strategy consultation</li><li>5–7 business day delivery</li><li>Unlimited revision rounds</li><li>Mobile responsive &amp; fast</li><li>Contact forms &amp; Google Maps</li><li>You own the site outright</li>
+        </ul>
+        <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline magnetic" style="display:block;text-align:center;">Text to Get Started</a>
+      </div>
+      <div class="pricing-card featured tilt-card">
+        <div class="pricing-label">Monthly Plan</div>
+        <div class="pricing-price"><sup>$</sup>294<span class="price-per">/mo</span></div>
+        <div class="pricing-period">Cancel anytime. No contracts.</div>
+        <ul class="pricing-features">
+          <li>Everything in One-Time, plus:</li><li>Free hosting included</li><li>Free website refresh every 12 months</li><li>Ongoing edits &amp; updates</li><li>Priority support</li><li>Security &amp; backups managed</li><li>Cancel anytime, no penalty</li>
+        </ul>
+        <a href="sms:4805890098?body=I'm interested in the monthly website plan at $294/mo" class="btn-primary magnetic" style="display:block;text-align:center;">Text to Get Started</a>
+      </div>
+    </div>
+    <p class="pricing-foot">Questions? Text or call <a href="tel:4805890098">(480) 589-0098</a> — we respond fast.</p>
+  </div>
+
+  <!-- Tab 2: App Development -->
+  <div class="pricing-panel" id="ppanel1" role="tabpanel">
+    <div class="pricing-single">
+      <div class="pricing-card accent tilt-card">
+        <div class="pc-badge">Custom Scope</div>
+        <div class="pricing-label">App Development</div>
+        <div class="pricing-price"><sup>$</sup>5,000<span class="price-plus">+</span></div>
+        <div class="pricing-period">Starting price · scoped to your project.</div>
+        <ul class="pricing-features">
+          <li>iOS, Android &amp; web applications</li><li>Custom UX / UI design</li><li>Scalable backend &amp; database</li><li>API &amp; third-party integrations</li><li>App Store &amp; Play Store launch</li><li>Ongoing support &amp; updates available</li>
+        </ul>
+        <a href="sms:4805890098?body=I'd like to inquire about app development" class="btn-primary magnetic" style="display:block;text-align:center;">Inquire About Your App</a>
+      </div>
+    </div>
+    <p class="pricing-foot">Every app is quoted to scope. Text <a href="tel:4805890098">(480) 589-0098</a> and tell us your idea.</p>
+  </div>
+
+  <!-- Tab 3: Ad Campaigns -->
+  <div class="pricing-panel" id="ppanel2" role="tabpanel">
+    <div class="pricing-single">
+      <div class="pricing-card accent tilt-card">
+        <div class="pc-badge">Money-Back</div>
+        <div class="pricing-label">Ad Campaigns</div>
+        <div class="pricing-price"><sup>$</sup>100<span class="price-per">/wk</span></div>
+        <div class="price-secondary">+ 10% of ad spend managed</div>
+        <div class="pricing-period">3-month minimum · money-back guarantee.</div>
+        <div class="roas-band">
+          <span class="roas-num">2.2× – 15×</span>
+          <span class="roas-label">Typical return on ad spend (ROAS)</span>
+        </div>
+        <ul class="pricing-features">
+          <li>Google &amp; Meta ad campaigns</li><li>Full setup, targeting &amp; ad creative</li><li>Weekly optimization &amp; reporting</li><li>3-month minimum commitment</li><li>Make your investment back — or we refund you</li>
+        </ul>
+        <a href="sms:4805890098?body=I'd like to start an ad campaign" class="btn-primary magnetic" style="display:block;text-align:center;">Start a Campaign</a>
+      </div>
+    </div>
+    <p class="pricing-foot">Guarantee: make your money back within the 3 months, or it's on us.</p>
+  </div>
 </section>
 
 <!-- BOOK A CALL -->
@@ -1557,6 +1647,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && lmModal.st
 
 // ── FAQ ──────────────────────────────────────────
 function toggleFaq(btn){const item=btn.parentElement,isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open');}
+
+// ── PRICING TABS ─────────────────────────────────
+function switchPricing(i){
+  document.querySelectorAll('.pricing-tab').forEach((t,idx)=>{const on=idx===i;t.classList.toggle('active',on);t.setAttribute('aria-selected',on);});
+  document.querySelectorAll('.pricing-panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+}
 
 // ── SCROLL REVEAL ────────────────────────────────
 const rObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rObs.unobserve(e.target);}});},{threshold:0.06});
