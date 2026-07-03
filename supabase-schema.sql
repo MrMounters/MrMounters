@@ -56,6 +56,21 @@ create policy "reps manage their own docs"
   using (bucket_id = 'rep-docs' and (storage.foldername(name))[1] = auth.uid()::text)
   with check (bucket_id = 'rep-docs' and (storage.foldername(name))[1] = auth.uid()::text);
 
+-- ---------- ACADEMY PROGRESS (rep training modules) ----------
+create table if not exists public.academy_progress (
+  rep_id      uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  module_id   text not null,                  -- 'm0'..'m4'
+  completed_at timestamptz default now(),
+  primary key (rep_id, module_id)
+);
+
+alter table public.academy_progress enable row level security;
+
+create policy "academy progress is private to the rep"
+  on public.academy_progress for all
+  using (auth.uid() = rep_id)
+  with check (auth.uid() = rep_id);
+
 -- ---------- keep updated_at fresh ----------
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$

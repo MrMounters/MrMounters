@@ -120,11 +120,54 @@
   .doc h2{ font-family:'Inter',sans-serif; font-weight:700; font-size:1.3rem; margin:1.6rem 0 0.6rem; letter-spacing:-0.01em; }
   .doc h2:first-child{ margin-top:0; }
   .doc h3{ font-family:'Inter',sans-serif; font-weight:700; font-size:0.98rem; color:var(--gold); margin:1.2rem 0 0.4rem; }
-  .doc p, .doc li{ color:var(--gray-light,#A9BACE); font-size:0.9rem; line-height:1.75; }
+  .doc p, .doc li{ color:var(--gray); font-size:0.9rem; line-height:1.75; }
   .doc ul, .doc ol{ margin:0.5rem 0 0.5rem 1.2rem; }
   .doc li{ margin-bottom:0.35rem; }
   .doc strong{ color:var(--white); font-weight:600; }
   .doc .kb-eyebrow{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+  /* ── THE ACADEMY ── */
+  .acad-head{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1.3rem 1.4rem; margin-bottom:1.2rem; box-shadow:0 1px 2px rgba(10,37,64,0.04), 0 6px 20px rgba(60,66,87,0.05); }
+  .acad-head-top{ display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:0.7rem; flex-wrap:wrap; }
+  .acad-pct{ font-family:var(--mono); font-size:0.72rem; color:var(--gold); font-weight:700; }
+  .progress-track{ height:8px; border-radius:4px; background:rgba(99,91,255,0.12); overflow:hidden; }
+  .progress-fill{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:4px; transition:width 0.6s cubic-bezier(0.22,1,0.36,1); }
+  .mod-card{ display:flex; align-items:center; gap:1rem; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1.05rem 1.15rem; cursor:pointer; text-align:left; width:100%; transition:border-color .2s, transform .15s; box-shadow:0 1px 2px rgba(10,37,64,0.04), 0 6px 20px rgba(60,66,87,0.05); }
+  .mod-card:hover{ border-color:rgba(99,91,255,0.4); transform:translateY(-1px); }
+  .mod-card.done{ border-color:rgba(31,169,113,0.35); }
+  .mod-num{ width:38px; height:38px; border-radius:10px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-weight:700; font-size:0.8rem; background:rgba(99,91,255,0.09); color:var(--gold); border:1px solid rgba(99,91,255,0.22); }
+  .mod-card.done .mod-num{ background:rgba(31,169,113,0.1); color:var(--green); border-color:rgba(31,169,113,0.3); }
+  .mod-body{ flex:1; min-width:0; }
+  .mod-t{ font-weight:600; color:var(--white); font-size:0.94rem; }
+  .mod-d{ font-size:0.76rem; color:var(--warm-muted); margin-top:0.15rem; }
+  .callout{ position:relative; background:rgba(99,91,255,0.05); border:1px solid rgba(99,91,255,0.22); border-left:3px solid var(--gold); border-radius:6px; padding:1rem 1.1rem; margin:0.9rem 0; }
+  .callout p{ color:var(--white) !important; font-style:italic; margin:0; padding-right:3.4rem; }
+  .callout-k{ font-family:var(--mono); font-size:0.55rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:0.4rem; }
+  .copy-btn{ position:absolute; top:0.7rem; right:0.7rem; font-family:var(--mono); font-size:0.6rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--gold); background:#fff; border:1px solid rgba(99,91,255,0.3); border-radius:4px; padding:0.3rem 0.55rem; cursor:pointer; }
+  .copy-btn:hover{ background:rgba(99,91,255,0.08); }
+  .takeaway{ background:var(--gold); color:#fff; border-radius:8px; padding:1rem 1.2rem; margin:1.2rem 0 0.4rem; font-weight:600; font-size:0.95rem; line-height:1.55; box-shadow:0 8px 24px rgba(99,91,255,0.3); }
+  .takeaway span{ display:block; font-family:var(--mono); font-size:0.55rem; letter-spacing:0.18em; text-transform:uppercase; opacity:0.85; margin-bottom:0.35rem; }
+  .quiz{ background:var(--dark4); border:1px solid var(--card-border); border-radius:8px; padding:1.3rem 1.3rem 1.1rem; margin-top:1.6rem; }
+  .quiz-t{ font-weight:700; color:var(--white); font-size:1rem; margin-bottom:0.2rem; }
+  .quiz-sub{ font-size:0.78rem; color:var(--warm-muted); margin-bottom:1rem; }
+  .qq{ margin-bottom:1.1rem; }
+  .qq-t{ font-weight:600; color:var(--white); font-size:0.88rem; margin-bottom:0.5rem; }
+  .quiz-opt{ display:block; width:100%; text-align:left; background:#fff; border:1px solid var(--card-border); border-radius:6px; padding:0.65rem 0.85rem; margin-bottom:0.4rem; font-family:'Inter',sans-serif; font-size:0.85rem; color:var(--gray); cursor:pointer; transition:border-color .15s, background .15s; }
+  .quiz-opt:hover{ border-color:rgba(99,91,255,0.4); }
+  .quiz-opt.sel{ border-color:var(--gold); background:rgba(99,91,255,0.06); color:var(--white); }
+  .quiz-opt.right{ border-color:var(--green); background:rgba(31,169,113,0.08); color:var(--white); }
+  .quiz-opt.wrong{ border-color:var(--red); background:rgba(223,27,65,0.06); }
+  .qq-why{ font-size:0.76rem; color:var(--green); margin:0.2rem 0 0.4rem; display:none; }
+  .qq.graded .qq-why{ display:block; }
+  .quiz-result{ font-family:var(--mono); font-size:0.78rem; margin-top:0.6rem; min-height:1.2em; }
+  .quiz-result.pass{ color:var(--green); } .quiz-result.fail{ color:var(--red); }
+  .badge-cert{ display:flex; align-items:center; gap:1rem; border-radius:10px; padding:1.2rem 1.3rem; margin-bottom:1.2rem; }
+  .badge-cert.locked{ background:var(--dark4); border:1px dashed var(--card-border); color:var(--warm-muted); }
+  .badge-cert.earned{ background:linear-gradient(135deg,var(--gold),#8B5CF6); color:#fff; box-shadow:0 14px 40px rgba(99,91,255,0.35); animation:certPop 0.6s cubic-bezier(0.22,1,0.36,1); }
+  @keyframes certPop{ from{ transform:scale(0.92); opacity:0; } to{ transform:none; opacity:1; } }
+  .badge-cert .medal{ font-size:2rem; }
+  .badge-cert b{ display:block; font-size:1.05rem; }
+  .badge-cert small{ font-size:0.75rem; opacity:0.85; }
+  .cert-chip{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; color:#fff; background:linear-gradient(135deg,var(--gold),#8B5CF6); border-radius:20px; padding:0.28rem 0.7rem; }
   /* Signature / compliance docs */
   .legal{ max-height:220px; overflow-y:auto; background:var(--dark4); border:1px solid var(--card-border); border-radius:4px; padding:1rem 1.1rem; font-size:0.8rem; line-height:1.65; color:var(--gray); margin-bottom:0.9rem; }
   .legal p{ margin-bottom:0.7rem; }
@@ -167,7 +210,7 @@
     <a class="m-item" data-s="dialer" onclick="go('dialer')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Dialer</a>
     <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
     <div class="m-section">Resources</div>
-    <a class="m-item" data-s="kb" onclick="go('kb')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Knowledge Base</a>
+    <a class="m-item" data-s="kb" onclick="go('kb')"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>The Academy</a>
     <a class="m-item" data-s="docs" onclick="go('docs')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Documents &amp; Onboarding</a>
     <div class="menu-div"></div>
     <a class="m-item" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sign out</a>
@@ -177,7 +220,7 @@
     <!-- OVERVIEW -->
     <section class="sec active" id="sec-overview">
       <div class="eyebrow">// Today</div>
-      <h1 class="h1">Welcome back<span id="hi"></span>.</h1>
+      <h1 class="h1">Welcome back<span id="hi"></span>. <span class="cert-chip hidden" id="certChip">🏅 Certified Closer</span></h1>
       <p class="lead">Your numbers this month. Keep the pipeline full.</p>
       <div class="stat-grid">
         <div class="stat"><div class="stat-k">Commission · MTD</div><div class="stat-v">$3,180</div><div class="stat-d">▲ 24%</div></div>
@@ -189,7 +232,7 @@
         <div class="panel-h"><div class="panel-t">Quick actions</div></div>
         <div class="sign-row">
           <button class="btn btn-p" onclick="go('pipeline')">+ Enter a deal</button>
-          <button class="btn btn-o" onclick="go('kb')">Open the playbook</button>
+          <button class="btn btn-o" onclick="go('kb')">Train in The Academy</button>
           <button class="btn btn-o" onclick="go('docs')">Finish onboarding</button>
         </div>
       </div>
@@ -331,86 +374,208 @@
       </div>
     </section>
 
-    <!-- KNOWLEDGE BASE -->
+    <!-- THE ACADEMY -->
     <section class="sec" id="sec-kb">
-      <div class="eyebrow">// Knowledge Base</div>
-      <h1 class="h1">Knowledge base</h1>
-      <p class="lead">Everything you need to pitch, handle objections, and close.</p>
+      <div class="eyebrow">// The Academy</div>
+      <h1 class="h1">The Academy</h1>
+      <p class="lead">Five short modules. Pass every quiz, earn your badge, and never lose a deal to "I didn't know what to say."</p>
+
+      <div class="acad-head">
+        <div class="acad-head-top">
+          <b>Your progress</b>
+          <span class="acad-pct" id="acadPct">0% · 0/5 modules</span>
+        </div>
+        <div class="progress-track"><span class="progress-fill" id="acadFill"></span></div>
+      </div>
+
+      <div class="badge-cert locked" id="certCard">
+        <div class="medal">🏅</div>
+        <div><b id="certTitle">Certified John Bert Closer — locked</b><small id="certSub">Complete all 5 modules to earn your certification.</small></div>
+      </div>
+
       <div class="kb-list" id="kbList">
-        <button class="kb-doc" onclick="openDoc('leads')">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
-          <div><div class="kb-doc-t">How to Find Unlimited Free Leads</div><div class="kb-doc-d">7 zero-cost ways to fill your pipeline today · 5 min read</div></div>
+        <button class="mod-card" id="mc-m0" onclick="openDoc('m0')">
+          <div class="mod-num">00</div>
+          <div class="mod-body"><div class="mod-t">Who We Are — Brand DNA</div><div class="mod-d">The one lesson that changes what you sell · 4 min</div></div>
+          <span class="pill new" id="mp-m0">Start</span>
         </button>
-        <button class="kb-doc" onclick="openDoc('playbook')">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
-          <div><div class="kb-doc-t">The Field Playbook — How to Sell &amp; Close</div><div class="kb-doc-d">Pitch, pricing, objection handling, and how to submit a deal · 6 min read</div></div>
+        <button class="mod-card" id="mc-m1" onclick="openDoc('m1')">
+          <div class="mod-num">01</div>
+          <div class="mod-body"><div class="mod-t">Find Unlimited Free Leads</div><div class="mod-d">7 zero-cost ways to fill your pipeline today · 5 min</div></div>
+          <span class="pill new" id="mp-m1">Start</span>
+        </button>
+        <button class="mod-card" id="mc-m2" onclick="openDoc('m2')">
+          <div class="mod-num">02</div>
+          <div class="mod-body"><div class="mod-t">The Pitch &amp; The Close</div><div class="mod-d">Discovery, the 30-second pitch, objection kills · 6 min</div></div>
+          <span class="pill new" id="mp-m2">Start</span>
+        </button>
+        <button class="mod-card" id="mc-m3" onclick="openDoc('m3')">
+          <div class="mod-num">03</div>
+          <div class="mod-body"><div class="mod-t">Sell the Whole Stack</div><div class="mod-d">Turn a $294 site into a $2k/mo growth engine · 5 min</div></div>
+          <span class="pill new" id="mp-m3">Start</span>
+        </button>
+        <button class="mod-card" id="mc-m4" onclick="openDoc('m4')">
+          <div class="mod-num">04</div>
+          <div class="mod-body"><div class="mod-t">Pricing, Deals &amp; Getting Paid</div><div class="mod-d">The offer, the pipeline, your commissions · 4 min</div></div>
+          <span class="pill new" id="mp-m4">Start</span>
         </button>
       </div>
 
-      <!-- LESSON: Unlimited Free Leads -->
-      <div class="doc hidden" id="doc-leads">
-        <div class="kb-eyebrow">// Lesson 1 · Prospecting</div>
-        <h2>How to Find Unlimited Free Leads</h2>
-        <p>You never need to pay for a lead. Every business in your city is a prospect, and most have a website that's costing them customers. Here's how to find them — free — and walk in with proof they need you.</p>
+      <!-- MODULE 0 · BRAND DNA -->
+      <div class="doc hidden" id="doc-m0">
+        <div class="kb-eyebrow">// Module 00 · Brand DNA</div>
+        <h2>We Are Not a Website Company.</h2>
+        <p>Read that again. The fastest way to stay broke in this job is to introduce yourself as "the website guy." Website guys compete with $16/mo templates. <strong>Growth agencies compete with nobody</strong> — because the local business owner has never met one that picks up the phone.</p>
+
+        <h3>The one sentence</h3>
+        <p><strong>John Bert Web Strategy is Phoenix's full-service digital agency</strong> — brand, websites, apps, ads, AI, and CRM under one roof, for local businesses that want their phone to ring.</p>
+
+        <h3>The six pillars (memorize these)</h3>
+        <ul>
+          <li><strong>Brand &amp; Identity</strong> — how they look and sound everywhere.</li>
+          <li><strong>Websites</strong> — custom, conversion-first, live in 5–7 days.</li>
+          <li><strong>Apps</strong> — iOS, Android &amp; web, full-stack, from $5k.</li>
+          <li><strong>Ads</strong> — Google &amp; Meta, managed for ROAS, money-back guarantee.</li>
+          <li><strong>AI &amp; Automation</strong> — voice agents that answer every call, chat &amp; SMS that reply in seconds.</li>
+          <li><strong>CRM &amp; Lead Tracking</strong> — every lead, call, and dollar tracked in their portal.</li>
+        </ul>
+        <p>Every first conversation should touch the full stack at least once. Not a feature dump — one sentence: <em>"we handle everything that gets you customers."</em></p>
+
+        <h3>Your 15-second elevator pitch</h3>
+        <div class="callout">
+          <span class="callout-k">Copy-paste script</span>
+          <p>"I'm with John Bert — we're a full-service digital agency in Phoenix. Websites, apps, ads, and AI that answers your phone. One team, one bill, and your phone starts ringing. What's the biggest way customers find you right now?"</p>
+          <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        </div>
+
+        <h3>Vendor vs. partner</h3>
+        <p>A vendor sells a thing and disappears. A partner owns an outcome. We sell <strong>outcomes</strong>: more calls, more booked jobs, more revenue. That's why our clients pay monthly and stay — and why your residuals compound.</p>
+
+        <div class="takeaway"><span>Remember this</span>Never say "I build websites." Say "I help local businesses grow." The first is a $294 conversation. The second is a $2,000/mo one.</div>
+
+        <div class="quiz" id="quiz-m0"></div>
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to The Academy</button>
+      </div>
+
+      <!-- MODULE 1 · LEADS -->
+      <div class="doc hidden" id="doc-m1">
+        <div class="kb-eyebrow">// Module 01 · Prospecting</div>
+        <h2>Find Unlimited Free Leads</h2>
+        <p>You never need to pay for a lead. Every business in your city is a prospect, and most have a website quietly costing them customers. Find them free — and walk in with proof.</p>
 
         <h3>1. Friends &amp; associates who own a business</h3>
-        <p>Start with your warm network — the fastest yeses you'll ever get. List everyone you know who owns or runs a business. Then <strong>look each one up and audit them before you reach out</strong>:</p>
-        <ul>
-          <li>Pull up their website on your phone. Time how long it takes to load — over 3 seconds is a problem.</li>
-          <li>Run an <strong>error check</strong>: broken links, no mobile version, no click-to-call, contact form that doesn't work, expired SSL ("Not secure" in the address bar), outdated info.</li>
-          <li>Google their business name + "reviews" and check their Google Business Profile — missing photos, few reviews, no website link = easy wins.</li>
-          <li>Free audit tools: PageSpeed Insights (speed), Google's Mobile-Friendly check, and the free Website Audit Checklist PDF on our site.</li>
-        </ul>
-        <p>Then reach out with a <strong>specific</strong> observation, not a pitch: <em>"Hey — was on your site and noticed it's not loading the contact button on mobile. That's costing you calls. Want me to fix it?"</em></p>
+        <p>Fastest yeses you'll ever get. List everyone you know who runs a business, then <strong>audit them before you reach out</strong>: load time over 3 seconds, broken links, no mobile version, no click-to-call, dead contact form, "Not secure" SSL warning, thin Google Business Profile. Free tools: PageSpeed Insights, Google's mobile check, and our Website Audit Checklist PDF.</p>
+        <div class="callout">
+          <span class="callout-k">Copy-paste opener</span>
+          <p>"Hey — was on your site and noticed the contact button doesn't load on mobile. That's costing you calls. Want me to fix it?"</p>
+          <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        </div>
 
         <h3>2. Google Maps cold calling</h3>
-        <p>This is an unlimited well. Open Google Maps and search a niche + city, e.g. <strong>"attorney in New York,"</strong> <strong>"roofer in Mesa,"</strong> <strong>"dentist in Scottsdale."</strong> You get a list of dozens of businesses with phone numbers.</p>
+        <p>An unlimited well. Search a niche + city — <strong>"attorney in New York," "roofer in Mesa," "dentist in Scottsdale."</strong> Dozens of businesses with phone numbers. No website listed? They need everything. Has one? Audit it live so you have a reason to call. Then work the list with the portal <strong>Dialer</strong> and log every conversation in your pipeline.</p>
+        <div class="callout">
+          <span class="callout-k">Copy-paste cold opener</span>
+          <p>"Hi, I help [niche] in [city] get more customers from their website — I noticed yours [specific issue]. Got 60 seconds?"</p>
+          <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        </div>
+
+        <h3>3–7. The rest of the well</h3>
         <ul>
-          <li>Click each one. <strong>No website listed</strong>? Perfect — they need everything.</li>
-          <li>Has a website? Open it and audit it live (see step 1) so you have a reason to call.</li>
-          <li>Use the portal <strong>Dialer</strong> to call straight down the list. Add each conversation to your pipeline.</li>
-          <li>Opener: <em>"Hi, I help [niche] in [city] get more customers from their website — I noticed yours [specific issue]. Got 60 seconds?"</em></li>
+          <li><strong>GBPs with no website</strong> — paying for visibility with nowhere to send people. Highest intent, easiest close.</li>
+          <li><strong>Facebook groups &amp; Nextdoor</strong> — watch for "anyone know a good web person?" posts.</li>
+          <li><strong>BNI, Chamber, meetups</strong> — become the marketing person in two or three rooms and referrals never stop.</li>
+          <li><strong>Drive-by &amp; service trucks</strong> — snap the number, audit that night, call tomorrow.</li>
+          <li><strong>Review platforms</strong> — Yelp/Angi listings with dated sites already invest in being found.</li>
         </ul>
-
-        <h3>3. Google Business Profiles with no website</h3>
-        <p>On Maps, filter for businesses whose profile has a phone but <strong>no website link</strong>. They're already paying for visibility and have nowhere to send people. Highest-intent, lowest-effort close.</p>
-
-        <h3>4. Facebook groups &amp; Nextdoor</h3>
-        <p>Local "[City] small business owners" groups and Nextdoor recommendations are full of owners. Watch for "anyone know a good web person?" posts — and for businesses posting with no link in their bio.</p>
-
-        <h3>5. Networking: BNI, Chamber, meetups</h3>
-        <p>One BNI or Chamber of Commerce meeting is a room full of business owners who refer each other. Become the "web/marketing person" in two or three groups and referrals never stop.</p>
-
-        <h3>6. Drive-by &amp; service trucks</h3>
-        <p>Bandit signs, truck wraps, and storefronts are advertised phone numbers. Snap a photo, look them up that night, audit, and call. Local + visible = they're spending on marketing already.</p>
-
-        <h3>7. Bad reviews &amp; old sites on review platforms</h3>
-        <p>Yelp, Angi, and Google listings with dated or broken sites are prospects who already invest in being found. A quick audit gives you a reason to reach out with value first.</p>
 
         <h3>The system</h3>
         <ol>
           <li><strong>Build a list</strong> (network → Maps niche/city → no-website profiles).</li>
           <li><strong>Audit before you reach out</strong> — speed, mobile, click-to-call, SSL, reviews.</li>
-          <li><strong>Lead with the problem</strong> you found, not the pitch.</li>
-          <li><strong>Dial</strong> the list from the portal and <strong>log every deal</strong> in your pipeline.</li>
+          <li><strong>Lead with the problem</strong>, not the pitch.</li>
+          <li><strong>Dial and log</strong> every deal in your pipeline.</li>
         </ol>
-        <p>Do 20 audited calls a day and you'll never have an empty pipeline. <strong>Pro tip:</strong> send the free Website Audit Checklist as your follow-up — it does the selling for you.</p>
 
-        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to knowledge base</button>
+        <div class="takeaway"><span>Remember this</span>20 audited calls a day = a pipeline that's never empty. The audit is the pitch.</div>
+
+        <div class="quiz" id="quiz-m1"></div>
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to The Academy</button>
       </div>
 
-      <div class="doc hidden" id="doc-playbook">
-        <div class="kb-eyebrow">// Playbook · v1</div>
-        <h2>The Field Playbook</h2>
-        <p>This is the only doc you need to start closing. Read it once, keep it open on calls.</p>
+      <!-- MODULE 2 · PITCH & CLOSE -->
+      <div class="doc hidden" id="doc-m2">
+        <div class="kb-eyebrow">// Module 02 · Selling</div>
+        <h2>The Pitch &amp; The Close</h2>
+        <p>Selling this is simple: find where they're losing customers, show them, and offer to fix all of it. Questions first, pitch second, close always.</p>
 
-        <h3>1. Who we are</h3>
-        <p>John Bert Web Strategy builds <strong>custom websites, apps, and ad campaigns</strong> for local businesses in the Phoenix area, and runs the marketing engine on top — AI voice &amp; chat agents, lead &amp; visitor tracking, email/SMS, reputation, and buy-intent data. We deliver fast (5–7 days for sites) and we're a real human who picks up. That's the wedge.</p>
+        <h3>Discovery questions (ask, then shut up)</h3>
+        <ol>
+          <li>"How are customers finding you right now?"</li>
+          <li>"When a call comes in after hours, what happens to it?"</li>
+          <li>"What's a new customer worth to you?"</li>
+          <li>"If we filled your calendar without you lifting a finger, what would that be worth?"</li>
+        </ol>
+        <p>Question 3 is the money question — once they say "$2,000 a job," every price we charge sounds small.</p>
 
-        <h3>2. Who to sell to</h3>
-        <p>Local service businesses that live or die on the phone ringing: home services (HVAC, plumbing, roofing, landscaping), contractors, clinics, restaurants, gyms, med-spas. If they're spending on ads or have an ugly/slow site, they're a fit.</p>
+        <h3>The 30-second pitch</h3>
+        <div class="callout">
+          <span class="callout-k">Copy-paste pitch</span>
+          <p>"Most local businesses lose customers to a slow website and missed calls. We fix both — a custom site in about a week, plus an AI that answers every call and texts every lead back in seconds. You only pay for what works, and there's a money-back guarantee on ads. Want me to show you what it'd look like for your business?"</p>
+          <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        </div>
 
-        <h3>3. The offer &amp; pricing</h3>
+        <h3>Objection kills</h3>
+        <ul>
+          <li><strong>"Too expensive."</strong> → "One saved job a month covers it. The voice agent alone catches calls you're losing today."</li>
+          <li><strong>"I already have a website."</strong> → "Great — is it bringing you calls? Let's audit it free and see where it's leaking customers."</li>
+          <li><strong>"I need to think about it."</strong> → "Totally fair. What's the one thing you'd need to see to feel confident?"</li>
+          <li><strong>"I'm too busy."</strong> → "That's exactly why this exists — we do all of it, you just answer the booked jobs."</li>
+        </ul>
+
+        <div class="takeaway"><span>Remember this</span>Every pitch ends with a question that invites a yes: "Want me to show you what it'd look like for your business?"</div>
+
+        <div class="quiz" id="quiz-m2"></div>
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to The Academy</button>
+      </div>
+
+      <!-- MODULE 3 · SELL THE STACK -->
+      <div class="doc hidden" id="doc-m3">
+        <div class="kb-eyebrow">// Module 03 · Expansion</div>
+        <h2>Sell the Whole Stack</h2>
+        <p>The website is the front door, not the sale. The real money — for the client, the agency, and <strong>your residuals</strong> — is the growth engine behind it.</p>
+
+        <h3>Land, then expand</h3>
+        <p>A $294/mo site client is a warm lead for everything else. The natural ladder:</p>
+        <ol>
+          <li><strong>AI Voice Agent ($497/mo)</strong> — the easiest yes in the deck. Every missed call is a lost job; one saved job pays for it.</li>
+          <li><strong>Ad Campaigns ($100/wk + 10%)</strong> — now that the site converts, pour traffic on it. Money-back guarantee makes it a no-brainer.</li>
+          <li><strong>Buy-Intent Data ($697/mo)</strong> — "want to know who's shopping for you before they call anyone?" Nobody else in their market has this.</li>
+        </ol>
+
+        <h3>Anchor high</h3>
+        <p>Present the full Growth Suite first, then let them step down. "Most clients run the full engine at around $2k/mo — but we can start with the site and the voice agent and grow from there." Starting high makes everything after it feel easy.</p>
+
+        <h3>The money math (use their numbers)</h3>
+        <p>From discovery you know what a customer is worth. Say it back: <em>"You said a job is worth $2,000. The voice agent is $497 a month. If it saves one missed call a month, you're up 4×. It'll save more than one."</em></p>
+        <div class="callout">
+          <span class="callout-k">Copy-paste upsell line</span>
+          <p>"The site gets them to the door — the voice agent, ads, and tracking are what walk them through it. Want me to show you what the full engine looks like?"</p>
+          <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+        </div>
+
+        <div class="takeaway"><span>Remember this</span>Sell outcomes, anchor high, and use their own customer-value number. A site sale is the beginning of the deal, not the end.</div>
+
+        <div class="quiz" id="quiz-m3"></div>
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to The Academy</button>
+      </div>
+
+      <!-- MODULE 4 · PRICING & PAY -->
+      <div class="doc hidden" id="doc-m4">
+        <div class="kb-eyebrow">// Module 04 · The Business</div>
+        <h2>Pricing, Deals &amp; Getting Paid</h2>
+        <p>Know the numbers cold. Hesitating on price reads as doubt — and doubt kills deals.</p>
+
+        <h3>The offer</h3>
         <ul>
           <li><strong>Website</strong> — $294/mo (hosting, edits, support) or $3,500 one-time.</li>
           <li><strong>App development</strong> — from $5,000, scoped per project.</li>
@@ -420,33 +585,27 @@
           <li><strong>Buy-Intent Data</strong> — from $697/mo. Know who's in-market before they call.</li>
         </ul>
 
-        <h3>4. Discovery questions</h3>
-        <ol>
-          <li>"How are customers finding you right now?"</li>
-          <li>"When a call comes in after hours, what happens to it?"</li>
-          <li>"What's a new customer worth to you?"</li>
-          <li>"If we filled your calendar without you lifting a finger, what would that be worth?"</li>
-        </ol>
+        <h3>Submitting a deal</h3>
+        <p>Go to <strong>Pipeline &amp; Deals → Enter a deal</strong>. Contact, business, service, value, stage — hit <strong>Add deal</strong>, and keep the stage updated as it moves. If it's not in the pipeline, it doesn't exist (and it doesn't pay).</p>
 
-        <h3>5. The pitch (30 seconds)</h3>
-        <p>"Most local businesses lose customers to a slow website and missed calls. We fix both — a custom site in about a week, plus an AI that answers every call and texts every lead back in seconds. You only pay for what works, and there's a money-back guarantee on ads. Want me to show you what it'd look like for your business?"</p>
-
-        <h3>6. Objection handling</h3>
+        <h3>How you get paid</h3>
         <ul>
-          <li><strong>"Too expensive."</strong> → "One saved job a month covers it. The voice agent alone catches calls you're losing today."</li>
-          <li><strong>"I already have a website."</strong> → "Great — is it bringing you calls? Let's audit it free and see where it's leaking customers."</li>
-          <li><strong>"I need to think about it."</strong> → "Totally fair. What's the one thing you'd need to see to feel confident?"</li>
-          <li><strong>"I'm too busy."</strong> → "That's exactly why this exists — we do all of it, you just answer the booked jobs."</li>
+          <li><strong>15%</strong> on one-time sites ($3,500 → $525 to you).</li>
+          <li><strong>First month + 5% residual for 12 months</strong> on monthly services.</li>
+          <li><strong>20% first month + setup share</strong> on high-ticket (Voice, Intent, Apps).</li>
+          <li><strong>$1,000 quarterly bonus</strong> at 10 closed deals.</li>
         </ul>
+        <p>Do the math: ten monthly clients on a $791/mo bundle (site + voice agent) is <strong>recurring income</strong> stacking every month you keep closing.</p>
 
-        <h3>7. How to submit a deal</h3>
-        <p>Go to <strong>Pipeline &amp; Deals → Enter a deal</strong>. Add the contact, business, service, and value, set the stage, and hit <strong>Add deal</strong>. Keep it updated as it moves — that's how you get paid.</p>
+        <div class="takeaway"><span>Remember this</span>Pipeline discipline = paycheck. Enter every deal, update every stage, and the residuals take care of themselves.</div>
 
-        <h3>8. How you get paid</h3>
-        <p>See <strong>Commissions</strong> for the full structure: 15% on one-time sites, first month + 5% residual on monthly services, 20% + setup share on high-ticket. Quarterly bonus at 10 closed deals.</p>
-
-        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to knowledge base</button>
+        <div class="quiz" id="quiz-m4"></div>
+        <button class="btn btn-o" onclick="closeDoc()" style="margin-top:1.4rem">← Back to The Academy</button>
       </div>
+
+      
+
+      
     </section>
 
     <!-- DOCUMENTS & ONBOARDING -->
@@ -535,6 +694,7 @@
       document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
       document.getElementById('loading').classList.add('hidden');
       await loadDeals();
+      initAcademy();
       initTwilio();
     }
 
@@ -664,16 +824,178 @@
       await persistAdd(d);
     }
 
-    // Knowledge base docs
+    // Academy module reader
     function openDoc(which){
       document.getElementById('kbList').classList.add('hidden');
+      document.getElementById('certCard').classList.add('hidden');
       document.querySelectorAll('#sec-kb .doc').forEach(d => d.classList.add('hidden'));
       const el = document.getElementById('doc-' + which); if (el) el.classList.remove('hidden');
       window.scrollTo({ top:0, behavior:'smooth' });
     }
     function closeDoc(){
       document.getElementById('kbList').classList.remove('hidden');
+      document.getElementById('certCard').classList.remove('hidden');
       document.querySelectorAll('#sec-kb .doc').forEach(d => d.classList.add('hidden'));
+      renderAcademy();
+    }
+
+    // ── THE ACADEMY (progress + quizzes + certification) ──
+    const QUIZZES = {
+      m0: [
+        { q:'A prospect asks: "So you build websites?" Your best answer:',
+          opts:['"Yep, starting at $294 a month."','"We\'re a full-service growth agency — the website is just the front door."','"Websites, yeah. Anything else?"'],
+          a:1, why:'Lead with the agency identity — it reframes the whole conversation from price to growth.' },
+        { q:'Which of these is NOT one of our six pillars?',
+          opts:['AI & Automation','Brand & Identity','Reselling website templates'],
+          a:2, why:'We never sell templates — everything is custom. The pillars: Brand, Websites, Apps, Ads, AI, CRM.' },
+        { q:'What do we sell, at the core?',
+          opts:['Deliverables','Outcomes — more calls, booked jobs, revenue','Hours'],
+          a:1, why:'Partners own outcomes. That\'s why clients pay monthly and stay.' },
+        { q:'Complete the mantra: "Never say I build websites. Say…"',
+          opts:['"I do web design and some marketing."','"I help local businesses grow."','"I\'m with a Phoenix startup."'],
+          a:1, why:'The first is a $294 conversation. The second is a $2,000/mo one.' }
+      ],
+      m1: [
+        { q:'Before you contact ANY prospect, you should:',
+          opts:['Send a price list','Run a quick audit of their site & Google profile','Connect on LinkedIn'],
+          a:1, why:'The audit gives you a specific problem to open with — the audit IS the pitch.' },
+        { q:'On Google Maps, the highest-intent easiest-close prospect is:',
+          opts:['A business with a beautiful new site','A business with a phone number but NO website link','A national franchise'],
+          a:1, why:'They\'re already paying for visibility with nowhere to send people.' },
+        { q:'The daily standard that keeps a pipeline full:',
+          opts:['5 emails','20 audited calls','100 unresearched cold calls'],
+          a:1, why:'20 audited calls a day = never an empty pipeline. Quality × volume.' }
+      ],
+      m2: [
+        { q:'The "money question" in discovery is:',
+          opts:['"What\'s your budget?"','"What\'s a new customer worth to you?"','"Who built your current site?"'],
+          a:1, why:'Once they say "$2,000 a job," every price we quote sounds small.' },
+        { q:'"I need to think about it." Best response:',
+          opts:['"No problem, call me whenever."','"Totally fair — what\'s the one thing you\'d need to see to feel confident?"','"Prices go up Friday."'],
+          a:1, why:'It keeps the conversation alive and surfaces the real objection.' },
+        { q:'Every pitch should end with:',
+          opts:['Your phone number','A question that invites a yes','A discount'],
+          a:1, why:'"Want me to show you what it\'d look like for your business?" — always be inviting.' }
+      ],
+      m3: [
+        { q:'A client just signed for a $294/mo site. Your natural next offer:',
+          opts:['Nothing — don\'t be pushy','The AI Voice Agent — every missed call is a lost job','A logo refresh'],
+          a:1, why:'It\'s the easiest yes in the deck, and one saved job covers the cost.' },
+        { q:'"Anchor high" means:',
+          opts:['Quote the cheapest option first so they say yes','Present the full Growth Suite first, then let them step down','Round prices up'],
+          a:1, why:'Starting at the full engine makes every smaller package feel easy.' },
+        { q:'The money math works best when you use:',
+          opts:['Our national averages','THEIR customer-value number from discovery','Round numbers'],
+          a:1, why:'Their own number is the one argument they can\'t dismiss.' }
+      ],
+      m4: [
+        { q:'Where does every deal go, no exceptions?',
+          opts:['A text to John','Pipeline & Deals → Enter a deal','Your notes app'],
+          a:1, why:'If it\'s not in the pipeline it doesn\'t exist — and it doesn\'t pay.' },
+        { q:'Your commission on a $3,500 one-time site:',
+          opts:['10% ($350)','15% ($525)','20% ($700)'],
+          a:1, why:'15% on one-time sites. High-ticket (Voice, Intent, Apps) pays 20% + setup share.' },
+        { q:'The quarterly bonus kicks in at:',
+          opts:['5 closed deals','10 closed deals','20 closed deals'],
+          a:1, why:'$1,000 bonus at 10 closed per quarter. Pipeline discipline = paycheck.' }
+      ]
+    };
+    const MODS = ['m0','m1','m2','m3','m4'];
+    let acad = JSON.parse(localStorage.getItem('jb-academy') || '{"done":{},"certAt":null}');
+
+    function saveAcad(){
+      localStorage.setItem('jb-academy', JSON.stringify(acad));
+      if (sb && session){
+        try {
+          const rows = Object.keys(acad.done).map(m => ({ module_id: m }));
+          if (rows.length) sb.from('academy_progress').upsert(rows.map(r => ({ ...r, rep_id: session.user.id })), { onConflict: 'rep_id,module_id' });
+        } catch (_) {}
+      }
+    }
+    function initAcademy(){ renderQuizzes(); renderAcademy(); }
+    function renderAcademy(){
+      const doneCount = MODS.filter(m => acad.done[m]).length;
+      const pct = Math.round(doneCount / MODS.length * 100);
+      document.getElementById('acadPct').textContent = pct + '% · ' + doneCount + '/' + MODS.length + ' modules';
+      document.getElementById('acadFill').style.width = pct + '%';
+      MODS.forEach(m => {
+        const card = document.getElementById('mc-' + m), pillEl = document.getElementById('mp-' + m);
+        if (!card || !pillEl) return;
+        const done = !!acad.done[m];
+        card.classList.toggle('done', done);
+        pillEl.className = 'pill ' + (done ? 'ok' : 'new');
+        pillEl.textContent = done ? '✓ Done' : 'Start';
+      });
+      const cert = document.getElementById('certCard');
+      const name = document.getElementById('acctName').textContent || 'Rep';
+      if (doneCount === MODS.length){
+        if (!acad.certAt){ acad.certAt = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); saveAcad(); }
+        cert.className = 'badge-cert earned';
+        document.getElementById('certTitle').textContent = 'Certified John Bert Closer — ' + name;
+        document.getElementById('certSub').textContent = 'Earned ' + acad.certAt + ' · All 5 modules passed';
+        document.getElementById('certChip').classList.remove('hidden');
+      } else {
+        cert.className = 'badge-cert locked' + (document.querySelector('#sec-kb .doc:not(.hidden)') ? ' hidden' : '');
+        document.getElementById('certTitle').textContent = 'Certified John Bert Closer — locked';
+        document.getElementById('certSub').textContent = (MODS.length - doneCount) + ' module' + (MODS.length - doneCount > 1 ? 's' : '') + ' to go.';
+        document.getElementById('certChip').classList.add('hidden');
+      }
+    }
+    function renderQuizzes(){
+      MODS.forEach(m => {
+        const host = document.getElementById('quiz-' + m); if (!host) return;
+        const qs = QUIZZES[m];
+        let html = '<div class="quiz-t">Quick check</div><div class="quiz-sub">' + qs.length + ' questions · pass to mark this module complete</div>';
+        qs.forEach((qq, qi) => {
+          html += '<div class="qq" data-a="' + qq.a + '"><div class="qq-t">' + (qi+1) + '. ' + qq.q + '</div>';
+          qq.opts.forEach((o, oi) => { html += '<button type="button" class="quiz-opt" data-i="' + oi + '" onclick="pickOpt(this)">' + o + '</button>'; });
+          html += '<div class="qq-why">' + qq.why + '</div></div>';
+        });
+        html += '<button class="btn btn-p" type="button" onclick="gradeQuiz(\'' + m + '\')">Submit answers</button>';
+        html += '<div class="quiz-result" id="qr-' + m + '"></div>';
+        host.innerHTML = html;
+      });
+    }
+    function pickOpt(btn){
+      const qq = btn.closest('.qq');
+      qq.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('sel'));
+      btn.classList.add('sel');
+    }
+    function gradeQuiz(m){
+      const host = document.getElementById('quiz-' + m);
+      const qqs = host.querySelectorAll('.qq');
+      let right = 0, answered = 0;
+      qqs.forEach(qq => {
+        const sel = qq.querySelector('.quiz-opt.sel');
+        if (sel) answered++;
+      });
+      const res = document.getElementById('qr-' + m);
+      if (answered < qqs.length){ res.className = 'quiz-result fail'; res.textContent = 'Answer all ' + qqs.length + ' questions first.'; return; }
+      qqs.forEach(qq => {
+        const a = parseInt(qq.dataset.a, 10);
+        const sel = qq.querySelector('.quiz-opt.sel');
+        qq.classList.add('graded');
+        qq.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('right','wrong'));
+        qq.querySelectorAll('.quiz-opt')[a].classList.add('right');
+        if (parseInt(sel.dataset.i, 10) === a) right++;
+        else sel.classList.add('wrong');
+      });
+      const pass = right / qqs.length >= 0.8;
+      if (pass){
+        acad.done[m] = true; saveAcad();
+        res.className = 'quiz-result pass';
+        const allDone = MODS.every(x => acad.done[x]);
+        res.textContent = '✓ Passed ' + right + '/' + qqs.length + (allDone ? ' — ACADEMY COMPLETE! Your badge is waiting on the module list. 🏅' : ' — module complete!');
+      } else {
+        res.className = 'quiz-result fail';
+        res.textContent = right + '/' + qqs.length + ' — review the green answers above and resubmit (need 80%).';
+      }
+    }
+    function copyScript(btn){
+      const p = btn.parentElement.querySelector('p');
+      const t = p ? p.textContent.replace(/^"|"$/g, '') : '';
+      if (navigator.clipboard) navigator.clipboard.writeText(t);
+      btn.textContent = '✓ Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 1400);
     }
 
     // ── DIALER (Twilio in-browser calling, with tel: fallback) ──
