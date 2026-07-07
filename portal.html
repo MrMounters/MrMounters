@@ -513,12 +513,11 @@
         <div class="panel-h"><div class="panel-t">Managed domains</div><button class="btn btn-o" onclick="go('requests')">+ Request a domain</button></div>
         <table>
           <thead><tr><th>Domain</th><th>Status</th><th>SSL</th><th>Renews</th><th></th></tr></thead>
-          <tbody>
-            <tr><td><b>yourbusiness.com</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-            <tr><td><b>yourbusiness.net</b></td><td><span class="pill ok">Active</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Mar 14, 2027</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-            <tr><td><b>getyourbusiness.com</b></td><td><span class="pill mut">Redirect</span></td><td><span class="pill ok">Valid</span></td><td class="nw">Nov 02, 2026</td><td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>
-          </tbody>
+          <tbody id="domainsBody"></tbody>
         </table>
+      </div>
+      <div class="panel hidden" id="domainsEmpty">
+        <p class="muted">No domains on file yet. Once we set one up for you, it'll show here.</p>
       </div>
       <p class="muted">Need a new domain or a transfer? Send a request and we'll handle the setup, DNS, and SSL for you.</p>
     </section>
@@ -543,11 +542,7 @@
         <div class="panel-h"><div class="panel-t">Recent requests</div></div>
         <table id="reqTable">
           <thead><tr><th>#</th><th>Request</th><th>Status</th><th>Updated</th></tr></thead>
-          <tbody>
-            <tr><td>1041</td><td><b>Add a "Book Online" button to the header</b></td><td><span class="pill warn">In progress</span></td><td class="nw">Today</td></tr>
-            <tr><td>1038</td><td><b>Update homepage hours</b></td><td><span class="pill ok">Done</span></td><td class="nw">May 28</td></tr>
-            <tr><td>1034</td><td><b>New gallery photos (12)</b></td><td><span class="pill ok">Done</span></td><td class="nw">May 19</td></tr>
-          </tbody>
+          <tbody id="reqBody"></tbody>
         </table>
       </div>
     </section>
@@ -695,6 +690,9 @@
         sb = window.supabase.createClient(URL_, KEY_);
         const { data: { session } } = await sb.auth.getSession();
         if (!session){ goLogin(); return; }
+        // Role gate: this is the client portal — a rep/admin account belongs in rep.html.
+        const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
+        if (profile && (profile.role === 'rep' || profile.role === 'admin')){ window.location.href = 'rep.html'; return; }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
         currentEmail = u.email || null;
@@ -706,6 +704,8 @@
       document.getElementById('loading').classList.add('hidden');
       renderChart();
       fetchClarityInsights();
+      loadDomains();
+      loadRequests();
     }
 
     function renderChart(){
@@ -740,16 +740,71 @@
         if (btn) btn.disabled = false;
       }
     }
-    function submitRequest(e){
+    // ── DOMAINS (real when Supabase is connected, demo fallback otherwise) ──
+    const domainSeed = [
+      { domain_name:'yourbusiness.com', status:'active', ssl_status:'valid', renews_at:'Mar 14, 2027' },
+      { domain_name:'yourbusiness.net', status:'active', ssl_status:'valid', renews_at:'Mar 14, 2027' },
+      { domain_name:'getyourbusiness.com', status:'redirect', ssl_status:'valid', renews_at:'Nov 02, 2026' },
+    ];
+    function domainPill(s){ return s === 'active' ? 'ok' : (s === 'redirect' ? 'mut' : 'warn'); }
+    async function loadDomains(){
+      let rows = domainSeed;
+      if (sb && session){
+        const { data } = await sb.from('domains').select('*').order('created_at');
+        rows = data || [];
+      }
+      const body = document.getElementById('domainsBody');
+      document.getElementById('domainsEmpty').classList.toggle('hidden', rows.length > 0);
+      body.innerHTML = rows.map(d => (
+        '<tr><td><b>' + esc(d.domain_name) + '</b></td>' +
+        '<td><span class="pill ' + domainPill(d.status) + '">' + esc(cap(d.status)) + '</span></td>' +
+        '<td><span class="pill ok">' + esc(cap(d.ssl_status)) + '</span></td>' +
+        '<td class="nw">' + esc(d.renews_at || '—') + '</td>' +
+        '<td style="text-align:right"><a class="link" onclick="return false" href="#">Manage</a></td></tr>'
+      )).join('');
+    }
+    function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+    function esc(s){ return String(s||'').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+    // ── CHANGE REQUESTS (real when Supabase is connected, demo fallback otherwise) ──
+    const requestSeed = [
+      { id:1041, request_text:'Add a "Book Online" button to the header', status:'In progress', updated:'Today' },
+      { id:1038, request_text:'Update homepage hours', status:'Done', updated:'May 28' },
+      { id:1034, request_text:'New gallery photos (12)', status:'Done', updated:'May 19' },
+    ];
+    let requests = [];
+    function reqPill(s){ return s === 'Done' ? 'ok' : (s === 'In progress' ? 'warn' : 'new'); }
+    function renderRequests(){
+      const body = document.getElementById('reqBody');
+      body.innerHTML = requests.map(r => (
+        '<tr><td>' + r.id + '</td><td><b>' + esc(r.request_text).slice(0,80) + '</b></td>' +
+        '<td><span class="pill ' + reqPill(r.status) + '">' + esc(r.status) + '</span></td>' +
+        '<td class="nw">' + esc(r.updated || '—') + '</td></tr>'
+      )).join('');
+    }
+    async function loadRequests(){
+      if (sb && session){
+        const { data } = await sb.from('change_requests').select('*').order('created_at', { ascending:false });
+        requests = (data || []).map(r => ({ id:r.id.slice(0,4), request_text:r.request_text, status:r.status, updated:'synced' }));
+      } else {
+        requests = requestSeed.slice();
+      }
+      renderRequests();
+    }
+    async function submitRequest(e){
       e.preventDefault();
       const txt = document.getElementById('reqText').value.trim();
+      const priority = document.getElementById('reqPriority').value;
       if (!txt) return;
       document.getElementById('reqOk').classList.remove('hidden');
-      const tb = document.querySelector('#reqTable tbody');
-      const id = 1042 + tb.children.length - 3;
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td>' + id + '</td><td><b>' + txt.replace(/</g,'&lt;').slice(0,60) + '</b></td><td><span class="pill new">Received</span></td><td class="nw">Just now</td>';
-      tb.prepend(tr);
+      if (sb && session){
+        const { data } = await sb.from('change_requests').insert({ request_text: txt, priority }).select().single();
+        if (data) requests.unshift({ id:data.id.slice(0,4), request_text:data.request_text, status:data.status, updated:'Just now' });
+      } else {
+        const nextId = 1042 + requests.length;
+        requests.unshift({ id:nextId, request_text:txt, status:'Received', updated:'Just now' });
+      }
+      renderRequests();
       document.getElementById('reqText').value = '';
     }
     async function signOut(){

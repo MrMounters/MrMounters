@@ -79,3 +79,86 @@ begin new.updated_at = now(); return new; end; $$;
 drop trigger if exists deals_touch on public.deals;
 create trigger deals_touch before update on public.deals
   for each row execute function public.touch_updated_at();
+
+-- ============================================================
+-- CLIENT SIDE — profiles (roles), domains, change requests
+-- ============================================================
+
+-- ---------- PROFILES (client / rep / admin role) ----------
+create table if not exists public.profiles (
+  user_id       uuid primary key references auth.users(id) on delete cascade,
+  role          text not null default 'client' check (role in ('client','rep','admin')),
+  business_name text,
+  created_at    timestamptz default now()
+);
+
+alter table public.profiles enable row level security;
+
+-- A user can only see and edit their own profile row.
+create policy "profiles are private to the user"
+  on public.profiles for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- Auto-create a profile (default role 'client') for every new signup.
+-- To make someone a rep: Table Editor → profiles → find their user_id → set role to 'rep'.
+-- There is no self-service way to become a rep — this is intentional.
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.profiles (user_id) values (new.id);
+  return new;
+end; $$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- One-time backfill: give a 'client' profile to any account that signed up before this
+-- table existed (the trigger above only fires on new signups going forward).
+insert into public.profiles (user_id)
+select id from auth.users
+where id not in (select user_id from public.profiles)
+on conflict (user_id) do nothing;
+
+-- ---------- DOMAINS (client-owned, read-only from the client portal) ----------
+create table if not exists public.domains (
+  id          uuid primary key default gen_random_uuid(),
+  client_id   uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  domain_name text not null,
+  status      text not null default 'active',    -- active | redirect | pending
+  ssl_status  text not null default 'valid',      -- valid | expiring | none
+  renews_at   date,
+  created_at  timestamptz default now()
+);
+
+alter table public.domains enable row level security;
+
+create policy "clients see only their own domains"
+  on public.domains for select
+  using (auth.uid() = client_id);
+
+-- Rows are added by staff (Table Editor / future admin tool), not by clients themselves —
+-- no insert/update/delete policy is granted to clients on purpose.
+
+-- ---------- CHANGE REQUESTS (client-submitted site edits) ----------
+create table if not exists public.change_requests (
+  id           uuid primary key default gen_random_uuid(),
+  client_id    uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  request_text text not null,
+  priority     text default 'Normal priority',
+  status       text not null default 'Received',  -- Received | In progress | Done
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now()
+);
+
+alter table public.change_requests enable row level security;
+
+create policy "clients manage their own requests"
+  on public.change_requests for all
+  using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+drop trigger if exists change_requests_touch on public.change_requests;
+create trigger change_requests_touch before update on public.change_requests
+  for each row execute function public.touch_updated_at();

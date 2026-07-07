@@ -174,10 +174,21 @@
 
     if (configured && window.supabase) {
       sb = window.supabase.createClient(URL_, KEY_);
-      sb.auth.getSession().then(({ data }) => { if (data.session) window.location.href = PORTAL; });
+      sb.auth.getSession().then(({ data }) => { if (data.session) goToRoleHome(); });
     }
     // already in a demo session? go straight in
     if (localStorage.getItem('jb-demo-session')) window.location.href = PORTAL;
+
+    // Real accounts are role-gated (client vs rep); demo accounts always go to the
+    // ?next= hint since they're a pure frontend demo with no profiles table behind them.
+    async function goToRoleHome(){
+      if (!(configured && sb)) { window.location.href = PORTAL; return; }
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) { window.location.href = PORTAL; return; }
+      const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
+      const role = profile && profile.role;
+      window.location.href = (role === 'rep' || role === 'admin') ? 'rep.html' : 'portal.html';
+    }
 
     function msg(t, k){ const m = document.getElementById('status'); m.textContent = t; m.className = 'auth-status ' + (k || ''); }
     function authTab(which){
@@ -209,12 +220,12 @@
         const { error } = await fn;
         if (error) return msg(error.message, 'err');
         if (signupMode) return msg('Account created — check your email to confirm, then sign in.', 'ok');
-        window.location.href = PORTAL; return;
+        goToRoleHome(); return;
       }
       msg('Use the demo login: user@user.com / password1', 'err');
     }
     async function oauth(provider){
-      if (configured && sb){ const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin + '/' + PORTAL } }); if (error) msg(error.message, 'err'); return; }
+      if (configured && sb){ const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin + '/login.html' } }); if (error) msg(error.message, 'err'); return; }
       msg('Social sign-in activates once Supabase is connected. Try the demo login below.', '');
     }
     async function sendMagic(e){
@@ -222,7 +233,7 @@
       if (!(configured && sb)) return msg('Magic links activate once Supabase is connected. Try the demo password login.', '');
       const email = document.getElementById('email').value.trim();
       msg('Sending…');
-      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/' + PORTAL } });
+      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/login.html' } });
       if (error) return msg(error.message, 'err');
       msg('Check your email — we sent you a secure sign-in link.', 'ok');
     }
@@ -244,7 +255,7 @@
       const token = document.getElementById('smsCode').value.trim();
       const { error } = await sb.auth.verifyOtp({ phone, token, type: 'sms' });
       if (error) return msg(error.message, 'err');
-      window.location.href = PORTAL;
+      goToRoleHome();
     }
   </script>
 </body>

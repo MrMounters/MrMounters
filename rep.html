@@ -684,6 +684,9 @@
         const { data } = await sb.auth.getSession();
         session = data.session;
         if (!session){ goLogin(); return; }
+        // Role gate: this is the rep portal — a plain client account belongs in portal.html.
+        const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
+        if (!profile || profile.role === 'client'){ window.location.href = 'portal.html'; return; }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
         sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
