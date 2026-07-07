@@ -1,5 +1,5 @@
 -- ============================================================
--- John Bert Web Strategy — Supabase schema
+-- Meridion AI — Supabase schema
 -- Run this once in your Supabase project: SQL Editor → New query → Run.
 -- Then put your Project URL + anon key in auth-config.js.
 -- ============================================================
