@@ -646,12 +646,13 @@
       <h1 class="h1">Payment &amp; invoices</h1>
       <p class="lead">Your plan, payment method, and invoice history.</p>
       <div class="panel">
-        <div class="panel-h"><div class="panel-t">Payment method</div><button class="btn btn-o" onclick="toast('updPay')">Update</button></div>
+        <div class="panel-h"><div class="panel-t">Payment method</div><button class="btn btn-p" onclick="manageBilling(this)">Manage Billing</button></div>
         <div class="cardrow">
           <div class="cc">VISA</div>
           <div><div><b>Visa ending 4242</b></div><div class="muted">Expires 08 / 27 · next charge $294.00 on Jul 1, 2026</div></div>
         </div>
-        <div class="ok-msg hidden" id="updPay">✓ We'll text you a secure link to update your card.</div>
+        <p class="muted" style="margin-top:0.7rem">Update your card, view real invoices, or change plans in the secure Stripe billing portal.</p>
+        <div class="ok-msg" id="billingStatus"></div>
       </div>
       <div class="panel">
         <div class="panel-h"><div class="panel-t">Plan</div><span class="pill new">Monthly · $294/mo</span></div>
@@ -678,6 +679,7 @@
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
     let sb = null;
+    let currentEmail = null;
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
 
     function goLogin(){ window.location.href = 'login.html'; }
@@ -688,12 +690,14 @@
       let name = null;
       if (demo){
         name = demo.name || demo.email;
+        currentEmail = demo.email || 'user@user.com';
       } else if (configured && window.supabase){
         sb = window.supabase.createClient(URL_, KEY_);
         const { data: { session } } = await sb.auth.getSession();
         if (!session){ goLogin(); return; }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
+        currentEmail = u.email || null;
         sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
       } else { goLogin(); return; }
 
@@ -717,6 +721,25 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     function toast(id){ const el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
+
+    async function manageBilling(btn){
+      const status = document.getElementById('billingStatus');
+      status.textContent = 'Opening your billing portal…'; status.className = 'ok-msg';
+      if (btn) btn.disabled = true;
+      try {
+        const r = await fetch('/api/create-portal-session', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail }),
+        });
+        const data = await r.json();
+        if (!r.ok || !data.url) throw new Error(data.detail || data.error || 'Billing portal is not available yet.');
+        window.location.href = data.url;
+      } catch (e) {
+        status.textContent = 'Couldn’t open billing — ' + e.message;
+        status.style.color = 'var(--red, #DF1B41)';
+        if (btn) btn.disabled = false;
+      }
+    }
     function submitRequest(e){
       e.preventDefault();
       const txt = document.getElementById('reqText').value.trim();

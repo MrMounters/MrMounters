@@ -552,6 +552,14 @@
   .roas-label { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-muted); }
   .pricing-foot { margin-top: 1.5rem; color: var(--warm-muted); font-size: 0.8rem; font-family: var(--mono); }
   .pricing-foot a { color: var(--warm-accent); text-decoration: none; }
+  .checkout-status { margin-top: 1rem; font-family: var(--mono); font-size: 0.78rem; color: var(--gold); min-height: 1.2em; }
+  .checkout-status.err { color: #ff8b6b; }
+  .checkout-banner {
+    max-width: 900px; margin: 0 auto 1.5rem; padding: 0.9rem 1.2rem; border-radius: 8px;
+    font-family: 'Inter', sans-serif; font-size: 0.88rem; text-align: center;
+    background: rgba(76,89,247,0.1); border: 1px solid rgba(76,89,247,0.3); color: var(--white);
+  }
+  .hidden { display: none !important; }
   .app-platforms { display: flex; gap: 0.75rem; margin-bottom: 1rem; color: var(--warm-accent); }
   .app-platforms svg { width: 23px; height: 23px; fill: currentColor; transition: fill 0.2s; }
   .pricing-card:hover .app-platforms { color: var(--gold); }
@@ -1453,6 +1461,7 @@
   <div class="section-eyebrow">Pricing</div>
   <h2 class="section-title">Simple. Transparent.<br><em>No Surprises.</em></h2>
   <p class="section-sub">Three ways we grow your business — websites, apps, and ad campaigns. Pick a track below.</p>
+  <div class="checkout-banner hidden" id="checkoutBanner"></div>
 
   <div class="pricing-tabs" role="tablist" aria-label="Pricing tracks">
     <button class="pricing-tab active" role="tab" aria-selected="true" onclick="switchPricing(0)">01 · Web Dev</button>
@@ -1470,7 +1479,7 @@
         <ul class="pricing-features">
           <li>Custom design built for your brand</li><li>30-minute strategy consultation</li><li>5–7 business day delivery</li><li>Unlimited revision rounds</li><li>Mobile responsive &amp; fast</li><li>Contact forms &amp; Google Maps</li><li>You own the site outright</li>
         </ul>
-        <a href="sms:4805890098?body=I'm interested in the one-time website package" class="btn-outline magnetic" style="display:block;text-align:center;">Text to Get Started</a>
+        <button onclick="startCheckout('onetime',this)" class="btn-outline magnetic" style="display:block;width:100%;text-align:center;">Get Started — $3,500</button>
       </div>
       <div class="pricing-card featured tilt-card">
         <div class="pricing-label">Monthly Plan</div>
@@ -1479,10 +1488,11 @@
         <ul class="pricing-features">
           <li>Everything in One-Time, plus:</li><li>Free hosting included</li><li>Free website refresh every 12 months</li><li>Ongoing edits &amp; updates</li><li>Priority support</li><li>Security &amp; backups managed</li><li>Cancel anytime, no penalty</li>
         </ul>
-        <a href="sms:4805890098?body=I'm interested in the monthly website plan at $294/mo" class="btn-primary magnetic" style="display:block;text-align:center;">Text to Get Started</a>
+        <button onclick="startCheckout('monthly',this)" class="btn-primary magnetic" style="display:block;width:100%;text-align:center;">Get Started — $294/mo</button>
       </div>
     </div>
-    <p class="pricing-foot">Questions? Text or call <a href="tel:4805890098">(480) 589-0098</a> — we respond fast.</p>
+    <p class="checkout-status" id="checkoutStatus"></p>
+    <p class="pricing-foot">Prefer to talk first? Text or call <a href="tel:4805890098">(480) 589-0098</a> — we respond fast.</p>
   </div>
 
   <!-- Tab 2: App Development -->
@@ -1821,6 +1831,46 @@ function switchPricing(i){
   document.querySelectorAll('.pricing-tab').forEach((t,idx)=>{const on=idx===i;t.classList.toggle('active',on);t.setAttribute('aria-selected',on);});
   document.querySelectorAll('.pricing-panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
 }
+
+// ── STRIPE CHECKOUT ───────────────────────────────
+async function startCheckout(plan, btn) {
+  const status = document.getElementById('checkoutStatus');
+  status.className = 'checkout-status';
+  status.textContent = 'Redirecting to secure checkout…';
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan }),
+    });
+    const data = await r.json();
+    if (!r.ok || !data.url) throw new Error(data.detail || data.error || 'Checkout is not available yet.');
+    window.location.href = data.url;
+  } catch (e) {
+    status.className = 'checkout-status err';
+    status.textContent = 'Couldn’t start checkout — text us instead: (480) 589-0098. (' + e.message + ')';
+    if (btn) btn.disabled = false;
+  }
+}
+
+// Show a banner if returning from Stripe Checkout
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const checkout = params.get('checkout');
+  if (!checkout) return;
+  const banner = document.getElementById('checkoutBanner');
+  if (checkout === 'success') {
+    banner.textContent = '✓ Payment received — thank you! We’ll text you shortly to kick things off.';
+    banner.classList.remove('hidden');
+  } else if (checkout === 'cancelled') {
+    banner.textContent = 'Checkout was cancelled — no charge was made. Pick a plan below whenever you’re ready.';
+    banner.classList.remove('hidden');
+  }
+  params.delete('checkout');
+  const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+  window.history.replaceState({}, '', newUrl);
+})();
 
 // ── SCROLL REVEAL ────────────────────────────────
 const rObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rObs.unobserve(e.target);}});},{threshold:0.06});
