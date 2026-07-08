@@ -189,6 +189,13 @@
   .pnav{ box-shadow:0 1px 3px rgba(0,0,0,0.25); }
   .stat-d.down{ color:var(--red,#DF1B41); }
 </style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xj1vynd82i");
+</script>
 </head>
 <body>
   <div class="loading" id="loading">// authenticating…</div>
@@ -852,12 +859,9 @@
       } catch (_) {}
     }
 
-    /* Clarity tracking snippet — uncomment + add your project ID to collect real sessions:
-    (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window,document,"clarity","script","CLARITY_PROJECT_ID");
-    */
+    /* Note: Meridion AI's own agency-wide Clarity tracking snippet is live in <head> above.
+       This "Visitors" panel is a separate, future per-client tracking product (still demo
+       data) — when it's real, each client's own Clarity project ID would be looked up here. */
 
     init();
   </script>
