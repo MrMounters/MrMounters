@@ -5,8 +5,8 @@
    The anon key is safe to expose in the browser (it is protected by
    Row Level Security). Do NOT paste the service_role key here.
    ──────────────────────────────────────────────────────────── */
-window.SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-window.SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+window.SUPABASE_URL = 'https://yvyreidpysqawormbvwy.supabase.co';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2eXJlaWRweXNxYXdvcm1idnd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNzkxNzAsImV4cCI6MjA5Nzg1NTE3MH0.TD_2NS4frYtXQn4N0gxe_G15A7apSdH_V67BBOrm8lY';
 
 /* After filling these in:
    1. SQL Editor → New query → paste the contents of supabase-schema.sql → Run.
