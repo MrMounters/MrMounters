@@ -548,3 +548,19 @@ update public.project_stages set stage_order = 3 where stage_key = 'deposit_paid
 update public.project_stages set stage_order = 4 where stage_key = 'in_progress';
 update public.project_stages set stage_order = 5 where stage_key = 'approval';
 update public.project_stages set stage_order = 6 where stage_key = 'launch';
+
+-- The reorder above can leave a project's timeline reading out of sequence: e.g. Discovery
+-- Call was completed back when IT was stage 1 (before Business Profile Setup existed), so it
+-- shows done while the new stage 1 is still pending — a stage that comes later than an
+-- unfinished one has no business showing as done. Enforce the invariant that a stage can only
+-- be done/approved if every earlier-order stage in the same project is too (idempotent — once
+-- consistent, this finds nothing to fix).
+update public.project_stages ps
+set status = 'pending', completed_at = null
+where ps.status in ('done','approved')
+  and exists (
+    select 1 from public.project_stages earlier
+    where earlier.project_id = ps.project_id
+      and earlier.stage_order < ps.stage_order
+      and earlier.status not in ('done','approved')
+  );
