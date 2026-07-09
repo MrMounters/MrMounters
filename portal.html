@@ -1097,10 +1097,11 @@
         : 'TBD';
 
       let currentSet = false;
+      let currentStageKey = null;
       document.getElementById('timelineList').innerHTML = stages.map(s => {
         const isDone = STAGE_DONE_STATES.includes(s.status);
         const isCurrent = !isDone && !currentSet;
-        if (isCurrent) currentSet = true;
+        if (isCurrent){ currentSet = true; currentStageKey = s.stage_key; }
         return `<li>
           <div class="t-dot ${isDone ? 'done' : 'pending'}">${isDone ? '✓' : ''}</div>
           <div style="flex:1;min-width:0;">
@@ -1117,8 +1118,11 @@
       const approvalStage = stages.find(s => s.stage_key === 'approval' && s.status === 'needs_review' && !STAGE_DONE_STATES.includes(s.status));
       if (approvalStage) renderDesignPreview(approvalStage);
 
-      const startBtn = document.getElementById('startSetupBtn');
-      if (!setupSubmitted){ startBtn.classList.remove('hidden'); }
+      // The big standalone "Start Setup" CTA is the Complete Setup stage's own intake
+      // step — only relevant (and only shown) while that's the actual current step, not
+      // during earlier stages like Discovery Call/Contract/Deposit where the timeline's
+      // own inline action button is what's live instead.
+      document.getElementById('startSetupBtn').classList.toggle('hidden', !(currentStageKey === 'complete_setup' && !setupSubmitted));
     }
 
     // ── Per-stage interactive actions, shown only for the current (first incomplete) stage ──
