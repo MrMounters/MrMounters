@@ -162,3 +162,13 @@ create policy "clients manage their own requests"
 drop trigger if exists change_requests_touch on public.change_requests;
 create trigger change_requests_touch before update on public.change_requests
   for each row execute function public.touch_updated_at();
+
+-- ============================================================
+-- ONBOARDING — extra profile fields collected at account setup
+-- (invited client clicks the invite link, which authenticates them, then
+-- fills these in on onboarding.html before the portal dashboard unlocks)
+-- ============================================================
+alter table public.profiles add column if not exists full_name text;
+alter table public.profiles add column if not exists phone text;
+alter table public.profiles add column if not exists terms_accepted_at timestamptz;
+-- business_name already exists above and doubles as "Company name" here.

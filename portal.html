@@ -702,8 +702,10 @@
         const { data: { session } } = await sb.auth.getSession();
         if (!session){ goLogin(); return; }
         // Role gate: this is the client portal — a rep/admin account belongs in rep.html.
-        const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
+        const { data: profile } = await sb.from('profiles').select('role, full_name, phone, terms_accepted_at').eq('user_id', session.user.id).single();
         if (profile && (profile.role === 'rep' || profile.role === 'admin')){ window.location.href = 'rep.html'; return; }
+        // Onboarding gate: don't show the dashboard until account setup is complete.
+        if (profile && (!profile.full_name || !profile.phone || !profile.terms_accepted_at)){ window.location.href = 'onboarding.html'; return; }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Client';
         currentEmail = u.email || null;

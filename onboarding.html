@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="format-detection" content="telephone=no">
+<title>Set Up Your Account — Meridion AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#4C59F7; --gold-light:#8A74FF; --cyan:#7DD3FC; --dark:#0B0F19; --dark3:#141E33; --dark4:#1A2540;
+    --white:#F2F4F8; --gray:#A6B0C3; --warm-muted:#7C88A0; --warm-accent:#B0BAD1;
+    --card-border:rgba(242,244,248,0.1); --mono:'Space Mono',monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',sans-serif; font-weight:300; color:var(--white);
+    background:var(--dark); min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:2rem 1.2rem; position:relative; overflow-x:hidden;
+  }
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      linear-gradient(rgba(76,89,247,0.05) 1px,transparent 1px) 0 0/46px 46px,
+      linear-gradient(90deg,rgba(76,89,247,0.05) 1px,transparent 1px) 0 0/46px 46px,
+      radial-gradient(ellipse 60% 50% at 50% 30%,rgba(76,89,247,0.07) 0%,transparent 70%);
+  }
+  .auth-card{
+    position:relative; z-index:1; width:100%; max-width:460px;
+    background:var(--dark3); border:1px solid rgba(76,89,247,0.22); border-top:3px solid var(--gold);
+    border-radius:6px; padding:2.6rem 2.2rem;
+    box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(76,89,247,0.05);
+  }
+  .auth-logo{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.15rem; letter-spacing:-0.01em; margin-bottom:1.4rem; }
+  .auth-logo span{ color:var(--gold); }
+  .auth-eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
+  .auth-h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; margin-bottom:0.4rem; }
+  .auth-lead{ font-size:0.86rem; color:var(--warm-accent); line-height:1.6; margin-bottom:1.5rem; }
+  .auth-input{
+    width:100%; background:rgba(242,244,248,0.04); border:1px solid rgba(242,244,248,0.12);
+    border-radius:4px; padding:0.85rem 1rem; color:var(--white); font-family:'Inter',sans-serif;
+    font-size:0.9rem; outline:none; margin-bottom:0.6rem; transition:border-color 0.2s, box-shadow 0.2s;
+  }
+  .auth-input:focus{ border-color:rgba(76,89,247,0.45); box-shadow:0 0 0 3px rgba(76,89,247,0.08); }
+  .auth-input::placeholder{ color:var(--warm-muted); }
+  .auth-input:disabled{ color:var(--warm-muted); cursor:not-allowed; }
+  .auth-field-label{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); margin:0 0 0.35rem; display:block; }
+  .auth-btn{
+    width:100%; background:var(--gold); color:var(--dark); border:none; border-radius:2px;
+    padding:0.9rem 1rem; cursor:pointer; font-family:var(--mono); font-weight:700; font-size:0.76rem;
+    letter-spacing:0.1em; text-transform:uppercase; transition:background 0.2s, box-shadow 0.2s;
+  }
+  .auth-btn:hover{ background:var(--gold-light); box-shadow:0 6px 24px rgba(76,89,247,0.35); }
+  .auth-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+  .terms-row{ display:flex; align-items:flex-start; gap:0.6rem; margin:0.4rem 0 1.2rem; font-size:0.78rem; color:var(--warm-accent); line-height:1.5; }
+  .terms-row input{ margin-top:0.2rem; flex-shrink:0; }
+  .terms-row strong{ color:var(--white); font-weight:600; }
+  .auth-status{ font-size:0.78rem; line-height:1.5; margin-top:1rem; min-height:1.1em; text-align:center; color:var(--warm-accent); }
+  .auth-status.err{ color:#ff8b6b; }
+  .hidden{ display:none !important; }
+
+  /* Welcome panel */
+  .welcome-icon{ width:64px; height:64px; border-radius:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light));
+    display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:1.4rem; }
+  .welcome-list{ display:flex; flex-direction:column; gap:0.9rem; margin:1.4rem 0 1.6rem; }
+  .welcome-item{ display:flex; gap:0.8rem; align-items:flex-start; font-size:0.85rem; color:var(--warm-accent); line-height:1.5; }
+  .welcome-item b{ color:var(--white); display:block; font-weight:600; margin-bottom:0.1rem; }
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xj1vynd82i");
+</script>
+</head>
+<body>
+  <div class="auth-card">
+    <div class="auth-logo"><img src="meridion-logo.svg" alt="" style="height:1.25rem;vertical-align:-0.25rem;margin-right:0.5rem;">Meridion<span>AI</span></div>
+
+    <!-- Panel 1: account setup -->
+    <div id="panel-setup">
+      <div class="auth-eyebrow">// Finish Setting Up</div>
+      <h1 class="auth-h1">Let's get your portal set up</h1>
+      <p class="auth-lead">Just a few details so we can personalize your project portal.</p>
+
+      <form id="setupForm" onsubmit="submitSetup(event)">
+        <label class="auth-field-label">Full name</label>
+        <input type="text" id="fullName" class="auth-input" placeholder="Jane Smith" required autocomplete="name">
+
+        <label class="auth-field-label">Email</label>
+        <input type="email" id="setupEmail" class="auth-input" disabled>
+
+        <label class="auth-field-label">Phone number</label>
+        <input type="tel" id="setupPhone" class="auth-input" placeholder="+1 (480) 000-0000" required autocomplete="tel">
+
+        <label class="auth-field-label">Company name</label>
+        <input type="text" id="companyName" class="auth-input" placeholder="Your Business LLC" required autocomplete="organization">
+
+        <div class="terms-row">
+          <input type="checkbox" id="acceptTerms" required>
+          <label for="acceptTerms">I agree to the <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>.</label>
+        </div>
+
+        <button type="submit" class="auth-btn" id="setupBtn">Complete Setup</button>
+      </form>
+      <div class="auth-status" id="status"></div>
+    </div>
+
+    <!-- Panel 2: welcome -->
+    <div id="panel-welcome" class="hidden">
+      <div class="welcome-icon">👋</div>
+      <h1 class="auth-h1">Welcome to your project portal</h1>
+      <p class="auth-lead">We're excited to build something incredible together.</p>
+      <div class="welcome-list">
+        <div class="welcome-item">⏱ <span><b>Set aside 10–20 minutes</b>to complete your project setup.</span></div>
+        <div class="welcome-item">☁️ <span><b>Your progress is saved</b>automatically as you go.</span></div>
+        <div class="welcome-item">🔒 <span><b>You can exit anytime</b>and come back later.</span></div>
+      </div>
+      <button type="button" class="auth-btn" onclick="goDashboard()">Continue</button>
+    </div>
+  </div>
+
+  <script src="auth-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
+    const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
+    let sb = null, session = null;
+
+    function msg(t, k){ const m = document.getElementById('status'); m.textContent = t; m.className = 'auth-status ' + (k || ''); }
+    function goDashboard(){ window.location.href = 'portal.html'; }
+
+    async function init(){
+      if (!(configured && window.supabase)){ window.location.href = 'login.html'; return; }
+      sb = window.supabase.createClient(URL_, KEY_);
+      const { data } = await sb.auth.getSession();
+      session = data.session;
+      if (!session){ window.location.href = 'login.html'; return; }
+
+      const { data: profile } = await sb.from('profiles').select('full_name, phone, business_name, terms_accepted_at').eq('user_id', session.user.id).single();
+      // Already onboarded — nothing to do here, go straight to the dashboard.
+      if (profile && profile.full_name && profile.phone && profile.terms_accepted_at){ goDashboard(); return; }
+
+      document.getElementById('setupEmail').value = session.user.email || session.user.phone || '';
+      if (profile && profile.full_name) document.getElementById('fullName').value = profile.full_name;
+      if (profile && profile.phone) document.getElementById('setupPhone').value = profile.phone;
+      if (profile && profile.business_name) document.getElementById('companyName').value = profile.business_name;
+    }
+
+    async function submitSetup(e){
+      e.preventDefault();
+      const full_name = document.getElementById('fullName').value.trim();
+      const phone = document.getElementById('setupPhone').value.trim();
+      const business_name = document.getElementById('companyName').value.trim();
+      if (!document.getElementById('acceptTerms').checked) return msg('Please accept the Terms of Service and Privacy Policy.', 'err');
+
+      const btn = document.getElementById('setupBtn');
+      btn.disabled = true; msg('Saving…');
+      const { error } = await sb.from('profiles').update({
+        full_name, phone, business_name, terms_accepted_at: new Date().toISOString()
+      }).eq('user_id', session.user.id);
+      btn.disabled = false;
+      if (error) return msg(error.message, 'err');
+
+      document.getElementById('panel-setup').classList.add('hidden');
+      document.getElementById('panel-welcome').classList.remove('hidden');
+    }
+
+    init();
+  </script>
+</body>
+</html>
