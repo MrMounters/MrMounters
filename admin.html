@@ -108,6 +108,7 @@
   .t-label{ font-size:0.92rem; font-weight:700; margin-bottom:0.15rem; }
   .t-label.current{ color:var(--gold); }
   .t-sub{ font-family:var(--mono); font-size:0.6rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.6rem; }
+  .stage-list{ display:flex; flex-direction:column; gap:0.6rem; }
   .stage-row{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:0.8rem; margin-top:0.5rem; }
   .stage-row-h{ display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
   .stage-row-t{ font-weight:600; font-size:0.86rem; }
@@ -168,6 +169,37 @@
   .notif-item-b{ font-size:0.76rem; color:var(--warm-muted); margin-top:0.25rem; }
   .notif-item-time{ font-family:var(--mono); font-size:0.58rem; color:var(--warm-muted); margin-top:0.35rem; }
   .proj-row-t .notif-badge{ position:static; margin-left:0.4rem; }
+
+  /* Calendar */
+  .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:1px; background:var(--card-border);
+    border:1px solid var(--card-border); border-radius:6px; overflow:hidden; min-width:760px; }
+  .cal-dow{ background:var(--dark4); padding:0.5rem; text-align:center; font-family:var(--mono); font-size:0.6rem;
+    text-transform:uppercase; letter-spacing:0.06em; color:var(--warm-muted); }
+  .cal-day{ background:var(--dark3); min-height:92px; padding:0.4rem; display:flex; flex-direction:column; gap:0.25rem; }
+  .cal-day.other-month{ background:var(--dark2); opacity:0.5; }
+  .cal-day-num{ font-size:0.72rem; font-weight:600; color:var(--warm-accent); }
+  .cal-day.today .cal-day-num{ background:var(--gold); color:var(--dark); border-radius:50%; width:20px; height:20px;
+    display:inline-flex; align-items:center; justify-content:center; }
+  .cal-chip{ background:rgba(76,89,247,0.16); border:1px solid rgba(76,89,247,0.32); border-radius:4px; padding:0.15rem 0.35rem;
+    font-size:0.62rem; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cal-chip:hover{ background:rgba(76,89,247,0.28); }
+  .cal-chip.cancelled{ background:rgba(255,139,107,0.1); border-color:rgba(255,139,107,0.3); text-decoration:line-through; opacity:0.7; }
+  .cal-more{ font-size:0.6rem; color:var(--warm-muted); cursor:pointer; }
+  .cal-more:hover{ color:var(--white); }
+
+  /* Messages */
+  .msg-tabs{ display:flex; gap:0.4rem; margin-bottom:0.8rem; flex-wrap:wrap; }
+  .msg-tab{ background:var(--dark4); border:1px solid var(--card-border); color:var(--warm-accent);
+    border-radius:20px; padding:0.4rem 0.8rem; font-size:0.76rem; font-family:'Inter',sans-serif; cursor:pointer; }
+  .msg-tab.active{ background:rgba(76,89,247,0.14); border-color:rgba(76,89,247,0.4); color:var(--white); font-weight:600; }
+  .msg-thread-panel{ display:flex; flex-direction:column; }
+  .msg-thread{ flex:1; overflow-y:auto; display:flex; flex-direction:column; padding-right:0.2rem; }
+  .msg-compose{ display:flex; gap:0.5rem; align-items:flex-end; margin-top:0.7rem; border-top:1px solid var(--card-border); padding-top:0.7rem; }
+  .msg-compose .ta{ flex:1; min-height:auto; resize:none; padding:0.6rem 0.8rem; }
+  .bub{ max-width:82%; padding:0.6rem 0.85rem; border-radius:10px; font-size:0.82rem; line-height:1.5; margin-bottom:0.5rem; color:var(--white); }
+  .bub.in{ background:var(--dark4); border:1px solid var(--card-border); }
+  .bub.out{ background:rgba(76,89,247,0.14); border:1px solid rgba(76,89,247,0.3); margin-left:auto; }
+  .bub-meta{ font-family:var(--mono); font-size:0.55rem; color:var(--warm-muted); margin-top:0.35rem; }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -192,7 +224,7 @@
         <button class="side-item" type="button" data-page="calendar" onclick="go('calendar')">Calendar</button>
         <button class="side-item disabled" type="button">Consults <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Tasks <span class="side-soon">Soon</span></button>
-        <button class="side-item disabled" type="button">Messages <span class="side-soon">Soon</span></button>
+        <button class="side-item" type="button" data-page="messages" onclick="go('messages')">Messages</button>
         <button class="side-item disabled" type="button">Invoices <span class="side-soon">Soon</span></button>
         <button class="side-item" type="button" data-page="clients" onclick="go('clients')">Clients</button>
         <button class="side-item disabled" type="button">Team <span class="side-soon">Soon</span></button>
@@ -288,12 +320,21 @@
       <div class="page" id="page-calendar">
         <div class="panel">
           <div class="panel-h">
-            <div class="panel-t">Upcoming Consults</div>
-            <a class="btn btn-p btn-sm" id="bookConsultBtn" href="#" target="_blank" rel="noopener">Book a Consult</a>
+            <div class="panel-t">Calendar</div>
+            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <button class="btn btn-sm" onclick="calShiftMonth(-1)" aria-label="Previous month">‹</button>
+              <div class="muted" id="calMonthLabel" style="min-width:130px;text-align:center;font-weight:600;color:var(--white);"></div>
+              <button class="btn btn-sm" onclick="calShiftMonth(1)" aria-label="Next month">›</button>
+              <button class="btn btn-sm" onclick="calGoToday()">Today</button>
+              <a class="btn btn-p btn-sm" id="bookConsultBtn" href="#" target="_blank" rel="noopener">Book a Consult</a>
+            </div>
           </div>
           <div class="muted" id="calSrc" style="margin-bottom:0.8rem;"></div>
-          <div id="consultsList"><div class="empty">Loading…</div></div>
+          <div style="overflow-x:auto;">
+            <div class="cal-grid" id="calGrid"></div>
+          </div>
         </div>
+        <div class="panel hidden" id="calDetail"></div>
       </div>
 
       <div class="page" id="page-clients">
@@ -307,6 +348,14 @@
           </div>
         </div>
         <div class="panel hidden" id="clientDetail"></div>
+      </div>
+
+      <div class="page" id="page-messages">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Messages</div><div class="muted" id="messagesSrc"></div></div>
+          <div class="proj-list" id="messagesList"></div>
+        </div>
+        <div class="panel hidden" id="messagesDetail"></div>
       </div>
     </main>
   </div>
@@ -359,7 +408,7 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('shell').classList.remove('hidden');
 
-      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications()]);
+      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications(), loadMessagesPage()]);
       renderClientsTable(); // re-render now that stagesByProject (needed for accessLabel) is guaranteed loaded
       renderProjectList(); // re-render now that notifications (needed for the per-project badge) is guaranteed loaded
       renderStats();
@@ -471,27 +520,111 @@
       alert('Sign-in link emailed to ' + lead.email + '. Once they click it, onboarding.html will pre-fill what we already know about them. Flip their status to "Converted" once they finish setup.');
     }
 
+    // ── CALENDAR — a real month grid, not just a flat upcoming list. Cal.com's v2 API only
+    // gives us "upcoming" bookings (no confirmed date-range filter params to rely on without
+    // risking a silent break), so this buckets whatever it returns into the visible month
+    // client-side — browsing back before today just shows an empty grid, which is expected
+    // since past bookings aren't fetched at all.
+    let calBookings = [];
+    let calMonthOffset = 0;
+
     async function loadConsults(){
       try {
-        const r = await fetch('/api/cal-bookings');
+        const r = await fetch('/api/cal-bookings?take=100');
         const data = await r.json();
-        const list = document.getElementById('consultsList');
         if (!data.configured){
           document.getElementById('calSrc').textContent = 'Cal.com not connected yet — add CALCOM_API_KEY in Vercel to show real bookings.';
-          list.innerHTML = '<div class="empty">No live consult data yet.</div>';
+          calBookings = [];
+          renderCalendar();
           return [];
         }
-        document.getElementById('calSrc').textContent = data.bookings.length + ' upcoming';
-        list.innerHTML = data.bookings.length ? data.bookings.map(b => `<div class="panel" style="margin-bottom:0.6rem;padding:0.9rem 1rem;">
-          <b>${esc(b.title || 'Consult')}</b>
-          <div class="muted">${esc(b.attendeeName || b.attendeeEmail || '')} · ${b.start ? new Date(b.start).toLocaleString() : ''}</div>
-        </div>`).join('') : '<div class="empty">No upcoming consults booked.</div>';
-        return data.bookings;
+        calBookings = data.bookings || [];
+        document.getElementById('calSrc').textContent = calBookings.length + ' upcoming';
+        renderCalendar();
+        return calBookings;
       } catch (e) {
         document.getElementById('calSrc').textContent = 'Could not reach Cal.com.';
-        document.getElementById('consultsList').innerHTML = '<div class="empty">—</div>';
+        calBookings = [];
+        renderCalendar();
         return [];
       }
+    }
+    function calShiftMonth(delta){ calMonthOffset += delta; renderCalendar(); }
+    function calGoToday(){ calMonthOffset = 0; renderCalendar(); }
+    function calDayKey(d){ return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); }
+
+    function renderCalendar(){
+      const grid = document.getElementById('calGrid');
+      if (!grid) return;
+      const now = new Date();
+      const viewDate = new Date(now.getFullYear(), now.getMonth() + calMonthOffset, 1);
+      const year = viewDate.getFullYear(), month = viewDate.getMonth();
+      document.getElementById('calMonthLabel').textContent = viewDate.toLocaleDateString(undefined, { month:'long', year:'numeric' });
+
+      const firstDow = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+      const todayKey = calDayKey(now);
+
+      const byDay = {};
+      calBookings.forEach(b => {
+        if (!b.start) return;
+        const key = calDayKey(new Date(b.start));
+        (byDay[key] = byDay[key] || []).push(b);
+      });
+
+      const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      let html = DOW.map(d => `<div class="cal-dow">${d}</div>`).join('');
+
+      for (let i = firstDow - 1; i >= 0; i--){
+        html += `<div class="cal-day other-month"><div class="cal-day-num">${daysInPrevMonth - i}</div></div>`;
+      }
+      for (let day = 1; day <= daysInMonth; day++){
+        const key = year + '-' + month + '-' + day;
+        const items = (byDay[key] || []).slice().sort((a,b) => new Date(a.start) - new Date(b.start));
+        const shown = items.slice(0, 3);
+        const extra = items.length - shown.length;
+        html += `<div class="cal-day ${key === todayKey ? 'today' : ''}">
+          <div class="cal-day-num">${day}</div>
+          ${shown.map(b => `<div class="cal-chip ${b.status === 'cancelled' ? 'cancelled' : ''}" onclick="openBookingDetail('${b.id}')">${esc(new Date(b.start).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}))} ${esc(b.attendeeName || b.title || 'Booking')}</div>`).join('')}
+          ${extra > 0 ? `<div class="cal-more" onclick="openDayDetail(${year},${month},${day})">+${extra} more</div>` : ''}
+        </div>`;
+      }
+      const totalCells = firstDow + daysInMonth;
+      const trailing = (7 - (totalCells % 7)) % 7;
+      for (let i = 1; i <= trailing; i++){
+        html += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+      }
+      grid.innerHTML = html;
+    }
+
+    function bookingDetailHtml(b){
+      return `<div class="muted" style="margin-bottom:0.5rem;">${b.start ? new Date(b.start).toLocaleString() : ''}${b.end ? ' – ' + new Date(b.end).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : ''}</div>
+        <div style="margin-bottom:0.4rem;"><b>Attendee:</b> ${esc(b.attendeeName || '—')}${b.attendeeEmail ? ` (${esc(b.attendeeEmail)})` : ''}</div>
+        <div><b>Status:</b> <span class="pill ${b.status === 'cancelled' ? 'lost' : 'ok'}">${esc(b.status || 'confirmed')}</span></div>`;
+    }
+    function openBookingDetail(id){
+      const b = calBookings.find(x => String(x.id) === String(id));
+      if (!b) return;
+      const panel = document.getElementById('calDetail');
+      panel.classList.remove('hidden');
+      panel.innerHTML = `<div class="panel-h"><div class="panel-t">${esc(b.title || 'Booking')}</div>
+          <button class="btn btn-sm" onclick="document.getElementById('calDetail').classList.add('hidden')">Close</button></div>
+        ${bookingDetailHtml(b)}`;
+      panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    function openDayDetail(year, month, day){
+      const key = year + '-' + month + '-' + day;
+      const items = calBookings.filter(b => b.start && calDayKey(new Date(b.start)) === key)
+        .sort((a,b) => new Date(a.start) - new Date(b.start));
+      const panel = document.getElementById('calDetail');
+      panel.classList.remove('hidden');
+      panel.innerHTML = `<div class="panel-h"><div class="panel-t">${new Date(year, month, day).toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})}</div>
+          <button class="btn btn-sm" onclick="document.getElementById('calDetail').classList.add('hidden')">Close</button></div>
+        <div class="stage-list">${items.map(b => `<div class="stage-row" style="cursor:pointer;" onclick="openBookingDetail('${b.id}')">
+          <b>${esc(new Date(b.start).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}))} — ${esc(b.attendeeName || b.title || 'Booking')}</b>
+        </div>`).join('') || '<div class="empty">No bookings this day.</div>'}</div>`;
+      panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
 
     const SETUP_STEP_COUNT = 12;
@@ -728,8 +861,13 @@
     // the contract, paying the deposit, requesting a discovery call, submitting the onboarding
     // wizard, approving a design, or requesting a revision. Staff never generates one of these
     // for their own edits — only client-driven changes (or the Stripe webhook, on their behalf).
+    //
+    // Nothing is ever deleted here — this is a permanent backlog, not a transient toast queue.
+    // "Mark all read" (below) only flips the `read` flag so the bell badge count clears; every
+    // notification stays visible in the list (just without the unread dot) so old ones are
+    // always still findable by scrolling.
     async function loadNotifications(){
-      const { data, error } = await sb.from('notifications').select('*').order('created_at', { ascending:false }).limit(50);
+      const { data, error } = await sb.from('notifications').select('*').order('created_at', { ascending:false }).limit(300);
       if (error) return;
       notifications = data || [];
       renderNotifBadge();
@@ -780,6 +918,97 @@
       if (s < 3600) return Math.floor(s / 60) + 'm ago';
       if (s < 86400) return Math.floor(s / 3600) + 'h ago';
       return Math.floor(s / 86400) + 'd ago';
+    }
+
+    // ── MESSAGES — every client's Team Chat + Meridion Support threads in one place. A new
+    // client message also lands in the notification bell (see notify_new_message() in
+    // supabase-schema.sql); this page is where staff actually reads and replies.
+    let messagesByClient = {};
+    let msgProfileById = {};
+    let openMessageClientId = null;
+    let openMessageChannel = 'team';
+
+    async function loadMessagesPage(){
+      const [{ data: msgs }, { data: profiles }] = await Promise.all([
+        sb.from('messages').select('*').order('created_at', { ascending:true }),
+        sb.from('profiles').select('user_id, full_name, business_name'),
+      ]);
+      msgProfileById = {};
+      (profiles || []).forEach(p => { msgProfileById[p.user_id] = p; });
+      messagesByClient = {};
+      (msgs || []).forEach(m => { (messagesByClient[m.client_id] = messagesByClient[m.client_id] || []).push(m); });
+      renderMessagesList();
+      if (openMessageClientId) renderMessageThread();
+    }
+    function renderMessagesList(){
+      const list = document.getElementById('messagesList');
+      const clientIds = Object.keys(messagesByClient);
+      document.getElementById('messagesSrc').textContent = clientIds.length + ' conversation' + (clientIds.length === 1 ? '' : 's');
+      if (!clientIds.length){ list.innerHTML = '<div class="empty">No messages yet.</div>'; return; }
+      const rows = clientIds.map(cid => {
+        const msgs = messagesByClient[cid];
+        const last = msgs[msgs.length - 1];
+        return { cid, last, profile: msgProfileById[cid] || {} };
+      }).sort((a, b) => new Date(b.last.created_at) - new Date(a.last.created_at));
+      list.innerHTML = rows.map(r => `<div class="proj-row ${r.cid === openMessageClientId ? 'active' : ''}" onclick="openMessageThread('${r.cid}')">
+        <div><div class="proj-row-t">${esc(r.profile.full_name || 'Unnamed client')}</div><div class="muted">${esc(r.last.body.slice(0, 60))}${r.last.body.length > 60 ? '…' : ''}</div></div>
+        <span class="muted" style="white-space:nowrap;">${esc(r.last.channel === 'support' ? 'Support' : 'Team')} · ${timeAgo(r.last.created_at)}</span>
+      </div>`).join('');
+    }
+    function openMessageThread(clientId, channel){
+      openMessageClientId = clientId;
+      openMessageChannel = channel || openMessageChannel || 'team';
+      renderMessagesList();
+      const profile = msgProfileById[clientId] || {};
+      const panel = document.getElementById('messagesDetail');
+      panel.classList.remove('hidden');
+      panel.innerHTML = `
+        <div class="panel-h"><div class="panel-t">${esc(profile.full_name || 'Client')}</div>
+          <button class="btn btn-sm" onclick="document.getElementById('messagesDetail').classList.add('hidden')">Close</button></div>
+        <div class="msg-tabs">
+          <button class="msg-tab ${openMessageChannel === 'team' ? 'active' : ''}" onclick="openMessageThread('${clientId}','team')">Team Chat</button>
+          <button class="msg-tab ${openMessageChannel === 'support' ? 'active' : ''}" onclick="openMessageThread('${clientId}','support')">Meridion Support</button>
+        </div>
+        <div class="msg-thread-panel" style="height:420px;">
+          <div class="msg-thread" id="adminMsgThread"></div>
+          <div class="msg-compose">
+            <textarea class="ta" id="adminMsgInput" placeholder="Reply…" rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminReply('${clientId}');}"></textarea>
+            <button class="btn btn-p" onclick="sendAdminReply('${clientId}')">Send</button>
+          </div>
+        </div>`;
+      renderMessageThread();
+      panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    function renderMessageThread(){
+      const el = document.getElementById('adminMsgThread');
+      if (!el || !openMessageClientId) return;
+      const msgs = (messagesByClient[openMessageClientId] || []).filter(m => m.channel === openMessageChannel);
+      if (!msgs.length){ el.innerHTML = '<div class="empty">No messages in this channel yet.</div>'; return; }
+      el.innerHTML = msgs.map(m => `<div class="bub ${m.sender_role === 'staff' ? 'out' : 'in'}">${esc(m.body)}<div class="bub-meta">${esc(m.sender_role === 'staff' ? (m.sender_name || 'You') : 'Client')} · ${new Date(m.created_at).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</div></div>`).join('');
+      el.scrollTop = el.scrollHeight;
+    }
+    async function sendAdminReply(clientId){
+      const input = document.getElementById('adminMsgInput');
+      const body = input.value.trim();
+      if (!body) return;
+      input.disabled = true;
+      // Carry forward whatever project this client's Team Chat is already scoped to — Support
+      // isn't tied to a specific project, so it's left null there.
+      const existing = (messagesByClient[clientId] || []).find(m => m.channel === openMessageChannel && m.project_id);
+      const { data, error } = await sb.from('messages').insert({
+        client_id: clientId,
+        project_id: existing ? existing.project_id : null,
+        channel: openMessageChannel,
+        sender_role: 'staff',
+        sender_name: document.getElementById('acctName').textContent || 'Meridion AI',
+        body,
+      }).select().single();
+      input.disabled = false;
+      if (error){ alert(error.message); return; }
+      (messagesByClient[clientId] = messagesByClient[clientId] || []).push(data);
+      input.value = '';
+      renderMessageThread();
+      renderMessagesList();
     }
 
     // ── PROJECT PIPELINE — a list of every client project; clicking one opens its full
@@ -961,9 +1190,7 @@
       document.getElementById('statRevenue').textContent = money(wonTotal);
       document.getElementById('statActive').textContent = active;
       document.getElementById('statLeads').textContent = newLeads;
-      const consultsEl = document.getElementById('consultsList');
-      const count = consultsEl.querySelectorAll('.panel').length;
-      document.getElementById('statConsults').textContent = count || '0';
+      document.getElementById('statConsults').textContent = calBookings.length || '0';
     }
 
     init();

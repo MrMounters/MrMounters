@@ -632,3 +632,62 @@ end; $$;
 drop trigger if exists on_stage_status_change on public.project_stages;
 create trigger on_stage_status_change after update on public.project_stages
   for each row execute function public.notify_stage_change();
+
+-- ============================================================
+-- MESSAGES — real two-way chat backing the client portal's "Team Chat" and "Meridion
+-- Support" inbox tabs, and admin.html's Messages page. `project_id` is nullable so a client
+-- can reach Support even before they have a project yet; `channel` keeps the two threads
+-- (team vs. support) separate within the same client's conversation history.
+-- ============================================================
+create table if not exists public.messages (
+  id           uuid primary key default gen_random_uuid(),
+  project_id   uuid references public.projects(id) on delete cascade,
+  client_id    uuid not null references auth.users(id) on delete cascade,
+  channel      text not null default 'team' check (channel in ('team','support')),
+  sender_role  text not null check (sender_role in ('client','staff')),
+  sender_name  text,
+  body         text not null,
+  created_at   timestamptz default now()
+);
+
+alter table public.messages enable row level security;
+
+-- A client owns their whole conversation history (both channels) — read/send freely.
+drop policy if exists "clients manage their own messages" on public.messages;
+create policy "clients manage their own messages"
+  on public.messages for all
+  using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+-- Staff can read and reply into ANY client's thread (admin.html's Messages page).
+drop policy if exists "staff manage all messages" on public.messages;
+create policy "staff manage all messages"
+  on public.messages for all
+  using (public.current_user_role() in ('rep','admin'))
+  with check (public.current_user_role() in ('rep','admin'));
+
+-- Notify staff (reusing the same notifications feed/bell as stage changes) whenever a
+-- client sends a new message — a staff reply doesn't notify itself.
+create or replace function public.notify_new_message()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  label text;
+begin
+  if new.sender_role <> 'client' then return new; end if;
+  if new.project_id is not null then
+    select name into label from public.projects where id = new.project_id;
+  end if;
+  if label is null then
+    select coalesce(business_name, full_name) into label from public.profiles where user_id = new.client_id;
+  end if;
+  label := coalesce(label, 'A client');
+  insert into public.notifications (project_id, client_id, title, body)
+  values (new.project_id, new.client_id,
+    label || ' — new ' || (case when new.channel = 'support' then 'support' else 'team chat' end) || ' message',
+    left(new.body, 140));
+  return new;
+end; $$;
+
+drop trigger if exists on_message_created on public.messages;
+create trigger on_message_created after insert on public.messages
+  for each row execute function public.notify_new_message();

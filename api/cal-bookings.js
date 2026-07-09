@@ -21,7 +21,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const url = 'https://api.cal.com/v2/bookings?status=upcoming&take=25';
+    const take = Math.min(Math.max(parseInt(req.query && req.query.take, 10) || 25, 1), 100);
+    const url = 'https://api.cal.com/v2/bookings?status=upcoming&take=' + take;
     const r = await fetch(url, {
       headers: {
         Authorization: 'Bearer ' + CALCOM_API_KEY,
