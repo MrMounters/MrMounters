@@ -1118,8 +1118,16 @@
         return `<div class="stage-action"><a class="btn btn-p" href="setup.html" style="text-decoration:none;">${setupSubmitted ? 'Continue Setup Wizard →' : 'Start Setup Wizard →'}</a></div>`;
       }
       if (s.stage_key === 'discovery_call'){
-        const url = CALCOM_BOOKING_URL + (currentEmail ? '?email=' + encodeURIComponent(currentEmail) : '');
-        return `<div class="stage-action"><a class="btn btn-p" href="${url}" target="_blank" rel="noopener" style="text-decoration:none;">Schedule Discovery Call →</a></div>`;
+        // Cal.com's plain booking page doesn't redirect back here after a booking is made,
+        // so we can't detect completion automatically — instead, clicking through marks the
+        // stage in_progress immediately so it's obvious something happened instead of the
+        // exact same button just sitting there forever. Staff marks it done once the actual
+        // call has happened (same as before).
+        if (s.status === 'in_progress'){
+          return `<div class="stage-action muted">Discovery call requested — we'll confirm your booking and follow up shortly.
+            <a href="javascript:void(0)" onclick="scheduleDiscoveryCall('${s.id}')" style="color:var(--gold);">Need to reschedule?</a></div>`;
+        }
+        return `<div class="stage-action"><button class="btn btn-p" onclick="scheduleDiscoveryCall('${s.id}')">Schedule Discovery Call →</button></div>`;
       }
       if (s.stage_key === 'in_progress'){
         return s.client_note ? '' : `<div class="stage-action muted">We're actively building your site — check back for updates.</div>`;
@@ -1189,6 +1197,14 @@
       }).eq('id', stageId);
       if (error){ alert(error.message); return; }
       loadProject();
+    }
+
+    async function scheduleDiscoveryCall(stageId){
+      const url = CALCOM_BOOKING_URL + (currentEmail ? '?email=' + encodeURIComponent(currentEmail) : '');
+      window.open(url, '_blank', 'noopener');
+      if (!sb) return; // demo mode — nothing to persist
+      const { error } = await sb.from('project_stages').update({ status:'in_progress' }).eq('id', stageId);
+      if (!error) loadProject();
     }
 
     async function payDeposit(stageId){
