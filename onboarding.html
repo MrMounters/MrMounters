@@ -61,13 +61,6 @@
   .auth-status{ font-size:0.78rem; line-height:1.5; margin-top:1rem; min-height:1.1em; text-align:center; color:var(--warm-accent); }
   .auth-status.err{ color:#ff8b6b; }
   .hidden{ display:none !important; }
-
-  /* Welcome panel */
-  .welcome-icon{ width:64px; height:64px; border-radius:14px; background:linear-gradient(135deg,var(--gold),var(--gold-light));
-    display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin-bottom:1.4rem; }
-  .welcome-list{ display:flex; flex-direction:column; gap:0.9rem; margin:1.4rem 0 1.6rem; }
-  .welcome-item{ display:flex; gap:0.8rem; align-items:flex-start; font-size:0.85rem; color:var(--warm-accent); line-height:1.5; }
-  .welcome-item b{ color:var(--white); display:block; font-weight:600; margin-bottom:0.1rem; }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -110,18 +103,6 @@
       <div class="auth-status" id="status"></div>
     </div>
 
-    <!-- Panel 2: welcome -->
-    <div id="panel-welcome" class="hidden">
-      <div class="welcome-icon">👋</div>
-      <h1 class="auth-h1">Welcome to your project portal</h1>
-      <p class="auth-lead">We're excited to build something incredible together.</p>
-      <div class="welcome-list">
-        <div class="welcome-item">⏱ <span><b>Set aside 10–20 minutes</b>to complete your project setup.</span></div>
-        <div class="welcome-item">☁️ <span><b>Your progress is saved</b>automatically as you go.</span></div>
-        <div class="welcome-item">🔒 <span><b>You can exit anytime</b>and come back later.</span></div>
-      </div>
-      <button type="button" class="auth-btn" onclick="goDashboard()">Continue</button>
-    </div>
   </div>
 
   <script src="auth-config.js"></script>
@@ -178,8 +159,9 @@
       btn.disabled = false;
       if (error) return msg(error.message, 'err');
 
-      document.getElementById('panel-setup').classList.add('hidden');
-      document.getElementById('panel-welcome').classList.remove('hidden');
+      // The dashboard already has its own "Welcome [name] 👋" header — go straight there
+      // instead of showing a second, redundant welcome screen.
+      goDashboard();
     }
 
     init();
