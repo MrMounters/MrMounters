@@ -259,7 +259,10 @@
 <!-- Cal.com embed — lets the Discovery Call stage book inline without leaving the portal -->
 <script type="text/javascript">
   (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-  Cal("init", { origin: "https://cal.com" });
+  // Namespaced init ("discoveryCall") — this is Cal.com's own documented pattern for inline
+  // embeds specifically (their embed generator's "Inline Embed" tab outputs this exact shape),
+  // as opposed to the simpler default-namespace form used for popup/floating-button embeds.
+  Cal("init", "discoveryCall", { origin: "https://cal.com" });
 </script>
 </head>
 <body>
@@ -1214,7 +1217,7 @@
     function ensureCalBookingListener(){
       if (calBookingListenerAdded || typeof Cal !== 'function') return;
       calBookingListenerAdded = true;
-      Cal('on', {
+      Cal.ns.discoveryCall('on', {
         action: 'bookingSuccessful',
         callback: async () => {
           if (!openDiscoveryStageId || !sb) return;
@@ -1228,12 +1231,11 @@
       const el = document.getElementById('action-' + stageId);
       el.innerHTML = `<div id="cal-inline-${stageId}" style="min-height:600px;border-radius:8px;overflow:hidden;"></div>`;
       ensureCalBookingListener();
-      Cal('inline', {
+      Cal.ns.discoveryCall('inline', {
         elementOrSelector: '#cal-inline-' + stageId,
         calLink: CALCOM_EVENT_SLUG,
-        config: currentEmail ? { email: currentEmail } : {},
+        config: Object.assign({ layout: 'month_view' }, currentEmail ? { email: currentEmail } : {}),
       });
-      Cal('ui', { hideEventTypeDetails: false, layout: 'month_view' });
     }
 
     async function payDeposit(stageId){
