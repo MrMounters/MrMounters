@@ -49,11 +49,27 @@ module.exports = async function handler(req, res) {
   }
 
   switch (event.type) {
-    case 'checkout.session.completed':
-      // TODO: a purchase completed. event.data.object is the Checkout Session —
-      // e.g. write the client/subscription record to Supabase here.
-      console.log('checkout.session.completed', event.data.object.id);
+    case 'checkout.session.completed': {
+      const session = event.data.object;
+      console.log('checkout.session.completed', session.id);
+
+      // Project deposit payments are only ever confirmed here, never client-side — this is
+      // the one place that can be trusted, since it's verified by Stripe's signature above.
+      if (session.metadata && session.metadata.kind === 'project_deposit' && session.metadata.stage_id) {
+        const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+        if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+          const { createClient } = require('@supabase/supabase-js');
+          const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+          const { error } = await supabaseAdmin.from('project_stages').update({
+            status: 'done', completed_at: new Date().toISOString(),
+          }).eq('id', session.metadata.stage_id);
+          if (error) console.error('deposit stage update failed', error.message);
+        } else {
+          console.error('deposit paid but SUPABASE_SERVICE_ROLE_KEY not configured — stage not marked done');
+        }
+      }
       break;
+    }
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted':
       // TODO: sync subscription status (active/canceled/past_due) to Supabase here.

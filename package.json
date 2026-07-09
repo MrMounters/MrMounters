@@ -4,6 +4,7 @@
   "description": "Marketing site + client/rep portals. Static, with optional Vercel serverless functions for the Twilio dialer and Stripe payments.",
   "dependencies": {
     "twilio": "^5.3.0",
-    "stripe": "^17.4.0"
+    "stripe": "^17.4.0",
+    "@supabase/supabase-js": "^2.45.0"
   }
 }

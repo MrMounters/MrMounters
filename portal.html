@@ -153,7 +153,12 @@
   .t-label{ font-size:0.9rem; font-weight:600; }
   .t-label.current{ color:var(--gold); }
   .t-sub{ font-family:var(--mono); font-size:0.62rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin-top:0.1rem; }
+  .t-note{ font-size:0.82rem; color:var(--warm-accent); margin-top:0.35rem; line-height:1.5; }
   .launch-box{ display:flex; align-items:center; justify-content:space-between; gap:1rem; background:rgba(76,89,247,0.06); border:1px solid rgba(76,89,247,0.2); border-radius:6px; padding:0.9rem 1.1rem; margin-top:0.4rem; }
+  .stage-action{ margin-top:0.7rem; }
+  .stage-action.muted{ font-size:0.82rem; color:var(--warm-muted); }
+  .contract-box{ background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.9rem; margin-top:0.4rem; }
+  .design-actions{ display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.3rem; }
   .panel-h{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
   .panel-t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }
   .panel-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
@@ -895,10 +900,23 @@
       loadDomains();
       loadRequests();
       loadProject();
+
+      // Returning from a deposit Stripe Checkout — the webhook confirms the payment
+      // asynchronously (usually within a second or two), so give it a moment and reload
+      // the timeline once more to pick up the confirmed status.
+      if (new URLSearchParams(location.search).get('stage_paid')){
+        history.replaceState(null, '', location.pathname);
+        setTimeout(loadProject, 2500);
+      }
     }
+
+    let currentProject = null;
+    let currentStages = [];
+    const STAGE_DONE_STATES = ['done', 'approved'];
 
     async function loadProject(){
       let project = null;
+      let stages = [];
       if (sb && !demo){
         if (session){
           const [{ data: proj }, { data: setup }] = await Promise.all([
@@ -910,27 +928,34 @@
           ]);
           project = proj;
           setupComplete = !!(setup && setup.submitted);
+          if (project){
+            const { data: stageRows } = await sb.from('project_stages').select('*').eq('project_id', project.id).order('stage_order');
+            stages = stageRows || [];
+          }
         }
       } else {
         // Demo fallback — setup_complete:true since the demo is meant to showcase the full
         // unlocked portal to prospects, not the locked pre-onboarding state.
-        project = {
-          name: 'Website Redesign', status: 'Project Setup',
-          timeline: [
-            { label:'Discovery Call', done:true }, { label:'Contract Signed', done:true },
-            { label:'Deposit Paid', done:true }, { label:'Complete Setup', done:false, current:true },
-            { label:'Homepage Design', done:false }, { label:'Development', done:false }, { label:'Launch', done:false }
-          ],
-          estimated_launch: '2026-07-28', setup_complete: true
-        };
+        project = { id: 'demo', name: 'Website Redesign', status: 'Project Setup', estimated_launch: '2026-07-28' };
+        stages = [
+          { id:'d1', stage_key:'discovery_call', label:'Discovery Call', status:'done', data:{} },
+          { id:'d2', stage_key:'contract_signed', label:'Contract Signed', status:'done', data:{} },
+          { id:'d3', stage_key:'deposit_paid', label:'Deposit Paid', status:'done', data:{} },
+          { id:'d4', stage_key:'complete_setup', label:'Complete Setup', status:'done', data:{} },
+          { id:'d5', stage_key:'homepage_design', label:'Homepage Design', status:'needs_review', data:{}, client_note:'Take a look and let us know what you think!' },
+          { id:'d6', stage_key:'development', label:'Development', status:'pending', data:{} },
+          { id:'d7', stage_key:'launch', label:'Launch', status:'pending', data:{} },
+        ];
         setupComplete = true;
       }
       applyLockState();
+      currentProject = project;
+      currentStages = stages;
       if (!project) return; // no project yet — cards stay hidden, rest of the portal stays locked
-      renderProject(project);
+      renderProject(project, stages);
     }
 
-    function renderProject(p){
+    function renderProject(p, stages){
       document.getElementById('projCard').classList.remove('hidden');
       document.getElementById('timelinePanel').classList.remove('hidden');
       document.getElementById('projName').textContent = p.name || 'Your Project';
@@ -938,13 +963,124 @@
       document.getElementById('projLaunch').textContent = p.estimated_launch
         ? new Date(p.estimated_launch + 'T00:00:00').toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' })
         : 'TBD';
-      const timeline = Array.isArray(p.timeline) ? p.timeline : [];
-      document.getElementById('timelineList').innerHTML = timeline.map(t => `<li>
-        <div class="t-dot ${t.done ? 'done' : 'pending'}">${t.done ? '✓' : ''}</div>
-        <div><div class="t-label ${t.current ? 'current' : ''}">${esc(t.label)}</div>${t.current ? '<div class="t-sub">Current Step</div>' : ''}</div>
-      </li>`).join('');
+
+      let currentSet = false;
+      document.getElementById('timelineList').innerHTML = stages.map(s => {
+        const isDone = STAGE_DONE_STATES.includes(s.status);
+        const isCurrent = !isDone && !currentSet;
+        if (isCurrent) currentSet = true;
+        return `<li>
+          <div class="t-dot ${isDone ? 'done' : 'pending'}">${isDone ? '✓' : ''}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="t-label ${isCurrent ? 'current' : ''}">${esc(s.label)}</div>
+            ${isCurrent ? '<div class="t-sub">Current Step</div>' : ''}
+            ${s.client_note ? `<div class="t-note">${esc(s.client_note)}</div>` : ''}
+            ${isCurrent ? stageActionHtml(s) : ''}
+          </div>
+        </li>`;
+      }).join('');
+
+      // Homepage design previews need an async signed-URL fetch, so they're filled in after
+      // the synchronous render above rather than blocking it.
+      const designStage = stages.find(s => s.stage_key === 'homepage_design' && s.status === 'needs_review' && !STAGE_DONE_STATES.includes(s.status));
+      if (designStage) renderDesignPreview(designStage);
+
       const startBtn = document.getElementById('startSetupBtn');
       if (!setupComplete){ startBtn.classList.remove('hidden'); }
+    }
+
+    // ── Per-stage interactive actions, shown only for the current (first incomplete) stage ──
+    function stageActionHtml(s){
+      if (s.stage_key === 'contract_signed'){
+        return `<div class="stage-action" id="action-${s.id}">
+          <button class="btn btn-p" onclick="expandSignContract('${s.id}')">Review &amp; Sign Contract</button>
+        </div>`;
+      }
+      if (s.stage_key === 'deposit_paid'){
+        const amount = s.data && s.data.amount;
+        if (!amount) return `<div class="stage-action muted">Waiting on your project admin to set the deposit amount.</div>`;
+        return `<div class="stage-action"><button class="btn btn-p" onclick="payDeposit('${s.id}')">Pay $${Number(amount).toLocaleString()} Deposit →</button></div>`;
+      }
+      if (s.stage_key === 'homepage_design'){
+        if (s.status === 'needs_review') return `<div class="stage-action" id="design-preview-${s.id}"><div class="muted">Loading design preview…</div></div>`;
+        if (s.status === 'revision_requested') return `<div class="stage-action muted">Revision requested — we'll follow up with an updated design soon.</div>`;
+        return `<div class="stage-action muted">We'll share your homepage design here once it's ready for review.</div>`;
+      }
+      if (s.stage_key === 'development'){
+        return s.client_note ? '' : `<div class="stage-action muted">Your site is in active development — check back for updates.</div>`;
+      }
+      return '';
+    }
+
+    async function renderDesignPreview(s){
+      const el = document.getElementById('design-preview-' + s.id);
+      if (!el) return;
+      const path = s.data && s.data.image_path;
+      let imgHtml = '';
+      if (path && sb){
+        const { data: signed } = await sb.storage.from('client-assets').createSignedUrl(path, 3600);
+        if (signed) imgHtml = `<img src="${signed.signedUrl}" style="width:100%;border-radius:6px;margin-bottom:0.7rem;display:block;">`;
+      }
+      el.innerHTML = imgHtml + `<div class="design-actions" id="design-actions-${s.id}">
+        <button class="btn btn-p" onclick="approveDesign('${s.id}')">✓ Approve</button>
+        <button class="btn btn-o" onclick="showRevisionForm('${s.id}')">Request Revision</button>
+      </div>`;
+    }
+    function showRevisionForm(stageId){
+      const el = document.getElementById('design-actions-' + stageId);
+      el.outerHTML = `<div id="design-actions-${stageId}">
+        <textarea class="ta" id="revisionNotes-${stageId}" placeholder="What would you like changed?"></textarea>
+        <button class="btn btn-p" onclick="requestRevision('${stageId}')">Submit Revision Request</button>
+      </div>`;
+    }
+    async function requestRevision(stageId){
+      const notesEl = document.getElementById('revisionNotes-' + stageId);
+      const notes = notesEl.value.trim();
+      if (!notes){ notesEl.focus(); return; }
+      const s = currentStages.find(x => x.id === stageId);
+      const newData = Object.assign({}, s && s.data, { decision:'revision_requested', revision_notes:notes });
+      const { error } = await sb.from('project_stages').update({ status:'revision_requested', data:newData }).eq('id', stageId);
+      if (error){ alert(error.message); return; }
+      loadProject();
+    }
+    async function approveDesign(stageId){
+      const s = currentStages.find(x => x.id === stageId);
+      const newData = Object.assign({}, s && s.data, { decision:'approved' });
+      const { error } = await sb.from('project_stages').update({ status:'done', completed_at:new Date().toISOString(), data:newData }).eq('id', stageId);
+      if (error){ alert(error.message); return; }
+      loadProject();
+    }
+
+    function expandSignContract(stageId){
+      const el = document.getElementById('action-' + stageId);
+      el.innerHTML = `<div class="contract-box">
+        <p class="muted" style="margin-bottom:0.6rem;">By typing your full legal name below, you agree to Meridion AI's services agreement for this project — the scope, timeline, and payment terms already discussed.</p>
+        <input class="inp" id="signName-${stageId}" placeholder="Type your full legal name">
+        <button class="btn btn-p" onclick="signContract('${stageId}')">Sign &amp; Continue</button>
+      </div>`;
+    }
+    async function signContract(stageId){
+      const input = document.getElementById('signName-' + stageId);
+      const name = input.value.trim();
+      if (!name){ input.focus(); return; }
+      const { error } = await sb.from('project_stages').update({
+        status:'done', completed_at:new Date().toISOString(),
+        data:{ signed_name:name, signed_at:new Date().toISOString() },
+      }).eq('id', stageId);
+      if (error){ alert(error.message); return; }
+      loadProject();
+    }
+
+    async function payDeposit(stageId){
+      try {
+        const r = await fetch('/api/create-deposit-session', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ stageId }),
+        });
+        const data = await r.json();
+        if (data.url) window.location.href = data.url;
+        else alert(data.detail || data.error || 'Could not start checkout.');
+      } catch (e) { alert('Could not start checkout: ' + e.message); }
     }
 
     function renderChart(){

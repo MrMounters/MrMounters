@@ -468,13 +468,14 @@
           project = created;
         }
         if (project){
-          const timeline = (project.timeline || []).map(t => {
-            if (t.label === 'Complete Setup') return { label:t.label, done:true };
-            if (t.label === 'Homepage Design') return { label:t.label, done:false, current:true };
-            return { label:t.label, done:t.done };
-          });
-          const { error: updErr } = await sb.from('projects').update({ status:'In Progress', timeline, setup_complete:true }).eq('id', project.id);
+          const { error: updErr } = await sb.from('projects').update({ status:'In Progress' }).eq('id', project.id);
           if (updErr) throw new Error(updErr.message);
+          // project_stages (seeded automatically when the project row was created) is the
+          // real source of truth for the dashboard timeline now — mark this one done.
+          const { error: stageErr } = await sb.from('project_stages')
+            .update({ status:'done', completed_at: new Date().toISOString() })
+            .eq('project_id', project.id).eq('stage_key', 'complete_setup');
+          if (stageErr) throw new Error(stageErr.message);
         }
       } catch (e) {
         console.error('submit error', e);

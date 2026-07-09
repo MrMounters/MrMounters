@@ -350,3 +350,112 @@ create policy "clients manage their own setup assets"
   on storage.objects for all
   using (bucket_id = 'client-assets' and (storage.foldername(name))[1] = auth.uid()::text)
   with check (bucket_id = 'client-assets' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- Staff can manage files in ANY client's folder too — needed so admin.html can upload a
+-- homepage design mockup into a client's own asset folder for them to review.
+drop policy if exists "staff manage all client assets" on storage.objects;
+create policy "staff manage all client assets"
+  on storage.objects for all
+  using (bucket_id = 'client-assets' and public.current_user_role() in ('rep','admin'))
+  with check (bucket_id = 'client-assets' and public.current_user_role() in ('rep','admin'));
+
+-- ============================================================
+-- PROJECT STAGES — the real, interactive project pipeline. Each project gets 7 rows
+-- (seeded automatically below) covering its full delivery lifecycle. This replaces
+-- projects.timeline as the source of truth for the dashboard's timeline display —
+-- that jsonb column stays for backward compatibility but the app no longer reads it.
+--
+-- Per-stage interactivity (built into portal.html / admin.html, not enforced by SQL):
+--   discovery_call   — admin marks done once the Cal.com consult has happened
+--   contract_signed  — client types their name to sign (data.signed_name/signed_at)
+--   deposit_paid     — client pays via Stripe; ONLY the webhook (service_role, bypasses
+--                       RLS) marks this done — client-side code can create a checkout
+--                       session but can never mark payment as complete itself
+--   complete_setup   — mirrors project_setup.submitted, marked done on wizard submit
+--   homepage_design  — admin uploads a mockup (data.image_path), client approves or
+--                       requests a revision (data.decision/revision_notes)
+--   development      — admin posts progress via client_note, no client action
+--   launch           — admin marks done, optionally sets data.live_url
+-- ============================================================
+create table if not exists public.project_stages (
+  id            uuid primary key default gen_random_uuid(),
+  project_id    uuid not null references public.projects(id) on delete cascade,
+  client_id     uuid not null references auth.users(id) on delete cascade,
+  stage_key     text not null,   -- discovery_call | contract_signed | deposit_paid | complete_setup | homepage_design | development | launch
+  label         text not null,
+  stage_order   int not null,
+  status        text not null default 'pending' check (status in ('pending','in_progress','needs_review','revision_requested','approved','done')),
+  client_note   text,            -- admin-written status message shown to the client
+  admin_note    text,            -- staff-only internal notes
+  data          jsonb not null default '{}'::jsonb,  -- stage-specific extras, see comment above
+  due_date      date,
+  completed_at  timestamptz,
+  created_at    timestamptz default now(),
+  updated_at    timestamptz default now()
+);
+
+alter table public.project_stages enable row level security;
+
+-- Clients can view and update (not insert/delete — stages are seeded automatically) their
+-- own project's stages, needed for the client-driven actions above (signing, approving).
+drop policy if exists "clients manage their own project stages" on public.project_stages;
+create policy "clients manage their own project stages"
+  on public.project_stages for select
+  using (auth.uid() = client_id);
+
+drop policy if exists "clients can update their own project stages" on public.project_stages;
+create policy "clients can update their own project stages"
+  on public.project_stages for update
+  using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+drop policy if exists "staff manage all project stages" on public.project_stages;
+create policy "staff manage all project stages"
+  on public.project_stages for all
+  using (public.current_user_role() in ('rep','admin'))
+  with check (public.current_user_role() in ('rep','admin'));
+
+drop trigger if exists project_stages_touch on public.project_stages;
+create trigger project_stages_touch before update on public.project_stages
+  for each row execute function public.touch_updated_at();
+
+-- Auto-seed the 7 default stages whenever a project is created — whether by staff
+-- (admin.html) or by a client's own setup.html submission auto-creating one.
+create or replace function public.seed_project_stages()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  stages jsonb := '[
+    {"key":"discovery_call","label":"Discovery Call"},
+    {"key":"contract_signed","label":"Contract Signed"},
+    {"key":"deposit_paid","label":"Deposit Paid"},
+    {"key":"complete_setup","label":"Complete Setup"},
+    {"key":"homepage_design","label":"Homepage Design"},
+    {"key":"development","label":"Development"},
+    {"key":"launch","label":"Launch"}
+  ]'::jsonb;
+  s jsonb;
+  i int := 0;
+begin
+  for s in select * from jsonb_array_elements(stages) loop
+    insert into public.project_stages (project_id, client_id, stage_key, label, stage_order)
+    values (new.id, new.client_id, s->>'key', s->>'label', i);
+    i := i + 1;
+  end loop;
+  return new;
+end; $$;
+
+drop trigger if exists on_project_created on public.projects;
+create trigger on_project_created after insert on public.projects
+  for each row execute function public.seed_project_stages();
+
+-- One-time backfill: seed stages for any project created before this table existed.
+insert into public.project_stages (project_id, client_id, stage_key, label, stage_order)
+select p.id, p.client_id, s.key, s.label, s.ord
+from public.projects p
+cross join (values
+  ('discovery_call','Discovery Call',0), ('contract_signed','Contract Signed',1),
+  ('deposit_paid','Deposit Paid',2), ('complete_setup','Complete Setup',3),
+  ('homepage_design','Homepage Design',4), ('development','Development',5),
+  ('launch','Launch',6)
+) as s(key, label, ord)
+where not exists (select 1 from public.project_stages ps where ps.project_id = p.id);
