@@ -224,3 +224,47 @@ drop policy if exists "users can read their own matching lead" on public.leads;
 create policy "users can read their own matching lead"
   on public.leads for select
   using (lower(email) = lower(auth.jwt() ->> 'email'));
+
+-- ============================================================
+-- PROJECTS — feeds the client portal dashboard's status card + timeline,
+-- and gates the "Start Setup" 12-step onboarding wizard.
+-- ============================================================
+create table if not exists public.projects (
+  id                uuid primary key default gen_random_uuid(),
+  client_id         uuid not null references auth.users(id) on delete cascade,
+  name              text not null default 'Website Redesign',
+  status            text not null default 'Project Setup',
+  -- Each item: {"label": "...", "done": bool, "current": bool (optional)}
+  timeline          jsonb not null default '[
+    {"label":"Discovery Call","done":true},
+    {"label":"Contract Signed","done":true},
+    {"label":"Deposit Paid","done":true},
+    {"label":"Complete Setup","done":false,"current":true},
+    {"label":"Homepage Design","done":false},
+    {"label":"Development","done":false},
+    {"label":"Launch","done":false}
+  ]'::jsonb,
+  estimated_launch  date,
+  setup_complete    boolean not null default false,
+  created_at        timestamptz default now(),
+  updated_at        timestamptz default now()
+);
+
+alter table public.projects enable row level security;
+
+-- Clients can view their own project(s), read-only — rows are created/managed by staff
+-- (Table Editor / admin.html), same pattern as domains.
+drop policy if exists "clients see only their own projects" on public.projects;
+create policy "clients see only their own projects"
+  on public.projects for select
+  using (auth.uid() = client_id);
+
+drop policy if exists "staff manage all projects" on public.projects;
+create policy "staff manage all projects"
+  on public.projects for all
+  using (exists (select 1 from public.profiles p where p.user_id = auth.uid() and p.role in ('rep','admin')))
+  with check (exists (select 1 from public.profiles p where p.user_id = auth.uid() and p.role in ('rep','admin')));
+
+drop trigger if exists projects_touch on public.projects;
+create trigger projects_touch before update on public.projects
+  for each row execute function public.touch_updated_at();

@@ -107,6 +107,25 @@
   .stat-d{ font-family:var(--mono); font-size:0.6rem; margin-top:0.4rem; color:var(--green); }
   .stat-d.down{ color:#ff8b6b; }
   .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:3px; padding:1.4rem 1.4rem; margin-bottom:1.2rem; overflow-x:auto; }
+  /* Project status card */
+  .proj-card{ background:var(--dark3); border:1px solid var(--card-border); border-left:3px solid var(--gold); border-radius:3px; padding:1.2rem 1.4rem; margin-bottom:1.2rem; }
+  .proj-top{ display:flex; align-items:center; gap:0.9rem; margin-bottom:1rem; }
+  .proj-ic{ width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+  .proj-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--warm-muted); }
+  .proj-name{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.15rem; }
+  .proj-status{ display:flex; align-items:center; gap:0.5rem; font-weight:600; color:var(--gold); font-size:0.92rem; padding-top:0.8rem; border-top:1px solid var(--card-border); }
+  .proj-status .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+  .timeline{ margin:0; padding:0; list-style:none; }
+  .timeline li{ display:flex; align-items:flex-start; gap:0.8rem; padding-bottom:1rem; position:relative; }
+  .timeline li:not(:last-child)::before{ content:''; position:absolute; left:11px; top:24px; bottom:0; width:1px; background:var(--card-border); }
+  .t-dot{ width:23px; height:23px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.7rem; margin-top:0.05rem; }
+  .t-dot.done{ background:var(--gold); color:var(--dark); }
+  .t-dot.pending{ border:1.5px solid var(--card-border); }
+  .t-label{ font-size:0.9rem; font-weight:600; }
+  .t-label.current{ color:var(--gold); }
+  .t-sub{ font-family:var(--mono); font-size:0.62rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin-top:0.1rem; }
+  .launch-box{ display:flex; align-items:center; justify-content:space-between; gap:1rem; background:rgba(76,89,247,0.06); border:1px solid rgba(76,89,247,0.2); border-radius:6px; padding:0.9rem 1.1rem; margin-top:0.4rem; }
   .panel-h{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.1rem; flex-wrap:wrap; }
   .panel-t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }
   .panel-k{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); }
@@ -250,6 +269,28 @@
   <main class="wrap">
     <!-- OVERVIEW (Stripe-style "Today") -->
     <section class="sec active" id="sec-overview">
+      <div class="proj-card hidden" id="projCard">
+        <div class="proj-top">
+          <div class="proj-ic">🗂</div>
+          <div>
+            <div class="proj-k">Project</div>
+            <div class="proj-name" id="projName">—</div>
+          </div>
+        </div>
+        <div class="proj-status"><span class="dot"></span><span id="projStatus">—</span></div>
+      </div>
+
+      <div class="panel hidden" id="timelinePanel">
+        <div class="panel-h"><div class="panel-t">Project Timeline</div></div>
+        <ul class="timeline" id="timelineList"></ul>
+        <div class="launch-box">
+          <div><div class="proj-k">Estimated Launch</div><div class="proj-name" id="projLaunch" style="font-size:1rem;">—</div></div>
+          <span style="font-size:1.6rem;">🚀</span>
+        </div>
+      </div>
+
+      <a class="btn btn-p hidden" id="startSetupBtn" href="setup.html" style="display:block;text-align:center;margin-bottom:1.4rem;text-decoration:none;">Start Setup →</a>
+
       <h1 class="today">Today</h1>
       <div class="rule"></div>
 
@@ -720,6 +761,48 @@
       fetchClarityInsights();
       loadDomains();
       loadRequests();
+      loadProject();
+    }
+
+    async function loadProject(){
+      let project = null;
+      if (sb && !demo){
+        const { data: { session } } = await sb.auth.getSession();
+        if (session){
+          const { data } = await sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle();
+          project = data;
+        }
+      } else {
+        // Demo fallback — same shape as a real row, so rendering logic never has to branch.
+        project = {
+          name: 'Website Redesign', status: 'Project Setup',
+          timeline: [
+            { label:'Discovery Call', done:true }, { label:'Contract Signed', done:true },
+            { label:'Deposit Paid', done:true }, { label:'Complete Setup', done:false, current:true },
+            { label:'Homepage Design', done:false }, { label:'Development', done:false }, { label:'Launch', done:false }
+          ],
+          estimated_launch: '2026-07-28', setup_complete: false
+        };
+      }
+      if (!project) return; // no project yet — cards stay hidden
+      renderProject(project);
+    }
+
+    function renderProject(p){
+      document.getElementById('projCard').classList.remove('hidden');
+      document.getElementById('timelinePanel').classList.remove('hidden');
+      document.getElementById('projName').textContent = p.name || 'Your Project';
+      document.getElementById('projStatus').textContent = p.status || '—';
+      document.getElementById('projLaunch').textContent = p.estimated_launch
+        ? new Date(p.estimated_launch + 'T00:00:00').toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' })
+        : 'TBD';
+      const timeline = Array.isArray(p.timeline) ? p.timeline : [];
+      document.getElementById('timelineList').innerHTML = timeline.map(t => `<li>
+        <div class="t-dot ${t.done ? 'done' : 'pending'}">${t.done ? '✓' : ''}</div>
+        <div><div class="t-label ${t.current ? 'current' : ''}">${esc(t.label)}</div>${t.current ? '<div class="t-sub">Current Step</div>' : ''}</div>
+      </li>`).join('');
+      const startBtn = document.getElementById('startSetupBtn');
+      if (!p.setup_complete){ startBtn.classList.remove('hidden'); }
     }
 
     function renderChart(){
