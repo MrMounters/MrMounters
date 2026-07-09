@@ -1268,10 +1268,18 @@
   if (!window.matchMedia('(max-width:640px)').matches) return;
   var el = document.getElementById('heroLottie');
   if (!el) return;
+  // Autoplay/loop by default so it's guaranteed to animate even if the scroll
+  // hook below never engages (e.g. a component version with a different ready event).
+  el.setAttribute('autoplay', '');
+  el.setAttribute('loop', '');
   el.setAttribute('src', 'https://lottie.host/14a91a74-e0bf-42ee-a98a-dfaf67a54bfc/aj772PKG96.lottie');
-  el.addEventListener('ready', function(){
-    var dl = el.dotLottie;
-    if (!dl || !dl.totalFrames) return;
+
+  var wired = false;
+  function wireScroll(dl){
+    if (wired || !dl || !dl.totalFrames) return;
+    wired = true;
+    dl.pause();
+    el.removeAttribute('loop');
     var hero = document.querySelector('.hero');
     function updateFrame(){
       var rect = hero.getBoundingClientRect();
@@ -1281,7 +1289,17 @@
     }
     window.addEventListener('scroll', updateFrame, { passive: true });
     updateFrame();
-  });
+  }
+  el.addEventListener('ready', function(){ wireScroll(el.dotLottie); });
+  el.addEventListener('load', function(){ wireScroll(el.dotLottie); });
+  // Fallback poll in case neither event fires on this component version —
+  // keeps checking for the underlying instance for up to ~10s.
+  var tries = 0;
+  var poll = setInterval(function(){
+    tries++;
+    if (wired || tries > 100) { clearInterval(poll); return; }
+    if (el.dotLottie && el.dotLottie.totalFrames) wireScroll(el.dotLottie);
+  }, 100);
 })();
 </script>
 
