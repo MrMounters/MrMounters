@@ -78,9 +78,21 @@
   .teaser-msg .btn{ text-decoration:none; display:inline-block; }
 
   /* Content */
-  .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 4rem; }
+  .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 6rem; }
   .sec{ display:none; animation:fade 0.4s both; }
   .sec.active{ display:block; }
+
+  /* Bottom nav — persistent across every section */
+  .bottom-nav{ position:fixed; left:0; right:0; bottom:0; z-index:40; display:flex;
+    background:rgba(11,15,25,0.92); backdrop-filter:blur(12px); border-top:1px solid var(--card-border);
+    padding:0.5rem 0.4rem max(0.5rem, env(safe-area-inset-bottom)); }
+  .bn-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:0.25rem;
+    background:none; border:none; color:var(--warm-muted); font-family:'Inter',sans-serif; font-size:0.62rem;
+    padding:0.3rem 0.2rem; cursor:pointer; position:relative; }
+  .bn-item svg{ width:21px; height:21px; stroke:currentColor; fill:none; stroke-width:2; }
+  .bn-item.active{ color:var(--gold); }
+  .bn-item.locked{ opacity:0.5; }
+  .bn-dot{ position:absolute; top:0.1rem; right:calc(50% - 15px); width:6px; height:6px; border-radius:50%; background:var(--gold); }
   @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
   .eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem; }
   .h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.8rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
@@ -167,6 +179,16 @@
   .ta{ width:100%; background:var(--dark4); border:1px solid rgba(242,244,248,0.14); border-radius:4px; padding:0.85rem; color:var(--white); font-family:'Inter',sans-serif; font-size:0.88rem; outline:none; resize:vertical; min-height:96px; margin-bottom:0.7rem; }
   .ta:focus{ border-color:rgba(76,89,247,0.45); }
   .sel{ background:var(--dark4); border:1px solid rgba(242,244,248,0.14); border-radius:4px; padding:0.6rem 0.7rem; color:var(--white); font-family:'Inter',sans-serif; font-size:0.84rem; outline:none; }
+  .inp{ width:100%; background:var(--dark4); border:1px solid rgba(242,244,248,0.14); border-radius:4px; padding:0.75rem 0.85rem; color:var(--white); font-family:'Inter',sans-serif; font-size:0.88rem; outline:none; margin-bottom:0.7rem; }
+  .inp:focus{ border-color:rgba(76,89,247,0.45); }
+  .inp:disabled{ color:var(--warm-muted); cursor:not-allowed; }
+  .field-label{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); margin:0 0 0.35rem; display:block; }
+  .file-cat{ margin-bottom:1.4rem; }
+  .file-cat:last-child{ margin-bottom:0; }
+  .file-cat-t{ font-weight:600; font-size:0.86rem; margin-bottom:0.5rem; }
+  .file-row{ display:flex; align-items:center; justify-content:space-between; gap:0.8rem; padding:0.6rem 0.7rem; background:var(--dark4); border-radius:4px; margin-bottom:0.4rem; font-size:0.82rem; }
+  .file-row a{ color:var(--gold); text-decoration:none; font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; white-space:nowrap; }
+  .file-row a:hover{ text-decoration:underline; }
   .ok-msg{ font-family:var(--mono); font-size:0.7rem; color:var(--green); margin-top:0.7rem; }
   .bar{ height:6px; border-radius:3px; background:rgba(76,89,247,0.12); overflow:hidden; }
   .bar > i{ display:block; height:100%; background:var(--gold); border-radius:3px; }
@@ -258,6 +280,7 @@
     <div class="m-section">Website</div>
     <a class="m-item locked" data-s="domains" onclick="go('domains')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>Domains<span class="m-lock">🔒</span></a>
     <a class="m-item locked" data-s="requests" onclick="go('requests')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Change Requests<span class="m-lock">🔒</span></a>
+    <a class="m-item locked" data-s="files" onclick="go('files')"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Files<span class="m-lock">🔒</span></a>
 
     <div class="m-section">Conversations</div>
     <a class="m-item locked" data-s="inbox" onclick="go('inbox')"><svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></svg>Inbox<span class="m-lock">🔒</span></a>
@@ -279,6 +302,7 @@
     <div class="m-section">Account</div>
     <a class="m-item" data-s="services" onclick="go('services')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Services &amp; Add-ons<span class="m-soon">Coming soon</span></a>
     <a class="m-item locked" data-s="billing" onclick="go('billing')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Billing<span class="m-lock">🔒</span></a>
+    <a class="m-item" data-s="profile" onclick="go('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</a>
     <a class="m-item" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sign out</a>
   </div>
 
@@ -749,7 +773,67 @@
         <div class="ok-msg hidden" id="dl">✓ Demo invoice — your real invoices download here once billing is connected.</div>
       </div>
     </section>
+
+    <!-- FILES -->
+    <section class="sec" id="sec-files">
+      <div class="eyebrow">// Project Files</div>
+      <h1 class="h1">Files</h1>
+      <p class="lead">Everything you uploaded during setup, plus anything new you send us.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Upload a file</div></div>
+        <input type="file" id="filesUploadInput" class="hidden" multiple onchange="uploadPortalFiles(this.files)">
+        <button class="btn btn-p" onclick="document.getElementById('filesUploadInput').click()">+ Upload File(s)</button>
+      </div>
+      <div class="panel" id="filesPanel">
+        <div class="panel-h"><div class="panel-t">Your files</div><span class="muted" id="filesCount"></span></div>
+        <div id="filesList"><div class="muted">Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="sec" id="sec-profile">
+      <div class="eyebrow">// Your Account</div>
+      <h1 class="h1">Profile</h1>
+      <p class="lead">Keep your contact info up to date.</p>
+      <div class="panel">
+        <form onsubmit="saveProfile(event)">
+          <label class="field-label">Full name</label>
+          <input class="inp" id="profFullName" required>
+          <label class="field-label">Email</label>
+          <input class="inp" id="profEmail" disabled>
+          <label class="field-label">Phone number</label>
+          <input class="inp" id="profPhone" required>
+          <label class="field-label">Company name</label>
+          <input class="inp" id="profBusiness" required>
+          <button type="submit" class="btn btn-p" id="profSaveBtn">Save Changes</button>
+          <span class="muted" id="profStatus" style="margin-left:0.8rem;"></span>
+        </form>
+      </div>
+    </section>
   </main>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="bn-item" data-s="overview" onclick="go('overview')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+      Dashboard
+    </button>
+    <button class="bn-item" data-s="inbox" onclick="go('inbox')">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Messages
+    </button>
+    <button class="bn-item" data-s="files" onclick="go('files')">
+      <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Files
+    </button>
+    <button class="bn-item" data-s="billing" onclick="go('billing')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      Payments
+    </button>
+    <button class="bn-item" data-s="profile" onclick="go('profile')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Profile
+    </button>
+  </nav>
 
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -757,19 +841,22 @@
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
     let sb = null;
+    let session = null;
     let currentEmail = null;
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
     // Locked-by-default (see the "locked" class already on these <a> tags in the HTML) until
     // a project is loaded and confirms setup_complete — or it's the demo, which always shows
     // the full unlocked portal since it's meant to showcase the whole product.
     let setupComplete = false;
-    const LOCKABLE_SECTIONS = ['domains','requests','inbox','voice','chat','visitors','billing'];
+    // "profile" is deliberately not lockable — editing your own contact info isn't gated by
+    // project progress the way project-scoped sections (files, billing, messages...) are.
+    const LOCKABLE_SECTIONS = ['domains','requests','inbox','voice','chat','visitors','billing','files'];
 
     function applyLockState(){
       document.getElementById('setupBanner').classList.toggle('hidden', setupComplete);
       document.getElementById('teaserOverlay').classList.toggle('hidden', setupComplete);
       document.getElementById('teaserContent').classList.toggle('blurred', !setupComplete);
-      document.querySelectorAll('.m-item[data-s]').forEach(el => {
+      document.querySelectorAll('.m-item[data-s], .bn-item[data-s]').forEach(el => {
         if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !setupComplete);
       });
     }
@@ -785,7 +872,8 @@
         currentEmail = demo.email || 'user@user.com';
       } else if (configured && window.supabase){
         sb = window.supabase.createClient(URL_, KEY_);
-        const { data: { session } } = await sb.auth.getSession();
+        const { data: sessionData } = await sb.auth.getSession();
+        session = sessionData.session;
         if (!session){ goLogin(); return; }
         // Role gate: this is the client portal — a rep/admin account belongs in rep.html.
         const { data: profile } = await sb.from('profiles').select('role, full_name, phone, terms_accepted_at').eq('user_id', session.user.id).single();
@@ -812,7 +900,6 @@
     async function loadProject(){
       let project = null;
       if (sb && !demo){
-        const { data: { session } } = await sb.auth.getSession();
         if (session){
           const [{ data: proj }, { data: setup }] = await Promise.all([
             sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle(),
@@ -866,16 +953,24 @@
       requestAnimationFrame(() => document.querySelectorAll('.chart i').forEach(b => b.style.height = b.dataset.h + '%'));
     }
 
+    const lazyLoaded = {};
     function go(s){
       if (!setupComplete && LOCKABLE_SECTIONS.includes(s)){
         closeMenu();
         window.location.href = 'setup.html';
         return;
       }
-      document.querySelectorAll('.m-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
+      document.querySelectorAll('.m-item, .bn-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
       document.querySelectorAll('.sec').forEach(sec => sec.classList.toggle('active', sec.id === 'sec-' + s));
       closeMenu();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Load Files/Profile data on first visit only — no point querying Storage/profiles
+      // for a section the client may never open.
+      if (!lazyLoaded[s]){
+        lazyLoaded[s] = true;
+        if (s === 'files') loadFiles();
+        if (s === 'profile') loadProfileSection();
+      }
     }
     function toast(id){ const el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
 
@@ -922,6 +1017,88 @@
     }
     function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
     function esc(s){ return String(s||'').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+
+    // ── FILES (client-assets Storage bucket — same files uploaded during setup.html,
+    // browsable/downloadable here, plus a way to send new ones any time after) ──
+    const FILE_CATEGORIES = [
+      { key:'logo', label:'Logo' },
+      { key:'brand_guidelines', label:'Brand Guidelines' },
+      { key:'photos', label:'Photos & Images' },
+      { key:'videos', label:'Videos' },
+      { key:'general', label:'Other Uploads' },
+    ];
+    async function loadFiles(){
+      const listEl = document.getElementById('filesList');
+      if (!(sb && session)){
+        listEl.innerHTML = '<div class="muted">Files sync here once your account is fully connected — try the real login instead of the demo.</div>';
+        return;
+      }
+      listEl.innerHTML = '<div class="muted">Loading…</div>';
+      let total = 0;
+      const groups = [];
+      for (const cat of FILE_CATEGORIES){
+        const path = session.user.id + '/assets/' + cat.key;
+        const { data: items } = await sb.storage.from('client-assets').list(path);
+        const files = (items || []).filter(i => i.id); // folders list with id:null — files only
+        if (!files.length) continue;
+        const withUrls = await Promise.all(files.map(async f => {
+          const { data: signed } = await sb.storage.from('client-assets').createSignedUrl(path + '/' + f.name, 3600);
+          return { name: f.name, url: signed ? signed.signedUrl : null };
+        }));
+        total += withUrls.length;
+        groups.push({ label: cat.label, files: withUrls });
+      }
+      document.getElementById('filesCount').textContent = total ? (total + ' file' + (total === 1 ? '' : 's')) : '';
+      listEl.innerHTML = groups.length ? groups.map(g => `<div class="file-cat">
+        <div class="file-cat-t">${esc(g.label)}</div>
+        ${g.files.map(f => `<div class="file-row"><span>${esc(f.name)}</span>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">Download</a>` : ''}</div>`).join('')}
+      </div>`).join('') : '<div class="muted">No files yet — anything you upload during setup shows up here, or add one above.</div>';
+    }
+    async function uploadPortalFiles(fileList){
+      const files = Array.from(fileList || []);
+      if (!files.length) return;
+      if (!(sb && session)){ alert('File uploads activate once your real account is connected.'); return; }
+      for (const file of files){
+        const path = session.user.id + '/assets/general/' + Date.now() + '-' + file.name;
+        const { error } = await sb.storage.from('client-assets').upload(path, file, { upsert:true });
+        if (error) alert(file.name + ': ' + error.message);
+      }
+      document.getElementById('filesUploadInput').value = '';
+      loadFiles();
+    }
+
+    // ── PROFILE (profiles table — same row onboarding.html writes to) ──
+    async function loadProfileSection(){
+      document.getElementById('profEmail').value = currentEmail || '';
+      if (!(sb && session)){
+        document.getElementById('profFullName').value = (demo && demo.name) || '';
+        document.getElementById('profStatus').textContent = 'Demo mode — changes here aren\'t saved.';
+        return;
+      }
+      const { data: profile } = await sb.from('profiles').select('full_name, phone, business_name').eq('user_id', session.user.id).single();
+      if (profile){
+        document.getElementById('profFullName').value = profile.full_name || '';
+        document.getElementById('profPhone').value = profile.phone || '';
+        document.getElementById('profBusiness').value = profile.business_name || '';
+      }
+    }
+    async function saveProfile(e){
+      e.preventDefault();
+      const status = document.getElementById('profStatus');
+      if (!(sb && session)){ status.textContent = 'Profile editing activates once your real account is connected.'; return; }
+      const btn = document.getElementById('profSaveBtn');
+      btn.disabled = true; status.textContent = 'Saving…'; status.style.color = '';
+      const full_name = document.getElementById('profFullName').value.trim();
+      const { error } = await sb.from('profiles').update({
+        full_name, phone: document.getElementById('profPhone').value.trim(),
+        business_name: document.getElementById('profBusiness').value.trim(),
+      }).eq('user_id', session.user.id);
+      btn.disabled = false;
+      if (error){ status.textContent = '⚠ ' + error.message; status.style.color = 'var(--red)'; return; }
+      status.textContent = 'Saved ✓';
+      document.getElementById('acctName').textContent = full_name;
+      document.getElementById('acctName2').childNodes[0].textContent = full_name + ' ';
+    }
 
     // ── CHANGE REQUESTS (real when Supabase is connected, demo fallback otherwise) ──
     const requestSeed = [
