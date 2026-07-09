@@ -9,18 +9,26 @@ window.SUPABASE_URL = 'https://yvyreidpysqawormbvwy.supabase.co';
 window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2eXJlaWRweXNxYXdvcm1idnd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNzkxNzAsImV4cCI6MjA5Nzg1NTE3MH0.TD_2NS4frYtXQn4N0gxe_G15A7apSdH_V67BBOrm8lY';
 
 /* After filling these in:
-   1. SQL Editor → New query → paste the contents of supabase-schema.sql → Run.
-      This creates deals/agreements/academy_progress (rep side) AND profiles/domains/
-      change_requests (client side), all with Row Level Security already scoped per user.
-   2. Authentication → Providers → enable Google, Apple, Azure (Microsoft),
-      Phone (SMS), and Email (turn on "Email OTP / Magic Link").
-   3. Authentication → URL Configuration → add your site URL and
-      <your-site>/portal.html + <your-site>/rep.html to the "Redirect URLs" allow list.
-   4. For SMS you'll need an SMS provider (e.g. Twilio) connected in Supabase.
+   1. SQL Editor → New query → paste the contents of supabase-schema.sql → Run (safe to
+      re-run any time — every CREATE POLICY is preceded by DROP POLICY IF EXISTS, and table/
+      column changes use IF NOT EXISTS). Creates deals/agreements/academy_progress (rep side),
+      profiles/domains/change_requests (client side), and leads (staff side).
+   2. Authentication → Providers → enable Email ("Email OTP / Magic Link") and Phone (SMS —
+      needs an SMS provider like Twilio connected under this same Providers page). Login.html
+      only offers Email + SMS now — no password, no OAuth.
+   3. Authentication → URL Configuration → set Site URL to your real domain (not the default
+      localhost:3000 — a wrong Site URL is why magic links can silently fail with
+      otp_expired/access_denied), and add <your-site>/login.html, /portal.html, /rep.html,
+      /admin.html, and /onboarding.html to the Redirect URLs allow list.
+   4. Authentication → Email Templates → paste the branded HTML from email-templates/*.html
+      into "Confirm signup", "Magic Link", and "Invite user" (replacing Supabase's plain
+      default templates).
 
    ROLES: every new signup automatically gets a `profiles` row with role='client' and
-   lands in portal.html. There is no self-service way to become a sales rep — to promote
+   lands in portal.html. There is no self-service way to become a rep or admin — to promote
    someone, open Table Editor → profiles, find their row (match by user_id — cross-reference
-   Authentication → Users to find the email), and change role to 'rep'. They'll land in
-   rep.html on their next sign-in. The demo accounts (user@user.com / password1 on either
-   login screen) bypass all of this — they're pure frontend demos with no real backend. */
+   Authentication → Users to find the email), and set role to 'rep' or 'admin'. They'll land
+   in rep.html or admin.html on their next sign-in. New client accounts land on
+   onboarding.html first (collects name/phone/company) before portal.html unlocks.
+   The demo account (the "Try the demo portal" link on login.html) bypasses all of this —
+   it's a pure frontend demo with no real backend. */
