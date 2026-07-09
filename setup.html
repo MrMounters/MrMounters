@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="format-detection" content="telephone=no">
+<title>Project Setup — Meridion AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#4C59F7; --gold-light:#8A74FF; --dark:#0B0F19; --dark2:#111A2E; --dark3:#141E33; --dark4:#1A2540;
+    --white:#F2F4F8; --warm-muted:#7C88A0; --warm-accent:#B0BAD1; --card-border:rgba(242,244,248,0.1);
+    --mono:'Space Mono',monospace; --green:#5FD08A; --red:#FF8B6B;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{ font-family:'Inter',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
+  a{ color:inherit; }
+  .hidden{ display:none !important; }
+  .loading{ position:fixed; inset:0; background:var(--dark); color:var(--warm-muted); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:0.8rem; z-index:999; }
+
+  .shell{ display:flex; min-height:100vh; }
+  .sidebar{ width:280px; flex-shrink:0; background:var(--dark2); border-right:1px solid var(--card-border);
+    padding:1.4rem 1.1rem; position:sticky; top:0; height:100vh; overflow-y:auto; }
+  .side-logo{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem; }
+  .side-logo span{ color:var(--gold); }
+  .side-title{ font-size:1.15rem; font-weight:700; font-family:'Space Grotesk',sans-serif; margin:1.1rem 0 0.2rem; }
+  .side-sub{ font-size:0.82rem; color:var(--warm-muted); margin-bottom:1.1rem; }
+  .progress-card{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:0.9rem 1rem; margin-bottom:1.2rem; }
+  .progress-top{ display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:0.5rem; }
+  .progress-top b{ color:var(--gold); }
+  .progress-bar{ height:6px; border-radius:20px; background:rgba(242,244,248,0.08); overflow:hidden; }
+  .progress-bar i{ display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); transition:width 0.3s; }
+  .step-nav{ display:flex; flex-direction:column; gap:0.15rem; margin-bottom:1rem; }
+  .step-item{ display:flex; align-items:center; gap:0.7rem; padding:0.55rem 0.5rem; border-radius:6px; cursor:pointer;
+    border:none; background:none; text-align:left; width:100%; font-family:'Inter',sans-serif; color:var(--warm-accent); }
+  .step-item:hover{ background:rgba(76,89,247,0.06); }
+  .step-item.active{ background:rgba(76,89,247,0.12); }
+  .step-item.active .step-t{ color:var(--gold); }
+  .step-num{ width:24px; height:24px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    font-size:0.7rem; font-weight:700; border:1.5px solid var(--card-border); }
+  .step-item.active .step-num{ border-color:var(--gold); color:var(--gold); }
+  .step-item.done .step-num{ background:var(--gold); border-color:var(--gold); color:var(--dark); }
+  .step-t{ font-size:0.86rem; font-weight:600; color:var(--white); }
+  .step-s{ font-size:0.7rem; color:var(--warm-muted); }
+  .exit-link{ display:block; text-align:center; padding:0.6rem; border-radius:6px; border:1px solid var(--card-border);
+    color:var(--warm-accent); font-size:0.8rem; text-decoration:none; }
+  .exit-link:hover{ border-color:var(--gold); color:var(--gold); }
+
+  .main{ flex:1; min-width:0; padding:2rem 2.4rem 4rem; max-width:760px; }
+  .step-head{ display:flex; align-items:flex-start; gap:0.9rem; margin-bottom:1.6rem; }
+  .step-ic{ width:44px; height:44px; border-radius:10px; background:linear-gradient(135deg,var(--gold),var(--gold-light));
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+  .step-title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.5rem; letter-spacing:-0.01em; }
+  .step-sub{ color:var(--warm-muted); font-size:0.9rem; margin-top:0.2rem; }
+
+  .field{ margin-bottom:1.2rem; }
+  .field label{ display:block; font-size:0.82rem; font-weight:600; margin-bottom:0.4rem; }
+  .field label .req{ color:var(--gold); }
+  .inp{ width:100%; background:var(--dark4); border:1px solid rgba(242,244,248,0.14); border-radius:6px;
+    padding:0.75rem 0.9rem; color:var(--white); font-family:'Inter',sans-serif; font-size:0.88rem; outline:none; }
+  .inp:focus{ border-color:rgba(76,89,247,0.5); }
+  textarea.inp{ min-height:90px; resize:vertical; }
+  select.inp{ cursor:pointer; }
+
+  .hint-box{ background:rgba(76,89,247,0.06); border:1px solid rgba(76,89,247,0.2); border-radius:8px; padding:0.9rem 1rem; margin-bottom:1.3rem; font-size:0.82rem; color:var(--warm-accent); line-height:1.5; }
+  .hint-box b{ color:var(--white); }
+
+  .file-row{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1rem; margin-bottom:1rem; }
+  .file-row-h{ font-weight:600; font-size:0.86rem; margin-bottom:0.6rem; }
+  .file-drop{ border:1.5px dashed var(--card-border); border-radius:6px; padding:1rem; text-align:center; cursor:pointer; font-size:0.8rem; color:var(--warm-muted); }
+  .file-drop:hover{ border-color:var(--gold); color:var(--gold); }
+  .file-list{ margin-top:0.6rem; display:flex; flex-direction:column; gap:0.3rem; }
+  .file-chip{ display:flex; align-items:center; justify-content:space-between; background:var(--dark4); border-radius:4px; padding:0.4rem 0.7rem; font-size:0.76rem; }
+  .file-chip button{ background:none; border:none; color:var(--red); cursor:pointer; font-size:0.9rem; }
+
+  .access-row{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1rem; margin-bottom:0.8rem; }
+  .access-top{ display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:0.6rem; }
+  .access-name{ font-weight:600; font-size:0.88rem; }
+  .toggle{ position:relative; width:42px; height:24px; flex-shrink:0; }
+  .toggle input{ opacity:0; width:100%; height:100%; margin:0; position:absolute; cursor:pointer; z-index:1; }
+  .toggle-track{ position:absolute; inset:0; background:var(--dark4); border:1px solid var(--card-border); border-radius:20px; transition:background 0.2s; }
+  .toggle-dot{ position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--warm-muted); transition:transform 0.2s, background 0.2s; }
+  .toggle input:checked ~ .toggle-track{ background:rgba(76,89,247,0.25); border-color:var(--gold); }
+  .toggle input:checked ~ .toggle-dot{ transform:translateX(18px); background:var(--gold); }
+
+  .check-row{ display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0; font-size:0.88rem; }
+  .check-row input{ width:16px; height:16px; accent-color:var(--gold); }
+
+  .actions{ display:flex; gap:0.8rem; margin-top:1.8rem; align-items:center; flex-wrap:wrap; }
+  .btn{ font-family:var(--mono); font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.75rem 1.4rem;
+    border-radius:4px; cursor:pointer; border:none; }
+  .btn-p{ background:var(--gold); color:var(--dark); font-weight:700; }
+  .btn-p:hover{ background:var(--gold-light); }
+  .btn-o{ background:none; border:1px solid var(--card-border); color:var(--warm-accent); }
+  .btn-o:hover{ border-color:var(--gold); color:var(--gold); }
+  .btn-submit{ background:var(--green); color:var(--dark); font-weight:700; }
+  .save-note{ font-family:var(--mono); font-size:0.68rem; color:var(--warm-muted); }
+
+  .review-group{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1rem 1.1rem; margin-bottom:0.8rem; }
+  .review-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; }
+  .review-t{ font-weight:600; font-size:0.9rem; }
+  .review-edit{ font-family:var(--mono); font-size:0.68rem; color:var(--gold); cursor:pointer; background:none; border:none; }
+  .review-d{ font-size:0.78rem; color:var(--warm-muted); }
+
+  @media (max-width: 900px){
+    .sidebar{ position:fixed; z-index:50; transform:translateX(-100%); transition:transform 0.25s; height:100vh; width:86vw; max-width:320px; }
+    .sidebar.open{ transform:none; }
+    .main{ padding:1.2rem 1.2rem 3rem; max-width:100%; }
+    .mobile-menu-btn{ display:flex !important; }
+  }
+  .mobile-menu-btn{ display:none; background:var(--dark3); border:1px solid var(--card-border); color:var(--white);
+    border-radius:6px; padding:0.5rem 0.7rem; cursor:pointer; margin-bottom:1rem; align-items:center; gap:0.5rem; font-size:0.8rem; }
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xj1vynd82i");
+</script>
+</head>
+<body>
+  <div class="loading" id="loading">// loading your setup…</div>
+
+  <div class="shell hidden" id="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-logo"><img src="meridion-logo.svg" alt="" style="height:1.1rem;">Meridion<span>AI</span></div>
+      <div class="side-title">Client Onboarding 👋</div>
+      <div class="side-sub">Let's build something incredible together.</div>
+      <div class="progress-card">
+        <div class="progress-top"><span>Overall Progress</span><b id="pctLabel">0%</b></div>
+        <div class="progress-bar"><i id="pctBar" style="width:0%"></i></div>
+        <div class="save-note" style="margin-top:0.5rem;" id="stepLabel">Step 1 of 12</div>
+      </div>
+      <nav class="step-nav" id="stepNav"></nav>
+      <a class="exit-link" href="portal.html">← Save &amp; Exit to Dashboard</a>
+    </aside>
+
+    <main class="main">
+      <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Steps</button>
+      <div id="stepBody"></div>
+    </main>
+  </div>
+
+  <script src="auth-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
+    const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
+    let sb = null, session = null, project = null, setupRow = null;
+    let curStep = 0; // index into STEPS
+
+    function esc(s){ return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
+    function goLogin(){ window.location.href = 'login.html'; }
+
+    const ACCESS_ITEMS = ['Domain Registrar','Hosting Provider','Google Business Profile','Google Analytics','Google Search Console','Meta Business Manager','Social Media Accounts'];
+    const FEATURE_ITEMS = ['Contact Form','Online Booking / Scheduling','E-Commerce / Online Store','Blog','Live Chat','Client Login / Portal','Multi-Language Support','Newsletter Signup','Reviews / Testimonials Display'];
+
+    const STEPS = [
+      { key:'business', icon:'🏢', title:'Business Information', sub:'Tell us about your business',
+        hint:'This helps us understand your business and create a strategy that delivers real results.',
+        fields:[
+          { key:'business_name', label:'Business Name', type:'text', required:true, placeholder:'Enter your business name' },
+          { key:'contact_name', label:'Contact Name', type:'text', required:true, placeholder:'Your full name' },
+          { key:'email', label:'Email Address', type:'email', required:true, placeholder:'you@yourbusiness.com' },
+          { key:'phone', label:'Phone Number', type:'tel', required:true, placeholder:'(555) 123-4567' },
+          { key:'website_url', label:'Website URL', type:'text', placeholder:'https://yourwebsite.com' },
+          { key:'industry', label:'Industry', type:'select', required:true, options:['Restaurant & Hospitality','Healthcare & Wellness','Legal Services','Real Estate','Home Services & Construction','Retail & E-Commerce','Professional Services','Fitness & Wellness','Automotive','Other'] },
+          { key:'business_address', label:'Business Address', type:'text', placeholder:'123 Main St, City, State, Zip' },
+          { key:'years_in_business', label:'Years in Business', type:'select', options:['Less than 1 year','1–3 years','3–5 years','5–10 years','10+ years'] },
+          { key:'referral_source', label:'How did you hear about us?', type:'select', options:['Google Search','Referral','Social Media','Existing Client','Other'] },
+        ] },
+      { key:'goals', icon:'🎯', title:'Project Goals', sub:'What are we building?', fields:[
+          { key:'hiring_for', label:'What are you hiring us for?', type:'textarea', required:true, placeholder:'Tell us what you need help with...' },
+          { key:'main_objective', label:'Main Objective', type:'select', required:true, options:['More Leads / Sales','Better Branding','Higher Conversion Rate','Rebuild / Modernize Existing Site','New Business Launch','Other'] },
+          { key:'top_competitors', label:'Top 3 Competitors', type:'textarea', placeholder:'Enter competitor websites (one per line)' },
+          { key:'likes_current_site', label:'What do you like about your current website?', type:'textarea', placeholder:'Share what you like...' },
+          { key:'dislikes_current_site', label:'What do you dislike about your current website?', type:'textarea', placeholder:'Share what could be better...' },
+          { key:'admired_websites', label:'Any websites you love?', type:'textarea', placeholder:'Share example websites you admire...' },
+          { key:'dream_outcome', label:'Dream Outcome', type:'textarea', placeholder:"If this project is wildly successful, what would that look like for your business in 12 months?" },
+        ] },
+      { key:'branding', icon:'🎨', title:'Branding', sub:'Your brand identity', fields:[
+          { key:'has_existing_brand', label:'Do you have existing brand guidelines?', type:'select', options:['Yes — fully established','Somewhat — some assets exist','No — starting fresh'] },
+          { key:'brand_colors', label:'Preferred Brand Colors', type:'text', placeholder:'Hex codes or descriptions' },
+          { key:'brand_fonts', label:'Preferred Fonts', type:'text', placeholder:'If you have any preferences' },
+          { key:'brand_voice', label:'Brand Voice', type:'select', options:['Professional & Corporate','Friendly & Approachable','Bold & Modern','Luxury & Premium','Playful & Fun','Other'] },
+          { key:'brand_notes', label:'Anything else about your brand identity?', type:'textarea' },
+        ] },
+      { key:'assets', icon:'📁', title:'Content & Assets', sub:'Images, text, files & more', files:[
+          { key:'logo', label:'Logo', accept:'.png,.svg,.jpg,.jpeg,image/*', hint:'PNG, SVG, or JPG' },
+          { key:'brand_guidelines', label:'Brand Guidelines (optional)', accept:'.pdf,.doc,.docx,.zip', hint:'PDF, DOC, or ZIP' },
+          { key:'photos', label:'Photos & Images', accept:'image/*', hint:'JPG, PNG, WebP', multiple:true },
+          { key:'videos', label:'Videos', accept:'video/*', hint:'MP4, MOV, or WebM', multiple:true },
+        ] },
+      { key:'access', icon:'🔑', title:'Access Needed', sub:'Accounts & logins',
+        hint:'We need access to these accounts to build, optimize, and launch your project. Toggle on what you\'ve shared, and leave a quick note (e.g. "invited you as admin").',
+        accessItems: ACCESS_ITEMS },
+      { key:'structure', icon:'🌐', title:'Website Structure', sub:'Pages, services & info', fields:[
+          { key:'pages_needed', label:'What pages do you need?', type:'textarea', placeholder:'Home, About, Services, Contact, etc.' },
+          { key:'services_list', label:'List your services/products', type:'textarea' },
+          { key:'structure_notes', label:'Any specific structure or navigation preferences?', type:'textarea' },
+        ] },
+      { key:'seo', icon:'📍', title:'SEO & Locations', sub:'Targeting & keywords', fields:[
+          { key:'target_keywords', label:'Target Keywords', type:'textarea', placeholder:'What should people search to find you?' },
+          { key:'service_areas', label:'Locations / Service Areas', type:'textarea' },
+          { key:'seo_competitors', label:'Competitors you want to outrank', type:'textarea' },
+        ] },
+      { key:'features', icon:'🧩', title:'Features', sub:'What do you need?', checklist: FEATURE_ITEMS, fields:[
+          { key:'other_features', label:'Other features?', type:'textarea' },
+        ] },
+      { key:'legal', icon:'⚖️', title:'Legal & Compliance', sub:'Policies & requirements', fields:[
+          { key:'needs_privacy_policy', label:'Privacy Policy', type:'select', options:['Please draft one for me','I already have one','Not sure'] },
+          { key:'needs_terms', label:'Terms of Service', type:'select', options:['Please draft one for me','I already have one','Not sure'] },
+          { key:'compliance_requirements', label:'Any specific compliance needs?', type:'textarea', placeholder:'ADA, HIPAA, industry-specific requirements, etc.' },
+        ] },
+      { key:'timeline', icon:'📅', title:'Timeline & Budget', sub:'Schedule & investment', fields:[
+          { key:'desired_launch', label:'Desired Launch Date', type:'date' },
+          { key:'budget_range', label:'Budget Range', type:'select', options:['Under $5,000','$5,000 – $10,000','$10,000 – $25,000','$25,000+','Not sure yet'] },
+          { key:'scheduling_notes', label:'Any deadlines or scheduling constraints?', type:'textarea' },
+        ] },
+      { key:'additional', icon:'💬', title:'Additional Info', sub:'Anything else we should know?', fields:[
+          { key:'additional_notes', label:'Anything else we should know?', type:'textarea', placeholder:"Tell us anything else that would help us build the perfect site for you..." },
+        ] },
+      { key:'review', icon:'✅', title:'Review & Submit', sub:"Almost done! Let's review everything.", review:true },
+    ];
+
+    let formData = {}; // { business:{...}, goals:{...}, access:{items:{...}}, features:{checked:[...], other_features:''}, assets:{logo:[...], ...} }
+
+    async function init(){
+      if (!(configured && window.supabase)){ goLogin(); return; }
+      sb = window.supabase.createClient(URL_, KEY_);
+      const { data } = await sb.auth.getSession();
+      session = data.session;
+      if (!session){ goLogin(); return; }
+
+      const { data: proj } = await sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle();
+      project = proj;
+
+      const { data: existing } = await sb.from('project_setup').select('*').eq('client_id', session.user.id).maybeSingle();
+      if (existing){
+        setupRow = existing;
+        formData = existing.data || {};
+        curStep = Math.min(Math.max((existing.current_step || 1) - 1, 0), STEPS.length - 1);
+      } else {
+        const { data: created } = await sb.from('project_setup').insert({
+          client_id: session.user.id, project_id: project ? project.id : null, data: {}, current_step: 1
+        }).select().single();
+        setupRow = created;
+      }
+
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('shell').classList.remove('hidden');
+      renderSidebar();
+      renderStep();
+    }
+
+    function completedSteps(){
+      return STEPS.filter((s,i) => i !== STEPS.length - 1 && formData[s.key] && Object.keys(formData[s.key]).length).length;
+    }
+
+    function renderSidebar(){
+      const total = STEPS.length - 1; // exclude review from the % denominator's "content" count, but count it as a nav item
+      const done = completedSteps();
+      const pct = Math.round((done / total) * 100);
+      document.getElementById('pctLabel').textContent = pct + '%';
+      document.getElementById('pctBar').style.width = pct + '%';
+      document.getElementById('stepLabel').textContent = 'Step ' + (curStep + 1) + ' of ' + STEPS.length;
+
+      document.getElementById('stepNav').innerHTML = STEPS.map((s,i) => {
+        const isDone = i !== STEPS.length - 1 && formData[s.key] && Object.keys(formData[s.key]).length;
+        const cls = 'step-item' + (i === curStep ? ' active' : '') + (isDone ? ' done' : '');
+        return `<button class="${cls}" onclick="jumpTo(${i})">
+          <div class="step-num">${isDone ? '✓' : (i+1)}</div>
+          <div><div class="step-t">${esc(s.title)}</div><div class="step-s">${esc(s.sub)}</div></div>
+        </button>`;
+      }).join('');
+    }
+
+    function jumpTo(i){ curStep = i; renderSidebar(); renderStep(); window.scrollTo({top:0,behavior:'smooth'}); document.getElementById('sidebar').classList.remove('open'); }
+
+    function fieldHTML(f, val){
+      const v = val == null ? '' : val;
+      const reqMark = f.required ? ' <span class="req">*</span>' : '';
+      let input;
+      if (f.type === 'textarea') input = `<textarea class="inp" data-k="${f.key}" placeholder="${esc(f.placeholder||'')}">${esc(v)}</textarea>`;
+      else if (f.type === 'select') input = `<select class="inp" data-k="${f.key}"><option value="">Select...</option>${f.options.map(o => `<option value="${esc(o)}" ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+      else input = `<input class="inp" type="${f.type}" data-k="${f.key}" placeholder="${esc(f.placeholder||'')}" value="${esc(v)}">`;
+      return `<div class="field"><label>${esc(f.label)}${reqMark}</label>${input}</div>`;
+    }
+
+    function renderStep(){
+      const s = STEPS[curStep];
+      const data = formData[s.key] || {};
+      let html = `<div class="step-head"><div class="step-ic">${s.icon}</div><div><div class="step-title">${esc(s.title)}</div><div class="step-sub">${esc(s.sub)}</div></div></div>`;
+
+      if (s.hint) html += `<div class="hint-box"><b>Why we ask:</b> ${esc(s.hint)}</div>`;
+
+      if (s.review){
+        html += renderReview();
+      } else {
+        if (s.fields) html += s.fields.map(f => fieldHTML(f, data[f.key])).join('');
+        if (s.checklist){
+          const checked = data.checked || [];
+          html += `<div class="field"><label>Select all that apply</label>` +
+            s.checklist.map(item => `<div class="check-row"><input type="checkbox" data-check="${esc(item)}" ${checked.includes(item)?'checked':''}> ${esc(item)}</div>`).join('') +
+            `</div>`;
+        }
+        if (s.accessItems){
+          const items = data.items || {};
+          html += s.accessItems.map(name => {
+            const it = items[name] || {};
+            return `<div class="access-row">
+              <div class="access-top"><div class="access-name">${esc(name)}</div>
+                <label class="toggle"><input type="checkbox" data-access="${esc(name)}" ${it.shared ? 'checked' : ''}><span class="toggle-track"></span><span class="toggle-dot"></span></label>
+              </div>
+              <input class="inp" data-access-note="${esc(name)}" placeholder="Notes (e.g. invited you as admin)" value="${esc(it.notes||'')}">
+            </div>`;
+          }).join('');
+        }
+        if (s.files){
+          html += s.files.map(f => {
+            const uploaded = data[f.key] || [];
+            return `<div class="file-row">
+              <div class="file-row-h">${esc(f.label)}</div>
+              <label class="file-drop">⬆ Upload ${f.multiple ? 'files' : 'file'}<br><span style="font-size:0.7rem;">${esc(f.hint)}</span>
+                <input type="file" class="hidden" ${f.multiple ? 'multiple' : ''} accept="${f.accept}" onchange="uploadFiles('${s.key}','${f.key}', this.files)">
+              </label>
+              <div class="file-list" id="filelist-${f.key}">${uploaded.map((u,idx) => `<div class="file-chip"><span>${esc(u.name)}</span><button onclick="removeFile('${s.key}','${f.key}',${idx})">✕</button></div>`).join('')}</div>
+            </div>`;
+          }).join('');
+        }
+      }
+
+      html += `<div class="actions">
+        ${s.review
+          ? `<button class="btn btn-submit" onclick="submitSetup()">Submit Onboarding ✓</button>`
+          : `<button class="btn btn-p" onclick="saveStep(true)">Save &amp; Continue →</button>`}
+        <button class="btn btn-o" onclick="saveStep(false)">Save &amp; Exit</button>
+        <span class="save-note" id="saveNote"></span>
+      </div>`;
+
+      document.getElementById('stepBody').innerHTML = html;
+    }
+
+    function renderReview(){
+      return STEPS.filter(s => !s.review).map((s,i) => {
+        const data = formData[s.key] || {};
+        let summary = [];
+        if (s.fields) summary = s.fields.filter(f => data[f.key]).map(f => esc(f.label) + ': ' + esc(data[f.key]));
+        if (s.checklist && data.checked && data.checked.length) summary.push('Selected: ' + data.checked.map(esc).join(', '));
+        if (s.accessItems && data.items) summary.push(Object.keys(data.items).filter(k => data.items[k].shared).length + ' accounts marked shared');
+        if (s.files) summary = s.files.filter(f => data[f.key] && data[f.key].length).map(f => esc(f.label) + ': ' + data[f.key].length + ' file(s)');
+        return `<div class="review-group">
+          <div class="review-top"><div class="review-t">${s.icon} ${esc(s.title)}</div><button class="review-edit" onclick="jumpTo(${STEPS.indexOf(s)})">Edit</button></div>
+          <div class="review-d">${summary.length ? summary.slice(0,3).join(' · ') : 'Not filled in yet'}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function collectCurrentStep(){
+      const s = STEPS[curStep];
+      if (s.review) return;
+      const data = formData[s.key] || {};
+      document.querySelectorAll('[data-k]').forEach(el => { data[el.dataset.k] = el.value; });
+      if (s.checklist){
+        data.checked = Array.from(document.querySelectorAll('[data-check]:checked')).map(el => el.dataset.check);
+      }
+      if (s.accessItems){
+        data.items = data.items || {};
+        s.accessItems.forEach(name => {
+          const shared = document.querySelector(`[data-access="${name}"]`).checked;
+          const notes = document.querySelector(`[data-access-note="${name}"]`).value;
+          data.items[name] = { shared, notes };
+        });
+      }
+      formData[s.key] = data;
+    }
+
+    async function persist(){
+      const { data } = await sb.from('project_setup').update({ data: formData, current_step: curStep + 1 }).eq('id', setupRow.id).select().single();
+      if (data) setupRow = data;
+    }
+
+    async function saveStep(advance){
+      collectCurrentStep();
+      const note = document.getElementById('saveNote');
+      if (note) note.textContent = 'Saving…';
+      await persist();
+      if (note) note.textContent = 'Saved ✓';
+      if (advance && curStep < STEPS.length - 1){ curStep++; renderSidebar(); renderStep(); window.scrollTo({top:0,behavior:'smooth'}); }
+      else if (!advance){ window.location.href = 'portal.html'; }
+      else { renderSidebar(); }
+    }
+
+    async function uploadFiles(stepKey, fieldKey, fileList){
+      const files = Array.from(fileList || []);
+      if (!files.length) return;
+      formData[stepKey] = formData[stepKey] || {};
+      formData[stepKey][fieldKey] = formData[stepKey][fieldKey] || [];
+      for (const file of files){
+        const path = session.user.id + '/' + stepKey + '/' + fieldKey + '/' + Date.now() + '-' + file.name;
+        const { error } = await sb.storage.from('client-assets').upload(path, file, { upsert:true });
+        if (!error) formData[stepKey][fieldKey].push({ name:file.name, path });
+      }
+      await persist();
+      renderStep();
+    }
+    async function removeFile(stepKey, fieldKey, idx){
+      const entry = formData[stepKey][fieldKey][idx];
+      if (entry) await sb.storage.from('client-assets').remove([entry.path]);
+      formData[stepKey][fieldKey].splice(idx, 1);
+      await persist();
+      renderStep();
+    }
+
+    async function submitSetup(){
+      await sb.from('project_setup').update({ data: formData, submitted: true, submitted_at: new Date().toISOString() }).eq('id', setupRow.id);
+      if (project){
+        const timeline = (project.timeline || []).map(t => {
+          if (t.label === 'Complete Setup') return { label:t.label, done:true };
+          if (t.label === 'Homepage Design') return { label:t.label, done:false, current:true };
+          return { label:t.label, done:t.done };
+        });
+        await sb.from('projects').update({ status:'In Progress', timeline, setup_complete:true }).eq('id', project.id);
+      }
+      window.location.href = 'portal.html';
+    }
+
+    init();
+  </script>
+</body>
+</html>

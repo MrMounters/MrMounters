@@ -268,3 +268,59 @@ create policy "staff manage all projects"
 drop trigger if exists projects_touch on public.projects;
 create trigger projects_touch before update on public.projects
   for each row execute function public.touch_updated_at();
+
+-- Clients can also update their own project row (not insert/delete) — needed so
+-- submitting the setup wizard can flip setup_complete and advance the timeline
+-- client-side, same trust level already given for change_requests.
+drop policy if exists "clients can update their own project" on public.projects;
+create policy "clients can update their own project"
+  on public.projects for update
+  using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+-- ============================================================
+-- PROJECT SETUP — the 12-step client onboarding wizard (setup.html)
+-- ============================================================
+create table if not exists public.project_setup (
+  id            uuid primary key default gen_random_uuid(),
+  project_id    uuid references public.projects(id) on delete cascade,
+  client_id     uuid not null references auth.users(id) on delete cascade,
+  data          jsonb not null default '{}'::jsonb,   -- keyed by step: {business:{...}, goals:{...}, ...}
+  current_step  int not null default 1,
+  submitted     boolean not null default false,
+  submitted_at  timestamptz,
+  created_at    timestamptz default now(),
+  updated_at    timestamptz default now()
+);
+
+alter table public.project_setup enable row level security;
+
+-- A client fully owns their own setup row (insert/select/update as they progress).
+drop policy if exists "clients manage their own project setup" on public.project_setup;
+create policy "clients manage their own project setup"
+  on public.project_setup for all
+  using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+drop policy if exists "staff view all project setup" on public.project_setup;
+create policy "staff view all project setup"
+  on public.project_setup for select
+  using (exists (select 1 from public.profiles p where p.user_id = auth.uid() and p.role in ('rep','admin')));
+
+drop trigger if exists project_setup_touch on public.project_setup;
+create trigger project_setup_touch before update on public.project_setup
+  for each row execute function public.touch_updated_at();
+
+-- ---------- STORAGE: client-uploaded setup assets (logo, brand guide, photos, videos) ----------
+-- Create a PRIVATE bucket named "client-assets" (Storage → New bucket, public = off).
+insert into storage.buckets (id, name, public)
+values ('client-assets', 'client-assets', false)
+on conflict (id) do nothing;
+
+-- Each client can only read/write files under a folder named with their own user id —
+-- same pattern as the "reps manage their own docs" policy above.
+drop policy if exists "clients manage their own setup assets" on storage.objects;
+create policy "clients manage their own setup assets"
+  on storage.objects for all
+  using (bucket_id = 'client-assets' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'client-assets' and (storage.foldername(name))[1] = auth.uid()::text);
