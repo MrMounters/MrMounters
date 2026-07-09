@@ -60,6 +60,15 @@
     color:var(--warm-muted); background:rgba(242,244,248,0.08); border:1px solid var(--card-border);
     border-radius:20px; padding:0.16rem 0.5rem; white-space:nowrap; flex-shrink:0; }
   .m-section{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--warm-muted); padding:1.3rem 0.55rem 0.5rem; }
+  .m-lock{ margin-left:auto; font-size:0.8rem; flex-shrink:0; display:none; }
+  .m-item.locked{ opacity:0.45; }
+  .m-item.locked .m-lock{ display:inline; }
+  .m-item.locked:hover{ background:none; color:var(--warm-accent); }
+  .setup-banner{ background:rgba(245,180,60,0.08); border:1px solid rgba(245,180,60,0.3); border-radius:6px;
+    padding:0.85rem 1rem; margin-bottom:1.2rem; font-size:0.85rem; color:var(--white); display:flex;
+    align-items:center; gap:0.7rem; flex-wrap:wrap; }
+  .setup-banner a{ margin-left:auto; color:var(--amber); font-weight:700; font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; text-decoration:none; white-space:nowrap; }
+  .setup-banner a:hover{ text-decoration:underline; }
 
   /* Content */
   .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 4rem; }
@@ -240,13 +249,13 @@
     <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
 
     <div class="m-section">Website</div>
-    <a class="m-item" data-s="domains" onclick="go('domains')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>Domains</a>
-    <a class="m-item" data-s="requests" onclick="go('requests')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Change Requests</a>
+    <a class="m-item locked" data-s="domains" onclick="go('domains')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/></svg>Domains<span class="m-lock">🔒</span></a>
+    <a class="m-item locked" data-s="requests" onclick="go('requests')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Change Requests<span class="m-lock">🔒</span></a>
 
     <div class="m-section">Conversations</div>
-    <a class="m-item" data-s="inbox" onclick="go('inbox')"><svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></svg>Inbox</a>
-    <a class="m-item" data-s="voice" onclick="go('voice')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>AI Voice Agent</a>
-    <a class="m-item" data-s="chat" onclick="go('chat')"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 8V4M8 4h8"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>AI Chat &amp; SMS</a>
+    <a class="m-item locked" data-s="inbox" onclick="go('inbox')"><svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></svg>Inbox<span class="m-lock">🔒</span></a>
+    <a class="m-item locked" data-s="voice" onclick="go('voice')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>AI Voice Agent<span class="m-lock">🔒</span></a>
+    <a class="m-item locked" data-s="chat" onclick="go('chat')"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M12 8V4M8 4h8"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg>AI Chat &amp; SMS<span class="m-lock">🔒</span></a>
 
     <div class="m-section">Marketing</div>
     <a class="m-item" data-s="email" onclick="go('email')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email Marketing<span class="m-soon">Coming soon</span></a>
@@ -258,17 +267,21 @@
     <a class="m-item" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Leads<span class="m-soon">Coming soon</span></a>
     <a class="m-item" data-s="intent" onclick="go('intent')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Buy-Intent Data<span class="m-soon">Coming soon</span></a>
     <a class="m-item" data-s="reputation" onclick="go('reputation')"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 .9-5 4.8 1.3 7-6.3-3.4L5.7 21l1.3-7-5-4.8 7-.9z"/></svg>Reputation<span class="m-soon">Coming soon</span></a>
-    <a class="m-item" data-s="visitors" onclick="go('visitors')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Visitors</a>
+    <a class="m-item locked" data-s="visitors" onclick="go('visitors')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Visitors<span class="m-lock">🔒</span></a>
 
     <div class="m-section">Account</div>
     <a class="m-item" data-s="services" onclick="go('services')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Services &amp; Add-ons<span class="m-soon">Coming soon</span></a>
-    <a class="m-item" data-s="billing" onclick="go('billing')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Billing</a>
+    <a class="m-item locked" data-s="billing" onclick="go('billing')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Billing<span class="m-lock">🔒</span></a>
     <a class="m-item" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sign out</a>
   </div>
 
   <main class="wrap">
     <!-- OVERVIEW (Stripe-style "Today") -->
     <section class="sec active" id="sec-overview">
+      <div class="setup-banner hidden" id="setupBanner">
+        <span>⚠️ Your portal is limited until project setup is complete.</span>
+        <a href="setup.html">Finish Setup →</a>
+      </div>
       <div class="proj-card hidden" id="projCard">
         <div class="proj-top">
           <div class="proj-ic">🗂</div>
@@ -728,6 +741,18 @@
     let sb = null;
     let currentEmail = null;
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
+    // Locked-by-default (see the "locked" class already on these <a> tags in the HTML) until
+    // a project is loaded and confirms setup_complete — or it's the demo, which always shows
+    // the full unlocked portal since it's meant to showcase the whole product.
+    let setupComplete = false;
+    const LOCKABLE_SECTIONS = ['domains','requests','inbox','voice','chat','visitors','billing'];
+
+    function applyLockState(){
+      document.getElementById('setupBanner').classList.toggle('hidden', setupComplete);
+      document.querySelectorAll('.m-item[data-s]').forEach(el => {
+        if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !setupComplete);
+      });
+    }
 
     function goLogin(){ window.location.href = 'login.html'; }
     function openMenu(){ document.getElementById('menu').classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -773,7 +798,8 @@
           project = data;
         }
       } else {
-        // Demo fallback — same shape as a real row, so rendering logic never has to branch.
+        // Demo fallback — setup_complete:true since the demo is meant to showcase the full
+        // unlocked portal to prospects, not the locked pre-onboarding state.
         project = {
           name: 'Website Redesign', status: 'Project Setup',
           timeline: [
@@ -781,10 +807,12 @@
             { label:'Deposit Paid', done:true }, { label:'Complete Setup', done:false, current:true },
             { label:'Homepage Design', done:false }, { label:'Development', done:false }, { label:'Launch', done:false }
           ],
-          estimated_launch: '2026-07-28', setup_complete: false
+          estimated_launch: '2026-07-28', setup_complete: true
         };
       }
-      if (!project) return; // no project yet — cards stay hidden
+      setupComplete = demo ? true : !!(project && project.setup_complete);
+      applyLockState();
+      if (!project) return; // no project yet — cards stay hidden, rest of the portal stays locked
       renderProject(project);
     }
 
@@ -812,6 +840,11 @@
     }
 
     function go(s){
+      if (!setupComplete && LOCKABLE_SECTIONS.includes(s)){
+        closeMenu();
+        window.location.href = 'setup.html';
+        return;
+      }
       document.querySelectorAll('.m-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
       document.querySelectorAll('.sec').forEach(sec => sec.classList.toggle('active', sec.id === 'sec-' + s));
       closeMenu();
