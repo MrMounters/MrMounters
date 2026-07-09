@@ -104,6 +104,7 @@
   .t-dot{ width:23px; height:23px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.7rem; margin-top:0.05rem; }
   .t-dot.done{ background:var(--gold); color:var(--dark); }
   .t-dot.pending{ border:1.5px solid var(--card-border); }
+  .t-dot.attn{ background:var(--amber); color:var(--dark); font-weight:800; }
   .t-label{ font-size:0.92rem; font-weight:700; margin-bottom:0.15rem; }
   .t-label.current{ color:var(--gold); }
   .t-sub{ font-family:var(--mono); font-size:0.6rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.6rem; }
@@ -142,6 +143,31 @@
   }
   .mobile-menu-btn{ display:none; background:var(--dark3); border:1px solid var(--card-border); color:var(--white);
     border-radius:6px; padding:0.5rem 0.7rem; cursor:pointer; margin-bottom:1rem; align-items:center; gap:0.5rem; font-size:0.8rem; }
+
+  /* Notifications — persists across every admin page, not just the dashboard */
+  .admin-topbar{ display:flex; justify-content:flex-end; margin-bottom:1.2rem; }
+  .notif-btn{ position:relative; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px;
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--white); padding:0; }
+  .notif-btn:hover{ border-color:rgba(76,89,247,0.4); }
+  .notif-btn svg{ width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .notif-badge{ position:absolute; top:-5px; right:-5px; background:var(--red); color:#fff; font-family:var(--mono); font-size:0.6rem;
+    font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+  .notif-dropdown{ position:absolute; top:46px; right:0; width:340px; max-width:88vw; max-height:440px; overflow-y:auto;
+    background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; box-shadow:0 20px 50px rgba(0,0,0,0.5); z-index:60; }
+  .notif-dropdown.hidden{ display:none; }
+  .notif-dropdown-h{ display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1rem;
+    border-bottom:1px solid var(--card-border); font-weight:700; font-size:0.82rem; position:sticky; top:0; background:var(--dark3); }
+  .notif-dropdown-h button{ background:none; border:none; color:var(--gold); font-family:var(--mono); font-size:0.6rem;
+    text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; }
+  .notif-item{ padding:0.8rem 1rem; border-bottom:1px solid var(--card-border); cursor:pointer; }
+  .notif-item:last-child{ border-bottom:none; }
+  .notif-item:hover{ background:rgba(76,89,247,0.06); }
+  .notif-item.unread{ background:rgba(76,89,247,0.05); }
+  .notif-item-t{ font-size:0.82rem; font-weight:600; display:flex; align-items:center; gap:0.4rem; }
+  .notif-item.unread .notif-item-t::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+  .notif-item-b{ font-size:0.76rem; color:var(--warm-muted); margin-top:0.25rem; }
+  .notif-item-time{ font-family:var(--mono); font-size:0.58rem; color:var(--warm-muted); margin-top:0.35rem; }
+  .proj-row-t .notif-badge{ position:static; margin-left:0.4rem; }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -187,6 +213,19 @@
 
     <main class="main">
       <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+
+      <div class="admin-topbar">
+        <div style="position:relative;">
+          <button class="notif-btn" id="notifBtn" onclick="toggleNotifDropdown(event)" aria-label="Notifications">
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span class="notif-badge hidden" id="notifBadge">0</span>
+          </button>
+          <div class="notif-dropdown hidden" id="notifDropdown">
+            <div class="notif-dropdown-h">Notifications <button onclick="markAllNotifsRead()">Mark all read</button></div>
+            <div id="notifList"><div class="empty">Loading…</div></div>
+          </div>
+        </div>
+      </div>
 
       <div class="page active" id="page-dashboard">
         <div class="topbar" id="top">
@@ -282,6 +321,7 @@
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
     let sb = null, session = null;
     let deals = [], leads = [];
+    let notifications = [];
 
     function esc(s){ return String(s||'').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
     function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString() : '—'; }
@@ -319,9 +359,18 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('shell').classList.remove('hidden');
 
-      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline()]);
+      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications()]);
       renderClientsTable(); // re-render now that stagesByProject (needed for accessLabel) is guaranteed loaded
+      renderProjectList(); // re-render now that notifications (needed for the per-project badge) is guaranteed loaded
       renderStats();
+
+      // Poll for new notifications rather than setting up a realtime channel — simple and
+      // enough for a staff-facing badge that doesn't need to update within milliseconds.
+      setInterval(loadNotifications, 30000);
+      document.addEventListener('click', (e) => {
+        const dd = document.getElementById('notifDropdown');
+        if (!dd.classList.contains('hidden') && !e.target.closest('#notifDropdown') && !e.target.closest('#notifBtn')) dd.classList.add('hidden');
+      });
     }
 
     async function loadDeals(){
@@ -674,6 +723,65 @@
       renderClientsTable();
     }
 
+    // ── NOTIFICATIONS — populated by a DB trigger on project_stages (see supabase-schema.sql's
+    // notify_stage_change()) whenever a client drives a meaningful stage transition: signing
+    // the contract, paying the deposit, requesting a discovery call, submitting the onboarding
+    // wizard, approving a design, or requesting a revision. Staff never generates one of these
+    // for their own edits — only client-driven changes (or the Stripe webhook, on their behalf).
+    async function loadNotifications(){
+      const { data, error } = await sb.from('notifications').select('*').order('created_at', { ascending:false }).limit(50);
+      if (error) return;
+      notifications = data || [];
+      renderNotifBadge();
+      renderNotifList();
+    }
+    function renderNotifBadge(){
+      const unread = notifications.filter(n => !n.read).length;
+      const badge = document.getElementById('notifBadge');
+      if (unread){ badge.textContent = unread > 9 ? '9+' : unread; badge.classList.remove('hidden'); }
+      else badge.classList.add('hidden');
+    }
+    function renderNotifList(){
+      const list = document.getElementById('notifList');
+      if (!notifications.length){ list.innerHTML = '<div class="empty">No notifications yet.</div>'; return; }
+      list.innerHTML = notifications.map(n => `<div class="notif-item ${n.read ? '' : 'unread'}" onclick="openNotification('${n.id}')">
+        <div class="notif-item-t">${esc(n.title)}</div>
+        ${n.body ? `<div class="notif-item-b">${esc(n.body)}</div>` : ''}
+        <div class="notif-item-time">${timeAgo(n.created_at)}</div>
+      </div>`).join('');
+    }
+    function toggleNotifDropdown(e){
+      if (e) e.stopPropagation();
+      document.getElementById('notifDropdown').classList.toggle('hidden');
+    }
+    async function markAllNotifsRead(){
+      const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+      if (!unreadIds.length) return;
+      await sb.from('notifications').update({ read:true }).in('id', unreadIds);
+      notifications.forEach(n => { n.read = true; });
+      renderNotifBadge(); renderNotifList(); renderProjectList();
+    }
+    async function markProjectNotificationsRead(projectId){
+      const unreadIds = notifications.filter(n => n.project_id === projectId && !n.read).map(n => n.id);
+      if (!unreadIds.length) return;
+      await sb.from('notifications').update({ read:true }).in('id', unreadIds);
+      unreadIds.forEach(id => { const n = notifications.find(x => x.id === id); if (n) n.read = true; });
+      renderNotifBadge(); renderNotifList(); renderProjectList();
+    }
+    function openNotification(id){
+      const n = notifications.find(x => x.id === id);
+      if (!n) return;
+      document.getElementById('notifDropdown').classList.add('hidden');
+      if (n.project_id){ go('pipeline'); openProjectDetail(n.project_id); }
+    }
+    function timeAgo(ts){
+      const s = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+      if (s < 60) return 'just now';
+      if (s < 3600) return Math.floor(s / 60) + 'm ago';
+      if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+      return Math.floor(s / 86400) + 'd ago';
+    }
+
     // ── PROJECT PIPELINE — a list of every client project; clicking one opens its full
     // timeline below, styled the same way as the client portal's own Project Timeline so
     // staff see exactly what the client sees, with an editable form nested under every stage.
@@ -719,8 +827,9 @@
       if (!pipelineProjects.length){ list.innerHTML = '<div class="empty">No projects yet.</div>'; return; }
       list.innerHTML = pipelineProjects.map(p => {
         const def = STAGE_DEFS.find(s => s.key === currentStageKey(p.id));
+        const unread = notifications.filter(n => n.project_id === p.id && !n.read).length;
         return `<div class="proj-row ${p.id === openDetailProjectId ? 'active' : ''}" onclick="openProjectDetail('${p.id}')">
-          <div><div class="proj-row-t">${esc((p._profile && p._profile.full_name) || 'Unnamed client')}</div><div class="muted">${esc(p.name || 'Project')}</div></div>
+          <div><div class="proj-row-t">${esc((p._profile && p._profile.full_name) || 'Unnamed client')}${unread ? `<span class="notif-badge">${unread > 9 ? '9+' : unread}</span>` : ''}</div><div class="muted">${esc(p.name || 'Project')}</div></div>
           <span class="pill new">${esc(def ? def.label : 'Launch & Deploy')}</span>
         </div>`;
       }).join('');
@@ -731,6 +840,7 @@
     function openProjectDetail(projectId){
       openDetailProjectId = projectId;
       renderProjectList();
+      markProjectNotificationsRead(projectId);
       const p = pipelineProjects.find(x => x.id === projectId);
       const stages = (stagesByProject[projectId] || []).slice().sort((a,b) => a.stage_order - b.stage_order);
       let currentSet = false;
@@ -741,12 +851,13 @@
           <button class="btn btn-sm" onclick="document.getElementById('projectDetail').classList.add('hidden')">Close</button></div>
         <ul class="timeline">${stages.map(s => {
           const isDone = STAGE_DONE.includes(s.status);
+          const needsAttn = ['needs_review','revision_requested'].includes(s.status);
           const isCurrent = !isDone && !currentSet;
           if (isCurrent) currentSet = true;
           return `<li>
-            <div class="t-dot ${isDone ? 'done' : 'pending'}">${isDone ? '✓' : ''}</div>
+            <div class="t-dot ${isDone ? 'done' : (needsAttn ? 'attn' : 'pending')}">${isDone ? '✓' : (needsAttn ? '!' : '')}</div>
             <div style="flex:1;min-width:0;">
-              <div class="t-label ${isCurrent ? 'current' : ''}">${esc(s.label)}</div>
+              <div class="t-label ${isCurrent ? 'current' : ''}">${esc(s.label)}${needsAttn ? '<span class="pill warn" style="margin-left:0.5rem;">' + (s.status === 'revision_requested' ? 'Revision requested' : 'Needs review') + '</span>' : ''}</div>
               ${isCurrent ? '<div class="t-sub">Current Step</div>' : ''}
               ${stageEditorHtml(s, p)}
             </div>

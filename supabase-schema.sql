@@ -564,3 +564,71 @@ where ps.status in ('done','approved')
       and earlier.stage_order < ps.stage_order
       and earlier.status not in ('done','approved')
   );
+
+-- ============================================================
+-- NOTIFICATIONS — staff-facing feed of client-driven project events (admin.html's bell).
+-- Populated automatically by a trigger on project_stages, not written to directly by the
+-- app, so every client action that changes a stage's status is guaranteed to surface here
+-- regardless of which code path triggered it (e.g. a revision request previously had no
+-- signal on the admin side at all).
+-- ============================================================
+create table if not exists public.notifications (
+  id           uuid primary key default gen_random_uuid(),
+  project_id   uuid references public.projects(id) on delete cascade,
+  stage_id     uuid references public.project_stages(id) on delete cascade,
+  client_id    uuid references auth.users(id) on delete cascade,
+  title        text not null,
+  body         text,
+  read         boolean not null default false,
+  created_at   timestamptz default now()
+);
+
+alter table public.notifications enable row level security;
+
+drop policy if exists "staff manage all notifications" on public.notifications;
+create policy "staff manage all notifications"
+  on public.notifications for all
+  using (public.current_user_role() in ('rep','admin'))
+  with check (public.current_user_role() in ('rep','admin'));
+
+create or replace function public.notify_stage_change()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  proj_name text;
+begin
+  if new.status = old.status then return new; end if;
+  -- Only notify staff about CLIENT-driven transitions. auth.uid() is the client's own id
+  -- when they make the change themselves in the portal, or null when the Stripe webhook
+  -- (service_role, bypasses RLS) confirms a deposit payment on their behalf. A staff member
+  -- editing a stage from admin.html (auth.uid() = their own id, never new.client_id) never
+  -- generates a notification for its own action.
+  if not (auth.uid() is null or auth.uid() = new.client_id) then return new; end if;
+
+  select name into proj_name from public.projects where id = new.project_id;
+  proj_name := coalesce(proj_name, 'Project');
+
+  if new.stage_key = 'business_profile_setup' and new.status in ('done','approved') then
+    insert into public.notifications (project_id, stage_id, client_id, title, body)
+    values (new.project_id, new.id, new.client_id, proj_name || ' — business profile submitted', null);
+  elsif new.stage_key = 'discovery_call' and new.status = 'in_progress' then
+    insert into public.notifications (project_id, stage_id, client_id, title, body)
+    values (new.project_id, new.id, new.client_id, proj_name || ' — discovery call requested', null);
+  elsif new.stage_key = 'contract_signed' and new.status in ('done','approved') then
+    insert into public.notifications (project_id, stage_id, client_id, title, body)
+    values (new.project_id, new.id, new.client_id, proj_name || ' — contract signed', 'Signed by ' || coalesce(new.data->>'signed_name', 'client'));
+  elsif new.stage_key = 'deposit_paid' and new.status in ('done','approved') then
+    insert into public.notifications (project_id, stage_id, client_id, title, body)
+    values (new.project_id, new.id, new.client_id, proj_name || ' — deposit paid', null);
+  elsif new.stage_key = 'approval' and new.status = 'revision_requested' then
+    insert into public.notifications (project_id, stage_id, client_id, title, body)
+    values (new.project_id, new.id, new.client_id, proj_name || ' — revision requested', new.data->>'revision_notes');
+  elsif new.stage_key = 'approval' and new.status in ('done','approved') then
+    insert into public.notifications (project_id, stage_id, client_id, title, body)
+    values (new.project_id, new.id, new.client_id, proj_name || ' — design approved', null);
+  end if;
+  return new;
+end; $$;
+
+drop trigger if exists on_stage_status_change on public.project_stages;
+create trigger on_stage_status_change after update on public.project_stages
+  for each row execute function public.notify_stage_change();
