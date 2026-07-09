@@ -80,13 +80,6 @@
     align-items:center; gap:0.7rem; flex-wrap:wrap; }
   .setup-banner a{ margin-left:auto; color:var(--amber); font-weight:700; font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; text-decoration:none; white-space:nowrap; }
   .setup-banner a:hover{ text-decoration:underline; }
-  .teaser-wrap{ position:relative; }
-  #teaserContent.blurred{ filter:blur(6px); pointer-events:none; user-select:none; opacity:0.55; }
-  .teaser-overlay{ position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; padding:1rem; text-align:center; }
-  .teaser-msg{ background:var(--dark3); border:1px solid rgba(76,89,247,0.35); border-radius:10px; padding:1.5rem 1.7rem;
-    max-width:320px; box-shadow:0 24px 60px rgba(0,0,0,0.55); font-size:1.4rem; }
-  .teaser-msg b{ display:block; font-size:0.95rem; margin-top:0.3rem; }
-  .teaser-msg .btn{ text-decoration:none; display:inline-block; }
 
   /* Content */
   .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 6rem; }
@@ -359,14 +352,11 @@
 
       <a class="btn btn-p hidden" id="startSetupBtn" href="setup.html" style="display:block;text-align:center;margin-bottom:1.4rem;text-decoration:none;">Start Setup →</a>
 
-      <div class="teaser-wrap">
-        <div class="teaser-overlay hidden" id="teaserOverlay">
-          <div class="teaser-msg">
-            🔒<br><b id="teaserTitle">This unlocks once your project launches.</b>
-            <div class="muted" style="margin:0.4rem 0 0.9rem;font-size:0.8rem;" id="teaserSub">Analytics, campaigns, and activity all populate for real once your site is live.</div>
-            <a href="setup.html" class="btn btn-p hidden" id="teaserBtn" style="text-decoration:none;">Start Setup Wizard →</a>
-          </div>
-        </div>
+      <!-- The full "Today" analytics dashboard below only makes sense once the project has
+           actually launched — before that, the Project Timeline above IS the dashboard, so
+           this whole block stays hidden rather than showing a blurred lock-teaser preview
+           of data that doesn't exist yet. -->
+      <div class="teaser-wrap hidden" id="teaserWrap">
         <div id="teaserContent">
           <h1 class="today">Today</h1>
           <div class="rule"></div>
@@ -882,29 +872,21 @@
 
     function applyLockState(){
       document.getElementById('setupBanner').classList.toggle('hidden', portalUnlocked);
-      document.getElementById('teaserOverlay').classList.toggle('hidden', portalUnlocked);
-      document.getElementById('teaserContent').classList.toggle('blurred', !portalUnlocked);
+      // Pre-launch, the Project Timeline is the dashboard — no separate blurred analytics
+      // preview needed underneath it.
+      document.getElementById('teaserWrap').classList.toggle('hidden', !portalUnlocked);
       document.querySelectorAll('.m-item[data-s], .bn-item[data-s]').forEach(el => {
         if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !portalUnlocked);
       });
 
       const bannerMsg = document.getElementById('setupBannerMsg');
       const bannerLink = document.getElementById('setupBannerLink');
-      const teaserTitle = document.getElementById('teaserTitle');
-      const teaserSub = document.getElementById('teaserSub');
-      const teaserBtn = document.getElementById('teaserBtn');
       if (!setupSubmitted){
         bannerMsg.textContent = '⚠️ Finish your project setup to get things moving.';
         bannerLink.classList.remove('hidden');
-        teaserTitle.textContent = 'Finish your project setup to get started.';
-        teaserSub.textContent = 'The rest of your portal unlocks once your site officially launches.';
-        teaserBtn.classList.remove('hidden');
       } else {
         bannerMsg.textContent = '⚠️ Your portal is limited until launch.';
         bannerLink.classList.add('hidden');
-        teaserTitle.textContent = 'This unlocks once your project launches.';
-        teaserSub.textContent = "Analytics, campaigns, and activity all populate for real once your site is live.";
-        teaserBtn.classList.add('hidden');
       }
     }
 
