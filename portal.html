@@ -334,8 +334,8 @@
     <!-- OVERVIEW (Stripe-style "Today") -->
     <section class="sec active" id="sec-overview">
       <div class="setup-banner hidden" id="setupBanner">
-        <span>⚠️ Your portal is limited until project setup is complete.</span>
-        <a href="setup.html">Finish Setup →</a>
+        <span id="setupBannerMsg">⚠️ Your portal is limited until launch.</span>
+        <a href="setup.html" id="setupBannerLink" class="hidden">Finish Setup →</a>
       </div>
       <div class="proj-card hidden" id="projCard">
         <div class="proj-top">
@@ -362,9 +362,9 @@
       <div class="teaser-wrap">
         <div class="teaser-overlay hidden" id="teaserOverlay">
           <div class="teaser-msg">
-            🔒<br><b>This unlocks once your project setup is complete.</b>
-            <div class="muted" style="margin:0.4rem 0 0.9rem;font-size:0.8rem;">Analytics, campaigns, and activity all populate for real once we're building.</div>
-            <a href="setup.html" class="btn btn-p" style="text-decoration:none;">Finish Setup →</a>
+            🔒<br><b id="teaserTitle">This unlocks once your project launches.</b>
+            <div class="muted" style="margin:0.4rem 0 0.9rem;font-size:0.8rem;" id="teaserSub">Analytics, campaigns, and activity all populate for real once your site is live.</div>
+            <a href="setup.html" class="btn btn-p hidden" id="teaserBtn" style="text-decoration:none;">Start Setup Wizard →</a>
           </div>
         </div>
         <div id="teaserContent">
@@ -869,20 +869,43 @@
     let currentEmail = null;
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
     // Locked-by-default (see the "locked" class already on these <a> tags in the HTML) until
-    // a project is loaded and confirms setup_complete — or it's the demo, which always shows
-    // the full unlocked portal since it's meant to showcase the whole product.
-    let setupComplete = false;
+    // the project reaches Launch & Deploy — or it's the demo, which always shows the full
+    // unlocked portal since it's meant to showcase the whole product. `setupSubmitted` is a
+    // separate, earlier signal (has the onboarding wizard been submitted) used only to drive
+    // the Complete Setup stage's CTA and the persistent "Start Setup" button — it does NOT by
+    // itself unlock the rest of the portal anymore.
+    let setupSubmitted = false;
+    let portalUnlocked = false;
     // "profile" is deliberately not lockable — editing your own contact info isn't gated by
     // project progress the way project-scoped sections (files, billing, messages...) are.
     const LOCKABLE_SECTIONS = ['domains','requests','inbox','voice','chat','visitors','billing','files'];
 
     function applyLockState(){
-      document.getElementById('setupBanner').classList.toggle('hidden', setupComplete);
-      document.getElementById('teaserOverlay').classList.toggle('hidden', setupComplete);
-      document.getElementById('teaserContent').classList.toggle('blurred', !setupComplete);
+      document.getElementById('setupBanner').classList.toggle('hidden', portalUnlocked);
+      document.getElementById('teaserOverlay').classList.toggle('hidden', portalUnlocked);
+      document.getElementById('teaserContent').classList.toggle('blurred', !portalUnlocked);
       document.querySelectorAll('.m-item[data-s], .bn-item[data-s]').forEach(el => {
-        if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !setupComplete);
+        if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !portalUnlocked);
       });
+
+      const bannerMsg = document.getElementById('setupBannerMsg');
+      const bannerLink = document.getElementById('setupBannerLink');
+      const teaserTitle = document.getElementById('teaserTitle');
+      const teaserSub = document.getElementById('teaserSub');
+      const teaserBtn = document.getElementById('teaserBtn');
+      if (!setupSubmitted){
+        bannerMsg.textContent = '⚠️ Finish your project setup to get things moving.';
+        bannerLink.classList.remove('hidden');
+        teaserTitle.textContent = 'Finish your project setup to get started.';
+        teaserSub.textContent = 'The rest of your portal unlocks once your site officially launches.';
+        teaserBtn.classList.remove('hidden');
+      } else {
+        bannerMsg.textContent = '⚠️ Your portal is limited until launch.';
+        bannerLink.classList.add('hidden');
+        teaserTitle.textContent = 'This unlocks once your project launches.';
+        teaserSub.textContent = "Analytics, campaigns, and activity all populate for real once your site is live.";
+        teaserBtn.classList.add('hidden');
+      }
     }
 
     function goLogin(){ window.location.href = 'login.html'; }
@@ -1016,32 +1039,39 @@
           if (project){
             const [{ data: stageRows }, { data: setup }] = await Promise.all([
               sb.from('project_stages').select('*').eq('project_id', project.id).order('stage_order'),
-              // The real "did they finish onboarding" signal, scoped to THIS company's
-              // project — each company has its own wizard submission. admin_lock_override
-              // (set from admin.html's Clients panel) takes precedence when staff has
-              // manually forced the portal locked or unlocked for this client.
+              // Scoped to THIS company's project — each company has its own wizard submission
+              // and its own manual lock override.
               sb.from('project_setup').select('submitted, admin_lock_override').eq('project_id', project.id).maybeSingle(),
             ]);
             stages = stageRows || [];
-            setupComplete = setup && setup.admin_lock_override != null ? !!setup.admin_lock_override : !!(setup && setup.submitted);
+            setupSubmitted = !!(setup && setup.submitted);
+            // The portal unlocks automatically once the project reaches Launch & Deploy — NOT
+            // just once setup is submitted. admin_lock_override (set from admin.html's Clients
+            // panel) takes precedence when staff has manually forced it locked or unlocked at
+            // any point in the timeline.
+            const launchStage = stages.find(s => s.stage_key === 'launch');
+            const reachedLaunch = !!(launchStage && STAGE_DONE_STATES.includes(launchStage.status));
+            portalUnlocked = (setup && setup.admin_lock_override != null) ? !!setup.admin_lock_override : reachedLaunch;
           } else {
-            setupComplete = false; // no project yet for this company at all
+            setupSubmitted = false; // no project yet for this company at all
+            portalUnlocked = false;
           }
         }
       } else {
-        // Demo fallback — setup_complete:true since the demo is meant to showcase the full
-        // unlocked portal to prospects, not the locked pre-onboarding state.
+        // Demo fallback — unlocked:true since the demo is meant to showcase the full
+        // unlocked portal to prospects, not the locked pre-launch state.
         project = { id: 'demo', name: 'Website Redesign', status: 'Project Setup', estimated_launch: '2026-07-28' };
         stages = [
           { id:'d1', stage_key:'discovery_call', label:'Discovery Call', status:'done', data:{} },
-          { id:'d2', stage_key:'contract_signed', label:'Contract Signed', status:'done', data:{} },
-          { id:'d3', stage_key:'deposit_paid', label:'Deposit Paid', status:'done', data:{} },
+          { id:'d2', stage_key:'contract_signed', label:'Contract', status:'done', data:{} },
+          { id:'d3', stage_key:'deposit_paid', label:'Deposit', status:'done', data:{} },
           { id:'d4', stage_key:'complete_setup', label:'Complete Setup', status:'done', data:{} },
-          { id:'d5', stage_key:'homepage_design', label:'Homepage Design', status:'needs_review', data:{}, client_note:'Take a look and let us know what you think!' },
-          { id:'d6', stage_key:'development', label:'Development', status:'pending', data:{} },
-          { id:'d7', stage_key:'launch', label:'Launch', status:'pending', data:{} },
+          { id:'d5', stage_key:'in_progress', label:'In Progress', status:'done', data:{} },
+          { id:'d6', stage_key:'approval', label:'Approval', status:'needs_review', data:{}, client_note:'Take a look and let us know what you think!' },
+          { id:'d7', stage_key:'launch', label:'Launch & Deploy', status:'pending', data:{} },
         ];
-        setupComplete = true;
+        setupSubmitted = true;
+        portalUnlocked = true;
       }
       applyLockState();
       currentProject = project;
@@ -1082,13 +1112,13 @@
         </li>`;
       }).join('');
 
-      // Homepage design previews need an async signed-URL fetch, so they're filled in after
-      // the synchronous render above rather than blocking it.
-      const designStage = stages.find(s => s.stage_key === 'homepage_design' && s.status === 'needs_review' && !STAGE_DONE_STATES.includes(s.status));
-      if (designStage) renderDesignPreview(designStage);
+      // Preview images need an async signed-URL fetch, so they're filled in after the
+      // synchronous render above rather than blocking it.
+      const approvalStage = stages.find(s => s.stage_key === 'approval' && s.status === 'needs_review' && !STAGE_DONE_STATES.includes(s.status));
+      if (approvalStage) renderDesignPreview(approvalStage);
 
       const startBtn = document.getElementById('startSetupBtn');
-      if (!setupComplete){ startBtn.classList.remove('hidden'); }
+      if (!setupSubmitted){ startBtn.classList.remove('hidden'); }
     }
 
     // ── Per-stage interactive actions, shown only for the current (first incomplete) stage ──
@@ -1103,13 +1133,16 @@
         if (!amount) return `<div class="stage-action muted">Waiting on your project admin to set the deposit amount.</div>`;
         return `<div class="stage-action"><button class="btn btn-p" onclick="payDeposit('${s.id}')">Pay $${Number(amount).toLocaleString()} Deposit →</button></div>`;
       }
-      if (s.stage_key === 'homepage_design'){
-        if (s.status === 'needs_review') return `<div class="stage-action" id="design-preview-${s.id}"><div class="muted">Loading design preview…</div></div>`;
-        if (s.status === 'revision_requested') return `<div class="stage-action muted">Revision requested — we'll follow up with an updated design soon.</div>`;
-        return `<div class="stage-action muted">We'll share your homepage design here once it's ready for review.</div>`;
+      if (s.stage_key === 'complete_setup'){
+        return `<div class="stage-action"><a class="btn btn-p" href="setup.html" style="text-decoration:none;">${setupSubmitted ? 'Continue Setup Wizard →' : 'Start Setup Wizard →'}</a></div>`;
       }
-      if (s.stage_key === 'development'){
-        return s.client_note ? '' : `<div class="stage-action muted">Your site is in active development — check back for updates.</div>`;
+      if (s.stage_key === 'in_progress'){
+        return s.client_note ? '' : `<div class="stage-action muted">We're actively building your site — check back for updates.</div>`;
+      }
+      if (s.stage_key === 'approval'){
+        if (s.status === 'needs_review') return `<div class="stage-action" id="design-preview-${s.id}"><div class="muted">Loading preview…</div></div>`;
+        if (s.status === 'revision_requested') return `<div class="stage-action muted">Revision requested — we'll follow up with an updated version soon.</div>`;
+        return `<div class="stage-action muted">We'll share your site here once it's ready for your approval.</div>`;
       }
       return '';
     }
@@ -1193,10 +1226,12 @@
 
     const lazyLoaded = {};
     function go(s){
-      if (!setupComplete && LOCKABLE_SECTIONS.includes(s)){
+      if (!portalUnlocked && LOCKABLE_SECTIONS.includes(s)){
         closeMenu();
-        window.location.href = 'setup.html';
-        return;
+        if (!setupSubmitted){ window.location.href = 'setup.html'; return; }
+        // Setup's already done — nothing to send them to, just bounce back to the timeline
+        // so they can see how close the project is to launch.
+        s = 'overview';
       }
       document.querySelectorAll('.m-item, .bn-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
       document.querySelectorAll('.sec').forEach(sec => sec.classList.toggle('active', sec.id === 'sec-' + s));

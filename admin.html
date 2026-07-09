@@ -317,6 +317,7 @@
       document.getElementById('shell').classList.remove('hidden');
 
       await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline()]);
+      renderClientsTable(); // re-render now that stagesByProject (needed for accessLabel) is guaranteed loaded
       renderStats();
     }
 
@@ -528,13 +529,22 @@
       document.getElementById('clientsSrc').textContent = clientRows.length + ' total';
       renderClientsTable();
     }
+    // The portal unlocks automatically once the project's `launch` stage is done/approved —
+    // needs stagesByProject (loaded by loadProjectsPipeline(), populated by the time init()'s
+    // Promise.all resolves and re-renders this table) rather than project_setup.submitted.
+    function launchReached(projectId){
+      const stages = (stagesByProject && stagesByProject[projectId]) || [];
+      const launch = stages.find(s => s.stage_key === 'launch');
+      return !!(launch && STAGE_DONE.includes(launch.status));
+    }
     function accessLabel(r){
       if (r.admin_lock_override === true) return '<span class="pill ok">Force unlocked</span>';
       if (r.admin_lock_override === false) return '<span class="pill lost">Force locked</span>';
-      return r.submitted ? '<span class="pill mut">Auto — unlocked</span>' : '<span class="pill mut">Auto — locked</span>';
+      return launchReached(r.project_id) ? '<span class="pill mut">Auto — unlocked</span>' : '<span class="pill mut">Auto — locked</span>';
     }
     function renderClientsTable(){
       const body = document.getElementById('clientsBody');
+      if (!clientRows.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No clients have started onboarding yet.</td></tr>'; return; }
       body.innerHTML = clientRows.map(r => {
         const p = r._profile || {};
         const businessName = (r.data && r.data.business && r.data.business.business_name) || p.business_name || '—';
@@ -604,7 +614,7 @@
         <div class="cd-field" style="max-width:340px;margin-bottom:1rem;">
           <label>Portal access override</label>
           <select class="sel" id="cdLockOverride">
-            <option value="">Automatic (unlocks once submitted)</option>
+            <option value="">Automatic (unlocks at Launch &amp; Deploy)</option>
             <option value="true" ${r.admin_lock_override === true ? 'selected' : ''}>Force unlocked</option>
             <option value="false" ${r.admin_lock_override === false ? 'selected' : ''}>Force locked</option>
           </select>
@@ -667,12 +677,12 @@
     // touch devices) since it's already proven there. ──
     const STAGE_DEFS = [
       { key:'discovery_call', label:'Discovery Call' },
-      { key:'contract_signed', label:'Contract Signed' },
-      { key:'deposit_paid', label:'Deposit Paid' },
+      { key:'contract_signed', label:'Contract' },
+      { key:'deposit_paid', label:'Deposit' },
       { key:'complete_setup', label:'Complete Setup' },
-      { key:'homepage_design', label:'Homepage Design' },
-      { key:'development', label:'Development' },
-      { key:'launch', label:'Launch' },
+      { key:'in_progress', label:'In Progress' },
+      { key:'approval', label:'Approval' },
+      { key:'launch', label:'Launch & Deploy' },
     ];
     const STAGE_DONE = ['done', 'approved'];
     let pipelineProjects = [];
@@ -791,8 +801,8 @@
       if (s.stage_key === 'deposit_paid'){
         extra.push(`<label>Deposit amount ($)</label><input class="inp" id="depAmt-${s.id}" type="number" min="0" step="1" value="${esc((s.data && s.data.amount) || '')}" placeholder="e.g. 1500">`);
       }
-      if (s.stage_key === 'homepage_design'){
-        extra.push(`<label>Upload design image</label><input type="file" class="inp" accept="image/*" onchange="uploadDesignImage('${s.id}','${s.project_id}', this.files[0])">`);
+      if (s.stage_key === 'approval'){
+        extra.push(`<label>Upload preview image</label><input type="file" class="inp" accept="image/*" onchange="uploadDesignImage('${s.id}','${s.project_id}', this.files[0])">`);
         if (s.data && s.data.image_path) extra.push(`<div class="muted" style="margin-top:0.3rem;">Current: ${esc(s.data.image_path.split('/').pop())}</div>`);
       }
       if (s.stage_key === 'launch'){
@@ -845,7 +855,7 @@
       if (!file) return;
       const project = pipelineProjects.find(p => p.id === projectId);
       if (!project) return;
-      const path = project.client_id + '/stages/homepage_design/' + Date.now() + '-' + file.name;
+      const path = project.client_id + '/stages/approval/' + Date.now() + '-' + file.name;
       const { error: upErr } = await sb.storage.from('client-assets').upload(path, file, { upsert:true });
       if (upErr){ alert(upErr.message); return; }
       const stage = Object.values(stagesByProject).flat().find(s => s.id === stageId);

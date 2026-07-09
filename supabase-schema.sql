@@ -427,17 +427,25 @@ create policy "staff manage all client assets"
 --   deposit_paid     — client pays via Stripe; ONLY the webhook (service_role, bypasses
 --                       RLS) marks this done — client-side code can create a checkout
 --                       session but can never mark payment as complete itself
---   complete_setup   — mirrors project_setup.submitted, marked done on wizard submit
---   homepage_design  — admin uploads a mockup (data.image_path), client approves or
+--   complete_setup   — client fills out the 12-step wizard (setup.html), linked directly
+--                       from this stage's action button; mirrors project_setup.submitted,
+--                       marked done automatically on wizard submit
+--   in_progress      — we're actively building the site; admin posts progress via
+--                       client_note, no client action
+--   approval         — admin uploads a preview (data.image_path), client approves or
 --                       requests a revision (data.decision/revision_notes)
---   development      — admin posts progress via client_note, no client action
 --   launch           — admin marks done, optionally sets data.live_url
+--
+-- The rest of the client portal (Inbox, AI Voice/Chat, Visitors, Billing, Files, Domains,
+-- Change Requests) stays teaser-locked until the `launch` stage is done/approved — NOT just
+-- once setup is submitted. Staff can override this per-client at any point in the timeline
+-- via project_setup.admin_lock_override (see below).
 -- ============================================================
 create table if not exists public.project_stages (
   id            uuid primary key default gen_random_uuid(),
   project_id    uuid not null references public.projects(id) on delete cascade,
   client_id     uuid not null references auth.users(id) on delete cascade,
-  stage_key     text not null,   -- discovery_call | contract_signed | deposit_paid | complete_setup | homepage_design | development | launch
+  stage_key     text not null,   -- discovery_call | contract_signed | deposit_paid | complete_setup | in_progress | approval | launch
   label         text not null,
   stage_order   int not null,
   status        text not null default 'pending' check (status in ('pending','in_progress','needs_review','revision_requested','approved','done')),
@@ -482,12 +490,12 @@ returns trigger language plpgsql security definer set search_path = public as $$
 declare
   stages jsonb := '[
     {"key":"discovery_call","label":"Discovery Call"},
-    {"key":"contract_signed","label":"Contract Signed"},
-    {"key":"deposit_paid","label":"Deposit Paid"},
+    {"key":"contract_signed","label":"Contract"},
+    {"key":"deposit_paid","label":"Deposit"},
     {"key":"complete_setup","label":"Complete Setup"},
-    {"key":"homepage_design","label":"Homepage Design"},
-    {"key":"development","label":"Development"},
-    {"key":"launch","label":"Launch"}
+    {"key":"in_progress","label":"In Progress"},
+    {"key":"approval","label":"Approval"},
+    {"key":"launch","label":"Launch & Deploy"}
   ]'::jsonb;
   s jsonb;
   i int := 0;
@@ -509,9 +517,18 @@ insert into public.project_stages (project_id, client_id, stage_key, label, stag
 select p.id, p.client_id, s.key, s.label, s.ord
 from public.projects p
 cross join (values
-  ('discovery_call','Discovery Call',0), ('contract_signed','Contract Signed',1),
-  ('deposit_paid','Deposit Paid',2), ('complete_setup','Complete Setup',3),
-  ('homepage_design','Homepage Design',4), ('development','Development',5),
-  ('launch','Launch',6)
+  ('discovery_call','Discovery Call',0), ('contract_signed','Contract',1),
+  ('deposit_paid','Deposit',2), ('complete_setup','Complete Setup',3),
+  ('in_progress','In Progress',4), ('approval','Approval',5),
+  ('launch','Launch & Deploy',6)
 ) as s(key, label, ord)
 where not exists (select 1 from public.project_stages ps where ps.project_id = p.id);
+
+-- Migration: earlier installs seeded stages under the old key names/labels/order below —
+-- relabel and re-key any rows created before this pass (idempotent: a second run finds no
+-- rows still using the old key names and is a no-op).
+update public.project_stages set stage_key = 'in_progress', label = 'In Progress', stage_order = 4 where stage_key = 'development';
+update public.project_stages set stage_key = 'approval', label = 'Approval', stage_order = 5 where stage_key = 'homepage_design';
+update public.project_stages set label = 'Contract' where stage_key = 'contract_signed' and label = 'Contract Signed';
+update public.project_stages set label = 'Deposit' where stage_key = 'deposit_paid' and label = 'Deposit Paid';
+update public.project_stages set label = 'Launch & Deploy' where stage_key = 'launch' and label = 'Launch';
