@@ -1078,6 +1078,11 @@
       goLogin();
     }
 
+    // If this page is restored from the back/forward cache (e.g. hitting Back right after
+    // signing out), force a real reload so init() re-checks the session from scratch instead
+    // of showing whatever was still rendered on screen at the moment of navigation.
+    window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
+
     init();
   </script>
 </body>

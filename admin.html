@@ -59,6 +59,11 @@
   .stat{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1.1rem 1.2rem; }
   .stat-l{ font-size:0.76rem; color:var(--warm-muted); margin-bottom:0.5rem; }
   .stat-v{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.5rem; }
+  .stats-period-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:0.8rem; }
+  .range-switch{ display:flex; gap:0.3rem; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:0.2rem; }
+  .range-btn{ background:none; border:none; color:var(--warm-accent); font-family:var(--mono); font-size:0.66rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.03em; padding:0.35rem 0.65rem; border-radius:6px; cursor:pointer; }
+  .range-btn.active{ background:rgba(76,89,247,0.16); color:var(--gold); }
 
   /* ── Panels / tables ───────────────────── */
   .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1.4rem; margin-bottom:1.4rem; overflow-x:auto; }
@@ -227,7 +232,7 @@
         <button class="side-item" type="button" data-page="messages" onclick="go('messages')">Messages</button>
         <button class="side-item disabled" type="button">Invoices <span class="side-soon">Soon</span></button>
         <button class="side-item" type="button" data-page="clients" onclick="go('clients')">Clients</button>
-        <button class="side-item disabled" type="button">Team <span class="side-soon">Soon</span></button>
+        <button class="side-item" type="button" data-page="team" onclick="go('team')">Team</button>
         <button class="side-item disabled" type="button">Reports <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Settings <span class="side-soon">Soon</span></button>
       </nav>
@@ -268,16 +273,46 @@
         </div>
 
         <div class="stats">
-          <div class="stat"><div class="stat-l">Total Revenue (won deals)</div><div class="stat-v" id="statRevenue">—</div></div>
+          <div class="stat"><div class="stat-l">Total Revenue (all time)</div><div class="stat-v" id="statRevenue">—</div></div>
           <div class="stat"><div class="stat-l">Active Projects</div><div class="stat-v" id="statActive">—</div></div>
-          <div class="stat"><div class="stat-l">New Leads</div><div class="stat-v" id="statLeads">—</div></div>
+          <div class="stat"><div class="stat-l">Active Deals</div><div class="stat-v" id="statDeals">—</div></div>
           <div class="stat"><div class="stat-l">Upcoming Consults</div><div class="stat-v" id="statConsults">—</div></div>
+        </div>
+
+        <div class="stats-period-h">
+          <div class="panel-t" style="font-size:0.92rem;">This period</div>
+          <div class="range-switch" id="rangeSwitch">
+            <button class="range-btn" data-range="7d" onclick="setStatRange('7d')">7D</button>
+            <button class="range-btn active" data-range="30d" onclick="setStatRange('30d')">30D</button>
+            <button class="range-btn" data-range="3m" onclick="setStatRange('3m')">3M</button>
+            <button class="range-btn" data-range="ytd" onclick="setStatRange('ytd')">YTD</button>
+          </div>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">New Leads</div><div class="stat-v" id="statNewLeads">—</div></div>
+          <div class="stat"><div class="stat-l">Revenue Won</div><div class="stat-v" id="statRevenueWon">—</div></div>
+          <div class="stat"><div class="stat-l">Deals Won</div><div class="stat-v" id="statDealsWon">—</div></div>
+          <div class="stat"><div class="stat-l">Clients Onboarded</div><div class="stat-v" id="statOnboarded">—</div></div>
         </div>
       </div>
 
       <div class="page" id="page-deals">
         <div class="panel">
-          <div class="panel-h"><div class="panel-t">Active Deals / Projects</div><div class="muted" id="dealsSrc"></div></div>
+          <div class="panel-h">
+            <div class="panel-t">Active Deals / Projects</div>
+            <div style="display:flex;align-items:center;gap:0.7rem;">
+              <div class="muted" id="dealsSrc"></div>
+              <button class="btn btn-p btn-sm" onclick="document.getElementById('dealForm').classList.toggle('open')">+ Add Deal</button>
+            </div>
+          </div>
+          <form class="lead-form" id="dealForm" onsubmit="addDeal(event)">
+            <div><label>Client / contact</label><input class="inp" id="dContact" required></div>
+            <div><label>Business</label><input class="inp" id="dBiz"></div>
+            <div><label>Service</label><input class="inp" id="dService" placeholder="Web Dev, Ad Campaigns, etc."></div>
+            <div><label>Deal value ($)</label><input class="inp" id="dValue" type="number" min="0" step="1" placeholder="3500"></div>
+            <div><label>Stage</label><select class="sel" id="dStage"><option>New</option><option>Contacted</option><option>Quoted</option><option>Won</option><option>Lost</option></select></div>
+            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Deal</button></div>
+          </form>
           <div style="overflow-x:auto;">
             <table>
               <thead><tr><th>Client / Business</th><th>Service</th><th>Stage</th><th>Value</th><th>Updated</th></tr></thead>
@@ -339,7 +374,24 @@
 
       <div class="page" id="page-clients">
         <div class="panel">
-          <div class="panel-h"><div class="panel-t">Clients — Onboarding Progress</div><div class="muted" id="clientsSrc"></div></div>
+          <div class="panel-h">
+            <div class="panel-t">Clients — Onboarding Progress</div>
+            <div style="display:flex;align-items:center;gap:0.7rem;">
+              <div class="muted" id="clientsSrc"></div>
+              <button class="btn btn-p btn-sm" onclick="document.getElementById('addClientForm').classList.toggle('open')">+ Add Client</button>
+            </div>
+          </div>
+          <form class="lead-form" id="addClientForm" onsubmit="addClientDirect(event)">
+            <div><label>Full name</label><input class="inp" id="acFullName" required></div>
+            <div><label>Email</label><input class="inp" type="email" id="acEmail" required></div>
+            <div><label>Phone</label><input class="inp" type="tel" id="acPhone"></div>
+            <div><label>Business</label><input class="inp" id="acBusiness"></div>
+            <div class="full">
+              <button type="submit" class="btn btn-p btn-sm">Send Invite</button>
+              <span class="muted" id="addClientNote" style="margin-left:0.6rem;"></span>
+            </div>
+          </form>
+          <div class="muted" style="margin-bottom:0.8rem;font-size:0.78rem;">This sends a sign-in link to their email — they'll land on account setup, then show up below once they start their project.</div>
           <div style="overflow-x:auto;">
             <table>
               <thead><tr><th>Client</th><th>Business</th><th>Onboarding</th><th>Step</th><th>Portal Access</th><th>Submitted</th></tr></thead>
@@ -356,6 +408,32 @@
           <div class="proj-list" id="messagesList"></div>
         </div>
         <div class="panel hidden" id="messagesDetail"></div>
+      </div>
+
+      <div class="page" id="page-team">
+        <div class="panel">
+          <div class="panel-h">
+            <div class="panel-t">Team</div>
+            <div style="display:flex;align-items:center;gap:0.7rem;">
+              <div class="muted" id="teamSrc"></div>
+              <button class="btn btn-p btn-sm" onclick="document.getElementById('repInviteForm').classList.toggle('open')">+ Invite Rep</button>
+            </div>
+          </div>
+          <form class="lead-form" id="repInviteForm" onsubmit="inviteRep(event)">
+            <div><label>Full name</label><input class="inp" id="repName"></div>
+            <div><label>Email</label><input class="inp" type="email" id="repEmail" required></div>
+            <div class="full">
+              <button type="submit" class="btn btn-p btn-sm">Send Invite</button>
+              <span class="muted" id="repInviteNote" style="margin-left:0.6rem;"></span>
+            </div>
+          </form>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Name</th><th>Role</th><th>Business</th></tr></thead>
+              <tbody id="teamBody"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -375,7 +453,7 @@
     function esc(s){ return String(s||'').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
     function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString() : '—'; }
     function goLogin(){ window.location.href = 'login.html'; }
-    function signOut(){ if (sb) sb.auth.signOut(); goLogin(); }
+    async function signOut(){ if (sb) await sb.auth.signOut(); goLogin(); }
 
     function go(page){
       document.querySelectorAll('.page').forEach(el => el.classList.toggle('active', el.id === 'page-' + page));
@@ -408,7 +486,7 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('shell').classList.remove('hidden');
 
-      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications(), loadMessagesPage()]);
+      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications(), loadMessagesPage(), loadTeam()]);
       renderClientsTable(); // re-render now that stagesByProject (needed for accessLabel) is guaranteed loaded
       renderProjectList(); // re-render now that notifications (needed for the per-project badge) is guaranteed loaded
       renderStats();
@@ -430,7 +508,7 @@
     }
     function renderDeals(){
       const body = document.getElementById('dealsBody');
-      if (!deals.length){ body.innerHTML = '<tr><td colspan="5" class="empty">No deals yet — add one from the Rep Portal pipeline.</td></tr>'; return; }
+      if (!deals.length){ body.innerHTML = '<tr><td colspan="5" class="empty">No deals yet — click "+ Add Deal" to add one.</td></tr>'; return; }
       const pillClass = { New:'new', Contacted:'warn', Quoted:'warn', Won:'ok', Lost:'lost' };
       body.innerHTML = deals.map(d => `<tr>
         <td><b>${esc(d.business || d.contact)}</b><div class="muted">${esc(d.contact)}</div></td>
@@ -439,6 +517,26 @@
         <td>${money(d.value)}</td>
         <td class="muted">${d.updated_at ? new Date(d.updated_at).toLocaleDateString() : '—'}</td>
       </tr>`).join('');
+    }
+    async function addDeal(e){
+      e.preventDefault();
+      const contact = document.getElementById('dContact').value.trim();
+      if (!contact) return;
+      const payload = {
+        contact,
+        business: document.getElementById('dBiz').value.trim() || null,
+        service: document.getElementById('dService').value.trim() || null,
+        value: parseInt(document.getElementById('dValue').value, 10) || 0,
+        stage: document.getElementById('dStage').value,
+      };
+      const { data, error } = await sb.from('deals').insert(payload).select().single();
+      if (error){ alert(error.message); return; }
+      deals.unshift(data);
+      document.getElementById('dealsSrc').textContent = deals.length + ' total';
+      renderDeals();
+      renderStats();
+      document.getElementById('dealForm').reset();
+      document.getElementById('dealForm').classList.remove('open');
     }
 
     async function loadLeads(){
@@ -698,6 +796,77 @@
     let clientRows = [];
     let openClientId = null;
 
+    // Adding a client here is the same underlying action as converting a lead
+    // (sb.auth.signInWithOtp → onboarding.html) — it also drops a row in `leads` (status
+    // 'Invited') purely so onboarding.html's existing lookup-by-email prefill picks up the
+    // name/phone/business we already collected, without duplicating that logic.
+    async function addClientDirect(e){
+      e.preventDefault();
+      const full_name = document.getElementById('acFullName').value.trim();
+      const email = document.getElementById('acEmail').value.trim();
+      const phone = document.getElementById('acPhone').value.trim();
+      const business = document.getElementById('acBusiness').value.trim();
+      if (!full_name || !email) return;
+      const note = document.getElementById('addClientNote');
+      note.textContent = 'Sending invite…';
+      const { data: lead, error: leadErr } = await sb.from('leads')
+        .insert({ full_name, email, phone: phone || null, business: business || null, status: 'Invited' })
+        .select().single();
+      if (leadErr){ note.textContent = '⚠ ' + leadErr.message; return; }
+      const { error: otpErr } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/onboarding.html' } });
+      if (otpErr){ note.textContent = '⚠ ' + otpErr.message; return; }
+      leads.unshift(lead);
+      renderLeads();
+      renderStats();
+      note.textContent = 'Invite sent to ' + email + ' ✓';
+      document.getElementById('addClientForm').reset();
+    }
+
+    // ── TEAM — reps can't self-elevate (RLS blocks anyone from changing someone else's
+    // profiles.role from the browser), so inviting one goes through api/invite-rep.js, which
+    // uses the service_role key server-side to create the account and set role='rep' in one step.
+    let teamProfiles = [];
+    async function loadTeam(){
+      const { data, error } = await sb.from('profiles').select('user_id, role, full_name, business_name').in('role', ['rep','admin']).order('role');
+      if (error) return;
+      teamProfiles = data || [];
+      renderTeam();
+    }
+    function renderTeam(){
+      document.getElementById('teamSrc').textContent = teamProfiles.length + ' total';
+      const body = document.getElementById('teamBody');
+      if (!teamProfiles.length){ body.innerHTML = '<tr><td colspan="3" class="empty">No team members yet.</td></tr>'; return; }
+      body.innerHTML = teamProfiles.map(p => `<tr>
+        <td><b>${esc(p.full_name || 'Unnamed')}</b></td>
+        <td><span class="pill ${p.role === 'admin' ? 'ok' : 'new'}">${esc(p.role)}</span></td>
+        <td>${esc(p.business_name || '—')}</td>
+      </tr>`).join('');
+    }
+    async function inviteRep(e){
+      e.preventDefault();
+      const full_name = document.getElementById('repName').value.trim();
+      const email = document.getElementById('repEmail').value.trim();
+      if (!email) return;
+      const note = document.getElementById('repInviteNote');
+      note.textContent = 'Sending invite…';
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        const token = sessionData.session && sessionData.session.access_token;
+        const r = await fetch('/api/invite-rep', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ email, full_name: full_name || undefined }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Could not send invite.');
+        note.textContent = 'Invite sent to ' + email + ' ✓';
+        document.getElementById('repInviteForm').reset();
+        loadTeam();
+      } catch (err) {
+        note.textContent = '⚠ ' + err.message;
+      }
+    }
+
     async function loadClients(){
       const body = document.getElementById('clientsBody');
       const { data: rows, error } = await sb.from('project_setup').select('*').order('updated_at', { ascending:false });
@@ -794,7 +963,10 @@
       panel.innerHTML = `
         <div class="panel-h">
           <div class="panel-t">${esc(p.full_name || 'Client')} — full onboarding submission</div>
-          <button class="btn btn-sm" onclick="document.getElementById('clientDetail').classList.add('hidden')">Close</button>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <button class="btn btn-sm" onclick="impersonateClient('${r.client_id}')">Sign in as this client →</button>
+            <button class="btn btn-sm" onclick="document.getElementById('clientDetail').classList.add('hidden')">Close</button>
+          </div>
         </div>
         <div class="cd-field" style="max-width:340px;margin-bottom:1rem;">
           <label>Portal access override</label>
@@ -1011,6 +1183,32 @@
       renderMessagesList();
     }
 
+    // ── IMPERSONATION — "Sign in as this client" opens their portal in this same tab, having
+    // first stashed the admin's own session tokens so "Exit to Admin" (shown as a banner in
+    // portal.html while impersonating) can restore them without a fresh login.
+    async function impersonateClient(clientId){
+      if (!clientId) return;
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        const adminSession = sessionData.session;
+        const token = adminSession && adminSession.access_token;
+        const r = await fetch('/api/impersonate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ client_id: clientId }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Could not sign in as this client.');
+        sessionStorage.setItem('jb-admin-return-session', JSON.stringify({
+          access_token: adminSession.access_token,
+          refresh_token: adminSession.refresh_token,
+        }));
+        window.location.href = data.url;
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
     // ── PROJECT PIPELINE — a list of every client project; clicking one opens its full
     // timeline below, styled the same way as the client portal's own Project Timeline so
     // staff see exactly what the client sees, with an editable form nested under every stage.
@@ -1183,15 +1381,58 @@
       if (openDetailProjectId) openProjectDetail(openDetailProjectId);
     }
 
-    function renderStats(){
-      const wonTotal = deals.filter(d => d.stage === 'Won').reduce((s,d) => s + (Number(d.value)||0), 0);
-      const active = deals.filter(d => d.stage !== 'Won' && d.stage !== 'Lost').length;
-      const newLeads = leads.filter(l => l.status === 'New').length;
-      document.getElementById('statRevenue').textContent = money(wonTotal);
-      document.getElementById('statActive').textContent = active;
-      document.getElementById('statLeads').textContent = newLeads;
-      document.getElementById('statConsults').textContent = calBookings.length || '0';
+    // "Active Projects" is the real client project pipeline (business_profile_setup →
+    // launch), not the sales `deals` table — those are two different things ("Active Deals"
+    // covers the sales side). A project counts as active until its launch stage is
+    // done/approved.
+    function isProjectActive(projectId){
+      const stages = stagesByProject[projectId] || [];
+      const launchStage = stages.find(s => s.stage_key === 'launch');
+      return !(launchStage && STAGE_DONE.includes(launchStage.status));
     }
+
+    let statRange = '30d';
+    function rangeStartDate(){
+      const now = new Date();
+      if (statRange === '7d') return new Date(now.getTime() - 7 * 86400000);
+      if (statRange === '30d') return new Date(now.getTime() - 30 * 86400000);
+      if (statRange === '3m') return new Date(now.getTime() - 90 * 86400000);
+      if (statRange === 'ytd') return new Date(now.getFullYear(), 0, 1);
+      return new Date(0);
+    }
+    function setStatRange(r){
+      statRange = r;
+      document.querySelectorAll('.range-btn').forEach(b => b.classList.toggle('active', b.dataset.range === r));
+      renderStats();
+    }
+
+    function renderStats(){
+      // Snapshot — current state, not affected by the period switcher.
+      const wonTotalAllTime = deals.filter(d => d.stage === 'Won').reduce((s,d) => s + (Number(d.value)||0), 0);
+      const activeProjects = pipelineProjects.filter(p => isProjectActive(p.id)).length;
+      const activeDeals = deals.filter(d => d.stage !== 'Won' && d.stage !== 'Lost').length;
+      document.getElementById('statRevenue').textContent = money(wonTotalAllTime);
+      document.getElementById('statActive').textContent = activeProjects;
+      document.getElementById('statDeals').textContent = activeDeals;
+      document.getElementById('statConsults').textContent = calBookings.length || '0';
+
+      // Period — everything below respects the 7D/30D/3M/YTD switcher.
+      const start = rangeStartDate();
+      const inRange = (ts) => !!ts && new Date(ts) >= start;
+      const newLeads = leads.filter(l => inRange(l.created_at)).length;
+      const wonInRange = deals.filter(d => d.stage === 'Won' && inRange(d.updated_at));
+      const revenueWon = wonInRange.reduce((s,d) => s + (Number(d.value)||0), 0);
+      const onboarded = clientRows.filter(r => r.submitted && inRange(r.submitted_at)).length;
+      document.getElementById('statNewLeads').textContent = newLeads;
+      document.getElementById('statRevenueWon').textContent = money(revenueWon);
+      document.getElementById('statDealsWon').textContent = wonInRange.length;
+      document.getElementById('statOnboarded').textContent = onboarded;
+    }
+
+    // If this page is restored from the back/forward cache (e.g. hitting Back right after
+    // signing out), force a real reload so init() re-checks the session from scratch instead
+    // of showing whatever was still rendered on screen at the moment of navigation.
+    window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
 
     init();
   </script>
