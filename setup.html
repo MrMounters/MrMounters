@@ -242,18 +242,29 @@
       session = data.session;
       if (!session){ goLogin(); return; }
 
-      const { data: proj } = await sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle();
+      const { data: proj, error: projErr } = await sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle();
+      if (projErr) console.error('projects load error', projErr);
       project = proj;
 
-      const { data: existing } = await sb.from('project_setup').select('*').eq('client_id', session.user.id).maybeSingle();
+      const { data: existing, error: existingErr } = await sb.from('project_setup').select('*').eq('client_id', session.user.id).maybeSingle();
+      if (existingErr){
+        document.getElementById('loading').textContent = '// error loading your setup: ' + existingErr.message;
+        console.error('project_setup load error', existingErr);
+        return;
+      }
       if (existing){
         setupRow = existing;
         formData = existing.data || {};
         curStep = Math.min(Math.max((existing.current_step || 1) - 1, 0), STEPS.length - 1);
       } else {
-        const { data: created } = await sb.from('project_setup').insert({
+        const { data: created, error: createErr } = await sb.from('project_setup').insert({
           client_id: session.user.id, project_id: project ? project.id : null, data: {}, current_step: 1
         }).select().single();
+        if (createErr || !created){
+          document.getElementById('loading').textContent = '// error starting your setup: ' + (createErr ? createErr.message : 'unknown error');
+          console.error('project_setup insert error', createErr);
+          return;
+        }
         setupRow = created;
       }
 
@@ -390,15 +401,23 @@
     }
 
     async function persist(){
-      const { data } = await sb.from('project_setup').update({ data: formData, current_step: curStep + 1 }).eq('id', setupRow.id).select().single();
+      if (!setupRow || !setupRow.id) throw new Error('Your setup session didn\'t load correctly — refresh the page and try again.');
+      const { data, error } = await sb.from('project_setup').update({ data: formData, current_step: curStep + 1 }).eq('id', setupRow.id).select().single();
+      if (error) throw new Error(error.message);
       if (data) setupRow = data;
     }
 
     async function saveStep(advance){
       collectCurrentStep();
       const note = document.getElementById('saveNote');
-      if (note) note.textContent = 'Saving…';
-      await persist();
+      if (note){ note.textContent = 'Saving…'; note.style.color = ''; }
+      try {
+        await persist();
+      } catch (e) {
+        console.error('save error', e);
+        if (note){ note.textContent = '⚠ ' + e.message; note.style.color = 'var(--red)'; }
+        return;
+      }
       if (note) note.textContent = 'Saved ✓';
       if (advance && curStep < STEPS.length - 1){ curStep++; renderSidebar(); renderStep(); window.scrollTo({top:0,behavior:'smooth'}); }
       else if (!advance){ window.location.href = 'portal.html'; }
@@ -410,13 +429,16 @@
       if (!files.length) return;
       formData[stepKey] = formData[stepKey] || {};
       formData[stepKey][fieldKey] = formData[stepKey][fieldKey] || [];
+      const errors = [];
       for (const file of files){
         const path = session.user.id + '/' + stepKey + '/' + fieldKey + '/' + Date.now() + '-' + file.name;
         const { error } = await sb.storage.from('client-assets').upload(path, file, { upsert:true });
         if (!error) formData[stepKey][fieldKey].push({ name:file.name, path });
+        else errors.push(file.name + ': ' + error.message);
       }
-      await persist();
+      try { await persist(); } catch (e) { errors.push(e.message); }
       renderStep();
+      if (errors.length) alert('Some files didn\'t upload:\n' + errors.join('\n'));
     }
     async function removeFile(stepKey, fieldKey, idx){
       const entry = formData[stepKey][fieldKey][idx];
@@ -427,25 +449,37 @@
     }
 
     async function submitSetup(){
-      await sb.from('project_setup').update({ data: formData, submitted: true, submitted_at: new Date().toISOString() }).eq('id', setupRow.id);
+      const note = document.getElementById('saveNote');
+      if (note){ note.textContent = 'Submitting…'; note.style.color = ''; }
+      try {
+        if (!setupRow || !setupRow.id) throw new Error('Your setup session didn\'t load correctly — refresh the page and try again.');
+        let { error } = await sb.from('project_setup').update({ data: formData, submitted: true, submitted_at: new Date().toISOString() }).eq('id', setupRow.id);
+        if (error) throw new Error(error.message);
 
-      // A staff-created project row isn't guaranteed to exist yet — create one instead of
-      // silently skipping, so the dashboard always has real project data once setup is done.
-      if (!project){
-        const businessName = (formData.business && formData.business.business_name) || null;
-        const { data: created } = await sb.from('projects').insert({
-          client_id: session.user.id,
-          name: businessName ? businessName + ' — Website' : 'Website Redesign',
-        }).select().single();
-        project = created;
-      }
-      if (project){
-        const timeline = (project.timeline || []).map(t => {
-          if (t.label === 'Complete Setup') return { label:t.label, done:true };
-          if (t.label === 'Homepage Design') return { label:t.label, done:false, current:true };
-          return { label:t.label, done:t.done };
-        });
-        await sb.from('projects').update({ status:'In Progress', timeline, setup_complete:true }).eq('id', project.id);
+        // A staff-created project row isn't guaranteed to exist yet — create one instead of
+        // silently skipping, so the dashboard always has real project data once setup is done.
+        if (!project){
+          const businessName = (formData.business && formData.business.business_name) || null;
+          const { data: created, error: createErr } = await sb.from('projects').insert({
+            client_id: session.user.id,
+            name: businessName ? businessName + ' — Website' : 'Website Redesign',
+          }).select().single();
+          if (createErr) throw new Error(createErr.message);
+          project = created;
+        }
+        if (project){
+          const timeline = (project.timeline || []).map(t => {
+            if (t.label === 'Complete Setup') return { label:t.label, done:true };
+            if (t.label === 'Homepage Design') return { label:t.label, done:false, current:true };
+            return { label:t.label, done:t.done };
+          });
+          const { error: updErr } = await sb.from('projects').update({ status:'In Progress', timeline, setup_complete:true }).eq('id', project.id);
+          if (updErr) throw new Error(updErr.message);
+        }
+      } catch (e) {
+        console.error('submit error', e);
+        if (note){ note.textContent = '⚠ ' + e.message; note.style.color = 'var(--red)'; }
+        return;
       }
       window.location.href = 'portal.html';
     }
