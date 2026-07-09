@@ -495,8 +495,8 @@
           project = created;
           // A brand-new project just seeded its own project_stages via the DB trigger, but
           // this wizard's project_setup row was created before the project existed — link it
-          // now so portal.html's per-project submitted check (and the complete_setup stage
-          // update right below) can find it.
+          // now so portal.html's per-project submitted check (and the business_profile_setup
+          // stage update right below) can find it.
           await sb.from('project_setup').update({ project_id: project.id }).eq('id', setupRow.id);
         }
         if (project){
@@ -506,7 +506,7 @@
           // real source of truth for the dashboard timeline now — mark this one done.
           const { error: stageErr } = await sb.from('project_stages')
             .update({ status:'done', completed_at: new Date().toISOString() })
-            .eq('project_id', project.id).eq('stage_key', 'complete_setup');
+            .eq('project_id', project.id).eq('stage_key', 'business_profile_setup');
           if (stageErr) throw new Error(stageErr.message);
         }
       } catch (e) {

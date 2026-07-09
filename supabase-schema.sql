@@ -422,14 +422,17 @@ create policy "staff manage all client assets"
 -- that jsonb column stays for backward compatibility but the app no longer reads it.
 --
 -- Per-stage interactivity (built into portal.html / admin.html, not enforced by SQL):
---   discovery_call   — admin marks done once the Cal.com consult has happened
+--   business_profile_setup — client fills out the 12-step wizard (setup.html). This is the
+--                       ONLY place in the client portal that links to setup.html — every
+--                       other "go finish your setup" shortcut was removed so there's a
+--                       single, unambiguous entry point. Mirrors project_setup.submitted,
+--                       marked done automatically on wizard submit.
+--   discovery_call   — client books via the Cal.com link shown on this stage; admin marks
+--                       it done once the consult has actually happened
 --   contract_signed  — client types their name to sign (data.signed_name/signed_at)
 --   deposit_paid     — client pays via Stripe; ONLY the webhook (service_role, bypasses
 --                       RLS) marks this done — client-side code can create a checkout
 --                       session but can never mark payment as complete itself
---   complete_setup   — client fills out the 12-step wizard (setup.html), linked directly
---                       from this stage's action button; mirrors project_setup.submitted,
---                       marked done automatically on wizard submit
 --   in_progress      — we're actively building the site; admin posts progress via
 --                       client_note, no client action
 --   approval         — admin uploads a preview (data.image_path), client approves or
@@ -445,7 +448,7 @@ create table if not exists public.project_stages (
   id            uuid primary key default gen_random_uuid(),
   project_id    uuid not null references public.projects(id) on delete cascade,
   client_id     uuid not null references auth.users(id) on delete cascade,
-  stage_key     text not null,   -- discovery_call | contract_signed | deposit_paid | complete_setup | in_progress | approval | launch
+  stage_key     text not null,   -- business_profile_setup | discovery_call | contract_signed | deposit_paid | in_progress | approval | launch
   label         text not null,
   stage_order   int not null,
   status        text not null default 'pending' check (status in ('pending','in_progress','needs_review','revision_requested','approved','done')),
@@ -489,10 +492,10 @@ create or replace function public.seed_project_stages()
 returns trigger language plpgsql security definer set search_path = public as $$
 declare
   stages jsonb := '[
+    {"key":"business_profile_setup","label":"Business Profile Setup"},
     {"key":"discovery_call","label":"Discovery Call"},
     {"key":"contract_signed","label":"Contract"},
     {"key":"deposit_paid","label":"Deposit"},
-    {"key":"complete_setup","label":"Complete Setup"},
     {"key":"in_progress","label":"In Progress"},
     {"key":"approval","label":"Approval"},
     {"key":"launch","label":"Launch & Deploy"}
@@ -517,8 +520,8 @@ insert into public.project_stages (project_id, client_id, stage_key, label, stag
 select p.id, p.client_id, s.key, s.label, s.ord
 from public.projects p
 cross join (values
-  ('discovery_call','Discovery Call',0), ('contract_signed','Contract',1),
-  ('deposit_paid','Deposit',2), ('complete_setup','Complete Setup',3),
+  ('business_profile_setup','Business Profile Setup',0), ('discovery_call','Discovery Call',1),
+  ('contract_signed','Contract',2), ('deposit_paid','Deposit',3),
   ('in_progress','In Progress',4), ('approval','Approval',5),
   ('launch','Launch & Deploy',6)
 ) as s(key, label, ord)
@@ -532,3 +535,16 @@ update public.project_stages set stage_key = 'approval', label = 'Approval', sta
 update public.project_stages set label = 'Contract' where stage_key = 'contract_signed' and label = 'Contract Signed';
 update public.project_stages set label = 'Deposit' where stage_key = 'deposit_paid' and label = 'Deposit Paid';
 update public.project_stages set label = 'Launch & Deploy' where stage_key = 'launch' and label = 'Launch';
+
+-- Migration: Business Profile Setup (the 12-step wizard) moved from position 4 to position 1
+-- — it's now the very first thing a client does, before their discovery call is even
+-- scheduled. Re-key/relabel any rows still on the old name, then fix stage_order for every
+-- stage in the pipeline to match the new sequence (idempotent — a second run is a no-op).
+update public.project_stages set stage_key = 'business_profile_setup', label = 'Business Profile Setup' where stage_key = 'complete_setup';
+update public.project_stages set stage_order = 0 where stage_key = 'business_profile_setup';
+update public.project_stages set stage_order = 1 where stage_key = 'discovery_call';
+update public.project_stages set stage_order = 2 where stage_key = 'contract_signed';
+update public.project_stages set stage_order = 3 where stage_key = 'deposit_paid';
+update public.project_stages set stage_order = 4 where stage_key = 'in_progress';
+update public.project_stages set stage_order = 5 where stage_key = 'approval';
+update public.project_stages set stage_order = 6 where stage_key = 'launch';

@@ -78,8 +78,6 @@
   .setup-banner{ background:rgba(245,180,60,0.08); border:1px solid rgba(245,180,60,0.3); border-radius:6px;
     padding:0.85rem 1rem; margin-bottom:1.2rem; font-size:0.85rem; color:var(--white); display:flex;
     align-items:center; gap:0.7rem; flex-wrap:wrap; }
-  .setup-banner a{ margin-left:auto; color:var(--amber); font-weight:700; font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; text-decoration:none; white-space:nowrap; }
-  .setup-banner a:hover{ text-decoration:underline; }
 
   /* Content */
   .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 6rem; }
@@ -328,7 +326,6 @@
     <section class="sec active" id="sec-overview">
       <div class="setup-banner hidden" id="setupBanner">
         <span id="setupBannerMsg">⚠️ Your portal is limited until launch.</span>
-        <a href="setup.html" id="setupBannerLink" class="hidden">Finish Setup →</a>
       </div>
       <div class="proj-card hidden" id="projCard">
         <div class="proj-top">
@@ -852,6 +849,8 @@
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    // Fill in your real Cal.com booking link (Cal.com → Event Types → copy the public link) — same one admin.html uses.
+    const CALCOM_BOOKING_URL = 'https://cal.com/john-bert/15min';
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
     let sb = null;
@@ -862,8 +861,8 @@
     // the project reaches Launch & Deploy — or it's the demo, which always shows the full
     // unlocked portal since it's meant to showcase the whole product. `setupSubmitted` is a
     // separate, earlier signal (has the onboarding wizard been submitted) used only to drive
-    // the Complete Setup stage's CTA and the persistent "Start Setup" button — it does NOT by
-    // itself unlock the rest of the portal anymore.
+    // the Business Profile Setup stage's CTA and the persistent "Start Setup" button — it
+    // does NOT by itself unlock the rest of the portal anymore.
     let setupSubmitted = false;
     let portalUnlocked = false;
     // "profile" is deliberately not lockable — editing your own contact info isn't gated by
@@ -879,15 +878,12 @@
         if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !portalUnlocked);
       });
 
+      // Purely informational now — Business Profile Setup's own inline action button in the
+      // Project Timeline is the only link into setup.html, so this banner doesn't duplicate it.
       const bannerMsg = document.getElementById('setupBannerMsg');
-      const bannerLink = document.getElementById('setupBannerLink');
-      if (!setupSubmitted){
-        bannerMsg.textContent = '⚠️ Finish your project setup to get things moving.';
-        bannerLink.classList.remove('hidden');
-      } else {
-        bannerMsg.textContent = '⚠️ Your portal is limited until launch.';
-        bannerLink.classList.add('hidden');
-      }
+      bannerMsg.textContent = !setupSubmitted
+        ? '⚠️ Finish your project setup to get things moving.'
+        : '⚠️ Your portal is limited until launch.';
     }
 
     function goLogin(){ window.location.href = 'login.html'; }
@@ -1044,10 +1040,10 @@
         // unlocked portal to prospects, not the locked pre-launch state.
         project = { id: 'demo', name: 'Website Redesign', status: 'Project Setup', estimated_launch: '2026-07-28' };
         stages = [
-          { id:'d1', stage_key:'discovery_call', label:'Discovery Call', status:'done', data:{} },
-          { id:'d2', stage_key:'contract_signed', label:'Contract', status:'done', data:{} },
-          { id:'d3', stage_key:'deposit_paid', label:'Deposit', status:'done', data:{} },
-          { id:'d4', stage_key:'complete_setup', label:'Complete Setup', status:'done', data:{} },
+          { id:'d1', stage_key:'business_profile_setup', label:'Business Profile Setup', status:'done', data:{} },
+          { id:'d2', stage_key:'discovery_call', label:'Discovery Call', status:'done', data:{} },
+          { id:'d3', stage_key:'contract_signed', label:'Contract', status:'done', data:{} },
+          { id:'d4', stage_key:'deposit_paid', label:'Deposit', status:'done', data:{} },
           { id:'d5', stage_key:'in_progress', label:'In Progress', status:'done', data:{} },
           { id:'d6', stage_key:'approval', label:'Approval', status:'needs_review', data:{}, client_note:'Take a look and let us know what you think!' },
           { id:'d7', stage_key:'launch', label:'Launch & Deploy', status:'pending', data:{} },
@@ -1101,8 +1097,8 @@
 
       // The standalone "Start Setup" button (below) is only the entry point for a client
       // with no project row at all yet (see loadProject()'s `if (!project)` branch) — once
-      // a project/timeline exists, the Complete Setup stage's own inline action button
-      // above is the one live CTA, so keep this one hidden to avoid showing both at once.
+      // a project/timeline exists, the Business Profile Setup stage's own inline action
+      // button above is the one live CTA, so keep this one hidden to avoid showing both.
       document.getElementById('startSetupBtn').classList.add('hidden');
     }
 
@@ -1118,8 +1114,12 @@
         if (!amount) return `<div class="stage-action muted">Waiting on your project admin to set the deposit amount.</div>`;
         return `<div class="stage-action"><button class="btn btn-p" onclick="payDeposit('${s.id}')">Pay $${Number(amount).toLocaleString()} Deposit →</button></div>`;
       }
-      if (s.stage_key === 'complete_setup'){
+      if (s.stage_key === 'business_profile_setup'){
         return `<div class="stage-action"><a class="btn btn-p" href="setup.html" style="text-decoration:none;">${setupSubmitted ? 'Continue Setup Wizard →' : 'Start Setup Wizard →'}</a></div>`;
+      }
+      if (s.stage_key === 'discovery_call'){
+        const url = CALCOM_BOOKING_URL + (currentEmail ? '?email=' + encodeURIComponent(currentEmail) : '');
+        return `<div class="stage-action"><a class="btn btn-p" href="${url}" target="_blank" rel="noopener" style="text-decoration:none;">Schedule Discovery Call →</a></div>`;
       }
       if (s.stage_key === 'in_progress'){
         return s.client_note ? '' : `<div class="stage-action muted">We're actively building your site — check back for updates.</div>`;
@@ -1212,10 +1212,9 @@
     const lazyLoaded = {};
     function go(s){
       if (!portalUnlocked && LOCKABLE_SECTIONS.includes(s)){
-        closeMenu();
-        if (!setupSubmitted){ window.location.href = 'setup.html'; return; }
-        // Setup's already done — nothing to send them to, just bounce back to the timeline
-        // so they can see how close the project is to launch.
+        // Never forward into setup.html from here — the Business Profile Setup stage's own
+        // inline action button is the only link into the wizard. Just bounce back to the
+        // timeline so they can see what's next / how close the project is to launch.
         s = 'overview';
       }
       document.querySelectorAll('.m-item, .bn-item').forEach(n => n.classList.toggle('active', n.dataset.s === s));
