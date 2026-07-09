@@ -156,7 +156,19 @@
   <script>
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
-    let sb = null, session = null, project = null, setupRow = null;
+    let sb = null, session = null, project = null, setupRow = null, activeCompanyId = null;
+
+    // Shared with portal.html — resolves which company this wizard is for. portal.html
+    // normally sets this in localStorage before the client ever clicks "Start Setup", but
+    // it's resolved fresh here too in case setup.html is opened directly.
+    async function resolveActiveCompanyId(){
+      let id = localStorage.getItem('jb-active-company');
+      const { data: companies } = await sb.from('companies').select('id').eq('client_id', session.user.id).order('created_at');
+      if (id && (companies || []).some(c => c.id === id)) return id;
+      if (companies && companies.length) return companies[0].id;
+      const { data: created } = await sb.from('companies').insert({ client_id: session.user.id, name: 'My Company' }).select().single();
+      return created ? created.id : null;
+    }
     let curStep = 0; // index into STEPS
 
     function esc(s){ return String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
@@ -242,11 +254,25 @@
       session = data.session;
       if (!session){ goLogin(); return; }
 
-      const { data: proj, error: projErr } = await sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle();
+      activeCompanyId = await resolveActiveCompanyId();
+      if (!activeCompanyId){
+        document.getElementById('loading').textContent = '// error resolving your company — refresh and try again.';
+        return;
+      }
+      localStorage.setItem('jb-active-company', activeCompanyId);
+
+      const { data: proj, error: projErr } = await sb.from('projects').select('*')
+        .eq('client_id', session.user.id).eq('company_id', activeCompanyId)
+        .order('created_at', { ascending:false }).limit(1).maybeSingle();
       if (projErr) console.error('projects load error', projErr);
       project = proj;
 
-      const { data: existing, error: existingErr } = await sb.from('project_setup').select('*').eq('client_id', session.user.id).maybeSingle();
+      // project_setup is scoped per PROJECT now, not per client — each company gets its own
+      // wizard submission. If this company doesn't have a project yet either, look for an
+      // orphaned setup row with no project_id (very first-ever run) before creating fresh.
+      const { data: existing, error: existingErr } = project
+        ? await sb.from('project_setup').select('*').eq('project_id', project.id).maybeSingle()
+        : { data: null, error: null };
       if (existingErr){
         document.getElementById('loading').textContent = '// error loading your setup: ' + existingErr.message;
         console.error('project_setup load error', existingErr);
@@ -462,10 +488,16 @@
           const businessName = (formData.business && formData.business.business_name) || null;
           const { data: created, error: createErr } = await sb.from('projects').insert({
             client_id: session.user.id,
+            company_id: activeCompanyId,
             name: businessName ? businessName + ' — Website' : 'Website Redesign',
           }).select().single();
           if (createErr) throw new Error(createErr.message);
           project = created;
+          // A brand-new project just seeded its own project_stages via the DB trigger, but
+          // this wizard's project_setup row was created before the project existed — link it
+          // now so portal.html's per-project submitted check (and the complete_setup stage
+          // update right below) can find it.
+          await sb.from('project_setup').update({ project_id: project.id }).eq('id', setupRow.id);
         }
         if (project){
           const { error: updErr } = await sb.from('projects').update({ status:'In Progress' }).eq('id', project.id);

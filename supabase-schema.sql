@@ -80,6 +80,41 @@ alter table public.profiles add column if not exists full_name text;
 alter table public.profiles add column if not exists phone text;
 alter table public.profiles add column if not exists terms_accepted_at timestamptz;
 
+-- ============================================================
+-- COMPANIES — a client can run more than one business under one login, each with its own
+-- fully separate project (switched via the dropdown under their business name in
+-- portal.html's menu). profiles.business_name above becomes just the FIRST company's name,
+-- kept for backward compatibility; companies is the real source of truth going forward.
+-- ============================================================
+create table if not exists public.companies (
+  id          uuid primary key default gen_random_uuid(),
+  client_id   uuid not null references auth.users(id) on delete cascade,
+  name        text not null,
+  created_at  timestamptz default now()
+);
+
+alter table public.companies enable row level security;
+
+drop policy if exists "clients manage their own companies" on public.companies;
+create policy "clients manage their own companies"
+  on public.companies for all
+  using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+drop policy if exists "staff manage all companies" on public.companies;
+create policy "staff manage all companies"
+  on public.companies for all
+  using (public.current_user_role() in ('rep','admin'))
+  with check (public.current_user_role() in ('rep','admin'));
+
+-- One-time backfill: give every existing client a company from their profile's business_name,
+-- so pre-existing accounts aren't left companyless when this feature ships.
+insert into public.companies (client_id, name)
+select p.user_id, coalesce(nullif(p.business_name, ''), 'My Company')
+from public.profiles p
+where p.role = 'client'
+  and not exists (select 1 from public.companies c where c.client_id = p.user_id);
+
 -- ---------- DEALS (sales rep pipeline) ----------
 create table if not exists public.deals (
   id          uuid primary key default gen_random_uuid(),
@@ -251,6 +286,7 @@ create policy "users can read their own matching lead"
 create table if not exists public.projects (
   id                uuid primary key default gen_random_uuid(),
   client_id         uuid not null references auth.users(id) on delete cascade,
+  company_id        uuid references public.companies(id) on delete set null,
   name              text not null default 'Website Redesign',
   status            text not null default 'Project Setup',
   -- Each item: {"label": "...", "done": bool, "current": bool (optional)}
@@ -268,6 +304,13 @@ create table if not exists public.projects (
   created_at        timestamptz default now(),
   updated_at        timestamptz default now()
 );
+
+-- Existing installs: add the column and backfill every project onto its client's
+-- (single, just-backfilled-above) company, so nothing is left unlinked.
+alter table public.projects add column if not exists company_id uuid references public.companies(id) on delete set null;
+update public.projects pr set company_id = c.id
+from public.companies c
+where pr.company_id is null and pr.client_id = c.client_id;
 
 alter table public.projects enable row level security;
 
@@ -315,9 +358,14 @@ create table if not exists public.project_setup (
   current_step  int not null default 1,
   submitted     boolean not null default false,
   submitted_at  timestamptz,
+  -- Manual admin override of portal-lock state, independent of `submitted`. NULL = automatic
+  -- (locked until submitted), true = force-unlocked, false = force-locked. Set from admin.html's
+  -- Clients panel; read by portal.html's loadProject() alongside the normal `submitted` check.
+  admin_lock_override boolean default null,
   created_at    timestamptz default now(),
   updated_at    timestamptz default now()
 );
+alter table public.project_setup add column if not exists admin_lock_override boolean default null;
 
 alter table public.project_setup enable row level security;
 
@@ -332,6 +380,14 @@ drop policy if exists "staff view all project setup" on public.project_setup;
 create policy "staff view all project setup"
   on public.project_setup for select
   using (public.current_user_role() in ('rep','admin'));
+
+-- Staff can edit a client's submitted answers and flip the manual lock override
+-- (admin.html's Clients detail panel).
+drop policy if exists "staff update all project setup" on public.project_setup;
+create policy "staff update all project setup"
+  on public.project_setup for update
+  using (public.current_user_role() in ('rep','admin'))
+  with check (public.current_user_role() in ('rep','admin'));
 
 drop trigger if exists project_setup_touch on public.project_setup;
 create trigger project_setup_touch before update on public.project_setup

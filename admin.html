@@ -48,6 +48,8 @@
   .side-signout:hover{ color:var(--red); }
 
   .main{ flex:1; min-width:0; padding:1.8rem 2rem 3rem; }
+  .page{ display:none; }
+  .page.active{ display:block; }
   .topbar{ display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:1.6rem; flex-wrap:wrap; }
   .h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
   .sub{ color:var(--warm-muted); font-size:0.88rem; }
@@ -112,6 +114,19 @@
   .row-actions{ display:flex; gap:0.4rem; flex-wrap:wrap; }
   .empty{ color:var(--warm-muted); font-size:0.84rem; padding:1.2rem 0; text-align:center; }
 
+  /* Client detail — full onboarding wizard data, editable */
+  .cd-section{ border-top:1px solid var(--card-border); padding-top:1rem; margin-top:1rem; }
+  .cd-section:first-child{ border-top:none; padding-top:0; margin-top:0; }
+  .cd-section-t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.92rem; margin-bottom:0.8rem; }
+  .cd-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; }
+  .cd-full{ grid-column:1 / -1; }
+  .cd-field label{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.3rem; display:block; }
+  .cd-access-row{ display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem; flex-wrap:wrap; }
+  .cd-access-row .cd-access-name{ min-width:170px; font-size:0.82rem; }
+  .cd-files{ display:flex; flex-wrap:wrap; gap:0.4rem; }
+  .cd-file-chip{ font-family:var(--mono); font-size:0.68rem; background:var(--dark4); border:1px solid var(--card-border); border-radius:4px; padding:0.3rem 0.55rem; color:var(--warm-accent); }
+  @media (max-width:700px){ .cd-grid{ grid-template-columns:1fr; } }
+
   @media (max-width: 900px){
     .sidebar{ position:fixed; z-index:50; transform:translateX(-100%); transition:transform 0.25s; height:100vh; }
     .sidebar.open{ transform:none; }
@@ -139,16 +154,16 @@
       <div class="side-logo"><img src="meridion-logo.svg" alt="" style="height:1.1rem;">Meridion<span>AI</span></div>
       <div class="side-tag">Admin</div>
       <nav class="side-nav">
-        <a class="side-item active" href="#top">Dashboard</a>
-        <a class="side-item" href="#deals">Deals / Projects</a>
-        <a class="side-item" href="#pipeline">Project Pipeline</a>
-        <a class="side-item" href="#leads">Leads</a>
-        <a class="side-item" href="#calendar">Calendar</a>
+        <button class="side-item active" type="button" data-page="dashboard" onclick="go('dashboard')">Dashboard</button>
+        <button class="side-item" type="button" data-page="deals" onclick="go('deals')">Deals / Projects</button>
+        <button class="side-item" type="button" data-page="pipeline" onclick="go('pipeline')">Project Pipeline</button>
+        <button class="side-item" type="button" data-page="leads" onclick="go('leads')">Leads</button>
+        <button class="side-item" type="button" data-page="calendar" onclick="go('calendar')">Calendar</button>
         <button class="side-item disabled" type="button">Consults <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Tasks <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Messages <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Invoices <span class="side-soon">Soon</span></button>
-        <a class="side-item" href="#clients">Clients</a>
+        <button class="side-item" type="button" data-page="clients" onclick="go('clients')">Clients</button>
         <button class="side-item disabled" type="button">Team <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Reports <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Settings <span class="side-soon">Soon</span></button>
@@ -167,75 +182,89 @@
 
     <main class="main">
       <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
-      <div class="topbar" id="top">
-        <div>
-          <div class="h1" id="welcomeH1">Welcome back 👋</div>
-          <div class="sub">Here's what's happening with your business today.</div>
+
+      <div class="page active" id="page-dashboard">
+        <div class="topbar" id="top">
+          <div>
+            <div class="h1" id="welcomeH1">Welcome back 👋</div>
+            <div class="sub">Here's what's happening with your business today.</div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Total Revenue (won deals)</div><div class="stat-v" id="statRevenue">—</div></div>
+          <div class="stat"><div class="stat-l">Active Projects</div><div class="stat-v" id="statActive">—</div></div>
+          <div class="stat"><div class="stat-l">New Leads</div><div class="stat-v" id="statLeads">—</div></div>
+          <div class="stat"><div class="stat-l">Upcoming Consults</div><div class="stat-v" id="statConsults">—</div></div>
         </div>
       </div>
 
-      <div class="stats">
-        <div class="stat"><div class="stat-l">Total Revenue (won deals)</div><div class="stat-v" id="statRevenue">—</div></div>
-        <div class="stat"><div class="stat-l">Active Projects</div><div class="stat-v" id="statActive">—</div></div>
-        <div class="stat"><div class="stat-l">New Leads</div><div class="stat-v" id="statLeads">—</div></div>
-        <div class="stat"><div class="stat-l">Upcoming Consults</div><div class="stat-v" id="statConsults">—</div></div>
-      </div>
-
-      <div class="panel" id="deals">
-        <div class="panel-h"><div class="panel-t">Active Deals / Projects</div><div class="muted" id="dealsSrc"></div></div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>Client / Business</th><th>Service</th><th>Stage</th><th>Value</th><th>Updated</th></tr></thead>
-            <tbody id="dealsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
-          </table>
+      <div class="page" id="page-deals">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Active Deals / Projects</div><div class="muted" id="dealsSrc"></div></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Client / Business</th><th>Service</th><th>Stage</th><th>Value</th><th>Updated</th></tr></thead>
+              <tbody id="dealsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <div class="panel" id="pipeline">
-        <div class="panel-h"><div class="panel-t">Project Pipeline</div><div class="muted">Drag a project between stages — changes save automatically.</div></div>
-        <div style="overflow-x:auto;">
-          <div class="pipe" id="projectPipe"></div>
-        </div>
-        <div class="panel hidden" id="projectDetail" style="margin-top:1rem;background:var(--dark4);"></div>
-      </div>
-
-      <div class="panel" id="leads">
-        <div class="panel-h">
-          <div class="panel-t">Leads</div>
-          <button class="btn btn-p btn-sm" onclick="document.getElementById('leadForm').classList.toggle('open')">+ Add Lead</button>
-        </div>
-        <form class="lead-form" id="leadForm" onsubmit="addLead(event)">
-          <div><label>Full name</label><input class="inp" id="lFullName" required></div>
-          <div><label>Email</label><input class="inp" type="email" id="lEmail" required></div>
-          <div><label>Phone</label><input class="inp" type="tel" id="lPhone"></div>
-          <div><label>Business</label><input class="inp" id="lBusiness"></div>
-          <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Lead</button></div>
-        </form>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>Name</th><th>Contact</th><th>Business</th><th>Status</th><th>Added</th><th></th></tr></thead>
-            <tbody id="leadsBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
-          </table>
+      <div class="page" id="page-pipeline">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Project Pipeline</div><div class="muted">Drag a project between stages — changes save automatically.</div></div>
+          <div style="overflow-x:auto;">
+            <div class="pipe" id="projectPipe"></div>
+          </div>
+          <div class="panel hidden" id="projectDetail" style="margin-top:1rem;background:var(--dark4);"></div>
         </div>
       </div>
 
-      <div class="panel" id="calendar">
-        <div class="panel-h">
-          <div class="panel-t">Upcoming Consults</div>
-          <a class="btn btn-p btn-sm" id="bookConsultBtn" href="#" target="_blank" rel="noopener">Book a Consult</a>
+      <div class="page" id="page-leads">
+        <div class="panel">
+          <div class="panel-h">
+            <div class="panel-t">Leads</div>
+            <button class="btn btn-p btn-sm" onclick="document.getElementById('leadForm').classList.toggle('open')">+ Add Lead</button>
+          </div>
+          <form class="lead-form" id="leadForm" onsubmit="addLead(event)">
+            <div><label>Full name</label><input class="inp" id="lFullName" required></div>
+            <div><label>Email</label><input class="inp" type="email" id="lEmail" required></div>
+            <div><label>Phone</label><input class="inp" type="tel" id="lPhone"></div>
+            <div><label>Business</label><input class="inp" id="lBusiness"></div>
+            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Lead</button></div>
+          </form>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Name</th><th>Contact</th><th>Business</th><th>Status</th><th>Added</th><th></th></tr></thead>
+              <tbody id="leadsBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+            </table>
+          </div>
         </div>
-        <div class="muted" id="calSrc" style="margin-bottom:0.8rem;"></div>
-        <div id="consultsList"><div class="empty">Loading…</div></div>
       </div>
 
-      <div class="panel" id="clients">
-        <div class="panel-h"><div class="panel-t">Clients — Onboarding Progress</div><div class="muted" id="clientsSrc"></div></div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>Client</th><th>Business</th><th>Onboarding</th><th>Step</th><th>Submitted</th></tr></thead>
-            <tbody id="clientsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
-          </table>
+      <div class="page" id="page-calendar">
+        <div class="panel">
+          <div class="panel-h">
+            <div class="panel-t">Upcoming Consults</div>
+            <a class="btn btn-p btn-sm" id="bookConsultBtn" href="#" target="_blank" rel="noopener">Book a Consult</a>
+          </div>
+          <div class="muted" id="calSrc" style="margin-bottom:0.8rem;"></div>
+          <div id="consultsList"><div class="empty">Loading…</div></div>
         </div>
+      </div>
+
+      <div class="page" id="page-clients">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Clients — Onboarding Progress</div><div class="muted" id="clientsSrc"></div></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Client</th><th>Business</th><th>Onboarding</th><th>Step</th><th>Portal Access</th><th>Submitted</th></tr></thead>
+              <tbody id="clientsBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel hidden" id="clientDetail"></div>
       </div>
     </main>
   </div>
@@ -255,6 +284,13 @@
     function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString() : '—'; }
     function goLogin(){ window.location.href = 'login.html'; }
     function signOut(){ if (sb) sb.auth.signOut(); goLogin(); }
+
+    function go(page){
+      document.querySelectorAll('.page').forEach(el => el.classList.toggle('active', el.id === 'page-' + page));
+      document.querySelectorAll('.side-item[data-page]').forEach(el => el.classList.toggle('active', el.dataset.page === page));
+      document.getElementById('sidebar').classList.remove('open');
+      window.scrollTo(0, 0);
+    }
 
     async function init(){
       if (!(configured && window.supabase)){ goLogin(); return; }
@@ -406,29 +442,223 @@
     }
 
     const SETUP_STEP_COUNT = 12;
+
+    // Mirrors setup.html's STEPS array (labels/field keys only — admin doesn't need the
+    // wizard's icons/hints/nav) so a client's full onboarding submission can be rendered and
+    // edited here with the same field structure it was collected in.
+    const CD_ACCESS_ITEMS = ['Domain Registrar','Hosting Provider','Google Business Profile','Google Analytics','Google Search Console','Meta Business Manager','Social Media Accounts'];
+    const CD_FEATURE_ITEMS = ['Contact Form','Online Booking / Scheduling','E-Commerce / Online Store','Blog','Live Chat','Client Login / Portal','Multi-Language Support','Newsletter Signup','Reviews / Testimonials Display'];
+    const CD_STEPS = [
+      { key:'business', title:'Business Information', fields:[
+          { key:'business_name', label:'Business Name', type:'text' },
+          { key:'contact_name', label:'Contact Name', type:'text' },
+          { key:'email', label:'Email Address', type:'email' },
+          { key:'phone', label:'Phone Number', type:'tel' },
+          { key:'website_url', label:'Website URL', type:'text' },
+          { key:'industry', label:'Industry', type:'select', options:['Restaurant & Hospitality','Healthcare & Wellness','Legal Services','Real Estate','Home Services & Construction','Retail & E-Commerce','Professional Services','Fitness & Wellness','Automotive','Other'] },
+          { key:'business_address', label:'Business Address', type:'text' },
+          { key:'years_in_business', label:'Years in Business', type:'select', options:['Less than 1 year','1–3 years','3–5 years','5–10 years','10+ years'] },
+          { key:'referral_source', label:'How did you hear about us?', type:'select', options:['Google Search','Referral','Social Media','Existing Client','Other'] },
+        ] },
+      { key:'goals', title:'Project Goals', fields:[
+          { key:'hiring_for', label:'What are you hiring us for?', type:'textarea' },
+          { key:'main_objective', label:'Main Objective', type:'select', options:['More Leads / Sales','Better Branding','Higher Conversion Rate','Rebuild / Modernize Existing Site','New Business Launch','Other'] },
+          { key:'top_competitors', label:'Top 3 Competitors', type:'textarea' },
+          { key:'likes_current_site', label:'Likes about current website', type:'textarea' },
+          { key:'dislikes_current_site', label:'Dislikes about current website', type:'textarea' },
+          { key:'admired_websites', label:'Websites they love', type:'textarea' },
+          { key:'dream_outcome', label:'Dream Outcome', type:'textarea' },
+        ] },
+      { key:'branding', title:'Branding', fields:[
+          { key:'has_existing_brand', label:'Existing brand guidelines?', type:'select', options:['Yes — fully established','Somewhat — some assets exist','No — starting fresh'] },
+          { key:'brand_colors', label:'Preferred Brand Colors', type:'text' },
+          { key:'brand_fonts', label:'Preferred Fonts', type:'text' },
+          { key:'brand_voice', label:'Brand Voice', type:'select', options:['Professional & Corporate','Friendly & Approachable','Bold & Modern','Luxury & Premium','Playful & Fun','Other'] },
+          { key:'brand_notes', label:'Other brand notes', type:'textarea' },
+        ] },
+      { key:'assets', title:'Content & Assets', files:[
+          { key:'logo', label:'Logo' }, { key:'brand_guidelines', label:'Brand Guidelines' },
+          { key:'photos', label:'Photos & Images' }, { key:'videos', label:'Videos' },
+        ] },
+      { key:'access', title:'Access Needed', accessItems: CD_ACCESS_ITEMS },
+      { key:'structure', title:'Website Structure', fields:[
+          { key:'pages_needed', label:'Pages needed', type:'textarea' },
+          { key:'services_list', label:'Services/products', type:'textarea' },
+          { key:'structure_notes', label:'Structure/navigation notes', type:'textarea' },
+        ] },
+      { key:'seo', title:'SEO & Locations', fields:[
+          { key:'target_keywords', label:'Target Keywords', type:'textarea' },
+          { key:'service_areas', label:'Locations / Service Areas', type:'textarea' },
+          { key:'seo_competitors', label:'Competitors to outrank', type:'textarea' },
+        ] },
+      { key:'features', title:'Features', checklist: CD_FEATURE_ITEMS, fields:[
+          { key:'other_features', label:'Other features', type:'textarea' },
+        ] },
+      { key:'legal', title:'Legal & Compliance', fields:[
+          { key:'needs_privacy_policy', label:'Privacy Policy', type:'select', options:['Please draft one for me','I already have one','Not sure'] },
+          { key:'needs_terms', label:'Terms of Service', type:'select', options:['Please draft one for me','I already have one','Not sure'] },
+          { key:'compliance_requirements', label:'Compliance needs', type:'textarea' },
+        ] },
+      { key:'timeline', title:'Timeline & Budget', fields:[
+          { key:'desired_launch', label:'Desired Launch Date', type:'date' },
+          { key:'budget_range', label:'Budget Range', type:'select', options:['Under $5,000','$5,000 – $10,000','$10,000 – $25,000','$25,000+','Not sure yet'] },
+          { key:'scheduling_notes', label:'Deadlines/scheduling notes', type:'textarea' },
+        ] },
+      { key:'additional', title:'Additional Info', fields:[
+          { key:'additional_notes', label:'Anything else', type:'textarea' },
+        ] },
+    ];
+
+    let clientRows = [];
+    let openClientId = null;
+
     async function loadClients(){
       const body = document.getElementById('clientsBody');
       const { data: rows, error } = await sb.from('project_setup').select('*').order('updated_at', { ascending:false });
       if (error){ document.getElementById('clientsSrc').textContent = 'Could not load'; return; }
-      if (!rows || !rows.length){ body.innerHTML = '<tr><td colspan="5" class="empty">No clients have started onboarding yet.</td></tr>'; document.getElementById('clientsSrc').textContent = '0 total'; return; }
+      clientRows = rows || [];
+      if (!clientRows.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No clients have started onboarding yet.</td></tr>'; document.getElementById('clientsSrc').textContent = '0 total'; return; }
 
-      const ids = rows.map(r => r.client_id);
+      const ids = clientRows.map(r => r.client_id);
       const { data: profiles } = await sb.from('profiles').select('user_id, full_name, business_name').in('user_id', ids);
       const byId = {};
       (profiles || []).forEach(p => { byId[p.user_id] = p; });
+      clientRows.forEach(r => { r._profile = byId[r.client_id] || {}; });
 
-      document.getElementById('clientsSrc').textContent = rows.length + ' total';
-      body.innerHTML = rows.map(r => {
-        const p = byId[r.client_id] || {};
+      document.getElementById('clientsSrc').textContent = clientRows.length + ' total';
+      renderClientsTable();
+    }
+    function accessLabel(r){
+      if (r.admin_lock_override === true) return '<span class="pill ok">Force unlocked</span>';
+      if (r.admin_lock_override === false) return '<span class="pill lost">Force locked</span>';
+      return r.submitted ? '<span class="pill mut">Auto — unlocked</span>' : '<span class="pill mut">Auto — locked</span>';
+    }
+    function renderClientsTable(){
+      const body = document.getElementById('clientsBody');
+      body.innerHTML = clientRows.map(r => {
+        const p = r._profile || {};
+        const businessName = (r.data && r.data.business && r.data.business.business_name) || p.business_name || '—';
         const statusPill = r.submitted ? '<span class="pill ok">Submitted</span>' : (r.current_step > 1 ? '<span class="pill warn">In Progress</span>' : '<span class="pill mut">Not Started</span>');
-        return `<tr>
+        return `<tr style="cursor:pointer;" onclick="openClientDetail('${r.id}')">
           <td><b>${esc(p.full_name || 'Unnamed client')}</b></td>
-          <td>${esc(p.business_name || '—')}</td>
+          <td>${esc(businessName)}</td>
           <td>${statusPill}</td>
           <td class="muted">${r.current_step || 1} of ${SETUP_STEP_COUNT}</td>
+          <td>${accessLabel(r)}</td>
           <td class="muted">${r.submitted_at ? new Date(r.submitted_at).toLocaleDateString() : '—'}</td>
         </tr>`;
       }).join('');
+    }
+
+    function cdFieldHtml(rowId, stepKey, f, val){
+      const v = val == null ? '' : val;
+      const name = `cd-${rowId}-${stepKey}-${f.key}`;
+      let input;
+      if (f.type === 'textarea') input = `<textarea class="ta" data-cd-field="${stepKey}.${f.key}">${esc(v)}</textarea>`;
+      else if (f.type === 'select') input = `<select class="sel" data-cd-field="${stepKey}.${f.key}"><option value="">—</option>${f.options.map(o => `<option value="${esc(o)}" ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+      else input = `<input class="inp" type="${f.type}" data-cd-field="${stepKey}.${f.key}" value="${esc(v)}">`;
+      return `<div class="cd-field"><label>${esc(f.label)}</label>${input}</div>`;
+    }
+    function cdStepHtml(rowId, s, data){
+      let inner = '';
+      if (s.fields) inner += `<div class="cd-grid">${s.fields.map(f => cdFieldHtml(rowId, s.key, f, data[f.key])).join('')}</div>`;
+      if (s.checklist){
+        const checked = data.checked || [];
+        inner += `<div class="cd-field cd-full" style="margin-top:0.7rem;"><label>Selected features</label>` +
+          s.checklist.map(item => `<label style="display:inline-flex;align-items:center;gap:0.35rem;margin:0 0.9rem 0.5rem 0;font-size:0.82rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--white);"><input type="checkbox" data-cd-check="${s.key}" value="${esc(item)}" ${checked.includes(item)?'checked':''}> ${esc(item)}</label>`).join('') +
+          `</div>`;
+      }
+      if (s.accessItems){
+        const items = data.items || {};
+        inner += s.accessItems.map(name => {
+          const it = items[name] || {};
+          return `<div class="cd-access-row">
+            <label style="display:flex;align-items:center;gap:0.4rem;margin:0;"><input type="checkbox" data-cd-access="${s.key}::${esc(name)}" ${it.shared?'checked':''}> <span class="cd-access-name">${esc(name)}</span></label>
+            <input class="inp" style="flex:1;min-width:160px;" data-cd-access-note="${s.key}::${esc(name)}" placeholder="Notes" value="${esc(it.notes||'')}">
+          </div>`;
+        }).join('');
+      }
+      if (s.files){
+        inner += s.files.map(f => {
+          const uploaded = data[f.key] || [];
+          if (!uploaded.length) return '';
+          return `<div class="cd-field cd-full"><label>${esc(f.label)}</label><div class="cd-files">${uploaded.map(u => `<span class="cd-file-chip">${esc(u.name)}</span>`).join('')}</div></div>`;
+        }).join('') || '<div class="muted">No files uploaded for this step.</div>';
+      }
+      if (!inner) inner = '<div class="muted">Not filled in yet.</div>';
+      return `<div class="cd-section"><div class="cd-section-t">${esc(s.title)}</div>${inner}</div>`;
+    }
+    function openClientDetail(rowId){
+      const r = clientRows.find(x => x.id === rowId);
+      if (!r) return;
+      openClientId = rowId;
+      const p = r._profile || {};
+      const formData = r.data || {};
+      const panel = document.getElementById('clientDetail');
+      panel.classList.remove('hidden');
+      panel.innerHTML = `
+        <div class="panel-h">
+          <div class="panel-t">${esc(p.full_name || 'Client')} — full onboarding submission</div>
+          <button class="btn btn-sm" onclick="document.getElementById('clientDetail').classList.add('hidden')">Close</button>
+        </div>
+        <div class="cd-field" style="max-width:340px;margin-bottom:1rem;">
+          <label>Portal access override</label>
+          <select class="sel" id="cdLockOverride">
+            <option value="">Automatic (unlocks once submitted)</option>
+            <option value="true" ${r.admin_lock_override === true ? 'selected' : ''}>Force unlocked</option>
+            <option value="false" ${r.admin_lock_override === false ? 'selected' : ''}>Force locked</option>
+          </select>
+        </div>
+        ${CD_STEPS.map(s => cdStepHtml(rowId, s, formData[s.key] || {})).join('')}
+        <div style="margin-top:1rem;display:flex;align-items:center;gap:0.8rem;">
+          <button class="btn btn-p" onclick="saveClientDetail('${rowId}')">Save Changes</button>
+          <span class="muted" id="cdSaveNote"></span>
+        </div>`;
+      panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    async function saveClientDetail(rowId){
+      const r = clientRows.find(x => x.id === rowId);
+      if (!r) return;
+      const formData = Object.assign({}, r.data || {});
+      const panel = document.getElementById('clientDetail');
+
+      panel.querySelectorAll('[data-cd-field]').forEach(el => {
+        const [stepKey, fieldKey] = el.dataset.cdField.split('.');
+        formData[stepKey] = formData[stepKey] || {};
+        formData[stepKey][fieldKey] = el.value;
+      });
+      const checklistSteps = new Set(Array.from(panel.querySelectorAll('[data-cd-check]')).map(el => el.dataset.cdCheck));
+      checklistSteps.forEach(stepKey => {
+        formData[stepKey] = formData[stepKey] || {};
+        formData[stepKey].checked = Array.from(panel.querySelectorAll(`[data-cd-check="${stepKey}"]:checked`)).map(el => el.value);
+      });
+      const accessSteps = new Set(Array.from(panel.querySelectorAll('[data-cd-access]')).map(el => el.dataset.cdAccess.split('::')[0]));
+      accessSteps.forEach(stepKey => {
+        formData[stepKey] = formData[stepKey] || {};
+        formData[stepKey].items = formData[stepKey].items || {};
+        panel.querySelectorAll(`[data-cd-access^="${stepKey}::"]`).forEach(el => {
+          const name = el.dataset.cdAccess.split('::')[1];
+          formData[stepKey].items[name] = formData[stepKey].items[name] || {};
+          formData[stepKey].items[name].shared = el.checked;
+        });
+        panel.querySelectorAll(`[data-cd-access-note^="${stepKey}::"]`).forEach(el => {
+          const name = el.dataset.cdAccessNote.split('::')[1];
+          formData[stepKey].items[name] = formData[stepKey].items[name] || {};
+          formData[stepKey].items[name].notes = el.value;
+        });
+      });
+
+      const overrideVal = document.getElementById('cdLockOverride').value;
+      const admin_lock_override = overrideVal === '' ? null : overrideVal === 'true';
+
+      const note = document.getElementById('cdSaveNote');
+      if (note) note.textContent = 'Saving…';
+      const { error } = await sb.from('project_setup').update({ data: formData, admin_lock_override }).eq('id', rowId);
+      if (error){ if (note) note.textContent = '⚠ ' + error.message; return; }
+      r.data = formData;
+      r.admin_lock_override = admin_lock_override;
+      if (note) note.textContent = 'Saved ✓';
+      renderClientsTable();
     }
 
     // ── PROJECT PIPELINE — every client project, one card per project, positioned in the
