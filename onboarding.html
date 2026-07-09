@@ -149,6 +149,18 @@
       if (profile && profile.full_name) document.getElementById('fullName').value = profile.full_name;
       if (profile && profile.phone) document.getElementById('setupPhone').value = profile.phone;
       if (profile && profile.business_name) document.getElementById('companyName').value = profile.business_name;
+
+      // Pre-fill from a matching lead record (e.g. converted via the admin dashboard) so
+      // clients don't have to retype info we already collected — only if the field is
+      // still blank, so it never overwrites something the profile already has.
+      if (session.user.email){
+        const { data: lead } = await sb.from('leads').select('full_name, phone, business').ilike('email', session.user.email).maybeSingle();
+        if (lead){
+          if (lead.full_name && !document.getElementById('fullName').value) document.getElementById('fullName').value = lead.full_name;
+          if (lead.phone && !document.getElementById('setupPhone').value) document.getElementById('setupPhone').value = lead.phone;
+          if (lead.business && !document.getElementById('companyName').value) document.getElementById('companyName').value = lead.business;
+        }
+      }
     }
 
     async function submitSetup(e){
