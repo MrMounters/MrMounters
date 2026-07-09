@@ -272,21 +272,47 @@
       if (error) console.warn('leads load error', error.message);
       renderLeads();
     }
+    // The real funnel: a prospect (New) gets reached out to (Contacted), gets a consult on
+    // the calendar (Meeting Set), gets sent an account-creation link (Invited), and finally
+    // actually finishes signing up (Converted). Status is manually editable per-row since we
+    // can't reliably auto-detect "they showed up to the meeting" or "they finished onboarding"
+    // without deeper integration — the action buttons just suggest the next status.
+    const LEAD_STATUSES = ['New', 'Contacted', 'Meeting Set', 'Invited', 'Converted'];
+    const pillClass = { New:'new', Contacted:'warn', 'Meeting Set':'warn', Invited:'new', Converted:'ok' };
+
     function renderLeads(){
       const body = document.getElementById('leadsBody');
       if (!leads.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No leads yet — click "+ Add Lead" to add one.</td></tr>'; return; }
-      const pillClass = { New:'new', Contacted:'warn', 'Not Contacted':'mut', Converted:'ok' };
       body.innerHTML = leads.map(l => `<tr>
         <td><b>${esc(l.full_name)}</b></td>
         <td>${esc(l.email)}${l.phone ? '<div class="muted">' + esc(l.phone) + '</div>' : ''}</td>
         <td>${esc(l.business || '—')}</td>
-        <td><span class="pill ${pillClass[l.status] || 'new'}">${esc(l.status)}</span></td>
+        <td>
+          <span class="pill ${pillClass[l.status] || 'new'}" style="margin-bottom:0.35rem;display:inline-block;">${esc(l.status)}</span>
+          <select class="sel" style="width:auto;padding:0.3rem 0.5rem;font-size:0.72rem;display:block;" onchange="updateLeadStatus('${l.id}', this.value)">
+            ${LEAD_STATUSES.map(s => `<option value="${s}" ${s === l.status ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </td>
         <td class="muted">${l.created_at ? new Date(l.created_at).toLocaleDateString() : '—'}</td>
         <td><div class="row-actions">
           <button class="btn btn-sm" onclick="inviteConsult('${l.id}')">Invite to Consult</button>
-          <button class="btn btn-p btn-sm" ${l.status === 'Converted' ? 'disabled' : ''} onclick="convertToCustomer('${l.id}')">${l.status === 'Converted' ? 'Converted' : 'Convert to Customer'}</button>
+          <button class="btn btn-p btn-sm" ${l.status === 'Converted' ? 'disabled' : ''} onclick="convertToCustomer('${l.id}')">${l.status === 'Invited' || l.status === 'Converted' ? 'Resend Invite' : 'Send Account Invite'}</button>
         </div></td>
       </tr>`).join('');
+    }
+    async function updateLeadStatus(id, status){
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+      lead.status = status;
+      await sb.from('leads').update({ status }).eq('id', id);
+      renderLeads();
+      renderStats();
+    }
+    // Only moves a lead forward in the funnel — never regresses one that's already further along.
+    function advanceLeadStatus(id, minStatus){
+      const lead = leads.find(l => l.id === id);
+      if (!lead) return;
+      if (LEAD_STATUSES.indexOf(minStatus) > LEAD_STATUSES.indexOf(lead.status)) updateLeadStatus(id, minStatus);
     }
     async function addLead(e){
       e.preventDefault();
@@ -307,6 +333,7 @@
       if (!lead) return;
       const url = CALCOM_BOOKING_URL + '?name=' + encodeURIComponent(lead.full_name) + '&email=' + encodeURIComponent(lead.email);
       window.open(url, '_blank', 'noopener');
+      advanceLeadStatus(id, 'Meeting Set');
     }
     async function convertToCustomer(id){
       const lead = leads.find(l => l.id === id);
@@ -314,10 +341,8 @@
       if (!confirm('Send ' + lead.full_name + ' (' + lead.email + ') an account-creation link?')) return;
       const { error } = await sb.auth.signInWithOtp({ email: lead.email, options: { emailRedirectTo: window.location.origin + '/onboarding.html' } });
       if (error){ alert(error.message); return; }
-      await sb.from('leads').update({ status: 'Converted' }).eq('id', id);
-      lead.status = 'Converted';
-      renderLeads();
-      alert('Sign-in link emailed to ' + lead.email + '. Once they click it, onboarding.html will pre-fill what we already know about them.');
+      advanceLeadStatus(id, 'Invited');
+      alert('Sign-in link emailed to ' + lead.email + '. Once they click it, onboarding.html will pre-fill what we already know about them. Flip their status to "Converted" once they finish setup.');
     }
 
     async function loadConsults(){
