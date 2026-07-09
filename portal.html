@@ -1099,10 +1099,12 @@
         </li>`;
       }).join('');
 
-      // Preview images need an async signed-URL fetch, so they're filled in after the
-      // synchronous render above rather than blocking it.
+      // Preview images/documents need an async signed-URL fetch, so they're filled in after
+      // the synchronous render above rather than blocking it.
       const approvalStage = stages.find(s => s.stage_key === 'approval' && s.status === 'needs_review' && !STAGE_DONE_STATES.includes(s.status));
       if (approvalStage) renderDesignPreview(approvalStage);
+      const contractStage = stages.find(s => s.stage_key === 'contract_signed' && s.data && s.data.contract_path && !STAGE_DONE_STATES.includes(s.status));
+      if (contractStage) renderContractLink(contractStage);
 
       // The standalone "Start Setup" button (below) is only the entry point for a client
       // with no project row at all yet (see loadProject()'s `if (!project)` branch) — once
@@ -1114,7 +1116,9 @@
     // ── Per-stage interactive actions, shown only for the current (first incomplete) stage ──
     function stageActionHtml(s){
       if (s.stage_key === 'contract_signed'){
+        const hasDoc = !!(s.data && s.data.contract_path);
         return `<div class="stage-action" id="action-${s.id}">
+          ${hasDoc ? `<div id="contract-doc-${s.id}" class="muted" style="margin-bottom:0.6rem;">Loading contract…</div>` : ''}
           <button class="btn btn-p" onclick="expandSignContract('${s.id}')">Review &amp; Sign Contract</button>
         </div>`;
       }
@@ -1153,12 +1157,14 @@
       const el = document.getElementById('design-preview-' + s.id);
       if (!el) return;
       const path = s.data && s.data.image_path;
+      const previewUrl = s.data && s.data.preview_url;
       let imgHtml = '';
       if (path && sb){
         const { data: signed } = await sb.storage.from('client-assets').createSignedUrl(path, 3600);
         if (signed) imgHtml = `<img src="${signed.signedUrl}" style="width:100%;border-radius:6px;margin-bottom:0.7rem;display:block;">`;
       }
-      el.innerHTML = imgHtml + `<div class="design-actions" id="design-actions-${s.id}">
+      const linkHtml = previewUrl ? `<a href="${previewUrl}" target="_blank" rel="noopener" class="btn btn-o" style="text-decoration:none;display:inline-block;margin-bottom:0.7rem;">View Live Preview ↗</a>` : '';
+      el.innerHTML = imgHtml + linkHtml + `<div class="design-actions" id="design-actions-${s.id}">
         <button class="btn btn-p" onclick="approveDesign('${s.id}')">✓ Approve</button>
         <button class="btn btn-o" onclick="showRevisionForm('${s.id}')">Request Revision</button>
       </div>`;
@@ -1190,11 +1196,20 @@
 
     function expandSignContract(stageId){
       const el = document.getElementById('action-' + stageId);
-      el.innerHTML = `<div class="contract-box">
+      const s = currentStages.find(x => x.id === stageId);
+      const hasDoc = !!(s && s.data && s.data.contract_path);
+      el.innerHTML = (hasDoc ? `<div id="contract-doc-${stageId}" class="muted" style="margin-bottom:0.6rem;">Loading contract…</div>` : '') + `<div class="contract-box">
         <p class="muted" style="margin-bottom:0.6rem;">By typing your full legal name below, you agree to Meridion AI's services agreement for this project — the scope, timeline, and payment terms already discussed.</p>
         <input class="inp" id="signName-${stageId}" placeholder="Type your full legal name">
         <button class="btn btn-p" onclick="signContract('${stageId}')">Sign &amp; Continue</button>
       </div>`;
+      if (hasDoc) renderContractLink(s);
+    }
+    async function renderContractLink(s){
+      const el = document.getElementById('contract-doc-' + s.id);
+      if (!el || !sb) return;
+      const { data: signed } = await sb.storage.from('client-assets').createSignedUrl(s.data.contract_path, 3600);
+      el.innerHTML = signed ? `<a href="${signed.signedUrl}" target="_blank" rel="noopener" style="color:var(--gold);">📄 Download Contract Document</a>` : '';
     }
     async function signContract(stageId){
       const input = document.getElementById('signName-' + stageId);

@@ -89,20 +89,25 @@
   .inp:focus, .sel:focus, .ta:focus{ border-color:rgba(76,89,247,0.45); }
   .ta{ resize:vertical; min-height:70px; }
 
-  /* Project pipeline (Kanban) — same pointer-based drag interaction as rep.html's deals board */
-  .pipe{ display:grid; grid-template-columns:repeat(7,1fr); gap:0.6rem; min-width:980px; }
-  .stage{ background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.7rem; }
-  .stage.drop-hover{ border-color:var(--gold); background:rgba(76,89,247,0.09); }
-  .stage-h{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; display:flex; justify-content:space-between; }
-  .stage-body{ min-height:30px; display:flex; flex-direction:column; gap:0.4rem; }
-  .pcard{ background:var(--dark3); border:1px solid var(--card-border); border-radius:4px; padding:0.55rem 0.6rem; font-size:0.74rem;
-    touch-action:none; user-select:none; -webkit-user-select:none; cursor:grab; }
-  .pcard:hover{ border-color:rgba(76,89,247,0.4); }
-  .pcard.drag-ghost{ opacity:0.96; box-shadow:0 14px 34px rgba(0,0,0,0.55); transform:rotate(-2deg); cursor:grabbing; }
-  .pcard b{ display:block; margin-bottom:0.15rem; }
-  .pcard .muted{ font-size:0.68rem; }
-  .stage-list{ display:flex; flex-direction:column; gap:0.6rem; }
-  .stage-row{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:0.8rem; }
+  /* Project pipeline — a project list + a per-project vertical timeline, mirroring the
+     client portal's own Project Timeline so staff and clients see the same shape. */
+  .proj-list{ display:flex; flex-direction:column; gap:0.4rem; }
+  .proj-row{ display:flex; align-items:center; justify-content:space-between; gap:0.8rem;
+    padding:0.75rem 0.9rem; border-radius:6px; border:1px solid var(--card-border); background:var(--dark4); cursor:pointer; }
+  .proj-row:hover{ border-color:rgba(76,89,247,0.4); }
+  .proj-row.active{ border-color:var(--gold); background:rgba(76,89,247,0.09); }
+  .proj-row-t{ font-weight:600; font-size:0.86rem; }
+
+  .timeline{ margin:0; padding:0; list-style:none; }
+  .timeline li{ display:flex; align-items:flex-start; gap:0.8rem; padding-bottom:1.2rem; position:relative; }
+  .timeline li:not(:last-child)::before{ content:''; position:absolute; left:11px; top:24px; bottom:0; width:1px; background:var(--card-border); }
+  .t-dot{ width:23px; height:23px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:0.7rem; margin-top:0.05rem; }
+  .t-dot.done{ background:var(--gold); color:var(--dark); }
+  .t-dot.pending{ border:1.5px solid var(--card-border); }
+  .t-label{ font-size:0.92rem; font-weight:700; margin-bottom:0.15rem; }
+  .t-label.current{ color:var(--gold); }
+  .t-sub{ font-family:var(--mono); font-size:0.6rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.6rem; }
+  .stage-row{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:0.8rem; margin-top:0.5rem; }
   .stage-row-h{ display:flex; align-items:center; justify-content:space-between; gap:0.6rem; margin-bottom:0.5rem; }
   .stage-row-t{ font-weight:600; font-size:0.86rem; }
   .lead-form{ display:none; grid-template-columns:1fr 1fr; gap:0.7rem; background:var(--dark4); border:1px solid var(--card-border);
@@ -213,12 +218,10 @@
 
       <div class="page" id="page-pipeline">
         <div class="panel">
-          <div class="panel-h"><div class="panel-t">Project Pipeline</div><div class="muted">Drag a project between stages — changes save automatically.</div></div>
-          <div style="overflow-x:auto;">
-            <div class="pipe" id="projectPipe"></div>
-          </div>
-          <div class="panel hidden" id="projectDetail" style="margin-top:1rem;background:var(--dark4);"></div>
+          <div class="panel-h"><div class="panel-t">Project Pipeline</div><div class="muted">Click a project to view and edit its timeline.</div></div>
+          <div class="proj-list" id="projectList"></div>
         </div>
+        <div class="panel hidden" id="projectDetail"></div>
       </div>
 
       <div class="page" id="page-leads">
@@ -671,10 +674,9 @@
       renderClientsTable();
     }
 
-    // ── PROJECT PIPELINE — every client project, one card per project, positioned in the
-    // column matching its current (first-incomplete) stage. Drag interaction is copied from
-    // rep.html's deals Kanban (pointer events, not native HTML5 DnD — much more reliable on
-    // touch devices) since it's already proven there. ──
+    // ── PROJECT PIPELINE — a list of every client project; clicking one opens its full
+    // timeline below, styled the same way as the client portal's own Project Timeline so
+    // staff see exactly what the client sees, with an editable form nested under every stage.
     const STAGE_DEFS = [
       { key:'business_profile_setup', label:'Business Profile Setup' },
       { key:'discovery_call', label:'Discovery Call' },
@@ -688,10 +690,6 @@
     let pipelineProjects = [];
     let stagesByProject = {};
     let openDetailProjectId = null;
-
-    document.getElementById('projectPipe').innerHTML = STAGE_DEFS.map(s =>
-      `<div class="stage" data-stage="${s.key}" id="pst-${s.key}"><div class="stage-h"><span>${s.label}</span><span class="ct">0</span></div><div class="stage-body" id="pbody-${s.key}"></div></div>`
-    ).join('');
 
     async function loadProjectsPipeline(){
       const [{ data: projects }, { data: stages }, { data: profiles }] = await Promise.all([
@@ -707,7 +705,7 @@
       (stages || []).forEach(s => {
         (stagesByProject[s.project_id] = stagesByProject[s.project_id] || []).push(s);
       });
-      renderPipeline();
+      renderProjectList();
     }
 
     function currentStageKey(projectId){
@@ -716,97 +714,64 @@
       return current ? current.stage_key : 'launch';
     }
 
-    function renderPipeline(){
-      STAGE_DEFS.forEach(s => {
-        const body = document.getElementById('pbody-' + s.key);
-        if (!body) return;
-        body.innerHTML = '';
-        const items = pipelineProjects.filter(p => currentStageKey(p.id) === s.key);
-        const ct = document.querySelector('#pst-' + s.key + ' .ct');
-        if (ct) ct.textContent = items.length;
-        items.forEach(p => body.appendChild(makeProjectCard(p)));
-      });
-    }
-    function makeProjectCard(p){
-      const el = document.createElement('div');
-      el.className = 'pcard'; el.dataset.id = p.id;
-      el.innerHTML = `<b>${esc((p._profile && p._profile.full_name) || 'Unnamed client')}</b><span class="muted">${esc(p.name || 'Project')}</span>`;
-      el.addEventListener('click', (e) => { if (!el._dragged) openProjectDetail(p.id); });
-      attachProjectDrag(el, p);
-      return el;
-    }
-    function stageUnderPoint(x, y){ const e = document.elementFromPoint(x, y); return e ? e.closest('.stage') : null; }
-    async function moveProjectToStage(projectId, targetKey){
-      const stages = (stagesByProject[projectId] || []).slice().sort((a,b) => a.stage_order - b.stage_order);
-      const targetIdx = stages.findIndex(s => s.stage_key === targetKey);
-      if (targetIdx === -1) return;
-      const updates = stages.map((s, i) => {
-        let status;
-        if (i < targetIdx) status = STAGE_DONE.includes(s.status) ? s.status : 'done';
-        else if (i === targetIdx) status = STAGE_DONE.includes(s.status) ? s.status : 'in_progress';
-        else status = s.status === 'pending' ? 'pending' : 'pending'; // moving backward resets later stages
-        return { id: s.id, status };
-      });
-      await Promise.all(updates.map(u => sb.from('project_stages').update({ status: u.status }).eq('id', u.id)));
-      await loadProjectsPipeline();
-      if (openDetailProjectId === projectId) openProjectDetail(projectId);
-    }
-    function attachProjectDrag(el, p){
-      el.addEventListener('pointerdown', e => {
-        if (e.button > 0) return;
-        const sx = e.clientX, sy = e.clientY;
-        let moved = false, ghost = null;
-        el._dragged = false;
-        function mv(ev){
-          if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 7) return;
-          if (!moved){
-            moved = true; el._dragged = true;
-            ghost = el.cloneNode(true); ghost.classList.add('drag-ghost');
-            ghost.style.position = 'fixed'; ghost.style.zIndex = '999'; ghost.style.pointerEvents = 'none';
-            ghost.style.width = el.offsetWidth + 'px';
-            document.body.appendChild(ghost); el.style.opacity = '0.35';
-          }
-          ghost.style.left = (ev.clientX - el.offsetWidth / 2) + 'px';
-          ghost.style.top = (ev.clientY - 16) + 'px';
-          const st = stageUnderPoint(ev.clientX, ev.clientY);
-          document.querySelectorAll('.stage').forEach(s => s.classList.toggle('drop-hover', s === st));
-        }
-        function up(ev){
-          document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up);
-          el.style.opacity = ''; if (ghost) ghost.remove();
-          document.querySelectorAll('.stage').forEach(s => s.classList.remove('drop-hover'));
-          if (moved){ const st = stageUnderPoint(ev.clientX, ev.clientY); if (st) moveProjectToStage(p.id, st.dataset.stage); }
-          setTimeout(() => { el._dragged = false; }, 0);
-        }
-        document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
-      });
+    function renderProjectList(){
+      const list = document.getElementById('projectList');
+      if (!pipelineProjects.length){ list.innerHTML = '<div class="empty">No projects yet.</div>'; return; }
+      list.innerHTML = pipelineProjects.map(p => {
+        const def = STAGE_DEFS.find(s => s.key === currentStageKey(p.id));
+        return `<div class="proj-row ${p.id === openDetailProjectId ? 'active' : ''}" onclick="openProjectDetail('${p.id}')">
+          <div><div class="proj-row-t">${esc((p._profile && p._profile.full_name) || 'Unnamed client')}</div><div class="muted">${esc(p.name || 'Project')}</div></div>
+          <span class="pill new">${esc(def ? def.label : 'Launch & Deploy')}</span>
+        </div>`;
+      }).join('');
     }
 
-    // ── Detail panel — click a card to inject documents, set the deposit amount, upload a
-    // homepage design, post client-facing notes, or manually override a stage's status. ──
+    // ── Timeline detail — click a project to inject documents, set the deposit amount,
+    // upload an approval preview, post client-facing notes, or override a stage's status. ──
     function openProjectDetail(projectId){
       openDetailProjectId = projectId;
+      renderProjectList();
       const p = pipelineProjects.find(x => x.id === projectId);
       const stages = (stagesByProject[projectId] || []).slice().sort((a,b) => a.stage_order - b.stage_order);
+      let currentSet = false;
       const panel = document.getElementById('projectDetail');
       panel.classList.remove('hidden');
       panel.innerHTML = `
         <div class="panel-h"><div class="panel-t">${esc((p._profile && p._profile.full_name) || 'Client')} — ${esc(p.name || 'Project')}</div>
           <button class="btn btn-sm" onclick="document.getElementById('projectDetail').classList.add('hidden')">Close</button></div>
-        <div class="stage-list">${stages.map(s => stageEditorHtml(s)).join('')}</div>`;
+        <ul class="timeline">${stages.map(s => {
+          const isDone = STAGE_DONE.includes(s.status);
+          const isCurrent = !isDone && !currentSet;
+          if (isCurrent) currentSet = true;
+          return `<li>
+            <div class="t-dot ${isDone ? 'done' : 'pending'}">${isDone ? '✓' : ''}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="t-label ${isCurrent ? 'current' : ''}">${esc(s.label)}</div>
+              ${isCurrent ? '<div class="t-sub">Current Step</div>' : ''}
+              ${stageEditorHtml(s, p)}
+            </div>
+          </li>`;
+        }).join('')}</ul>`;
       panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
     }
-    function stageEditorHtml(s){
+    function stageEditorHtml(s, project){
       const extra = [];
+      if (s.stage_key === 'contract_signed'){
+        extra.push(`<label>Upload contract document</label><input type="file" class="inp" accept=".pdf,.doc,.docx" onchange="uploadStageFile('${s.id}','${s.project_id}','contract_signed','contract_path', this.files[0])">`);
+        if (s.data && s.data.contract_path) extra.push(`<div class="muted" style="margin-top:0.3rem;">Current: ${esc(s.data.contract_path.split('/').pop())}</div>`);
+      }
       if (s.stage_key === 'deposit_paid'){
         extra.push(`<label>Deposit amount ($)</label><input class="inp" id="depAmt-${s.id}" type="number" min="0" step="1" value="${esc((s.data && s.data.amount) || '')}" placeholder="e.g. 1500">`);
+        if (STAGE_DONE.includes(s.status)) extra.push(`<div class="muted" style="margin-top:0.3rem;">✓ Paid</div>`);
       }
       if (s.stage_key === 'approval'){
-        extra.push(`<label>Upload preview image</label><input type="file" class="inp" accept="image/*" onchange="uploadDesignImage('${s.id}','${s.project_id}', this.files[0])">`);
+        extra.push(`<label>Upload preview image</label><input type="file" class="inp" accept="image/*" onchange="uploadStageFile('${s.id}','${s.project_id}','approval','image_path', this.files[0])">`);
         if (s.data && s.data.image_path) extra.push(`<div class="muted" style="margin-top:0.3rem;">Current: ${esc(s.data.image_path.split('/').pop())}</div>`);
+        extra.push(`<label style="margin-top:0.6rem;">Preview URL (optional)</label><input class="inp" id="previewUrl-${s.id}" value="${esc((s.data && s.data.preview_url) || '')}" placeholder="https://staging.clientsite.com">`);
       }
       if (s.stage_key === 'launch'){
         extra.push(`<label>Live URL</label><input class="inp" id="liveUrl-${s.id}" value="${esc((s.data && s.data.live_url) || '')}" placeholder="https://clientsite.com">`);
+        extra.push(`<label style="margin-top:0.6rem;">Estimated / TBD launch date</label><input class="inp" type="date" id="launchDate-${s.id}" value="${esc((project && project.estimated_launch) || '')}">`);
       }
       if (s.data && s.data.signed_name){
         extra.push(`<div class="muted">Signed by ${esc(s.data.signed_name)} on ${s.data.signed_at ? new Date(s.data.signed_at).toLocaleDateString() : ''}</div>`);
@@ -843,24 +808,36 @@
       if (depEl && depEl.value) newData.amount = Number(depEl.value);
       const urlEl = document.getElementById('liveUrl-' + stageId);
       if (urlEl && urlEl.value) newData.live_url = urlEl.value.trim();
+      const previewUrlEl = document.getElementById('previewUrl-' + stageId);
+      if (previewUrlEl) newData.preview_url = previewUrlEl.value.trim() || null;
       update.data = newData;
 
       const note = document.getElementById('stageSaveNote-' + stageId);
       if (note) note.textContent = 'Saving…';
-      const { error } = await sb.from('project_stages').update(update).eq('id', stageId);
+      const ops = [sb.from('project_stages').update(update).eq('id', stageId)];
+      // Launch date lives on the project itself (portal.html's "Estimated Launch" box reads
+      // projects.estimated_launch directly), not in this stage's own data — separate write.
+      const launchDateEl = document.getElementById('launchDate-' + stageId);
+      if (launchDateEl && stage) ops.push(sb.from('projects').update({ estimated_launch: launchDateEl.value || null }).eq('id', stage.project_id));
+      const results = await Promise.all(ops);
+      const error = results.find(r => r.error)?.error;
       if (note) note.textContent = error ? '⚠ ' + error.message : 'Saved ✓';
       if (!error){ await loadProjectsPipeline(); if (openDetailProjectId) openProjectDetail(openDetailProjectId); }
     }
-    async function uploadDesignImage(stageId, projectId, file){
+    // Generic stage-file uploader — used for the Contract document and the Approval preview
+    // image. `folder` groups files in Storage by stage, `dataKey` is where the path is stored
+    // in this stage's own `data` jsonb (e.g. contract_path, image_path).
+    async function uploadStageFile(stageId, projectId, folder, dataKey, file){
       if (!file) return;
       const project = pipelineProjects.find(p => p.id === projectId);
       if (!project) return;
-      const path = project.client_id + '/stages/approval/' + Date.now() + '-' + file.name;
+      const path = project.client_id + '/stages/' + folder + '/' + Date.now() + '-' + file.name;
       const { error: upErr } = await sb.storage.from('client-assets').upload(path, file, { upsert:true });
       if (upErr){ alert(upErr.message); return; }
       const stage = Object.values(stagesByProject).flat().find(s => s.id === stageId);
-      const newData = Object.assign({}, stage && stage.data, { image_path: path });
-      const { error } = await sb.from('project_stages').update({ status:'needs_review', data:newData }).eq('id', stageId);
+      const newData = Object.assign({}, stage && stage.data, { [dataKey]: path });
+      const statusUpdate = dataKey === 'image_path' ? { status:'needs_review', data:newData } : { data:newData };
+      const { error } = await sb.from('project_stages').update(statusUpdate).eq('id', stageId);
       if (error){ alert(error.message); return; }
       await loadProjectsPipeline();
       if (openDetailProjectId) openProjectDetail(openDetailProjectId);
