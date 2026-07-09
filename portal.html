@@ -69,6 +69,13 @@
     align-items:center; gap:0.7rem; flex-wrap:wrap; }
   .setup-banner a{ margin-left:auto; color:var(--amber); font-weight:700; font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; text-decoration:none; white-space:nowrap; }
   .setup-banner a:hover{ text-decoration:underline; }
+  .teaser-wrap{ position:relative; }
+  #teaserContent.blurred{ filter:blur(6px); pointer-events:none; user-select:none; opacity:0.55; }
+  .teaser-overlay{ position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center; padding:1rem; text-align:center; }
+  .teaser-msg{ background:var(--dark3); border:1px solid rgba(76,89,247,0.35); border-radius:10px; padding:1.5rem 1.7rem;
+    max-width:320px; box-shadow:0 24px 60px rgba(0,0,0,0.55); font-size:1.4rem; }
+  .teaser-msg b{ display:block; font-size:0.95rem; margin-top:0.3rem; }
+  .teaser-msg .btn{ text-decoration:none; display:inline-block; }
 
   /* Content */
   .wrap{ position:relative; z-index:1; max-width:760px; margin:0 auto; padding:1.6rem 1.2rem 4rem; }
@@ -304,51 +311,62 @@
 
       <a class="btn btn-p hidden" id="startSetupBtn" href="setup.html" style="display:block;text-align:center;margin-bottom:1.4rem;text-decoration:none;">Start Setup →</a>
 
-      <h1 class="today">Today</h1>
-      <div class="rule"></div>
-
-      <div class="metric-head">
-        <button class="mdrop">Visitor sessions <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-        <button class="mdrop">Today <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
-      </div>
-      <div class="metric-val">1,284</div>
-      <div class="metric-time">Updated 1:05 PM</div>
-      <div class="chart" id="chart"></div>
-      <div class="chart-ax"><span>12:00 AM</span><span>11:59 PM</span></div>
-
-      <div class="mini-grid">
-        <div class="mini">
-          <div class="mini-h"><span>Ad spend · 30d</span><a class="link" onclick="go('ads')">View</a></div>
-          <div class="mini-v">$2,140</div>
-          <div class="mini-d">6.4× ROAS</div>
+      <div class="teaser-wrap">
+        <div class="teaser-overlay hidden" id="teaserOverlay">
+          <div class="teaser-msg">
+            🔒<br><b>This unlocks once your project setup is complete.</b>
+            <div class="muted" style="margin:0.4rem 0 0.9rem;font-size:0.8rem;">Analytics, campaigns, and activity all populate for real once we're building.</div>
+            <a href="setup.html" class="btn btn-p" style="text-decoration:none;">Finish Setup →</a>
+          </div>
         </div>
-        <div class="mini">
-          <div class="mini-h"><span>Leads · 30d</span><a class="link" onclick="go('leads')">View</a></div>
-          <div class="mini-v">47</div>
-          <div class="mini-d">▲ 18%</div>
+        <div id="teaserContent">
+          <h1 class="today">Today</h1>
+          <div class="rule"></div>
+
+          <div class="metric-head">
+            <button class="mdrop">Visitor sessions <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+            <button class="mdrop">Today <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+          <div class="metric-val">1,284</div>
+          <div class="metric-time">Updated 1:05 PM</div>
+          <div class="chart" id="chart"></div>
+          <div class="chart-ax"><span>12:00 AM</span><span>11:59 PM</span></div>
+
+          <div class="mini-grid">
+            <div class="mini">
+              <div class="mini-h"><span>Ad spend · 30d</span><a class="link" onclick="go('ads')">View</a></div>
+              <div class="mini-v">$2,140</div>
+              <div class="mini-d">6.4× ROAS</div>
+            </div>
+            <div class="mini">
+              <div class="mini-h"><span>Leads · 30d</span><a class="link" onclick="go('leads')">View</a></div>
+              <div class="mini-v">47</div>
+              <div class="mini-d">▲ 18%</div>
+            </div>
+          </div>
+
+          <div class="reco" id="reco">
+            <button class="reco-x" onclick="document.getElementById('reco').remove()" aria-label="Dismiss">✕</button>
+            <div class="reco-t">Recommendations</div>
+            <p class="reco-d">Your Meta retargeting campaign is beating its ROAS target — shifting ~15% more budget could lift revenue without raising your cost per lead.</p>
+            <a class="link" onclick="go('ads')">Learn more</a>
+          </div>
+
+          <div class="setup">
+            <div class="setup-h"><span>Setup guide</span><span class="setup-pct">60%</span></div>
+            <div class="setup-bar"><i style="width:60%"></i></div>
+            <div class="setup-next">Next: <a class="link" onclick="go('visitors')">Connect Microsoft Clarity</a></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-h"><div class="panel-t">Recent activity</div><span class="panel-k">live</span></div>
+            <table>
+              <tr><td><b>New lead</b> — Maria G. via Google Ads</td><td class="nw" style="text-align:right;color:var(--warm-muted)">2h ago</td></tr>
+              <tr><td><b>Invoice paid</b> — INV-0007 · $294.00</td><td class="nw" style="text-align:right;color:var(--warm-muted)">Jun 1</td></tr>
+              <tr><td><b>Change request closed</b> — Updated homepage hours</td><td class="nw" style="text-align:right;color:var(--warm-muted)">May 28</td></tr>
+            </table>
+          </div>
         </div>
-      </div>
-
-      <div class="reco" id="reco">
-        <button class="reco-x" onclick="document.getElementById('reco').remove()" aria-label="Dismiss">✕</button>
-        <div class="reco-t">Recommendations</div>
-        <p class="reco-d">Your Meta retargeting campaign is beating its ROAS target — shifting ~15% more budget could lift revenue without raising your cost per lead.</p>
-        <a class="link" onclick="go('ads')">Learn more</a>
-      </div>
-
-      <div class="setup">
-        <div class="setup-h"><span>Setup guide</span><span class="setup-pct">60%</span></div>
-        <div class="setup-bar"><i style="width:60%"></i></div>
-        <div class="setup-next">Next: <a class="link" onclick="go('visitors')">Connect Microsoft Clarity</a></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-h"><div class="panel-t">Recent activity</div><span class="panel-k">live</span></div>
-        <table>
-          <tr><td><b>New lead</b> — Maria G. via Google Ads</td><td class="nw" style="text-align:right;color:var(--warm-muted)">2h ago</td></tr>
-          <tr><td><b>Invoice paid</b> — INV-0007 · $294.00</td><td class="nw" style="text-align:right;color:var(--warm-muted)">Jun 1</td></tr>
-          <tr><td><b>Change request closed</b> — Updated homepage hours</td><td class="nw" style="text-align:right;color:var(--warm-muted)">May 28</td></tr>
-        </table>
       </div>
     </section>
 
@@ -749,6 +767,8 @@
 
     function applyLockState(){
       document.getElementById('setupBanner').classList.toggle('hidden', setupComplete);
+      document.getElementById('teaserOverlay').classList.toggle('hidden', setupComplete);
+      document.getElementById('teaserContent').classList.toggle('blurred', !setupComplete);
       document.querySelectorAll('.m-item[data-s]').forEach(el => {
         if (LOCKABLE_SECTIONS.includes(el.dataset.s)) el.classList.toggle('locked', !setupComplete);
       });
@@ -794,8 +814,15 @@
       if (sb && !demo){
         const { data: { session } } = await sb.auth.getSession();
         if (session){
-          const { data } = await sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle();
-          project = data;
+          const [{ data: proj }, { data: setup }] = await Promise.all([
+            sb.from('projects').select('*').eq('client_id', session.user.id).order('created_at', { ascending:false }).limit(1).maybeSingle(),
+            // The real "did they finish onboarding" signal — project_setup always exists once
+            // someone has opened setup.html, unlike projects, which only exists if staff
+            // created one (or the client's own submission auto-creates it — see setup.html).
+            sb.from('project_setup').select('submitted').eq('client_id', session.user.id).maybeSingle(),
+          ]);
+          project = proj;
+          setupComplete = !!(setup && setup.submitted);
         }
       } else {
         // Demo fallback — setup_complete:true since the demo is meant to showcase the full
@@ -809,8 +836,8 @@
           ],
           estimated_launch: '2026-07-28', setup_complete: true
         };
+        setupComplete = true;
       }
-      setupComplete = demo ? true : !!(project && project.setup_complete);
       applyLockState();
       if (!project) return; // no project yet — cards stay hidden, rest of the portal stays locked
       renderProject(project);
@@ -830,7 +857,7 @@
         <div><div class="t-label ${t.current ? 'current' : ''}">${esc(t.label)}</div>${t.current ? '<div class="t-sub">Current Step</div>' : ''}</div>
       </li>`).join('');
       const startBtn = document.getElementById('startSetupBtn');
-      if (!p.setup_complete){ startBtn.classList.remove('hidden'); }
+      if (!setupComplete){ startBtn.classList.remove('hidden'); }
     }
 
     function renderChart(){

@@ -114,6 +114,14 @@ create policy "profiles are private to the user"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+-- Staff can also VIEW every profile (needed for admin.html to show client names against
+-- leads/projects/onboarding progress). Self-referencing the same table to check the
+-- caller's own role is a standard, safe Supabase RLS pattern — it does not recurse.
+drop policy if exists "staff can view all profiles" on public.profiles;
+create policy "staff can view all profiles"
+  on public.profiles for select
+  using (exists (select 1 from public.profiles p where p.user_id = auth.uid() and p.role in ('rep','admin')));
+
 -- Auto-create a profile (default role 'client') for every new signup.
 -- To make someone a rep: Table Editor → profiles → find their user_id → set role to 'rep'.
 -- There is no self-service way to become a rep — this is intentional.
@@ -269,13 +277,20 @@ drop trigger if exists projects_touch on public.projects;
 create trigger projects_touch before update on public.projects
   for each row execute function public.touch_updated_at();
 
--- Clients can also update their own project row (not insert/delete) — needed so
--- submitting the setup wizard can flip setup_complete and advance the timeline
--- client-side, same trust level already given for change_requests.
+-- Clients can also update their own project row — needed so submitting the setup wizard can
+-- flip setup_complete and advance the timeline client-side, same trust level already given
+-- for change_requests.
 drop policy if exists "clients can update their own project" on public.projects;
 create policy "clients can update their own project"
   on public.projects for update
   using (auth.uid() = client_id)
+  with check (auth.uid() = client_id);
+
+-- And insert one for themselves — covers the case where staff never pre-created a project
+-- row before the client finished onboarding (setup.html creates one on submit if missing).
+drop policy if exists "clients can create their own project" on public.projects;
+create policy "clients can create their own project"
+  on public.projects for insert
   with check (auth.uid() = client_id);
 
 -- ============================================================

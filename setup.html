@@ -70,9 +70,15 @@
 
   .file-row{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1rem; margin-bottom:1rem; }
   .file-row-h{ font-weight:600; font-size:0.86rem; margin-bottom:0.6rem; }
-  .file-drop{ border:1.5px dashed var(--card-border); border-radius:6px; padding:1rem; text-align:center; cursor:pointer; font-size:0.8rem; color:var(--warm-muted); }
-  .file-drop:hover{ border-color:var(--gold); color:var(--gold); }
-  .file-list{ margin-top:0.6rem; display:flex; flex-direction:column; gap:0.3rem; }
+  .file-drop{ border:1.5px dashed var(--card-border); border-radius:6px; padding:1.4rem 1rem; text-align:center; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:0.5rem; background:none; width:100%; font-family:'Inter',sans-serif; }
+  .file-drop:hover{ border-color:var(--gold); }
+  .file-drop:hover .file-drop-t{ color:var(--gold); }
+  .file-drop-ic{ width:34px; height:34px; border-radius:50%; background:rgba(76,89,247,0.15); color:var(--gold-light);
+    display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+  .file-drop-t{ font-size:0.84rem; font-weight:600; color:var(--warm-accent); }
+  .file-drop-h{ font-size:0.72rem; color:var(--warm-muted); }
+  .file-list{ margin-top:0.7rem; display:flex; flex-direction:column; gap:0.3rem; }
   .file-chip{ display:flex; align-items:center; justify-content:space-between; background:var(--dark4); border-radius:4px; padding:0.4rem 0.7rem; font-size:0.76rem; }
   .file-chip button{ background:none; border:none; color:var(--red); cursor:pointer; font-size:0.9rem; }
 
@@ -323,11 +329,15 @@
         if (s.files){
           html += s.files.map(f => {
             const uploaded = data[f.key] || [];
+            const inputId = 'file-' + s.key + '-' + f.key;
             return `<div class="file-row">
               <div class="file-row-h">${esc(f.label)}</div>
-              <label class="file-drop">⬆ Upload ${f.multiple ? 'files' : 'file'}<br><span style="font-size:0.7rem;">${esc(f.hint)}</span>
-                <input type="file" class="hidden" ${f.multiple ? 'multiple' : ''} accept="${f.accept}" onchange="uploadFiles('${s.key}','${f.key}', this.files)">
-              </label>
+              <input type="file" id="${inputId}" class="hidden" ${f.multiple ? 'multiple' : ''} accept="${f.accept}" onchange="uploadFiles('${s.key}','${f.key}', this.files)">
+              <button type="button" class="file-drop" onclick="document.getElementById('${inputId}').click()">
+                <div class="file-drop-ic">⬆</div>
+                <div class="file-drop-t">Upload ${f.multiple ? 'files' : 'file'}</div>
+                <div class="file-drop-h">${esc(f.hint)}</div>
+              </button>
               <div class="file-list" id="filelist-${f.key}">${uploaded.map((u,idx) => `<div class="file-chip"><span>${esc(u.name)}</span><button onclick="removeFile('${s.key}','${f.key}',${idx})">✕</button></div>`).join('')}</div>
             </div>`;
           }).join('');
@@ -418,6 +428,17 @@
 
     async function submitSetup(){
       await sb.from('project_setup').update({ data: formData, submitted: true, submitted_at: new Date().toISOString() }).eq('id', setupRow.id);
+
+      // A staff-created project row isn't guaranteed to exist yet — create one instead of
+      // silently skipping, so the dashboard always has real project data once setup is done.
+      if (!project){
+        const businessName = (formData.business && formData.business.business_name) || null;
+        const { data: created } = await sb.from('projects').insert({
+          client_id: session.user.id,
+          name: businessName ? businessName + ' — Website' : 'Website Redesign',
+        }).select().single();
+        project = created;
+      }
       if (project){
         const timeline = (project.timeline || []).map(t => {
           if (t.label === 'Complete Setup') return { label:t.label, done:true };

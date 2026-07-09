@@ -129,7 +129,7 @@
         <button class="side-item disabled" type="button">Tasks <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Messages <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Invoices <span class="side-soon">Soon</span></button>
-        <button class="side-item disabled" type="button">Clients <span class="side-soon">Soon</span></button>
+        <a class="side-item" href="#clients">Clients</a>
         <button class="side-item disabled" type="button">Team <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Reports <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Settings <span class="side-soon">Soon</span></button>
@@ -200,6 +200,16 @@
         <div class="muted" id="calSrc" style="margin-bottom:0.8rem;"></div>
         <div id="consultsList"><div class="empty">Loading…</div></div>
       </div>
+
+      <div class="panel" id="clients">
+        <div class="panel-h"><div class="panel-t">Clients — Onboarding Progress</div><div class="muted" id="clientsSrc"></div></div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Client</th><th>Business</th><th>Onboarding</th><th>Step</th><th>Submitted</th></tr></thead>
+            <tbody id="clientsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </main>
   </div>
 
@@ -243,7 +253,7 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('shell').classList.remove('hidden');
 
-      await Promise.all([loadDeals(), loadLeads(), loadConsults()]);
+      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients()]);
       renderStats();
     }
 
@@ -366,6 +376,32 @@
         document.getElementById('consultsList').innerHTML = '<div class="empty">—</div>';
         return [];
       }
+    }
+
+    const SETUP_STEP_COUNT = 12;
+    async function loadClients(){
+      const body = document.getElementById('clientsBody');
+      const { data: rows, error } = await sb.from('project_setup').select('*').order('updated_at', { ascending:false });
+      if (error){ document.getElementById('clientsSrc').textContent = 'Could not load'; return; }
+      if (!rows || !rows.length){ body.innerHTML = '<tr><td colspan="5" class="empty">No clients have started onboarding yet.</td></tr>'; document.getElementById('clientsSrc').textContent = '0 total'; return; }
+
+      const ids = rows.map(r => r.client_id);
+      const { data: profiles } = await sb.from('profiles').select('user_id, full_name, business_name').in('user_id', ids);
+      const byId = {};
+      (profiles || []).forEach(p => { byId[p.user_id] = p; });
+
+      document.getElementById('clientsSrc').textContent = rows.length + ' total';
+      body.innerHTML = rows.map(r => {
+        const p = byId[r.client_id] || {};
+        const statusPill = r.submitted ? '<span class="pill ok">Submitted</span>' : (r.current_step > 1 ? '<span class="pill warn">In Progress</span>' : '<span class="pill mut">Not Started</span>');
+        return `<tr>
+          <td><b>${esc(p.full_name || 'Unnamed client')}</b></td>
+          <td>${esc(p.business_name || '—')}</td>
+          <td>${statusPill}</td>
+          <td class="muted">${r.current_step || 1} of ${SETUP_STEP_COUNT}</td>
+          <td class="muted">${r.submitted_at ? new Date(r.submitted_at).toLocaleDateString() : '—'}</td>
+        </tr>`;
+      }).join('');
     }
 
     function renderStats(){
