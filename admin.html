@@ -27,7 +27,6 @@
   .sidebar{ width:250px; flex-shrink:0; background:var(--dark2); border-right:1px solid var(--card-border);
     padding:1.4rem 1rem; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; overflow-y:auto; }
   .side-logo{ font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.05rem; margin-bottom:0.1rem; display:flex; align-items:center; gap:0.5rem; }
-  .side-logo span{ color:var(--gold); }
   .side-tag{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:1.6rem; }
   .side-nav{ display:flex; flex-direction:column; gap:0.15rem; flex:1; }
   .side-item{ display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.65rem 0.7rem; border-radius:6px;
@@ -219,7 +218,7 @@
 
   <div class="shell hidden" id="shell">
     <aside class="sidebar" id="sidebar">
-      <div class="side-logo"><img src="meridion-logo.svg" alt="" style="height:1.1rem;">Meridion<span>AI</span></div>
+      <div class="side-logo"><img src="meridion-logo-full.png" alt="Meridion AI" style="height:24px;display:block;"></div>
       <div class="side-tag">Admin</div>
       <nav class="side-nav">
         <button class="side-item active" type="button" data-page="dashboard" onclick="go('dashboard')">Dashboard</button>
