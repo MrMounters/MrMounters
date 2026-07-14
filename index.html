@@ -345,7 +345,16 @@
   .portfolio-featured .browser-frame .browser-preview img { aspect-ratio: 21/9 !important; }
   .portfolio-featured .portfolio-card-info { padding: 1.3rem 1.5rem 1.7rem; }
   .portfolio-featured .portfolio-card-name { font-size: 1.2rem; }
-  .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+  .portfolio-scroll { overflow: hidden; position: relative; margin: 0 -4vw; padding: 0 4vw; }
+  .portfolio-scroll::before, .portfolio-scroll::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none;
+  }
+  .portfolio-scroll::before { left: 0; background: linear-gradient(to right, var(--dark2), transparent); }
+  .portfolio-scroll::after  { right: 0; background: linear-gradient(to left, var(--dark2), transparent); }
+  .portfolio-track { display: flex; gap: 1.25rem; width: max-content; animation: portfolio-scroll 16s linear infinite; will-change: transform; }
+  .portfolio-track:hover { animation-play-state: paused; }
+  @keyframes portfolio-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .portfolio-track .browser-frame { width: 340px; flex-shrink: 0; }
 
   .browser-frame {
     display: block; text-decoration: none; color: inherit;
@@ -774,7 +783,6 @@
 
   /* ── MOBILE ─────────────────────────────────── */
   @media (max-width: 900px) {
-    .portfolio-grid { grid-template-columns: repeat(2,1fr); }
     .portfolio-featured .browser-preview img { aspect-ratio: 16/7 !important; }
     .lead-magnet-inner { grid-template-columns: 1fr; gap: 2.5rem; }
     .lm-visual { justify-content: center; }
@@ -788,7 +796,7 @@
   @media (max-width: 640px) {
     nav { padding:1rem 4%; }
     .hero { padding:7rem 4% 3rem; }
-    .portfolio-grid { grid-template-columns:1fr; }
+    .portfolio-track .browser-frame { width: 260px; }
     .portfolio-featured .browser-preview img { aspect-ratio:16/9 !important; }
     .step-connector { display:none; }
     .footer-inner { flex-direction:column; }
@@ -1107,13 +1115,23 @@
       <div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Renovation</div><div class="portfolio-card-name">KATO Renovation</div></div>
     </a>
   </div>
-  <div class="portfolio-grid reveal">
-    <a href="https://carmen2.vercel.app" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">carmen2.vercel.app</div></div><div class="browser-preview"><img src="carmen-thumb.webp" alt="Carmen" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Nightlife</div><div class="portfolio-card-name">Carmen — Tempe, AZ</div></div></a>
-    <a href="https://hormone-zone.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">hormone-zone.com</div></div><div class="browser-preview"><img src="hormonezone-thumb.webp" alt="Hormone Zone" style="object-position:top center;" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Wellness</div><div class="portfolio-card-name">Hormone Zone</div></div></a>
-    <a href="https://reddconstruction.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">reddconstruction.com</div></div><div class="browser-preview"><img src="redd-thumb.webp" alt="RedD Construction" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Outdoor Living</div><div class="portfolio-card-name">RedD Construction LLC</div></div></a>
-    <a href="https://liferesetpeptides.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="Life Reset Peptides" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></a>
-    <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="Segal Group" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
-    <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
+  <div class="portfolio-scroll reveal">
+    <div class="portfolio-track">
+      <a href="https://carmen2.vercel.app" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">carmen2.vercel.app</div></div><div class="browser-preview"><img src="carmen-thumb.webp" alt="Carmen" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Nightlife</div><div class="portfolio-card-name">Carmen — Tempe, AZ</div></div></a>
+      <a href="https://hormone-zone.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">hormone-zone.com</div></div><div class="browser-preview"><img src="hormonezone-thumb.webp" alt="Hormone Zone" style="object-position:top center;" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Wellness</div><div class="portfolio-card-name">Hormone Zone</div></div></a>
+      <a href="https://reddconstruction.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">reddconstruction.com</div></div><div class="browser-preview"><img src="redd-thumb.webp" alt="RedD Construction" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Outdoor Living</div><div class="portfolio-card-name">RedD Construction LLC</div></div></a>
+      <a href="https://liferesetpeptides.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="Life Reset Peptides" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></a>
+      <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="Segal Group" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
+      <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
+      <div aria-hidden="true" style="display:contents;">
+        <a href="https://carmen2.vercel.app" target="_blank" rel="noopener" tabindex="-1" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">carmen2.vercel.app</div></div><div class="browser-preview"><img src="carmen-thumb.webp" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Nightlife</div><div class="portfolio-card-name">Carmen — Tempe, AZ</div></div></a>
+        <a href="https://hormone-zone.com" target="_blank" rel="noopener" tabindex="-1" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">hormone-zone.com</div></div><div class="browser-preview"><img src="hormonezone-thumb.webp" alt="" style="object-position:top center;" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Wellness</div><div class="portfolio-card-name">Hormone Zone</div></div></a>
+        <a href="https://reddconstruction.com" target="_blank" rel="noopener" tabindex="-1" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">reddconstruction.com</div></div><div class="browser-preview"><img src="redd-thumb.webp" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Outdoor Living</div><div class="portfolio-card-name">RedD Construction LLC</div></div></a>
+        <a href="https://liferesetpeptides.com" target="_blank" rel="noopener" tabindex="-1" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></a>
+        <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
+        <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1582,7 +1600,7 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 
 // ── STAGGERED GRID ───────────────────────────────
 const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
-document.querySelectorAll('.portfolio-grid,.services-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
+document.querySelectorAll('.services-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
 
 // ── COOKIE CONSENT ───────────────────────────────
 (function() {
