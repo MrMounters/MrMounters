@@ -761,6 +761,26 @@
   }
   .lm-grab-arrow { display: block; width: 58px; height: 48px; color: var(--gold); margin: -4px 0 -10px 24px; }
 
+  /* ── PLATFORMS / TOOLS LOGO WALL ─────────────────── */
+  .logos-band { background: var(--dark2); padding: 3.2rem 0 2.8rem; border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+  .logos-eyebrow { text-align: center; font-family: 'Inter', sans-serif; font-size: 0.66rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 1.8rem; }
+  .logos-row { overflow: hidden; position: relative; margin-bottom: 1.6rem; }
+  .logos-row:last-child { margin-bottom: 0; }
+  .logos-row::before, .logos-row::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none;
+  }
+  .logos-row::before { left: 0; background: linear-gradient(to right, var(--dark2), transparent); }
+  .logos-row::after  { right: 0; background: linear-gradient(to left, var(--dark2), transparent); }
+  .logos-track { display: flex; align-items: center; gap: 3.4rem; width: max-content; animation: logos-scroll-left 26s linear infinite; will-change: transform; }
+  .logos-row.reverse .logos-track { animation-name: logos-scroll-right; animation-duration: 30s; }
+  .logos-track:hover { animation-play-state: paused; }
+  @keyframes logos-scroll-left  { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  @keyframes logos-scroll-right { from{transform:translateX(-50%)} to{transform:translateX(0)} }
+  .logo-item { display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0; color: var(--warm-muted); opacity: 0.55; transition: opacity 0.2s, color 0.2s; }
+  .logo-item:hover { opacity: 1; color: var(--gray-light); }
+  .logo-item svg { width: 24px; height: 24px; flex-shrink: 0; }
+  .logo-item span { font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 600; white-space: nowrap; letter-spacing: -0.01em; }
+
   /* ── CERTIFICATIONS ──────────────────────────── */
   .certs-band { background: var(--dark2); padding: 2.8rem 4%; border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
   .certs-eyebrow { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 1.3rem; }
@@ -1012,6 +1032,45 @@
   }, 100);
 })();
 </script>
+
+<!-- PLATFORMS / TOOLS LOGO WALL -->
+<div class="logos-band reveal">
+  <div class="logos-eyebrow">Platforms &amp; Tools We Build Around</div>
+  <div class="logos-row">
+    <div class="logos-track">
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.344-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg><span>Google</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6.5 8c-2.2 0-4 2-4 4.5S4.3 17 6.5 17c1.8 0 3-1.3 4.2-3.2M17.5 8c2.2 0 4 2 4 4.5S19.7 17 17.5 17c-1.8 0-3-1.3-4.2-3.2M6.5 8c1.8 0 3 1.3 4.2 3.2M17.5 8c-1.8 0-3 1.3-4.2 3.2"/></svg><span>Meta</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.462 2.15-1.21 2.9-.83.85-2.19 1.51-3.32 1.42-.14-1.1.46-2.26 1.19-3 .83-.86 2.28-1.51 3.34-1.32zM20.5 17.34c-.5 1.15-.74 1.66-1.38 2.68-.9 1.43-2.16 3.21-3.73 3.22-1.39.02-1.75-.9-3.64-.89-1.89.01-2.28.91-3.67.89-1.57-.02-2.76-1.62-3.66-3.05-2.51-3.95-2.77-8.6-1.22-11.07 1.1-1.75 2.83-2.78 4.45-2.78 1.65 0 2.69.9 4.06.9 1.32 0 2.13-.9 4.03-.9 1.44 0 2.97.79 4.06 2.15-3.57 1.96-2.99 7.06.7 8.85z"/></svg><span>Apple</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8.5v6a1 1 0 0 0 1 1h.5v3a1.2 1.2 0 0 0 2.4 0v-3h3.2v3a1.2 1.2 0 0 0 2.4 0v-3h.5a1 1 0 0 0 1-1v-6h-11zM5 8.5a1.2 1.2 0 0 0-1.2 1.2v4.1a1.2 1.2 0 1 0 2.4 0v-4.1A1.2 1.2 0 0 0 5 8.5zM19 8.5a1.2 1.2 0 0 0-1.2 1.2v4.1a1.2 1.2 0 1 0 2.4 0v-4.1A1.2 1.2 0 0 0 19 8.5zM8.2 4.2 7 2.6a.4.4 0 1 1 .64-.48l1.24 1.66a5.6 5.6 0 0 1 4.24 0L14.36 2.1A.4.4 0 1 1 15 2.6l-1.2 1.6a5.9 5.9 0 0 1 3.2 4.8H5a5.9 5.9 0 0 1 3.2-4.8zM9 6.3a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2zM15 6.3a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2z"/></svg><span>Android</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="9" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg><span>Twilio</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l1 12.5a1.5 1.5 0 0 1-1.5 1.5H6.5A1.5 1.5 0 0 1 5 20.5L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Shopify</span></div>
+      <div class="logo-item" aria-hidden="true" style="display:contents;">
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.344-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg><span>Google</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6.5 8c-2.2 0-4 2-4 4.5S4.3 17 6.5 17c1.8 0 3-1.3 4.2-3.2M17.5 8c2.2 0 4 2 4 4.5S19.7 17 17.5 17c-1.8 0-3-1.3-4.2-3.2M6.5 8c1.8 0 3 1.3 4.2 3.2M17.5 8c-1.8 0-3 1.3-4.2 3.2"/></svg><span>Meta</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.462 2.15-1.21 2.9-.83.85-2.19 1.51-3.32 1.42-.14-1.1.46-2.26 1.19-3 .83-.86 2.28-1.51 3.34-1.32zM20.5 17.34c-.5 1.15-.74 1.66-1.38 2.68-.9 1.43-2.16 3.21-3.73 3.22-1.39.02-1.75-.9-3.64-.89-1.89.01-2.28.91-3.67.89-1.57-.02-2.76-1.62-3.66-3.05-2.51-3.95-2.77-8.6-1.22-11.07 1.1-1.75 2.83-2.78 4.45-2.78 1.65 0 2.69.9 4.06.9 1.32 0 2.13-.9 4.03-.9 1.44 0 2.97.79 4.06 2.15-3.57 1.96-2.99 7.06.7 8.85z"/></svg><span>Apple</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8.5v6a1 1 0 0 0 1 1h.5v3a1.2 1.2 0 0 0 2.4 0v-3h3.2v3a1.2 1.2 0 0 0 2.4 0v-3h.5a1 1 0 0 0 1-1v-6h-11zM5 8.5a1.2 1.2 0 0 0-1.2 1.2v4.1a1.2 1.2 0 1 0 2.4 0v-4.1A1.2 1.2 0 0 0 5 8.5zM19 8.5a1.2 1.2 0 0 0-1.2 1.2v4.1a1.2 1.2 0 1 0 2.4 0v-4.1A1.2 1.2 0 0 0 19 8.5zM8.2 4.2 7 2.6a.4.4 0 1 1 .64-.48l1.24 1.66a5.6 5.6 0 0 1 4.24 0L14.36 2.1A.4.4 0 1 1 15 2.6l-1.2 1.6a5.9 5.9 0 0 1 3.2 4.8H5a5.9 5.9 0 0 1 3.2-4.8zM9 6.3a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2zM15 6.3a.6.6 0 1 1 0-1.2.6.6 0 0 1 0 1.2z"/></svg><span>Android</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><circle cx="9" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.5" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg><span>Twilio</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l1 12.5a1.5 1.5 0 0 1-1.5 1.5H6.5A1.5 1.5 0 0 1 5 20.5L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Shopify</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="logos-row reverse">
+    <div class="logos-track">
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="9" y="2" width="3" height="8" rx="1.5"/><rect x="9" y="14" width="3" height="8" rx="1.5"/><rect x="2" y="9" width="8" height="3" rx="1.5"/><rect x="14" y="9" width="8" height="3" rx="1.5"/></svg><span>Slack</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 6.5a4 4 0 0 1 3.7 2.5 3 3 0 0 1 3.8 2.9c0 .2 0 .3-.05.5A2.7 2.7 0 0 1 19 17.2a2.7 2.7 0 0 1-2.7 2.7H6.5A3.5 3.5 0 0 1 4.7 13a4 4 0 0 1 4.8-6.5z"/></svg><span>Salesforce</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="7" r="2.2" fill="currentColor" stroke="none"/><circle cx="6" cy="16" r="2.2" fill="currentColor" stroke="none"/><circle cx="18" cy="16" r="2.2" fill="currentColor" stroke="none"/><path d="M12 9.2V13M12 13 7.6 15M12 13l4.4 2"/></svg><span>HubSpot</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 6.5v11L12 22l8-4.5v-11L12 2Z"/><path d="M13.2 7 9.5 12.5H12L10.7 17l3.8-5.5H12L13.2 7Z" fill="currentColor" stroke="none"/></svg><span>Zapier</span></div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2.3"/><circle cx="18.3" cy="8.5" r="2.3"/><circle cx="18.3" cy="15.5" r="2.3"/><circle cx="12" cy="19" r="2.3"/><circle cx="5.7" cy="15.5" r="2.3"/><circle cx="5.7" cy="8.5" r="2.3"/></svg><span>OpenAI</span></div>
+      <div class="logo-item" aria-hidden="true" style="display:contents;">
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="9" y="2" width="3" height="8" rx="1.5"/><rect x="9" y="14" width="3" height="8" rx="1.5"/><rect x="2" y="9" width="8" height="3" rx="1.5"/><rect x="14" y="9" width="8" height="3" rx="1.5"/></svg><span>Slack</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 6.5a4 4 0 0 1 3.7 2.5 3 3 0 0 1 3.8 2.9c0 .2 0 .3-.05.5A2.7 2.7 0 0 1 19 17.2a2.7 2.7 0 0 1-2.7 2.7H6.5A3.5 3.5 0 0 1 4.7 13a4 4 0 0 1 4.8-6.5z"/></svg><span>Salesforce</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="7" r="2.2" fill="currentColor" stroke="none"/><circle cx="6" cy="16" r="2.2" fill="currentColor" stroke="none"/><circle cx="18" cy="16" r="2.2" fill="currentColor" stroke="none"/><path d="M12 9.2V13M12 13 7.6 15M12 13l4.4 2"/></svg><span>HubSpot</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 6.5v11L12 22l8-4.5v-11L12 2Z"/><path d="M13.2 7 9.5 12.5H12L10.7 17l3.8-5.5H12L13.2 7Z" fill="currentColor" stroke="none"/></svg><span>Zapier</span></div>
+        <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2.3"/><circle cx="18.3" cy="8.5" r="2.3"/><circle cx="18.3" cy="15.5" r="2.3"/><circle cx="12" cy="19" r="2.3"/><circle cx="5.7" cy="15.5" r="2.3"/><circle cx="5.7" cy="8.5" r="2.3"/></svg><span>OpenAI</span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- CERTIFICATIONS (near hero) -->
 <div class="certs-band">
