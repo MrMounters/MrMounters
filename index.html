@@ -277,6 +277,19 @@
   }
   .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.7s 0.65s both; }
 
+  .hero-audit { margin-top: 1.8rem; max-width: 460px; animation: fadeUp 0.7s 0.78s both; }
+  .hero-audit-label { display: flex; align-items: center; gap: 0.5rem; font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.7rem; }
+  .hero-audit-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-light); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
+  .audit-input-wrap { display: flex; align-items: center; gap: 0.6rem; background: var(--dark3); border: 1px solid var(--card-border-hover); border-radius: 50px; padding: 0.45rem 0.45rem 0.45rem 1.1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.35); transition: border-color 0.2s, box-shadow 0.2s; }
+  .audit-input-wrap:focus-within { border-color: var(--gold); box-shadow: 0 10px 34px rgba(0,0,0,0.4), 0 0 0 3px rgba(76,89,247,0.15); }
+  .audit-input-icon { width: 17px; height: 17px; color: var(--warm-muted); flex-shrink: 0; }
+  .audit-input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.9rem; }
+  .audit-input::placeholder { color: var(--warm-muted); }
+  .audit-submit { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); border: none; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s, transform 0.2s; box-shadow: 0 4px 16px rgba(76,89,247,0.4); }
+  .audit-submit svg { width: 17px; height: 17px; }
+  .audit-submit:hover { background: var(--gold-light); transform: scale(1.06); }
+  .audit-url-chip { display: inline-flex; align-items: center; background: var(--dark4); border: 1px solid var(--card-border); border-radius: 20px; padding: 0.35rem 0.85rem; font-family: var(--mono); font-size: 0.76rem; color: var(--gold-light); margin-bottom: 1rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
   .btn-primary {
     background: var(--gold); color: #fff; padding: 0.9rem 1.8rem;
     font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.92rem;
@@ -1002,6 +1015,14 @@
     <a href="#pricing" class="btn-primary">See Pricing</a>
     <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-outline" data-desktop-label="Book a Free Call">Text Us Now</a>
   </div>
+  <form class="hero-audit" onsubmit="submitAuditUrl(event)">
+    <div class="hero-audit-label"><span class="dot"></span>Free Site Audit + Concept Design</div>
+    <div class="audit-input-wrap">
+      <svg class="audit-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <input type="text" id="auditUrl" class="audit-input" placeholder="yourbusiness.com" required autocomplete="off" inputmode="url" aria-label="Your website URL">
+      <button type="submit" class="audit-submit" aria-label="Get my free audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </form>
   <div class="hero-stats">
     <div><div class="hero-stat-num" data-target="7" data-prefix="5–">5–7</div><div class="hero-stat-label">Business Day Delivery</div></div>
     <div><div class="hero-stat-num" data-target="40" data-suffix="+">40+</div><div class="hero-stat-label">Active Clients</div></div>
@@ -1525,6 +1546,35 @@
   </div>
 </div>
 
+<!-- FREE SITE AUDIT MODAL -->
+<div id="auditModal" class="lm-modal-overlay" aria-hidden="true">
+  <div class="lm-modal-card" role="dialog" aria-modal="true" aria-label="Free Site Audit and Concept Design">
+    <button class="lm-modal-close" onclick="closeAuditModal()" aria-label="Close">✕</button>
+
+    <!-- Step 1: Email -->
+    <div id="auditStep1" class="lm-step">
+      <div class="lm-modal-eyebrow">Free Site Audit</div>
+      <h3 class="lm-modal-title">Where should we send it?</h3>
+      <div class="audit-url-chip" id="auditUrlDisplay"></div>
+      <p class="lm-modal-sub">We'll put together a free audit and concept design for your site. Enter your email and we'll get started.</p>
+      <form onsubmit="auditNext(event,1)">
+        <input type="email" id="auditEmail" class="lm-input" placeholder="your@email.com" required autocomplete="email">
+        <button type="submit" class="lm-modal-btn">Continue →</button>
+      </form>
+      <p class="lm-fine">We respect your privacy. Unsubscribe anytime.</p>
+    </div>
+
+    <!-- Step 2: Book the call -->
+    <div id="auditStep2" class="lm-step lm-step-hidden">
+      <div class="lm-step2-check">✓</div>
+      <h3 class="lm-modal-title">Last step — book your call.</h3>
+      <p class="lm-modal-sub">We review your site and walk you through your audit and concept designs live on a free 15-minute call. No automated report — a real person looks at your site.</p>
+      <a href="https://cal.com/john-bert/15min" id="auditBookLink" target="_blank" rel="noopener" class="lm-modal-btn" style="display:block;text-align:center;text-decoration:none;">Book My Free Call →</a>
+      <p class="lm-fine">No pitch, no pressure — just your audit and a few quick questions about your business.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── SCROLL PROGRESS ──────────────────────────────
 const prog = document.getElementById('scrollProgress');
@@ -1629,6 +1679,66 @@ function lmNext(e, step, skip) {
 
 lmModal.addEventListener('click', e => { if (e.target === lmModal) closeLmModal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && lmModal.style.display !== 'none') closeLmModal(); });
+
+// ── FREE SITE AUDIT ───────────────────────────────
+const auditModal = document.getElementById('auditModal');
+let _auditUrl = '';
+
+function normalizeUrl(raw) {
+  const v = raw.trim();
+  if (!v) return '';
+  return /^https?:\/\//i.test(v) ? v : 'https://' + v;
+}
+
+function submitAuditUrl(e) {
+  e.preventDefault();
+  const raw = document.getElementById('auditUrl').value;
+  _auditUrl = normalizeUrl(raw);
+  if (!_auditUrl) return;
+  document.getElementById('auditUrlDisplay').textContent = raw.trim();
+  auditModal.style.display = 'flex'; auditModal.removeAttribute('aria-hidden');
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => auditModal.classList.add('lm-modal-open'));
+  setTimeout(() => document.getElementById('auditEmail').focus(), 60);
+}
+
+function closeAuditModal() {
+  auditModal.classList.remove('lm-modal-open');
+  setTimeout(() => {
+    auditModal.style.display = 'none'; auditModal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    ['auditStep1','auditStep2'].forEach((id,i) => {
+      const el = document.getElementById(id);
+      el.classList.toggle('lm-step-hidden', i > 0);
+      el.classList.remove('lm-step-out','lm-step-in','lm-step-in-active');
+    });
+    document.getElementById('auditEmail').value = '';
+  }, 320);
+}
+
+function auditNext(e, step) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('auditEmail').value.trim();
+  // TODO: wire up to FormSpree/webhook to actually capture {email, url: _auditUrl} —
+  // same stub state as the PDF lead magnet above; nothing is persisted yet.
+
+  const cur = document.getElementById('auditStep' + step);
+  const nxt = document.getElementById('auditStep' + (step + 1));
+  cur.classList.add('lm-step-out');
+  setTimeout(() => {
+    cur.classList.add('lm-step-hidden'); cur.classList.remove('lm-step-out');
+    nxt.classList.remove('lm-step-hidden'); nxt.classList.add('lm-step-in');
+    requestAnimationFrame(() => nxt.classList.add('lm-step-in-active'));
+
+    const params = new URLSearchParams();
+    if (email) params.set('email', email);
+    params.set('notes', 'Free site audit request — ' + _auditUrl);
+    document.getElementById('auditBookLink').href = 'https://cal.com/john-bert/15min?' + params.toString();
+  }, 280);
+}
+
+auditModal.addEventListener('click', e => { if (e.target === auditModal) closeAuditModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && auditModal.style.display !== 'none') closeAuditModal(); });
 
 // ── FAQ ──────────────────────────────────────────
 function toggleFaq(btn){
