@@ -210,6 +210,11 @@
     font-size: 0.88rem; font-weight: 600;
     border-radius: 8px; text-decoration: none; display: inline-block;
   }
+  .mobile-nav-close {
+    position: absolute; top: 1.3rem; right: 5%; background: none; border: none;
+    color: var(--white); padding: 0.5rem; cursor: pointer; display: flex;
+  }
+  .mobile-nav-close svg { width: 26px; height: 26px; }
 
   /* ── FLOATING CTA ───────────────────────────── */
   .float-cta {
@@ -279,7 +284,7 @@
 
   .hero-audit { margin-top: 1.8rem; max-width: 460px; animation: fadeUp 0.7s 0.78s both; }
   .hero-audit-label { display: flex; align-items: center; gap: 0.5rem; font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.7rem; }
-  .hero-audit-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-light); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
+  .hero-audit-label .dot { width: 6px; height: 6px; border-radius: 50%; background: #2ECC71; box-shadow: 0 0 6px rgba(46,204,113,0.7); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
   .audit-input-wrap {
     display: flex; align-items: center; gap: 0.6rem; background: var(--dark3);
     border: 1px solid var(--card-border-hover); border-radius: 50px;
@@ -586,9 +591,7 @@
   .cta-band h2 em { font-style:italic; color:var(--gold-light); text-shadow:0 0 50px rgba(76,89,247,0.28); }
   .cta-band p { font-family:'Inter',sans-serif; color:var(--gray); margin-bottom:2.5rem; font-size:1rem; position:relative; font-weight:300; }
   .cta-band .hero-actions { justify-content:center; position:relative; }
-  .cta-contact { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-top:2rem; position:relative; }
-  .cta-contact a { font-family:'Inter',sans-serif; color:var(--warm-muted); text-decoration:none; font-size:0.82rem; letter-spacing:0.06em; display:flex; align-items:center; gap:0.4rem; transition:color 0.2s; }
-  .cta-contact a:hover { color:var(--white); }
+  .cta-band .hero-actions .btn-primary svg, .cta-band .hero-actions .btn-outline svg { vertical-align:-3px; margin-right:0.35rem; }
 
   /* ── APP COMING SOON ─────────────────────────── */
   .app-soon-band { background:var(--dark2); border-top:1px solid var(--card-border); border-bottom:1px solid var(--card-border); padding:3.6rem 4%; position:relative; overflow:hidden; }
@@ -841,6 +844,7 @@
     .portfolio-featured .browser-preview img { aspect-ratio: 16/7 !important; }
     .lead-magnet-inner { grid-template-columns: 1fr; gap: 2.5rem; }
     .lm-visual { justify-content: center; }
+    .portfolio-track .browser-frame { width: 340px; }
   }
   @media (max-width: 768px) {
     .nav-links { display: none; }
@@ -851,7 +855,8 @@
   @media (max-width: 640px) {
     nav { padding:1rem 4%; }
     .hero { padding:7rem 4% 3rem; }
-    .portfolio-track .browser-frame { width: 320px; }
+    .portfolio-track .browser-frame { width: 230px; }
+    .portfolio-track { gap: 0.85rem; }
     .portfolio-featured .browser-preview img { aspect-ratio:16/9 !important; }
     .step-connector { display:none; }
     .footer-inner { flex-direction:column; }
@@ -981,6 +986,7 @@
 
 <!-- MOBILE NAV -->
 <div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
   <a href="#portfolio" class="mobile-link">Portfolio</a>
   <a href="#pricing" class="mobile-link">Pricing</a>
   <a href="#how" class="mobile-link">How It Works</a>
@@ -1023,7 +1029,7 @@
     <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-outline" data-desktop-label="Book a Free Call">Text Us Now</a>
   </div>
   <form class="hero-audit" onsubmit="submitAuditUrl(event)">
-    <div class="hero-audit-label"><span class="dot"></span>Free Site Audit + Concept Design</div>
+    <div class="hero-audit-label"><span class="dot"></span>Free Site Audit + Concept Design — Ready in 24hr</div>
     <div class="audit-input-wrap">
       <svg class="audit-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       <input type="text" id="auditUrl" class="audit-input" placeholder="yourbusiness.com" required autocomplete="off" inputmode="url" aria-label="Your website URL">
@@ -1453,12 +1459,8 @@
   <h2>Ready to Get More<br><em>Customers?</em></h2>
   <p>Let's build something great. Text or call — we respond fast.</p>
   <div class="hero-actions">
-    <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-primary" data-desktop-label="Book a Free Call">Text Us Now</a>
-    <a href="tel:4805890098" class="btn-outline">(480) 589-0098</a>
-  </div>
-  <div class="cta-contact">
-    <a href="tel:4805890098"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.632 1.6l-.465.355a1 1 0 0 0-.303 1.213 12.035 12.035 0 0 0 5.652 5.4Z"/></svg> Call: (480) 589-0098</a>
-    <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" data-desktop-label="Book a Call"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Text: (480) 589-0098</a>
+    <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-primary" data-desktop-label="Book a Free Call"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Text Us Now</a>
+    <a href="tel:4805890098" class="btn-outline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.632 1.6l-.465.355a1 1 0 0 0-.303 1.213 12.035 12.035 0 0 0 5.652 5.4Z"/></svg> (480) 589-0098</a>
   </div>
 </div>
 
@@ -1574,7 +1576,7 @@
     <div id="auditStep2" class="lm-step lm-step-hidden">
       <div class="lm-step2-check">✓</div>
       <h3 class="lm-modal-title">Last step — book your call.</h3>
-      <p class="lm-modal-sub">We review your site and walk you through your audit and concept designs live on a free 15-minute call. No automated report — a real person looks at your site.</p>
+      <p class="lm-modal-sub">Your audit and concept designs will be ready within 24 hours. We'll walk you through them live on a free 15-minute call — pick any time that works. No automated report — a real person looks at your site.</p>
       <a href="https://cal.com/john-bert/15min" id="auditBookLink" target="_blank" rel="noopener" class="lm-modal-btn" style="display:block;text-align:center;text-decoration:none;">Book My Free Call →</a>
       <p class="lm-fine">No pitch, no pressure — just your audit and a few quick questions about your business.</p>
     </div>
@@ -1611,8 +1613,9 @@ document.querySelectorAll('[data-target]').forEach(el=>cObs.observe(el));
 
 // ── MOBILE NAV ───────────────────────────────────
 const hamburger=document.getElementById('navHamburger'), mobileNav=document.getElementById('mobileNav');
+function closeMobileNav(){hamburger.classList.remove('open');mobileNav.classList.remove('open');hamburger.setAttribute('aria-expanded','false');document.body.style.overflow='';}
 hamburger.addEventListener('click',()=>{const o=hamburger.classList.toggle('open');mobileNav.classList.toggle('open',o);hamburger.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';});
-document.querySelectorAll('.mobile-link,.mobile-cta').forEach(l=>l.addEventListener('click',()=>{hamburger.classList.remove('open');mobileNav.classList.remove('open');hamburger.setAttribute('aria-expanded','false');document.body.style.overflow='';}));
+document.querySelectorAll('.mobile-link,.mobile-cta').forEach(l=>l.addEventListener('click',closeMobileNav));
 
 // ── DESKTOP CTA SWAP: sms: links are a dead end without a phone app, so on
 // devices with a mouse we point the "text us" CTAs at the real Cal.com booking
