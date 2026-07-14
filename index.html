@@ -379,7 +379,7 @@
   .portfolio-track { display: flex; gap: 1.25rem; width: max-content; animation: portfolio-scroll 16s linear infinite; will-change: transform; }
   .portfolio-track:hover { animation-play-state: paused; }
   @keyframes portfolio-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-  .portfolio-track .browser-frame { width: 460px; flex-shrink: 0; }
+  .portfolio-track .browser-frame { width: 600px; flex-shrink: 0; }
 
   .browser-frame {
     display: block; text-decoration: none; color: inherit;
@@ -404,7 +404,7 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .browser-preview { position: relative; overflow: hidden; }
-  .browser-preview img { display: block; width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+  .browser-preview img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; object-position: top; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
   .browser-frame:hover .browser-preview img { transform: scale(1.03); }
   .portfolio-card-info { padding: 1rem 1.2rem 1.3rem; border-top: 1px solid rgba(242,244,248,0.06); background: var(--dark3); }
   .portfolio-card-tag { font-family: 'Inter', sans-serif; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 0.35rem; }
