@@ -280,25 +280,15 @@
   .hero-audit { margin-top: 1.8rem; max-width: 460px; animation: fadeUp 0.7s 0.78s both; }
   .hero-audit-label { display: flex; align-items: center; gap: 0.5rem; font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.7rem; }
   .hero-audit-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-light); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
-  @property --audit-spin { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
   .audit-input-wrap {
     display: flex; align-items: center; gap: 0.6rem; background: var(--dark3);
     border: 1px solid var(--card-border-hover); border-radius: 50px;
     padding: 0.45rem 0.45rem 0.45rem 1.1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
     transition: border-color 0.2s, box-shadow 0.2s;
-    position: relative; isolation: isolate; overflow: visible;
+    animation: audit-bounce 2.8s ease-in-out infinite;
   }
-  .audit-input-wrap::before {
-    content: ''; position: absolute; inset: -2px; border-radius: inherit; padding: 2px;
-    background: conic-gradient(from var(--audit-spin), transparent 0%, rgba(76,89,247,0.95) 10%, rgba(138,116,255,0.65) 20%, transparent 34%);
-    animation: audit-border-spin 3s linear infinite;
-    pointer-events: none; z-index: -1;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-  }
-  @keyframes audit-border-spin { to { --audit-spin: 360deg; } }
-  .audit-input-wrap:focus-within { border-color: var(--gold); box-shadow: 0 10px 34px rgba(0,0,0,0.4), 0 0 0 3px rgba(76,89,247,0.15); }
+  @keyframes audit-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .audit-input-wrap:focus-within { border-color: var(--gold); box-shadow: 0 10px 34px rgba(0,0,0,0.4), 0 0 0 3px rgba(76,89,247,0.15); animation-play-state: paused; }
   .audit-input-icon { width: 17px; height: 17px; color: var(--warm-muted); flex-shrink: 0; }
   .audit-input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.9rem; }
   .audit-input::placeholder { color: var(--warm-muted); }
