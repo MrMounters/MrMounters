@@ -858,7 +858,11 @@
     .nav-login-label { display: none; }
     .nav-login { padding: 0.5rem 0.6rem; }
     .nav-tools { gap: 0.6rem; margin-left: 0.8rem; }
-    .hero-lottie-mobile { display: block; }
+    .hero-lottie-mobile { display: block; opacity: 0.4; }
+    .hero-bg::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, rgba(11,15,25,0.8) 0%, rgba(11,15,25,0.42) 42%, rgba(11,15,25,0.85) 100%);
+    }
   }
 
   /* Process numbers: a real sequence, set as a mono index */
