@@ -56,8 +56,8 @@ module.exports = async function handler(req, res) {
           quantity: 1,
         },
       ],
-      success_url: `${origin}/index.html?checkout=success#pricing`,
-      cancel_url: `${origin}/index.html?checkout=cancelled#pricing`,
+      success_url: `${origin}/web-development.html?checkout=success#pricing`,
+      cancel_url: `${origin}/web-development.html?checkout=cancelled#pricing`,
     });
 
     res.setHeader('Cache-Control', 'no-store');
