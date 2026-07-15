@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<title>Dashboards — Meridion AI</title>
+<meta name="description" content="Custom reporting dashboards that pull your leads, ad spend, and site performance into one live view — for businesses across the USA, Europe, the UK, Australia, and the Gulf.">
+<link rel="canonical" href="https://meridionai.com/dashboards.html">
+<meta property="og:title" content="Dashboards — Meridion AI">
+<meta property="og:description" content="Custom reporting dashboards that pull your leads, ad spend, and site performance into one live view — for businesses across the USA, Europe, the UK, Australia, and the Gulf.">
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://meridionai.com/dashboards.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dashboards — Meridion AI">
+<meta name="twitter:description" content="Custom reporting dashboards that pull your leads, ad spend, and site performance into one live view — for businesses across the USA, Europe, the UK, Australia, and the Gulf.">
+<meta name="twitter:image" content="og-image.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B0F19'/%3E%3Cpath d='M8 22V10l8 8 8-8v12' stroke='%234C59F7' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Custom Reporting Dashboard Development",
+  "name": "Custom Reporting Dashboard Development \u2014 Meridion AI",
+  "provider": {
+    "@type": "ProfessionalService",
+    "name": "Meridion AI",
+    "telephone": "+14805890098",
+    "url": "https://meridionai.com/"
+  },
+  "areaServed": [
+    "US",
+    "GB",
+    "AU",
+    "AE",
+    "EU"
+  ],
+  "description": "Custom reporting dashboards that pull your leads, ad spend, and site performance into one live view \u2014 for businesses across the USA, Europe, the UK, Australia, and the Gulf."
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --gold: #4C59F7; --gold-light: #8A74FF; --gold-dim: rgba(76,89,247,0.12);
+    --cyan: #7DD3FC; --dark: #0B0F19; --dark2: #111A2E; --dark3: #141E33; --dark4: #1A2540;
+    --white: #F2F4F8; --gray: #A6B0C3; --gray-light: #C7CFDE; --warm-muted: #7C88A0; --warm-accent: #B0BAD1;
+    --border: rgba(76,89,247,0.2); --card-border: rgba(242,244,248,0.1); --card-border-hover: rgba(76,89,247,0.4);
+    --glow-strong: 0 0 30px rgba(76,89,247,0.25), 0 0 60px rgba(138,116,255,0.12);
+    --card-shadow-hover: 0 4px 10px rgba(0,0,0,0.3), 0 0 24px rgba(76,89,247,0.1);
+    --display: 'Space Grotesk','Inter',sans-serif; --mono: 'Space Mono','SFMono-Regular',ui-monospace,monospace;
+  }
+  #cookieBanner {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 8000;
+    background: rgba(11,15,25,0.94); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(76,89,247,0.18);
+    padding: 1.1rem 4%; display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; flex-wrap: wrap;
+    transform: translateY(100%); opacity: 0; pointer-events: none;
+    transition: transform 0.48s cubic-bezier(0.22,1,0.36,1), opacity 0.48s;
+  }
+  #cookieBanner.cb-show { transform: none; opacity: 1; pointer-events: auto; }
+  .cb-text { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--gray); line-height: 1.65; max-width: 660px; flex: 1; font-weight: 300; }
+  .cb-text a { color: var(--warm-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .cb-actions { display: flex; gap: 0.65rem; align-items: center; flex-shrink: 0; }
+  .cb-accept { background: var(--gold); color: var(--white); border: none; padding: 0.6rem 1.4rem; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; transition: background 0.2s, box-shadow 0.2s; }
+  .cb-accept:hover { background: var(--gold-light); box-shadow: 0 4px 20px rgba(76,89,247,0.38); }
+  .cb-decline { background: none; border: 1px solid var(--card-border); color: var(--warm-muted); padding: 0.58rem 1rem; border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.74rem; letter-spacing: 0.06em; transition: border-color 0.2s, color 0.2s; }
+  .cb-decline:hover { border-color: var(--card-border-hover); color: var(--white); }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--dark); color: var(--white); font-family: 'Inter', sans-serif; font-weight: 400; overflow-x: hidden; }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background-image: linear-gradient(rgba(76,89,247,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(76,89,247,0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .skip-link { position: fixed; top: -100%; left: 1rem; z-index: 100001; background: var(--gold); color: var(--dark); padding: 0.7rem 1.2rem; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.82rem; border-radius: 4px; text-decoration: none; transition: top 0.2s; }
+  .skip-link:focus { top: 1rem; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  #scrollProgress { position: fixed; top: 0; left: 0; height: 2px; z-index: 9998; background: linear-gradient(to right, var(--gold), var(--gold-light)); width: 0%; pointer-events: none; transition: width 0.08s linear; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 4%; background: rgba(11,15,25,0.82); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--card-border); transition: background 0.3s, box-shadow 0.3s; }
+  nav.scrolled { background: rgba(11,15,25,0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .nav-logo { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--white); letter-spacing: 0.02em; position: relative; z-index: 210; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; margin-left: auto; }
+  .nav-links a { color: var(--warm-muted); text-decoration: none; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-trigger { background: none; border: none; font-family: 'Inter', sans-serif; cursor: pointer; color: var(--warm-muted); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.3rem; transition: color 0.2s; padding: 0.4rem 0; }
+  .nav-dropdown-trigger svg { width: 11px; height: 11px; transition: transform 0.2s; }
+  .nav-dropdown:hover .nav-dropdown-trigger, .nav-dropdown:focus-within .nav-dropdown-trigger { color: var(--white); }
+  .nav-dropdown:hover .nav-dropdown-trigger svg, .nav-dropdown:focus-within .nav-dropdown-trigger svg { transform: rotate(180deg); }
+  .nav-dropdown-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(6px); width: 240px; background: var(--dark3); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.5rem; box-shadow: 0 20px 50px rgba(0,0,0,0.55); opacity: 0; pointer-events: none; transition: opacity 0.18s, transform 0.18s; }
+  .nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown:focus-within .nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(2px); }
+  .nav-dropdown-menu a { display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.7rem; border-radius: 6px; color: var(--gray-light) !important; text-transform: none !important; letter-spacing: 0 !important; font-size: 0.85rem !important; font-weight: 500 !important; transition: background 0.15s, color 0.15s !important; }
+  .nav-dropdown-menu a:hover { background: var(--dark4); color: var(--white) !important; }
+  .nav-dropdown-menu a svg { width: 17px; height: 17px; color: var(--gold); flex-shrink: 0; }
+  .nav-dropdown-menu a.active { background: var(--dark4); color: var(--white) !important; }
+  .nav-cta { background: var(--gold); color: #fff; padding: 0.55rem 1.3rem; font-weight: 600; font-size: 0.85rem; border-radius: 8px; display: inline-block; transition: background 0.2s, box-shadow 0.2s; }
+  .nav-cta:hover { background: var(--gold-light); box-shadow: 0 0 20px rgba(76,89,247,0.35); color: #fff; }
+  .nav-tools { display: flex; align-items: center; gap: 0.9rem; margin-left: 1.4rem; position: relative; z-index: 210; }
+  .nav-login { display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); text-decoration: none; border: 1px solid var(--card-border-hover); padding: 0.5rem 0.85rem; border-radius: 2px; cursor: pointer; white-space: nowrap; transition: border-color 0.2s, background 0.2s, color 0.2s; }
+  .nav-login:hover { border-color: var(--gold); color: var(--gold); background: rgba(76,89,247,0.06); }
+  .nav-login svg { width: 15px; height: 15px; }
+  .nav-hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 0.5rem; z-index: 210; position: relative; }
+  .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; transform-origin: center; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .mobile-nav { display: none; position: fixed; inset: 0; z-index: 205; background: rgba(11,15,25,0.97); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 1.3rem; opacity: 0; pointer-events: none; transition: opacity 0.3s; overflow-y: auto; padding: 6rem 4% 3rem; }
+  .mobile-nav.open { opacity: 1; pointer-events: auto; }
+  .mobile-nav a { font-family: 'Inter', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; letter-spacing: -0.02em; transition: color 0.2s; }
+  .mobile-nav a:hover { color: var(--gold); }
+  .mobile-nav-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-top: 0.8rem; }
+  .mobile-nav .mobile-sublink { font-size: 1.05rem; font-weight: 500; color: var(--gray-light); }
+  .mobile-nav .mobile-sublink:hover { color: var(--gold); }
+  .mobile-nav .mobile-cta { margin-top: 1rem; background: var(--gold); color: #fff; padding: 0.9rem 2.2rem; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; border-radius: 8px; text-decoration: none; display: inline-block; }
+  .mobile-nav-close { position: absolute; top: 1.3rem; right: 5%; background: none; border: none; color: var(--white); padding: 0.5rem; cursor: pointer; display: flex; }
+  .mobile-nav-close svg { width: 26px; height: 26px; }
+
+  .float-cta { position: fixed; bottom: 2rem; right: 2rem; z-index: 300; display: flex; align-items: center; gap: 0.6rem; background: var(--gold); color: #fff; padding: 0.85rem 1.4rem; border-radius: 50px; font-weight: 600; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 20px rgba(76,89,247,0.5); opacity: 0; transform: translateY(20px) scale(0.95); transition: opacity 0.4s, transform 0.4s, background 0.2s, box-shadow 0.2s; pointer-events: none; }
+  .float-cta.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  .float-cta:hover { background: var(--gold-light); box-shadow: 0 6px 30px rgba(76,89,247,0.65); transform: translateY(-2px) scale(1.02); }
+  .float-cta .dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+
+  .hero { min-height: 88vh; display: flex; flex-direction: column; justify-content: center; padding: 9rem 4% 5rem; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(60% 55% at 85% 10%, rgba(76,89,247,0.18) 0%, transparent 60%), radial-gradient(50% 50% at 10% 90%, rgba(125,211,252,0.12) 0%, transparent 60%), linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); }
+  .hero > *:not(.hero-bg) { position: relative; z-index: 2; }
+  .hero-eyebrow { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.6rem; animation: fadeUp 0.6s 0.1s both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+  .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.6rem, 5.8vw, 4.8rem); font-weight: 700; line-height: 1.06; max-width: 880px; margin-bottom: 1.6rem; letter-spacing: -0.03em; animation: fadeUp 0.7s 0.2s both; }
+  .line-gold { color: var(--gold-light); text-shadow: 0 0 30px rgba(76,89,247,0.35); }
+  .hero-sub { font-family: 'Inter', sans-serif; font-size: 1.08rem; color: var(--gray-light); max-width: 540px; line-height: 1.72; margin-bottom: 2rem; font-weight: 400; animation: fadeUp 0.7s 0.35s both; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeUp 0.7s 0.5s both; }
+  .hero-regions { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; margin: 2rem 0 0; animation: fadeUp 0.7s 0.42s both; }
+  .hero-regions-label { font-family: 'Inter', sans-serif; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--warm-muted); }
+  .region-chips { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .region-chip { display: flex; align-items: center; gap: 0.4rem; background: var(--dark3); border: 1px solid var(--card-border); border-radius: 20px; padding: 0.3rem 0.7rem 0.3rem 0.4rem; transition: border-color 0.2s, transform 0.2s; }
+  .region-chip:hover { border-color: var(--card-border-hover); transform: translateY(-1px); }
+  .region-chip svg { width: 18px; height: 13px; border-radius: 2px; flex-shrink: 0; display: block; }
+  .region-chip span { font-family: 'Inter', sans-serif; font-size: 0.74rem; font-weight: 600; color: var(--gray-light); white-space: nowrap; }
+
+  .btn-primary { background: var(--gold); color: #fff; padding: 0.9rem 1.8rem; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.92rem; border: none; cursor: pointer; text-decoration: none; display: inline-block; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.3), 0 0 20px rgba(76,89,247,0.25); position: relative; transition: background 0.2s, box-shadow 0.2s; }
+  .btn-primary:hover { background: var(--gold-light); box-shadow: 0 4px 20px rgba(138,116,255,0.4); }
+  .btn-outline { background: var(--dark3); color: var(--white); padding: 0.9rem 1.8rem; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.92rem; border: 1px solid var(--card-border-hover); cursor: pointer; text-decoration: none; display: inline-block; border-radius: 8px; position: relative; transition: border-color 0.2s, background 0.2s; }
+  .btn-outline:hover { background: var(--dark4); border-color: var(--gold); }
+
+  .hero-stats { display: flex; gap: 3rem; margin-top: 3.6rem; padding-top: 2.2rem; border-top: 1px solid rgba(242,244,248,0.09); flex-wrap: wrap; animation: fadeUp 0.7s 0.62s both; }
+  .hero-stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 2.1rem; font-weight: 700; color: var(--white); letter-spacing: -0.02em; }
+  .hero-stat-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-muted); margin-top: 0.3rem; }
+
+  section { padding: 7rem 4%; }
+  .section-eyebrow { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; line-height: 1.1; margin-bottom: 1.1rem; letter-spacing: -0.02em; }
+  .section-title em { font-style: normal; color: var(--gold-light); text-shadow: 0 0 30px rgba(76,89,247,0.35); }
+  .section-sub { font-family: 'Inter', sans-serif; color: var(--gray); max-width: 560px; line-height: 1.7; margin-bottom: 3.2rem; font-size: 0.97rem; font-weight: 400; }
+  .glow-accent { position: absolute; pointer-events: none; border-radius: 50%; filter: blur(90px); background: radial-gradient(circle, rgba(76,89,247,0.06) 0%, transparent 70%); width: 500px; height: 500px; top: -100px; left: -100px; }
+
+  .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.65s cubic-bezier(0.22,1,0.36,1),transform 0.65s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.visible { opacity:1; transform:none; }
+
+  #benefits { background:var(--dark2); position:relative; overflow:hidden; }
+  .services-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.2rem; }
+  .service-card { border:1px solid var(--card-border); padding:1.8rem; border-radius:8px; background:var(--dark3); box-shadow:0 2px 5px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.2); transition:border-color 0.3s, background 0.3s, box-shadow 0.35s; }
+  .service-card:hover { border-color:var(--card-border-hover); background:var(--dark4); box-shadow:var(--card-shadow-hover); }
+  .service-icon { width:1.6rem; height:1.6rem; margin-bottom:1rem; color:var(--gold); }
+  .service-icon svg { width:100%; height:100%; stroke-width:1.6; }
+  .service-name { font-family:'Inter',sans-serif; font-weight:600; font-size:0.96rem; margin-bottom:0.5rem; }
+  .service-desc { font-family:'Inter',sans-serif; color:var(--gray); font-size:0.83rem; line-height:1.72; font-weight:300; }
+
+  #how { background:var(--dark); position:relative; overflow:hidden; }
+  #how::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 50%, rgba(76,89,247,0.022) 0%, transparent 65%); }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:2.5rem; }
+  .step { position:relative; }
+  .step-num { font-family: var(--mono); font-weight: 700; font-size: 2.4rem; color: var(--warm-accent); opacity: 0.92; letter-spacing: -0.02em; margin-bottom: 0.9rem; }
+  .step-num::before { content: '/ '; color: var(--gold); }
+  .step-title { font-family:'Inter',sans-serif; font-weight:600; font-size:0.98rem; margin-bottom:0.5rem; }
+  .step-desc { font-family:'Inter',sans-serif; color:var(--gray); font-size:0.85rem; line-height:1.72; font-weight:300; }
+  .step-connector { position:absolute; top:2.8rem; right:-1.5rem; width:1.5rem; height:1px; background:linear-gradient(to right,rgba(242,244,248,0.12),transparent); }
+
+  .ticker-band { background: var(--dark3); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); padding: 1.1rem 0; overflow: hidden; position: relative; }
+  .ticker-band::before,.ticker-band::after { content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2; pointer-events: none; }
+  .ticker-band::before { left: 0; background: linear-gradient(to right, var(--dark3), transparent); }
+  .ticker-band::after  { right: 0; background: linear-gradient(to left, var(--dark3), transparent); }
+  .ticker-track { display: flex; gap: 3rem; white-space: nowrap; animation: ticker-scroll 28s linear infinite; width: max-content; }
+  .ticker-track:hover { animation-play-state: paused; }
+  @keyframes ticker-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .ticker-item { display: flex; align-items: center; gap: 1rem; font-family: 'Inter', sans-serif; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); }
+  .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0.6; flex-shrink: 0; }
+  .proof-cta { text-align:center; padding: 2.4rem 4% 0; }
+  .proof-cta a { font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:600; color:var(--gold-light); text-decoration:none; }
+  .proof-cta a:hover { text-decoration:underline; }
+
+  .cta-band { background:linear-gradient(135deg,rgba(76,89,247,0.1) 0%,rgba(76,89,247,0.03) 50%,rgba(76,89,247,0.07) 100%); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:7rem 4%; text-align:center; position:relative; overflow:hidden; }
+  .cta-band::before { content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:700px; height:700px; border-radius:50%; pointer-events:none; background:radial-gradient(circle,rgba(76,89,247,0.07) 0%,transparent 65%); }
+  .cta-band h2 { font-family:var(--display); font-size:clamp(2.2rem,5vw,3.8rem); font-weight:700; margin-bottom:1rem; position:relative; letter-spacing:-0.035em; }
+  .cta-band h2 em { font-style:italic; color:var(--gold-light); text-shadow:0 0 50px rgba(76,89,247,0.28); }
+  .cta-band p { font-family:'Inter',sans-serif; color:var(--gray); margin-bottom:2.5rem; font-size:1rem; position:relative; font-weight:300; }
+  .cta-band .hero-actions { justify-content:center; position:relative; }
+  .cta-band .hero-actions .btn-primary svg, .cta-band .hero-actions .btn-outline svg { vertical-align:-3px; margin-right:0.35rem; }
+
+  footer { background:var(--dark2); padding:3.5rem 4% 2rem; border-top:1px solid var(--card-border); }
+  .footer-inner { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:2rem; margin-bottom:2.5rem; }
+  .footer-brand { font-family:'Inter',sans-serif; font-size:1.1rem; font-weight:700; }
+  .footer-tagline { font-family:'Inter',sans-serif; color:var(--gray); font-size:0.78rem; margin-top:0.4rem; font-weight:300; }
+  .footer-links { display:flex; gap:2rem; flex-wrap:wrap; }
+  .footer-links a { font-family:'Inter',sans-serif; color:var(--gray); text-decoration:none; font-size:0.78rem; letter-spacing:0.06em; transition:color 0.2s; }
+  .footer-links a:hover { color:var(--white); }
+  .footer-bottom { border-top:1px solid var(--card-border); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; color:var(--warm-muted); font-size:0.75rem; font-family:'Inter',sans-serif; }
+  .footer-legal { display:flex; gap:1.2rem; flex-wrap:wrap; }
+  .footer-legal a { color:var(--warm-muted); text-decoration:none; }
+  .footer-legal a:hover { color:var(--white); }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .mobile-nav { display: flex; }
+  }
+  @media (max-width: 640px) {
+    nav { padding:1rem 4%; }
+    .hero { padding:7.5rem 4% 3rem; }
+    .step-connector { display:none; }
+    .footer-inner { flex-direction:column; }
+    .hero-stats { gap:2rem; }
+    .float-cta { bottom:1.2rem; right:1.2rem; padding:0.75rem 1.1rem; font-size:0.76rem; }
+    .nav-login-label { display: none; }
+    .nav-login { padding: 0.5rem 0.6rem; }
+    .nav-tools { gap: 0.6rem; margin-left: 0.8rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  }
+
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xj1vynd82i");
+</script>
+
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div id="scrollProgress"></div>
+
+<a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="float-cta" id="floatCta" data-desktop-label="Book a Free Call">
+  <span class="dot"></span>Text Us Now
+</a>
+
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo" style="display:flex;align-items:center;text-decoration:none;"><img src="meridion-logo-full.png" alt="Meridion AI" style="height:32px;display:block;"></a>
+  <div class="nav-links">
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger" aria-haspopup="true">Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="nav-dropdown-menu">
+        <a href="seo.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>SEO</a>
+        <a href="paid-advertising.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>Paid Advertising</a>
+        <a href="web-development.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Web Development</a>
+        <a href="ugc-content.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m9 9 6 3-6 3V9Z"/></svg>UGC Content</a>
+        <a href="dashboards.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboards</a>
+        <a href="ai-lead-generation.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M9 13v2M15 13v2"/></svg>AI Lead Generation</a>
+      </div>
+    </div>
+    <a href="work.html">Work</a>
+    <a href="about.html">About</a>
+    <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
+  </div>
+  <div class="nav-tools">
+    <a href="login.html" class="nav-login" aria-label="Client login">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>
+      <span class="nav-login-label">Client Login</span>
+    </a>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <a href="work.html" class="mobile-link">Work</a>
+  <a href="about.html" class="mobile-link">About</a>
+  <div class="mobile-nav-label">Services</div>
+  <a href="seo.html" class="mobile-link mobile-sublink">SEO</a>
+  <a href="paid-advertising.html" class="mobile-link mobile-sublink">Paid Advertising</a>
+  <a href="web-development.html" class="mobile-link mobile-sublink">Web Development</a>
+  <a href="ugc-content.html" class="mobile-link mobile-sublink">UGC Content</a>
+  <a href="dashboards.html" class="mobile-link mobile-sublink">Dashboards</a>
+  <a href="ai-lead-generation.html" class="mobile-link mobile-sublink">AI Lead Generation</a>
+  <a href="login.html" class="mobile-link" style="margin-top:0.8rem;">Client Login</a>
+  <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="mobile-cta">Text Us Now</a>
+</div>
+
+<section class="hero" id="main">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow">Dashboards</div>
+  <h1>See Everything.<br><span class="line-gold">In One Place.</span></h1>
+  <p class="hero-sub">Custom reporting dashboards that pull your leads, ad spend, and site performance into one live view — no more digging through five different logins.</p>
+  <div class="hero-regions">
+    <span class="hero-regions-label">Serving businesses in</span>
+    <div class="region-chips">
+      <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#B22234"/><g fill="#fff"><rect y="1.38" width="24" height="1.38"/><rect y="4.15" width="24" height="1.38"/><rect y="6.92" width="24" height="1.38"/><rect y="9.69" width="24" height="1.38"/><rect y="12.46" width="24" height="1.38"/><rect y="15.23" width="24" height="1.38"/></g><rect width="10.8" height="9.69" fill="#3C3B6E"/></svg><span>USA</span></div>
+      <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#003399"/><g fill="#FFCC00"><circle cx="12" cy="4" r=".6"/><circle cx="16" cy="5.2" r=".6"/><circle cx="18.5" cy="9" r=".6"/><circle cx="16" cy="12.8" r=".6"/><circle cx="12" cy="14" r=".6"/><circle cx="8" cy="12.8" r=".6"/><circle cx="5.5" cy="9" r=".6"/><circle cx="8" cy="5.2" r=".6"/></g></svg><span>Europe</span></div>
+      <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#00247D"/><path d="M0 0L24 18M24 0L0 18" stroke="#fff" stroke-width="3.6"/><path d="M0 0L24 18M24 0L0 18" stroke="#CF142B" stroke-width="1.2"/><path d="M12 0V18M0 9H24" stroke="#fff" stroke-width="5.4"/><path d="M12 0V18M0 9H24" stroke="#CF142B" stroke-width="3"/></svg><span>UK</span></div>
+      <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#00247D"/><g fill="#fff"><circle cx="18" cy="4" r=".5"/><circle cx="20" cy="8" r=".7"/><circle cx="19" cy="12" r=".5"/><circle cx="16" cy="14" r=".5"/><circle cx="15" cy="9" r=".4"/></g><rect width="9" height="6.75" fill="#00247D" stroke="#fff" stroke-width=".5"/></svg><span>Australia</span></div>
+      <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#fff"/><rect width="24" height="6" fill="#00732F"/><rect y="12" width="24" height="6" fill="#000"/><rect width="7" height="18" fill="#FF0000"/></svg><span>Gulf</span></div>
+    </div>
+  </div>
+  <div class="hero-actions">
+    <a href="https://cal.com/john-bert/15min" target="_blank" rel="noopener" class="btn-primary" data-desktop-label="Book a Free Strategy Call">Book a Free Strategy Call</a>
+    <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-outline" data-desktop-label="Call Instead">Text Us Now</a>
+  </div>
+  <div class="hero-stats">
+    <div><div class="hero-stat-num" data-target="5" data-suffix="+">5+</div><div class="hero-stat-label">Regions Served</div></div>
+    <div><div class="hero-stat-num" data-target="40" data-suffix="+">40+</div><div class="hero-stat-label">Active Clients</div></div>
+    <div><div class="hero-stat-num" data-target="100" data-suffix="%">100%</div><div class="hero-stat-label">Custom Strategy</div></div>
+  </div>
+</section>
+
+
+
+<section id="benefits">
+  <div class="glow-accent"></div>
+  <div class="section-eyebrow">Why This Works</div>
+  <h2 class="section-title">What You Get.</h2>
+  <p class="section-sub">No bloated retainers or vague "brand awareness" decks — just the work that moves the number you're being measured on.</p>
+  <div class="services-grid reveal">
+    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div><div class="service-name">Live Lead &amp; Revenue Tracking</div><div class="service-desc">Every lead and dollar in one view, updated in real time — not a monthly PDF.</div></div>
+    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div class="service-name">Ad Spend &amp; ROAS Visibility</div><div class="service-desc">See exactly what your marketing spend is producing, across every channel.</div></div>
+    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="service-name">Custom Built for Your Stack</div><div class="service-desc">Connected to the tools you already use — no forced migration to a new platform.</div></div>
+    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="service-name">Client Portal Access</div><div class="service-desc">A clean, branded dashboard your whole team can log into, anywhere.</div></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="glow-accent" style="right:-80px;left:auto;"></div>
+  <div class="section-eyebrow">The Process</div>
+  <h2 class="section-title">How We<br><em>Get It Done.</em></h2>
+  <p class="section-sub">Same team from strategy call to launch — no handoffs, no surprises.</p>
+  <div class="steps reveal">
+    <div class="step"><div class="step-num">01</div><div class="step-title">Map Your Data</div><div class="step-desc">We identify every source of truth — leads, ad spend, site analytics, CRM.</div><div class="step-connector"></div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-title">Design the Dashboard</div><div class="step-desc">A layout built around the numbers that actually drive your decisions.</div><div class="step-connector"></div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-title">Build &amp; Connect</div><div class="step-desc">We wire up live data connections so the dashboard updates itself.</div><div class="step-connector"></div></div>
+    <div class="step"><div class="step-num">04</div><div class="step-title">Launch &amp; Iterate</div><div class="step-desc">You start using it — and we refine it as your business changes.</div></div>
+  </div>
+</section>
+
+<div class="ticker-band">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>40+ Businesses Served</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>40+ Businesses Served</span>
+  </div>
+</div>
+<div class="proof-cta"><a href="work.html">See the full portfolio →</a></div>
+
+<div class="cta-band">
+  <h2>Ready to See<br><em>Your Numbers Clearly?</em></h2>
+  <p>Book a free strategy call and we'll show you what a live dashboard could look like for your business.</p>
+  <div class="hero-actions">
+    <a href="https://cal.com/john-bert/15min" target="_blank" rel="noopener" class="btn-primary" data-desktop-label="Book a Free Strategy Call">Book a Free Strategy Call</a>
+    <a href="tel:4805890098" class="btn-outline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.632 1.6l-.465.355a1 1 0 0 0-.303 1.213 12.035 12.035 0 0 0 5.652 5.4Z"/></svg> (480) 589-0098</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand"><img src="meridion-logo-full.png" alt="Meridion AI" style="height:28px;display:block;"></div>
+      <div class="footer-tagline">Scale Your Business, Anywhere You Operate — Global Growth Partner</div>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Home</a><a href="work.html">Work</a><a href="about.html">About</a>
+      <a href="index.html#services">Services</a><a href="tel:4805890098">(480) 589-0098</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Meridion AI. All rights reserved.</span>
+    <div class="footer-legal">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<div id="cookieBanner" role="dialog" aria-label="Cookie consent">
+  <p class="cb-text">
+    We use cookies to personalize content and analyze traffic. By clicking <strong style="color:var(--warm-accent);">Accept</strong>, you agree to our use of cookies as described in our <a href="privacy.html">Privacy Policy</a>. You can manage preferences at any time.
+  </p>
+  <div class="cb-actions">
+    <button class="cb-decline" id="cbDecline">Decline</button>
+    <button class="cb-accept" id="cbAccept">Accept All</button>
+  </div>
+</div>
+
+<script>
+const prog = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+  prog.style.width = (pct * 100) + '%';
+  document.getElementById('floatCta').classList.toggle('visible', window.scrollY > 400);
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+function animateCounter(el, target, prefix, suffix) {
+  const dur = 1800, t0 = performance.now();
+  (function tick(now) {
+    const p = Math.min((now-t0)/dur,1), e = 1-Math.pow(1-p,4);
+    el.textContent = (prefix||'') + Math.floor(e*target) + (suffix||'');
+    if(p<1) requestAnimationFrame(tick);
+  })(t0);
+}
+const cObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    const el=e.target, tgt=parseInt(el.dataset.target,10);
+    if(!isNaN(tgt)){animateCounter(el,tgt,el.dataset.prefix||'',el.dataset.suffix||'');cObs.unobserve(el);}
+  });
+},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el=>cObs.observe(el));
+
+const hamburger=document.getElementById('navHamburger'), mobileNav=document.getElementById('mobileNav');
+function closeMobileNav(){hamburger.classList.remove('open');mobileNav.classList.remove('open');hamburger.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+hamburger.addEventListener('click',()=>{const o=hamburger.classList.toggle('open');mobileNav.classList.toggle('open',o);hamburger.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';});
+document.querySelectorAll('.mobile-link,.mobile-cta').forEach(l=>l.addEventListener('click',closeMobileNav));
+
+(function() {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const BOOK_URL = 'https://cal.com/john-bert/15min';
+  document.querySelectorAll('a[href^="sms:"]').forEach(a => {
+    if (a.closest('.mobile-nav')) return;
+    a.href = a.dataset.desktopHref || BOOK_URL;
+    if (!a.dataset.desktopHref) { a.target = '_blank'; a.rel = 'noopener'; }
+    if (a.dataset.desktopLabel) {
+      if (a.lastChild && a.lastChild.nodeType === 3) a.lastChild.textContent = a.dataset.desktopLabel;
+      else a.textContent = a.dataset.desktopLabel;
+    }
+  });
+})();
+
+const rObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rObs.unobserve(e.target);}});},{threshold:0.06});
+document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
+
+const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
+document.querySelectorAll('.services-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
+
+(function() {
+  if (localStorage.getItem('jb-cookie')) return;
+  const banner = document.getElementById('cookieBanner');
+  setTimeout(() => banner.classList.add('cb-show'), 1200);
+  function dismiss() {
+    banner.classList.remove('cb-show');
+    setTimeout(() => { banner.style.display = 'none'; }, 500);
+  }
+  document.getElementById('cbAccept').addEventListener('click', () => {
+    localStorage.setItem('jb-cookie', 'accepted'); dismiss();
+  });
+  document.getElementById('cbDecline').addEventListener('click', () => {
+    localStorage.setItem('jb-cookie', 'declined'); dismiss();
+  });
+})();
+</script>
+</body>
+</html>
