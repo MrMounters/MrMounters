@@ -234,7 +234,7 @@
   #portfolio { background: var(--dark2); position: relative; overflow: hidden; }
   #portfolio::before { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 60% 40% at 85% 15%, rgba(76,89,247,0.04) 0%, transparent 60%); }
   .portfolio-featured { margin-bottom: 1.5rem; }
-  .portfolio-featured .browser-frame .browser-preview img { aspect-ratio: 21/9 !important; }
+  .portfolio-featured .browser-frame .browser-preview { aspect-ratio: 21/9 !important; }
   .portfolio-featured .portfolio-card-info { padding: 1.3rem 1.5rem 1.7rem; }
   .portfolio-featured .portfolio-card-name { font-size: 1.2rem; }
   .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
@@ -246,8 +246,8 @@
   .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
   .dot-red{background:#ff5f57} .dot-yellow{background:#febc2e} .dot-green{background:#28c840}
   .browser-bar { flex: 1; background: #131313; border-radius: 4px; padding: 0.26rem 0.7rem; font-size: 0.67rem; color: #3e3e3e; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .browser-preview { position: relative; overflow: hidden; }
-  .browser-preview img { display: block; width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+  .browser-preview { position: relative; overflow: hidden; aspect-ratio: 16/9; }
+  .browser-preview img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
   .browser-frame:hover .browser-preview img { transform: scale(1.03); }
   .portfolio-card-info { padding: 1rem 1.2rem 1.3rem; border-top: 1px solid rgba(242,244,248,0.06); background: var(--dark3); }
   .portfolio-card-tag { font-family: 'Inter', sans-serif; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 0.35rem; }
@@ -266,12 +266,12 @@
   .author-biz { font-family:'Inter',sans-serif; font-size:0.74rem; color:var(--warm-muted); margin-top:0.15rem; }
 
   @media (max-width: 900px) {
-    .portfolio-featured .browser-preview img { aspect-ratio: 16/7 !important; }
+    .portfolio-featured .browser-preview { aspect-ratio: 16/7 !important; }
     .portfolio-grid { grid-template-columns: repeat(2,1fr); }
   }
   @media (max-width: 640px) {
     .portfolio-grid { grid-template-columns:1fr; }
-    .portfolio-featured .browser-preview img { aspect-ratio:16/9 !important; }
+    .portfolio-featured .browser-preview { aspect-ratio:16/9 !important; }
   }
 
 </style>
