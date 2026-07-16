@@ -25,6 +25,53 @@ function bearerToken(req) {
   return (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
 }
 
+// Verifies the caller's Supabase JWT and returns their auth user. Shared by every action that
+// needs "who is asking" before doing privileged work or sending a notification on someone's
+// behalf.
+async function requireUser(supabaseAdmin, req) {
+  const token = bearerToken(req);
+  if (!token) return null;
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !data || !data.user) return null;
+  return data.user;
+}
+
+// ---------------------------------------------------------------------------
+// Resend — best-effort transactional email. Never throws: a failed/unconfigured send should
+// never break the action that triggered it (e.g. an assignment still saves even if the
+// notification email fails). Returns { skipped } when RESEND_API_KEY / RESEND_FROM_EMAIL
+// aren't set yet, or { ok, id|detail } once they are.
+//
+// Required env vars once you're ready to send real email:
+//   RESEND_API_KEY     (from Resend → API Keys)
+//   RESEND_FROM_EMAIL  (an address on your verified sending domain, e.g. notifications@yourdomain.com)
+// Optional:
+//   ADMIN_NOTIFY_EMAIL (where "demo booked" pings go when the rep has no manager on file)
+// ---------------------------------------------------------------------------
+async function sendEmail({ to, subject, html }) {
+  const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
+  if (!RESEND_API_KEY || !RESEND_FROM_EMAIL || !to) return { skipped: true };
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + RESEND_API_KEY },
+      body: JSON.stringify({ from: RESEND_FROM_EMAIL, to: Array.isArray(to) ? to : [to], subject, html }),
+    });
+    const json = await r.json().catch(() => null);
+    if (!r.ok) { console.error('resend send failed', json); return { ok: false, detail: json }; }
+    return { ok: true, id: json && json.id };
+  } catch (e) {
+    console.error('resend send error', e);
+    return { ok: false, detail: String((e && e.message) || e) };
+  }
+}
+function emailShell(title, bodyHtml) {
+  return `<div style="font-family:sans-serif;max-width:520px;margin:0 auto;color:#111">
+    <h2 style="margin:0 0 12px">${title}</h2>${bodyHtml}
+    <p style="margin-top:24px;color:#888;font-size:12px">Meridion AI</p></div>`;
+}
+
 // ---------------------------------------------------------------------------
 // create-checkout-session — Stripe Checkout for the two fixed-price Web Dev plans.
 // ---------------------------------------------------------------------------
@@ -250,6 +297,22 @@ async function closeOpportunity(req, res) {
       const code = /not_found/.test(error.message) ? 404 : 400;
       return res.status(code).json({ error: 'close_failed', detail: error.message });
     }
+
+    // Best-effort welcome email — only fires if the opportunity traces back to a lead with an
+    // email on file (opportunities entered without one, e.g. via the admin "Add Opportunity"
+    // form, simply have no recipient yet). Never blocks the response either way.
+    try {
+      const { data: client } = await supabaseAdmin.from('clients').select('business_name, contact_name, contact_email').eq('id', data).single();
+      if (client && client.contact_email) {
+        await sendEmail({
+          to: client.contact_email,
+          subject: `Welcome to Meridion AI, ${client.business_name || client.contact_name || ''}!`,
+          html: emailShell('You’re all set 🎉', `<p>Hi ${client.contact_name || 'there'},</p>
+            <p>Thanks for signing on with Meridion AI — your project is officially underway. Your rep will be in touch shortly with next steps.</p>`),
+        });
+      }
+    } catch (e) { console.error('welcome email failed', e); }
+
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json({ ok: true, client_id: data });
   } catch (e) {
@@ -530,6 +593,127 @@ function twilioToken(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// notify-assignment — best-effort email to a rep when a prospect/lead is assigned to them.
+// Called from the browser right after the assignment write already succeeded (RLS already
+// proved the caller was allowed to make it); this only sends the notification.
+// ---------------------------------------------------------------------------
+async function notifyAssignment(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const caller = await requireUser(supabaseAdmin, req);
+  if (!caller) return res.status(401).json({ error: 'unauthorized' });
+
+  try {
+    const { lead_id } = req.body || {};
+    if (!lead_id) return res.status(400).json({ error: 'lead_id_required' });
+
+    const { data: lead } = await supabaseAdmin.from('leads').select('full_name, business, lifecycle, assigned_rep_id').eq('id', lead_id).single();
+    if (!lead || !lead.assigned_rep_id) return res.status(200).json({ ok: true, skipped: true });
+
+    const { data: rep } = await supabaseAdmin.auth.admin.getUserById(lead.assigned_rep_id);
+    const repEmail = rep && rep.user && rep.user.email;
+    if (!repEmail) return res.status(200).json({ ok: true, skipped: true });
+
+    const kind = lead.lifecycle === 'lead' ? 'lead' : 'prospect';
+    const result = await sendEmail({
+      to: repEmail,
+      subject: `New ${kind} assigned: ${lead.full_name}`,
+      html: emailShell('New assignment', `<p>${lead.full_name}${lead.business ? ' — ' + lead.business : ''} has been assigned to you as a ${kind}.</p><p>Open rep.html to follow up.</p>`),
+    });
+    return res.status(200).json({ ok: true, email: result });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// notify-demo-booked — best-effort email to the rep's manager (or ADMIN_NOTIFY_EMAIL as a
+// fallback) when a rep books a demo, so someone besides the rep knows a hot one just landed.
+// ---------------------------------------------------------------------------
+async function notifyDemoBooked(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const caller = await requireUser(supabaseAdmin, req);
+  if (!caller) return res.status(401).json({ error: 'unauthorized' });
+
+  try {
+    const { deal_id } = req.body || {};
+    if (!deal_id) return res.status(400).json({ error: 'deal_id_required' });
+
+    const { data: deal } = await supabaseAdmin.from('deals').select('contact, business, rep_id').eq('id', deal_id).single();
+    if (!deal) return res.status(200).json({ ok: true, skipped: true });
+
+    const { data: repProfile } = await supabaseAdmin.from('profiles').select('full_name, manager_id').eq('user_id', deal.rep_id).single();
+
+    let toEmail = null;
+    if (repProfile && repProfile.manager_id) {
+      const { data: manager } = await supabaseAdmin.auth.admin.getUserById(repProfile.manager_id);
+      toEmail = manager && manager.user && manager.user.email;
+    }
+    if (!toEmail) toEmail = process.env.ADMIN_NOTIFY_EMAIL || null;
+    if (!toEmail) return res.status(200).json({ ok: true, skipped: true });
+
+    const repName = (repProfile && repProfile.full_name) || 'A rep';
+    const result = await sendEmail({
+      to: toEmail,
+      subject: `Demo booked: ${deal.contact}${deal.business ? ' (' + deal.business + ')' : ''}`,
+      html: emailShell('Demo booked', `<p>${repName} just booked a demo with ${deal.contact}${deal.business ? ' — ' + deal.business : ''}. An Opportunity has been created.</p>`),
+    });
+    return res.status(200).json({ ok: true, email: result });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// notify-commission-status — best-effort email to a rep when admin advances their commission
+// through Pending -> Approved -> Payable -> Paid (or Reverses it).
+// ---------------------------------------------------------------------------
+async function notifyCommissionStatus(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const caller = await requireUser(supabaseAdmin, req);
+  if (!caller) return res.status(401).json({ error: 'unauthorized' });
+
+  try {
+    const { data: callerProfile } = await supabaseAdmin.from('profiles').select('role').eq('user_id', caller.id).single();
+    if (!callerProfile || callerProfile.role !== 'admin') return res.status(403).json({ error: 'forbidden' });
+
+    const { commission_id } = req.body || {};
+    if (!commission_id) return res.status(400).json({ error: 'commission_id_required' });
+
+    const { data: commission } = await supabaseAdmin.from('commissions').select('rep_id, amount, status, kind, revenue_type').eq('id', commission_id).single();
+    if (!commission) return res.status(200).json({ ok: true, skipped: true });
+
+    const { data: rep } = await supabaseAdmin.auth.admin.getUserById(commission.rep_id);
+    const repEmail = rep && rep.user && rep.user.email;
+    if (!repEmail) return res.status(200).json({ ok: true, skipped: true });
+
+    const amount = '$' + Number(commission.amount || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    const result = await sendEmail({
+      to: repEmail,
+      subject: `Commission update: ${amount} is now ${commission.status}`,
+      html: emailShell('Commission status updated', `<p>Your ${commission.kind === 'override' ? 'override ' : ''}commission of ${amount} is now <b>${commission.status}</b>.</p>`),
+    });
+    return res.status(200).json({ ok: true, email: result });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
 const ACTIONS = {
@@ -544,6 +728,9 @@ const ACTIONS = {
   'impersonate': impersonate,
   'cal-bookings': calBookings,
   'twilio-token': twilioToken,
+  'notify-assignment': notifyAssignment,
+  'notify-demo-booked': notifyDemoBooked,
+  'notify-commission-status': notifyCommissionStatus,
 };
 
 module.exports = async function handler(req, res) {

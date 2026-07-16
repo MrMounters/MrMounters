@@ -238,6 +238,16 @@
     function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString(undefined,{maximumFractionDigits:2}) : '$0'; }
     function goLogin(){ window.location.href = 'login.html'; }
     async function signOut(){ if (sb) await sb.auth.signOut(); goLogin(); }
+    async function fireNotify(action, body){
+      try {
+        const { data } = await sb.auth.getSession();
+        const token = data.session && data.session.access_token;
+        await fetch('/api/actions?action=' + action, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify(body),
+        });
+      } catch (_) { /* best-effort */ }
+    }
     function statusPill(s){
       if (['Won','Qualified','enabled','paid','approved','payable','live','Enabled'].includes(s)) return 'ok';
       if (['Lost','Disqualified','Bad Data','Wrong Number','Do Not Contact','Duplicate','Archived','reversed','restricted','churned'].includes(s)) return 'lost';
@@ -332,7 +342,11 @@
       document.getElementById('lCount').textContent = n + ' active'; document.getElementById('dLeads').textContent = res.error?'—':n;
     }
     async function setStatus(id, status){ const { error } = await sb.from('leads').update({ status }).eq('id', id); if (error) alert('Update failed: ' + error.message); }
-    async function reassign(id, rep){ const { error } = await sb.from('leads').update({ assigned_rep_id: rep || null }).eq('id', id); if (error){ alert('Reassign failed: ' + error.message); } }
+    async function reassign(id, rep){
+      const { error } = await sb.from('leads').update({ assigned_rep_id: rep || null }).eq('id', id);
+      if (error){ alert('Reassign failed: ' + error.message); return; }
+      if (rep) fireNotify('notify-assignment', { lead_id: id });
+    }
     async function archive(id){ if (!confirm('Archive this record? It stays in history.')) return; const { error } = await sb.from('leads').update({ archived_at:new Date().toISOString(), status:'Archived' }).eq('id', id); if (error){ alert('Archive failed: ' + error.message); return; } loadProspects(); loadLeads(); }
 
     // ── Edit modal (name/business/email/phone/notes) — reassignment stays in its own

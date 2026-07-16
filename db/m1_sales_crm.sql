@@ -455,9 +455,16 @@ declare
   v_manager uuid;
   v_setup_rate numeric; v_mrr_rate numeric; v_override_rate numeric;
   v_direct_setup numeric; v_direct_mrr numeric;
+  v_contact_email text; v_contact_phone text;
 begin
   select * into v_deal from public.deals where id = p_deal_id for update;
   if v_deal.id is null then raise exception 'deal_not_found'; end if;
+
+  -- Carry the contact's email/phone over from the originating lead (if any) so the new
+  -- client row — and any welcome email sent off it — has someone to reach.
+  if v_deal.lead_id is not null then
+    select email, phone into v_contact_email, v_contact_phone from public.leads where id = v_deal.lead_id;
+  end if;
 
   -- Idempotency: already converted?
   select id into v_client_id from public.clients where origin_deal_id = p_deal_id;
@@ -490,10 +497,10 @@ begin
    where id = p_deal_id;
 
   -- Create the client (unique origin_deal_id blocks duplicates under concurrency).
-  insert into public.clients (origin_deal_id, business_name, contact_name,
+  insert into public.clients (origin_deal_id, business_name, contact_name, contact_email, contact_phone,
                               assigned_rep_id, assigned_manager_id, team_id, created_by,
                               lifetime_value, onboarding_status, active_services, status)
-  values (p_deal_id, v_deal.business, v_deal.contact,
+  values (p_deal_id, v_deal.business, v_deal.contact, v_contact_email, v_contact_phone,
           v_deal.rep_id, v_deal.assigned_manager_id, v_deal.team_id, coalesce(p_actor, v_deal.rep_id),
           coalesce(v_deal.setup_revenue,0) + coalesce(v_deal.mrr,0), 'pending', v_deal.services, 'active')
   on conflict (origin_deal_id) do nothing

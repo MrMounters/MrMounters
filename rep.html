@@ -1076,6 +1076,7 @@
       // Promote the contact so the funnel stays honest.
       await sb.from('leads').update({ lifecycle:'lead', status:'Discovery Scheduled', became_lead_at: new Date().toISOString() }).eq('id', id);
       await logActivity('deal', deal.id, 'demo_booked', { lead_id: lead.id });
+      fireNotify('notify-demo-booked', { deal_id: deal.id });
       loadProspects(); loadLeads(); await loadOpps(); go('opportunities');
     }
     async function addLead(e){
@@ -1628,6 +1629,17 @@
       localStorage.removeItem('jb-demo-session');
       if (sb) await sb.auth.signOut();
       goLogin();
+    }
+    async function fireNotify(action, body){
+      if (!(sb && session)) return;
+      try {
+        const { data } = await sb.auth.getSession();
+        const token = data.session && data.session.access_token;
+        await fetch('/api/actions?action=' + action, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify(body),
+        });
+      } catch (_) { /* best-effort */ }
     }
 
     // If this page is restored from the back/forward cache (e.g. hitting Back right after

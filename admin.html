@@ -1504,6 +1504,16 @@
       document.getElementById(bodyId).innerHTML = `<tr><td colspan="${cols}" class="empty"${isErr?' style="color:var(--red)"':''}>${msg}</td></tr>`;
     }
     async function bearer(){ const { data } = await sb.auth.getSession(); return data.session && data.session.access_token; }
+    // Fire-and-forget notification email — never blocks or surfaces errors to the user; the
+    // underlying save already succeeded before this is called.
+    async function fireNotify(action, body){
+      try {
+        await fetch('/api/actions?action=' + action, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await bearer()) },
+          body: JSON.stringify(body),
+        });
+      } catch (_) { /* best-effort */ }
+    }
 
     // Reps eligible for assignment (used by both the Prospects and Opportunities add/edit forms).
     function repOptionsHtml(selectedId){
@@ -1537,19 +1547,22 @@
         assigned_rep_id: document.getElementById('apRep').value || null,
         lifecycle: 'prospect', status: document.getElementById('apRep').value ? 'Assigned' : 'New',
       };
-      const { error } = await sb.from('leads').insert(payload);
+      const { data, error } = await sb.from('leads').insert(payload).select().single();
       if (error){ alert(error.message); return; }
       document.getElementById('aProspectForm').reset();
       document.getElementById('aProspectForm').classList.remove('open');
+      if (data && data.assigned_rep_id) fireNotify('notify-assignment', { lead_id: data.id });
       adminLoadProspects();
     }
 
     // ── Shared edit modal for prospects & leads (both rows live in the leads table) ──
     let contactEditId = null;
+    let contactEditPrevRep = null;
     async function openContactModal(id){
       const { data, error } = await sb.from('leads').select('*').eq('id', id).single();
       if (error || !data){ alert('Could not load contact: ' + (error && error.message)); return; }
       contactEditId = id;
+      contactEditPrevRep = data.assigned_rep_id || null;
       document.getElementById('contactModalTitle').textContent = 'Edit ' + (data.lifecycle === 'lead' ? 'lead' : 'prospect');
       document.getElementById('cmName').value = data.full_name || '';
       document.getElementById('cmBiz').value = data.business || '';
@@ -1566,14 +1579,17 @@
       if (!contactEditId) return;
       const full_name = document.getElementById('cmName').value.trim();
       if (!full_name){ document.getElementById('contactModalErr').textContent = 'Name is required.'; return; }
+      const newRepId = document.getElementById('cmRep').value || null;
+      const repChanged = newRepId && newRepId !== contactEditPrevRep;
       const { error } = await sb.from('leads').update({
         full_name, business: document.getElementById('cmBiz').value.trim() || null,
         email: document.getElementById('cmEmail').value.trim() || null,
         phone: document.getElementById('cmPhone').value.trim() || null,
         notes: document.getElementById('cmNotes').value.trim() || null,
-        assigned_rep_id: document.getElementById('cmRep').value || null,
+        assigned_rep_id: newRepId,
       }).eq('id', contactEditId);
       if (error){ document.getElementById('contactModalErr').textContent = 'Save failed — ' + error.message; return; }
+      if (repChanged) fireNotify('notify-assignment', { lead_id: contactEditId });
       closeContactModal();
       adminLoadProspects();
     }
@@ -1718,6 +1734,7 @@
     async function adminSetCommission(id, status){
       const { error } = await sb.from('commissions').update({ status }).eq('id', id);
       if (error){ alert('Update failed: ' + error.message); return; }
+      fireNotify('notify-commission-status', { commission_id: id });
       adminLoadCommissions();
     }
 
