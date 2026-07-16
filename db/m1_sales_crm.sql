@@ -653,6 +653,11 @@ create policy "admins manage all rep docs" on storage.objects for all
   using (bucket_id = 'rep-docs' and public.current_user_role() = 'admin')
   with check (bucket_id = 'rep-docs' and public.current_user_role() = 'admin');
 
+-- Bug fix: the original leads table declared email NOT NULL, but reps can add a prospect
+-- with only a name/phone (email unknown yet) — that insert was failing. Safe/idempotent:
+-- DROP NOT NULL on an already-nullable column is a no-op in Postgres.
+alter table public.leads alter column email drop not null;
+
 -- ============================================================
 -- END M3
 -- ============================================================
@@ -663,6 +668,7 @@ create policy "admins manage all rep docs" on storage.objects for all
 with checks(object, ok) as (values
   ('leads.lifecycle',            (to_regclass('public.leads') is not null and exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='lifecycle'))),
   ('leads.call_outcome',         exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='call_outcome')),
+  ('leads.email nullable',       (select is_nullable='YES' from information_schema.columns where table_schema='public' and table_name='leads' and column_name='email')),
   ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),
   ('deals.demo_booked_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='demo_booked_at')),
   ('profiles.avatar_url',        exists(select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='avatar_url')),

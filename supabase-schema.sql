@@ -1340,6 +1340,11 @@ create policy "admins manage all rep docs" on storage.objects for all
   using (bucket_id = 'rep-docs' and public.current_user_role() = 'admin')
   with check (bucket_id = 'rep-docs' and public.current_user_role() = 'admin');
 
+-- Bug fix: the original leads table declared email NOT NULL, but reps can add a prospect
+-- with only a name/phone (email unknown yet) — that insert was failing. Safe/idempotent:
+-- DROP NOT NULL on an already-nullable column is a no-op in Postgres.
+alter table public.leads alter column email drop not null;
+
 -- ============================================================
 -- END M3
 -- ============================================================

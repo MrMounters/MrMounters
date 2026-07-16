@@ -102,6 +102,15 @@
   .locked .lock-ov svg{ width:26px; height:26px; stroke:var(--gold); }
   .lock-title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1rem; }
   .lock-pill{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); background:rgba(76,89,247,0.12); border:1px solid rgba(76,89,247,0.3); padding:0.2rem 0.6rem; border-radius:20px; }
+  /* edit modal — reused for editing a prospect or a lead */
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(11,15,25,0.72); backdrop-filter:blur(2px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1.2rem; }
+  .modal-backdrop.hidden{ display:none; }
+  .modal-box{ width:100%; max-width:460px; max-height:90vh; overflow-y:auto; background:var(--dark3); border:1px solid var(--card-border); border-top:3px solid var(--gold); border-radius:8px; padding:1.4rem 1.5rem; box-shadow:0 24px 70px rgba(0,0,0,0.55); }
+  .modal-h{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  .modal-t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }
+  .modal-x{ background:none; border:none; color:var(--warm-muted); cursor:pointer; padding:0.2rem; }
+  .modal-x:hover{ color:var(--white); }
+  .modal-x svg{ width:18px; height:18px; stroke:currentColor; stroke-width:2; fill:none; }
   .cal-cta{ display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
   .pipe{ display:grid; grid-template-columns:repeat(5,1fr); gap:0.6rem; min-width:640px; }
   .stage{ background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.7rem; }
@@ -243,7 +252,7 @@
     <div class="acct">
       <div class="acct-logo" id="acctLogo">M</div>
       <img class="acct-logo hidden" id="menuAvatar" alt="" style="object-fit:cover;">
-      <div><div class="acct-name" id="acctName2">Sales Rep</div><div class="acct-sub">Independent Sales Representative</div></div>
+      <div><div class="acct-name" id="acctName2">Sales Rep</div><div class="acct-sub">Growth Advisor</div></div>
     </div>
     <div class="menu-div"></div>
     <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
@@ -442,7 +451,7 @@
     <section class="sec" id="sec-profile">
       <div class="eyebrow">// Account</div>
       <h1 class="h1">Your profile</h1>
-      <p class="lead">Your photo and mailing address (so we can send you swag), plus your email signature.</p>
+      <p class="lead">Your photo, contact info, and mailing address (so we can send you swag).</p>
       <div id="profileState" class="data-state">Loading…</div>
       <div id="profileWrap" class="hidden">
         <div class="panel">
@@ -452,6 +461,19 @@
             <label class="btn btn-o file-btn">Choose photo<input type="file" id="avatarFile" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="uploadAvatar()"></label>
             <span class="muted" id="avatarMsg"></span>
           </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">About you</div></div>
+          <form onsubmit="saveContactInfo(event)">
+            <div class="form-grid">
+              <div class="fld"><label>Email</label><input class="inp" id="profEmail" disabled></div>
+              <div class="fld"><label>Phone</label><input class="inp" id="profPhone" placeholder="+1 (480) 000-0000"></div>
+              <div class="fld"><label>Growth Advisor since</label><input class="inp" id="profJoined" disabled></div>
+            </div>
+            <button class="btn btn-p" type="submit">Save</button>
+            <div class="ok-msg hidden" id="contactOk">✓ Saved.</div>
+            <div class="err-msg hidden" id="contactErr"></div>
+          </form>
         </div>
         <div class="panel">
           <div class="panel-h"><div class="panel-t">Swag mailing address</div></div>
@@ -810,6 +832,26 @@
     </section>
   </main>
 
+  <!-- EDIT PROSPECT/LEAD — one shared modal for both lists -->
+  <div class="modal-backdrop hidden" id="editModal" onclick="if(event.target===this) closeEditModal()">
+    <div class="modal-box">
+      <div class="modal-h"><div class="modal-t" id="editModalTitle">Edit contact</div>
+        <button class="modal-x" onclick="closeEditModal()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form onsubmit="saveEdit(event)">
+        <div class="form-grid">
+          <div class="fld full"><label>Name</label><input class="inp" id="eName" required></div>
+          <div class="fld full"><label>Business</label><input class="inp" id="eBiz"></div>
+          <div class="fld"><label>Email</label><input class="inp" id="eEmail" type="email"></div>
+          <div class="fld"><label>Phone</label><input class="inp" id="ePhone"></div>
+          <div class="fld full"><label>Notes</label><textarea class="ta" id="eNotes"></textarea></div>
+        </div>
+        <button class="btn btn-p" type="submit">Save changes</button>
+        <div class="err-msg hidden" id="editErr"></div>
+      </form>
+    </div>
+  </div>
+
   <script src="https://sdk.twilio.com/js/voice/releases/2.11.1/twilio.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -954,6 +996,7 @@
             <button class="btn-xs" onclick="markAnswered('${p.id}')">Answered</button>
             ${canConvert ? `<button class="btn-xs" onclick="convertProspectToLead('${p.id}')">→ Lead</button>` : ''}
             ${canConvert ? `<button class="btn-xs p" onclick="bookDemo('${p.id}')">Book demo</button>` : ''}
+            <button class="btn-xs" onclick="openEditModal('${p.id}')">Edit</button>
             <button class="btn-xs" onclick="archiveRecord('leads','${p.id}','prospect')">Archive</button>
           </div></td></tr>`;
       }, 'No prospects yet. Add one above, or ask your manager to assign you some.');
@@ -1060,13 +1103,15 @@
     async function loadProfile(){
       if (!(sb && session)){ setState('profileState','Sign in to edit your profile.', false); return; }
       setState('profileState','Loading…',false); document.getElementById('profileWrap').classList.add('hidden');
-      const { data, error } = await sb.from('profiles').select('avatar_url, ship_name, ship_address1, ship_address2, ship_city, ship_state, ship_postal, ship_country').eq('user_id', session.user.id).single();
+      const { data, error } = await sb.from('profiles').select('avatar_url, phone, created_at, ship_name, ship_address1, ship_address2, ship_city, ship_state, ship_postal, ship_country').eq('user_id', session.user.id).single();
       if (error){ setState('profileState','Couldn’t load — ' + error.message, true); return; }
       const p = data || {};
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
       set('shipName', p.ship_name); set('ship1', p.ship_address1); set('ship2', p.ship_address2);
       set('shipCity', p.ship_city); set('shipState', p.ship_state); set('shipPostal', p.ship_postal);
       set('shipCountry', p.ship_country);
+      set('profEmail', session.user.email); set('profPhone', p.phone);
+      set('profJoined', p.created_at ? new Date(p.created_at).toLocaleDateString(undefined,{month:'short', day:'numeric', year:'numeric'}) : '—');
       const img = document.getElementById('avatarImg'); if (img && p.avatar_url) img.src = p.avatar_url;
       const ss = document.getElementById('slackStatus');
       if (ss && p.slack_connected){ ss.textContent = 'Connected'; ss.className = 'pill ok'; }
@@ -1084,6 +1129,14 @@
       }).eq('user_id', session.user.id);
       if (error){ err.textContent = 'Save failed — ' + error.message; err.classList.remove('hidden'); return; }
       const ok = document.getElementById('profileOk'); ok.classList.remove('hidden'); setTimeout(() => ok.classList.add('hidden'), 2500);
+    }
+    async function saveContactInfo(e){
+      e.preventDefault();
+      const err = document.getElementById('contactErr'); err.classList.add('hidden');
+      const phone = document.getElementById('profPhone').value.trim() || null;
+      const { error } = await sb.from('profiles').update({ phone }).eq('user_id', session.user.id);
+      if (error){ err.textContent = 'Save failed — ' + error.message; err.classList.remove('hidden'); return; }
+      const ok = document.getElementById('contactOk'); ok.classList.remove('hidden'); setTimeout(() => ok.classList.add('hidden'), 2500);
     }
     // Slack: if a workspace OAuth URL is configured we open it; otherwise it's a
     // clearly-labeled "coming soon" so the button is never a dead end.
@@ -1119,6 +1172,7 @@
           <td><div class="row-act">
             <button class="btn-xs p" onclick="bookDemo('${l.id}')">Book demo</button>
             ${l.status==='Qualified' ? `<button class="btn-xs" onclick="createOpportunity('${l.id}')">Create Opp</button>` : ''}
+            <button class="btn-xs" onclick="openEditModal('${l.id}')">Edit</button>
             <button class="btn-xs" onclick="archiveRecord('leads','${l.id}','lead')">Archive</button>
           </div></td></tr>`;
       }, 'No leads yet. Convert an interested prospect to start a lead.');
@@ -1239,6 +1293,44 @@
       await logActivity(table === 'leads' ? 'lead' : 'deal', id, 'archived', { kind });
       loadSalesData();
     }
+
+    // ---- EDIT (prospects & leads share the same leads table + one modal) ----
+    let editingId = null;
+    async function openEditModal(id){
+      const { data, error } = await sb.from('leads').select('id, full_name, business, email, phone, notes, lifecycle').eq('id', id).single();
+      if (error || !data){ alert('Could not load contact: ' + (error && error.message)); return; }
+      editingId = id;
+      document.getElementById('editModalTitle').textContent = 'Edit ' + (data.lifecycle === 'lead' ? 'lead' : 'prospect');
+      document.getElementById('eName').value = data.full_name || '';
+      document.getElementById('eBiz').value = data.business || '';
+      document.getElementById('eEmail').value = data.email || '';
+      document.getElementById('ePhone').value = data.phone || '';
+      document.getElementById('eNotes').value = data.notes || '';
+      document.getElementById('editErr').classList.add('hidden');
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+    function closeEditModal(){
+      editingId = null;
+      document.getElementById('editModal').classList.add('hidden');
+    }
+    async function saveEdit(e){
+      e.preventDefault();
+      if (!editingId) return;
+      const err = document.getElementById('editErr'); err.classList.add('hidden');
+      const full_name = document.getElementById('eName').value.trim();
+      if (!full_name){ err.textContent = 'Name is required.'; err.classList.remove('hidden'); return; }
+      const { error } = await sb.from('leads').update({
+        full_name,
+        business: document.getElementById('eBiz').value.trim() || null,
+        email: document.getElementById('eEmail').value.trim() || null,
+        phone: document.getElementById('ePhone').value.trim() || null,
+        notes: document.getElementById('eNotes').value.trim() || null,
+      }).eq('id', editingId);
+      if (error){ err.textContent = 'Save failed — ' + error.message; err.classList.remove('hidden'); return; }
+      closeEditModal();
+      loadProspects(); loadLeads();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEditModal(); });
 
     // Academy module reader
     function openDoc(which){
