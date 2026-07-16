@@ -572,7 +572,6 @@ alter table public.profiles add column if not exists ship_city       text;
 alter table public.profiles add column if not exists ship_state      text;
 alter table public.profiles add column if not exists ship_postal     text;
 alter table public.profiles add column if not exists ship_country    text;
-alter table public.profiles add column if not exists email_signature text;
 
 -- Call disposition on prospects/leads (Answered, No Answer, Voicemail, Callback, ...)
 alter table public.leads add column if not exists call_outcome      text;
@@ -607,7 +606,7 @@ with checks(object, ok) as (values
   ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),
   ('deals.demo_booked_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='demo_booked_at')),
   ('profiles.avatar_url',        exists(select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='avatar_url')),
-  ('profiles.email_signature',   exists(select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='email_signature')),
+  ('profiles.ship_address1',     exists(select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='ship_address1')),
   ('table clients',              (to_regclass('public.clients') is not null)),
   ('table commissions',          (to_regclass('public.commissions') is not null)),
   ('table commission_plans',     (to_regclass('public.commission_plans') is not null)),
@@ -619,5 +618,4 @@ with checks(object, ok) as (values
 )
 select object, ok from checks order by object;
 
--- Refresh the API cache so the app sees the new tables/columns immediately:
 notify pgrst, 'reload schema';

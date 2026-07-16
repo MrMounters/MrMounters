@@ -1259,7 +1259,6 @@ alter table public.profiles add column if not exists ship_city       text;
 alter table public.profiles add column if not exists ship_state      text;
 alter table public.profiles add column if not exists ship_postal     text;
 alter table public.profiles add column if not exists ship_country    text;
-alter table public.profiles add column if not exists email_signature text;
 
 -- Call disposition on prospects/leads (Answered, No Answer, Voicemail, Callback, ...)
 alter table public.leads add column if not exists call_outcome      text;

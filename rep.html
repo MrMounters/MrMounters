@@ -446,12 +446,22 @@
               <div class="fld"><label>State</label><input class="inp" id="shipState" placeholder="AZ"></div>
               <div class="fld"><label>ZIP / Postal</label><input class="inp" id="shipPostal" placeholder="85001"></div>
               <div class="fld"><label>Country</label><input class="inp" id="shipCountry" placeholder="USA"></div>
-              <div class="fld full"><label>Email signature</label><textarea class="ta" id="emailSig" placeholder="Maria Gomez · Meridion AI · (480) 000-0000"></textarea></div>
             </div>
             <button class="btn btn-p" type="submit">Save profile</button>
             <div class="ok-msg hidden" id="profileOk">✓ Saved.</div>
             <div class="err-msg hidden" id="profileErr"></div>
           </form>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Integrations</div></div>
+          <p class="muted" style="margin-bottom:0.8rem">Connect Slack to get new-lead and booking alerts where your team already works.</p>
+          <div class="cal-cta">
+            <button class="btn btn-p" onclick="connectSlack()">
+              <svg viewBox="0 0 24 24" width="14" height="14" style="vertical-align:-2px;margin-right:0.35rem" fill="currentColor" aria-hidden="true"><path d="M6 15a2 2 0 1 1-2-2h2v2zm1 0a2 2 0 0 1 4 0v5a2 2 0 1 1-4 0v-5zM9 6a2 2 0 1 1 2-2v2H9zm0 1a2 2 0 0 1 0 4H4a2 2 0 1 1 0-4h5zm9 2a2 2 0 1 1 2 2h-2V9zm-1 0a2 2 0 0 1-4 0V4a2 2 0 1 1 4 0v5zm-2 9a2 2 0 1 1-2 2v-2h2zm0-1a2 2 0 0 1 0-4h5a2 2 0 1 1 0 4h-5z"/></svg>
+              Connect Slack
+            </button>
+            <span class="pill mut" id="slackStatus">Not connected</span>
+          </div>
         </div>
       </div>
     </section>
@@ -993,14 +1003,16 @@
     async function loadProfile(){
       if (!(sb && session)){ setState('profileState','Sign in to edit your profile.', false); return; }
       setState('profileState','Loading…',false); document.getElementById('profileWrap').classList.add('hidden');
-      const { data, error } = await sb.from('profiles').select('avatar_url, ship_name, ship_address1, ship_address2, ship_city, ship_state, ship_postal, ship_country, email_signature').eq('user_id', session.user.id).single();
+      const { data, error } = await sb.from('profiles').select('avatar_url, ship_name, ship_address1, ship_address2, ship_city, ship_state, ship_postal, ship_country').eq('user_id', session.user.id).single();
       if (error){ setState('profileState','Couldn’t load — ' + error.message, true); return; }
       const p = data || {};
       const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
       set('shipName', p.ship_name); set('ship1', p.ship_address1); set('ship2', p.ship_address2);
       set('shipCity', p.ship_city); set('shipState', p.ship_state); set('shipPostal', p.ship_postal);
-      set('shipCountry', p.ship_country); set('emailSig', p.email_signature);
+      set('shipCountry', p.ship_country);
       const img = document.getElementById('avatarImg'); if (img && p.avatar_url) img.src = p.avatar_url;
+      const ss = document.getElementById('slackStatus');
+      if (ss && p.slack_connected){ ss.textContent = 'Connected'; ss.className = 'pill ok'; }
       document.getElementById('profileState').classList.add('hidden');
       document.getElementById('profileWrap').classList.remove('hidden');
     }
@@ -1011,10 +1023,19 @@
       const { error } = await sb.from('profiles').update({
         ship_name:g('shipName'), ship_address1:g('ship1'), ship_address2:g('ship2'),
         ship_city:g('shipCity'), ship_state:g('shipState'), ship_postal:g('shipPostal'),
-        ship_country:g('shipCountry'), email_signature:g('emailSig')
+        ship_country:g('shipCountry')
       }).eq('user_id', session.user.id);
       if (error){ err.textContent = 'Save failed — ' + error.message; err.classList.remove('hidden'); return; }
       const ok = document.getElementById('profileOk'); ok.classList.remove('hidden'); setTimeout(() => ok.classList.add('hidden'), 2500);
+    }
+    // Slack: if a workspace OAuth URL is configured we open it; otherwise it's a
+    // clearly-labeled "coming soon" so the button is never a dead end.
+    const SLACK_OAUTH_URL = ''; // e.g. https://slack.com/oauth/v2/authorize?client_id=...&scope=chat:write,incoming-webhook
+    function connectSlack(){
+      if (SLACK_OAUTH_URL){ window.location.href = SLACK_OAUTH_URL; return; }
+      const ss = document.getElementById('slackStatus');
+      if (ss){ ss.textContent = 'Coming soon'; ss.className = 'pill warn'; }
+      alert('Slack alerts are coming soon — you’ll connect your workspace here to get new-lead and booking notifications.');
     }
     async function uploadAvatar(){
       const file = document.getElementById('avatarFile').files[0]; if (!file) return;
