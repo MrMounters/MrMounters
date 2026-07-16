@@ -336,6 +336,11 @@ async function inviteRep(req, res) {
     const patch = { role: newRole };
     if (manager_id) patch.manager_id = manager_id;
     if (team_id) patch.team_id = team_id;
+    // Also persist to profiles.full_name — inviteUserByEmail's `data` option only writes
+    // auth.users.raw_user_meta_data, which nothing reads for the admin Team table. Without
+    // this, every invited rep/manager shows "Unnamed" until they separately fill out
+    // onboarding.html or their profile page.
+    if (full_name) patch.full_name = full_name;
     const { error: roleErr } = await supabaseAdmin.from('profiles').update(patch).eq('user_id', invited.user.id);
     if (roleErr) return res.status(500).json({ error: 'role_update_failed', detail: roleErr.message });
 
@@ -695,6 +700,48 @@ async function notifyCommissionStatus(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// admin-update-team-member — admin sets/fixes a rep/manager/admin's name (and business_name).
+// Needed because profiles RLS only allows a user to update their own row — an admin fixing a
+// teammate's "Unnamed" entry (e.g. an account created before onboarding.html was filled out)
+// has to go through the service role.
+// ---------------------------------------------------------------------------
+async function adminUpdateTeamMember(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const token = bearerToken(req);
+  if (!token) return res.status(401).json({ error: 'unauthorized' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  try {
+    const { data: callerData, error: callerErr } = await supabaseAdmin.auth.getUser(token);
+    if (callerErr || !callerData || !callerData.user) return res.status(401).json({ error: 'unauthorized' });
+    const { data: callerProfile } = await supabaseAdmin.from('profiles').select('role').eq('user_id', callerData.user.id).single();
+    if (!callerProfile || callerProfile.role !== 'admin') return res.status(403).json({ error: 'forbidden', detail: 'Only admins can edit team members.' });
+
+    const { user_id, full_name, business_name } = req.body || {};
+    if (!user_id) return res.status(400).json({ error: 'user_id_required' });
+    if (!full_name || !full_name.trim()) return res.status(400).json({ error: 'full_name_required' });
+
+    const { data: target } = await supabaseAdmin.from('profiles').select('role').eq('user_id', user_id).single();
+    if (!target || !['rep', 'manager', 'admin'].includes(target.role)) return res.status(400).json({ error: 'not_a_team_member' });
+
+    const patch = { full_name: full_name.trim() };
+    if (business_name !== undefined) patch.business_name = (business_name || '').trim() || null;
+    const { error } = await supabaseAdmin.from('profiles').update(patch).eq('user_id', user_id);
+    if (error) return res.status(500).json({ error: 'update_failed', detail: error.message });
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
 const ACTIONS = {
@@ -704,6 +751,7 @@ const ACTIONS = {
   'create-connect-account': createConnectAccount,
   'close-opportunity': closeOpportunity,
   'invite-rep': inviteRep,
+  'admin-update-team-member': adminUpdateTeamMember,
   'create-signing-request': createSigningRequest,
   'documenso-webhook': documensoWebhook,
   'impersonate': impersonate,

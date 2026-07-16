@@ -410,10 +410,27 @@
           </form>
           <div style="overflow-x:auto;">
             <table>
-              <thead><tr><th>Name</th><th>Role</th><th>Business</th><th>NDA</th><th>Non-Compete</th><th>W-9</th></tr></thead>
-              <tbody id="teamBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+              <thead><tr><th>Name</th><th>Role</th><th>Business</th><th>NDA</th><th>Non-Compete</th><th>W-9</th><th></th></tr></thead>
+              <tbody id="teamBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      <!-- edit modal for team member name/business (fixes "Unnamed" rows) -->
+      <div class="modal-backdrop hidden" id="teamModal" onclick="if(event.target===this) closeTeamModal()">
+        <div class="modal-box">
+          <div class="modal-h"><div class="modal-t">Edit team member</div>
+            <button class="modal-x" onclick="closeTeamModal()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <form onsubmit="saveTeamEdit(event)">
+            <div class="modal-grid">
+              <div class="full"><label>Full name</label><input class="inp" id="tmName" required></div>
+              <div class="full"><label>Business</label><input class="inp" id="tmBiz"></div>
+            </div>
+            <button class="btn btn-p btn-sm" type="submit">Save changes</button>
+            <div class="muted" id="teamModalErr" style="color:var(--red);margin-top:0.5rem;"></div>
+          </form>
         </div>
       </div>
 
@@ -871,7 +888,7 @@
     function renderTeam(){
       document.getElementById('teamSrc').textContent = teamProfiles.length + ' total';
       const body = document.getElementById('teamBody');
-      if (!teamProfiles.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No team members yet.</td></tr>'; return; }
+      if (!teamProfiles.length){ body.innerHTML = '<tr><td colspan="7" class="empty">No team members yet.</td></tr>'; return; }
       body.innerHTML = teamProfiles.map(p => {
         const ag = teamAgreements[p.user_id] || {};
         return `<tr>
@@ -881,8 +898,44 @@
         <td>${docPill(ag.nda)}</td>
         <td>${docPill(ag.non_compete)}</td>
         <td><span class="pill mut" style="cursor:pointer" onclick="viewRepW9('${p.user_id}')">View</span></td>
+        <td><button class="btn btn-o btn-sm" onclick="openTeamModal('${p.user_id}')">Edit</button></td>
       </tr>`;
       }).join('');
+    }
+
+    // ── Edit a team member's name/business — routes through the admin-update-team-member
+    // action since profiles RLS only lets a user update their own row (see api/actions.js).
+    let teamEditId = null;
+    function openTeamModal(userId){
+      const p = teamProfiles.find(t => t.user_id === userId);
+      if (!p) return;
+      teamEditId = userId;
+      document.getElementById('tmName').value = p.full_name || '';
+      document.getElementById('tmBiz').value = p.business_name || '';
+      document.getElementById('teamModalErr').textContent = '';
+      document.getElementById('teamModal').classList.remove('hidden');
+    }
+    function closeTeamModal(){ teamEditId = null; document.getElementById('teamModal').classList.add('hidden'); }
+    async function saveTeamEdit(e){
+      e.preventDefault();
+      if (!teamEditId) return;
+      const full_name = document.getElementById('tmName').value.trim();
+      if (!full_name){ document.getElementById('teamModalErr').textContent = 'Name is required.'; return; }
+      const business_name = document.getElementById('tmBiz').value.trim();
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        const r = await fetch('/api/actions?action=admin-update-team-member', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
+          body: JSON.stringify({ user_id: teamEditId, full_name, business_name }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Save failed');
+        closeTeamModal();
+        loadTeam();
+      } catch (err) {
+        document.getElementById('teamModalErr').textContent = 'Save failed — ' + err.message;
+      }
     }
     function populateManagerSelect(){
       const sel = document.getElementById('repManager'); if (!sel) return;
