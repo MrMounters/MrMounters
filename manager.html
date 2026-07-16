@@ -63,6 +63,22 @@
   .hidden{ display:none !important; }
   .row-act{ display:inline-flex; gap:0.35rem; flex-wrap:wrap; align-items:center; }
   #loading{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--dark); z-index:100; font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); }
+  .btn-p{ background:var(--gold); color:var(--dark); border-color:var(--gold); font-weight:700; }
+  /* edit modal — reused for editing a prospect or a lead */
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(11,15,25,0.72); backdrop-filter:blur(2px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1.2rem; }
+  .modal-backdrop.hidden{ display:none; }
+  .modal-box{ width:100%; max-width:460px; max-height:90vh; overflow-y:auto; background:var(--dark3); border:1px solid var(--card-border); border-top:3px solid var(--gold); border-radius:8px; padding:1.4rem 1.5rem; box-shadow:0 24px 70px rgba(0,0,0,0.55); }
+  .modal-h{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  .modal-t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }
+  .modal-x{ background:none; border:none; color:var(--warm-muted); cursor:pointer; padding:0.2rem; }
+  .modal-x:hover{ color:var(--white); }
+  .modal-x svg{ width:18px; height:18px; stroke:currentColor; stroke-width:2; fill:none; }
+  .modal-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1rem; }
+  .modal-grid .full{ grid-column:1 / -1; }
+  .modal-grid label{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.3rem; display:block; }
+  .modal-grid input, .modal-grid textarea, .modal-grid select{ width:100%; background:var(--dark4); border:1px solid rgba(242,244,248,0.14); border-radius:4px; padding:0.6rem 0.7rem; color:var(--white); font-family:'Inter',sans-serif; font-size:0.85rem; }
+  .modal-grid textarea{ resize:vertical; min-height:70px; }
+  @media (max-width:520px){ .modal-grid{ grid-template-columns:1fr; } }
   @media (max-width:900px){
     .sidebar{ position:fixed; z-index:50; transform:translateX(-100%); transition:transform 0.25s; }
     .sidebar.open{ transform:none; }
@@ -126,7 +142,7 @@
         <p class="lead">Reassign, re-status, or archive any prospect across your team.</p>
         <div class="panel"><div class="panel-h"><div class="panel-t">Prospects</div><span class="panel-k" id="pCount">—</span></div>
           <div id="pState" class="data-state">Loading…</div>
-          <table id="pTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Assigned</th><th></th></tr></thead><tbody id="pBody"></tbody></table>
+          <table id="pTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Assigned</th><th></th><th></th></tr></thead><tbody id="pBody"></tbody></table>
         </div>
       </div>
 
@@ -136,7 +152,27 @@
         <p class="lead">Move leads through the stages; qualified leads become opportunities.</p>
         <div class="panel"><div class="panel-h"><div class="panel-t">Leads</div><span class="panel-k" id="lCount">—</span></div>
           <div id="lState" class="data-state">Loading…</div>
-          <table id="lTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Stage</th><th>Assigned</th><th></th></tr></thead><tbody id="lBody"></tbody></table>
+          <table id="lTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Stage</th><th>Assigned</th><th></th><th></th></tr></thead><tbody id="lBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- shared edit modal for prospects & leads (both live in the leads table) -->
+      <div class="modal-backdrop hidden" id="contactModal" onclick="if(event.target===this) closeContactModal()">
+        <div class="modal-box">
+          <div class="modal-h"><div class="modal-t" id="contactModalTitle">Edit contact</div>
+            <button class="modal-x" onclick="closeContactModal()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <form onsubmit="saveContactEdit(event)">
+            <div class="modal-grid">
+              <div class="full"><label>Name</label><input id="cmName" required></div>
+              <div class="full"><label>Business</label><input id="cmBiz"></div>
+              <div><label>Email</label><input id="cmEmail" type="email"></div>
+              <div><label>Phone</label><input id="cmPhone"></div>
+              <div class="full"><label>Notes</label><textarea id="cmNotes"></textarea></div>
+            </div>
+            <button class="btn btn-p" type="submit">Save changes</button>
+            <div class="muted" id="contactModalErr" style="color:var(--red);margin-top:0.5rem;"></div>
+          </form>
         </div>
       </div>
 
@@ -274,6 +310,7 @@
         return `<tr><td><b>${esc(p.full_name)}</b></td><td>${esc(p.business)||'—'}</td>
           <td><select class="sel-sm" onchange="setStatus('${p.id}', this.value)">${opts}</select></td>
           <td><select class="sel-sm" onchange="reassign('${p.id}', this.value)">${repOptions(p.assigned_rep_id)}</select></td>
+          <td><button class="btn btn-o" style="padding:0.3rem 0.6rem" onclick="openContactModal('${p.id}')">Edit</button></td>
           <td><button class="btn btn-o" style="padding:0.3rem 0.6rem" onclick="archive('${p.id}')">Archive</button></td></tr>`;
       }, 'No prospects across your team yet.');
       allProspects = res.data || [];
@@ -287,6 +324,7 @@
         return `<tr><td><b>${esc(l.full_name)}</b></td><td>${esc(l.business)||'—'}</td>
           <td><select class="sel-sm" onchange="setStatus('${l.id}', this.value)">${opts}</select></td>
           <td><select class="sel-sm" onchange="reassign('${l.id}', this.value)">${repOptions(l.assigned_rep_id)}</select></td>
+          <td><button class="btn btn-o" style="padding:0.3rem 0.6rem" onclick="openContactModal('${l.id}')">Edit</button></td>
           <td><button class="btn btn-o" style="padding:0.3rem 0.6rem" onclick="archive('${l.id}')">Archive</button></td></tr>`;
       }, 'No leads across your team yet.');
       const n = res.data ? res.data.length : 0;
@@ -295,6 +333,40 @@
     async function setStatus(id, status){ const { error } = await sb.from('leads').update({ status }).eq('id', id); if (error) alert('Update failed: ' + error.message); }
     async function reassign(id, rep){ const { error } = await sb.from('leads').update({ assigned_rep_id: rep || null }).eq('id', id); if (error){ alert('Reassign failed: ' + error.message); } }
     async function archive(id){ if (!confirm('Archive this record? It stays in history.')) return; const { error } = await sb.from('leads').update({ archived_at:new Date().toISOString(), status:'Archived' }).eq('id', id); if (error){ alert('Archive failed: ' + error.message); return; } loadProspects(); loadLeads(); }
+
+    // ── Edit modal (name/business/email/phone/notes) — reassignment stays in its own
+    // inline dropdown above, so it isn't duplicated here. ──
+    let contactEditId = null;
+    async function openContactModal(id){
+      const { data, error } = await sb.from('leads').select('*').eq('id', id).single();
+      if (error || !data){ alert('Could not load contact: ' + (error && error.message)); return; }
+      contactEditId = id;
+      document.getElementById('contactModalTitle').textContent = 'Edit ' + (data.lifecycle === 'lead' ? 'lead' : 'prospect');
+      document.getElementById('cmName').value = data.full_name || '';
+      document.getElementById('cmBiz').value = data.business || '';
+      document.getElementById('cmEmail').value = data.email || '';
+      document.getElementById('cmPhone').value = data.phone || '';
+      document.getElementById('cmNotes').value = data.notes || '';
+      document.getElementById('contactModalErr').textContent = '';
+      document.getElementById('contactModal').classList.remove('hidden');
+    }
+    function closeContactModal(){ contactEditId = null; document.getElementById('contactModal').classList.add('hidden'); }
+    async function saveContactEdit(e){
+      e.preventDefault();
+      if (!contactEditId) return;
+      const full_name = document.getElementById('cmName').value.trim();
+      if (!full_name){ document.getElementById('contactModalErr').textContent = 'Name is required.'; return; }
+      const { error } = await sb.from('leads').update({
+        full_name, business: document.getElementById('cmBiz').value.trim() || null,
+        email: document.getElementById('cmEmail').value.trim() || null,
+        phone: document.getElementById('cmPhone').value.trim() || null,
+        notes: document.getElementById('cmNotes').value.trim() || null,
+      }).eq('id', contactEditId);
+      if (error){ document.getElementById('contactModalErr').textContent = 'Save failed — ' + error.message; return; }
+      closeContactModal();
+      loadProspects(); loadLeads();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContactModal(); });
 
     async function loadOpps(){
       const res = await sb.from('deals').select('*').is('archived_at',null).order('updated_at',{ascending:false});

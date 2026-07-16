@@ -125,6 +125,20 @@
   .row-actions{ display:flex; gap:0.4rem; flex-wrap:wrap; }
   .empty{ color:var(--warm-muted); font-size:0.84rem; padding:1.2rem 0; text-align:center; }
 
+  /* edit modal — reused for editing a prospect/lead or an opportunity */
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(11,15,25,0.72); backdrop-filter:blur(2px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1.2rem; }
+  .modal-backdrop.hidden{ display:none; }
+  .modal-box{ width:100%; max-width:480px; max-height:90vh; overflow-y:auto; background:var(--dark3); border:1px solid var(--card-border); border-top:3px solid var(--gold); border-radius:8px; padding:1.4rem 1.5rem; box-shadow:0 24px 70px rgba(0,0,0,0.55); }
+  .modal-h{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  .modal-t{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05rem; }
+  .modal-x{ background:none; border:none; color:var(--warm-muted); cursor:pointer; padding:0.2rem; }
+  .modal-x:hover{ color:var(--white); }
+  .modal-x svg{ width:18px; height:18px; stroke:currentColor; stroke-width:2; fill:none; }
+  .modal-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1rem; }
+  .modal-grid .full{ grid-column:1 / -1; }
+  .modal-grid label{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.3rem; display:block; }
+  @media (max-width:520px){ .modal-grid{ grid-template-columns:1fr; } }
+
   /* Client detail — full onboarding wizard data, editable */
   .cd-section{ border-top:1px solid var(--card-border); padding-top:1rem; margin-top:1rem; }
   .cd-section:first-child{ border-top:none; padding-top:0; margin-top:0; }
@@ -230,9 +244,7 @@
         <button class="side-item" type="button" data-page="acommissions" onclick="go('acommissions'); adminLoadCommissions()">Commissions</button>
         <button class="side-item" type="button" data-page="aconnect" onclick="go('aconnect'); adminLoadConnect()">Stripe Connect</button>
         <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Delivery</div>
-        <button class="side-item" type="button" data-page="deals" onclick="go('deals')">Deals / Projects</button>
         <button class="side-item" type="button" data-page="pipeline" onclick="go('pipeline')">Project Pipeline</button>
-        <button class="side-item" type="button" data-page="leads" onclick="go('leads')">Leads</button>
         <button class="side-item" type="button" data-page="calendar" onclick="go('calendar')">Calendar</button>
         <button class="side-item disabled" type="button">Consults <span class="side-soon">Soon</span></button>
         <button class="side-item disabled" type="button">Tasks <span class="side-soon">Soon</span></button>
@@ -303,60 +315,12 @@
         </div>
       </div>
 
-      <div class="page" id="page-deals">
-        <div class="panel">
-          <div class="panel-h">
-            <div class="panel-t">Active Deals / Projects</div>
-            <div style="display:flex;align-items:center;gap:0.7rem;">
-              <div class="muted" id="dealsSrc"></div>
-              <button class="btn btn-p btn-sm" onclick="document.getElementById('dealForm').classList.toggle('open')">+ Add Deal</button>
-            </div>
-          </div>
-          <form class="lead-form" id="dealForm" onsubmit="addDeal(event)">
-            <div><label>Client / contact</label><input class="inp" id="dContact" required></div>
-            <div><label>Business</label><input class="inp" id="dBiz"></div>
-            <div><label>Service</label><input class="inp" id="dService" placeholder="Web Dev, Ad Campaigns, etc."></div>
-            <div><label>Deal value ($)</label><input class="inp" id="dValue" type="number" min="0" step="1" placeholder="3500"></div>
-            <div><label>Stage</label><select class="sel" id="dStage"><option>New</option><option>Contacted</option><option>Quoted</option><option>Won</option><option>Lost</option></select></div>
-            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Deal</button></div>
-          </form>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead><tr><th>Client / Business</th><th>Service</th><th>Stage</th><th>Value</th><th>Updated</th></tr></thead>
-              <tbody id="dealsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
       <div class="page" id="page-pipeline">
         <div class="panel">
           <div class="panel-h"><div class="panel-t">Project Pipeline</div><div class="muted">Click a project to view and edit its timeline.</div></div>
           <div class="proj-list" id="projectList"></div>
         </div>
         <div class="panel hidden" id="projectDetail"></div>
-      </div>
-
-      <div class="page" id="page-leads">
-        <div class="panel">
-          <div class="panel-h">
-            <div class="panel-t">Leads</div>
-            <button class="btn btn-p btn-sm" onclick="document.getElementById('leadForm').classList.toggle('open')">+ Add Lead</button>
-          </div>
-          <form class="lead-form" id="leadForm" onsubmit="addLead(event)">
-            <div><label>Full name</label><input class="inp" id="lFullName" required></div>
-            <div><label>Email</label><input class="inp" type="email" id="lEmail" required></div>
-            <div><label>Phone</label><input class="inp" type="tel" id="lPhone"></div>
-            <div><label>Business</label><input class="inp" id="lBusiness"></div>
-            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Lead</button></div>
-          </form>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead><tr><th>Name</th><th>Contact</th><th>Business</th><th>Status</th><th>Added</th><th></th></tr></thead>
-              <tbody id="leadsBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
-            </table>
-          </div>
-        </div>
       </div>
 
       <div class="page" id="page-calendar">
@@ -455,23 +419,101 @@
       <!-- GROWTH · PROSPECTS (all reps' prospects) -->
       <div class="page" id="page-aprospects">
         <div class="panel">
-          <div class="panel-h"><div class="panel-t">Prospects</div><div class="muted" id="aProspectsSrc"></div></div>
+          <div class="panel-h">
+            <div class="panel-t">Prospects</div>
+            <div style="display:flex;align-items:center;gap:0.7rem;">
+              <div class="muted" id="aProspectsSrc"></div>
+              <button class="btn btn-p btn-sm" onclick="document.getElementById('aProspectForm').classList.toggle('open')">+ Add Prospect</button>
+            </div>
+          </div>
+          <form class="lead-form" id="aProspectForm" onsubmit="adminAddProspect(event)">
+            <div><label>Full name</label><input class="inp" id="apName" required></div>
+            <div><label>Business</label><input class="inp" id="apBiz"></div>
+            <div><label>Email</label><input class="inp" type="email" id="apEmail"></div>
+            <div><label>Phone</label><input class="inp" type="tel" id="apPhone"></div>
+            <div class="full"><label>Assign to</label><select class="sel" id="apRep"></select></div>
+            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Prospect</button></div>
+          </form>
           <div style="overflow-x:auto;"><table>
-            <thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Assigned rep</th></tr></thead>
-            <tbody id="aProspectsBody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+            <thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Assigned rep</th><th></th></tr></thead>
+            <tbody id="aProspectsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
           </table></div>
+        </div>
+      </div>
+
+      <!-- shared edit modal for prospects & leads (both live in the leads table) -->
+      <div class="modal-backdrop hidden" id="contactModal" onclick="if(event.target===this) closeContactModal()">
+        <div class="modal-box">
+          <div class="modal-h"><div class="modal-t" id="contactModalTitle">Edit contact</div>
+            <button class="modal-x" onclick="closeContactModal()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <form onsubmit="saveContactEdit(event)">
+            <div class="modal-grid">
+              <div class="full"><label>Name</label><input class="inp" id="cmName" required></div>
+              <div class="full"><label>Business</label><input class="inp" id="cmBiz"></div>
+              <div><label>Email</label><input class="inp" id="cmEmail" type="email"></div>
+              <div><label>Phone</label><input class="inp" id="cmPhone"></div>
+              <div class="full"><label>Assigned rep</label><select class="sel" id="cmRep"></select></div>
+              <div class="full"><label>Notes</label><textarea class="ta" id="cmNotes"></textarea></div>
+            </div>
+            <button class="btn btn-p btn-sm" type="submit">Save changes</button>
+            <div class="muted" id="contactModalErr" style="color:var(--red);margin-top:0.5rem;"></div>
+          </form>
         </div>
       </div>
 
       <!-- GROWTH · OPPORTUNITIES (confirm payment → close won) -->
       <div class="page" id="page-aopps">
         <div class="panel">
-          <div class="panel-h"><div class="panel-t">Opportunities</div><div class="muted" id="aOppsSrc"></div></div>
+          <div class="panel-h">
+            <div class="panel-t">Opportunities</div>
+            <div style="display:flex;align-items:center;gap:0.7rem;">
+              <div class="muted" id="aOppsSrc"></div>
+              <button class="btn btn-p btn-sm" onclick="document.getElementById('aOppForm').classList.toggle('open')">+ Add Opportunity</button>
+            </div>
+          </div>
           <p class="muted" style="margin-bottom:0.9rem">Closing an opportunity confirms payment cleared, then creates the Client and commission ledger automatically (one transaction, no duplicates).</p>
+          <form class="lead-form" id="aOppForm" onsubmit="adminAddOpportunity(event)">
+            <div><label>Contact</label><input class="inp" id="aoContact" required></div>
+            <div><label>Business</label><input class="inp" id="aoBiz"></div>
+            <div><label>Estimated value ($)</label><input class="inp" id="aoValue" type="number" min="0"></div>
+            <div><label>Setup revenue ($)</label><input class="inp" id="aoSetup" type="number" min="0"></div>
+            <div><label>MRR ($/mo)</label><input class="inp" id="aoMrr" type="number" min="0"></div>
+            <div><label>Probability (%)</label><input class="inp" id="aoProb" type="number" min="0" max="100"></div>
+            <div><label>Expected close</label><input class="inp" id="aoClose" type="date"></div>
+            <div><label>Stage</label><select class="sel" id="aoStage"></select></div>
+            <div class="full"><label>Assigned rep</label><select class="sel" id="aoRep"></select></div>
+            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save Opportunity</button></div>
+          </form>
           <div style="overflow-x:auto;"><table>
-            <thead><tr><th>Contact</th><th>Value</th><th>Setup / MRR</th><th>Stage</th><th>Action</th></tr></thead>
-            <tbody id="aOppsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+            <thead><tr><th>Contact</th><th>Value</th><th>Setup / MRR</th><th>Stage</th><th>Rep</th><th>Action</th></tr></thead>
+            <tbody id="aOppsBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
           </table></div>
+        </div>
+      </div>
+
+      <!-- edit modal for opportunities -->
+      <div class="modal-backdrop hidden" id="oppModal" onclick="if(event.target===this) closeOppModal()">
+        <div class="modal-box">
+          <div class="modal-h"><div class="modal-t">Edit opportunity</div>
+            <button class="modal-x" onclick="closeOppModal()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <form onsubmit="saveOppEdit(event)">
+            <div class="modal-grid">
+              <div class="full"><label>Contact</label><input class="inp" id="omContact" required></div>
+              <div class="full"><label>Business</label><input class="inp" id="omBiz"></div>
+              <div><label>Estimated value ($)</label><input class="inp" id="omValue" type="number" min="0"></div>
+              <div><label>Probability (%)</label><input class="inp" id="omProb" type="number" min="0" max="100"></div>
+              <div><label>Setup revenue ($)</label><input class="inp" id="omSetup" type="number" min="0"></div>
+              <div><label>MRR ($/mo)</label><input class="inp" id="omMrr" type="number" min="0"></div>
+              <div><label>Expected close</label><input class="inp" id="omClose" type="date"></div>
+              <div><label>Stage</label><select class="sel" id="omStage"></select></div>
+              <div class="full"><label>Assigned rep</label><select class="sel" id="omRep"></select></div>
+              <div class="full"><label>Notes</label><textarea class="ta" id="omNotes"></textarea></div>
+            </div>
+            <button class="btn btn-p btn-sm" type="submit">Save changes</button>
+            <div class="muted" id="oppModalErr" style="color:var(--red);margin-top:0.5rem;"></div>
+          </form>
         </div>
       </div>
 
@@ -576,122 +618,17 @@
       });
     }
 
+    // deals/leads are kept loaded (no dedicated legacy page renders them anymore — that's
+    // Growth → Opportunities / Prospects now) purely because renderStats() below still reads
+    // these two arrays for the Dashboard's revenue/lead counters.
     async function loadDeals(){
-      const { data, error } = await sb.from('deals').select('*').order('updated_at', { ascending:false });
+      const { data } = await sb.from('deals').select('*').order('updated_at', { ascending:false });
       deals = data || [];
-      document.getElementById('dealsSrc').textContent = error ? 'Could not load deals' : (deals.length + ' total');
-      renderDeals();
     }
-    function renderDeals(){
-      const body = document.getElementById('dealsBody');
-      if (!deals.length){ body.innerHTML = '<tr><td colspan="5" class="empty">No deals yet — click "+ Add Deal" to add one.</td></tr>'; return; }
-      const pillClass = { New:'new', Contacted:'warn', Quoted:'warn', Won:'ok', Lost:'lost' };
-      body.innerHTML = deals.map(d => `<tr>
-        <td><b>${esc(d.business || d.contact)}</b><div class="muted">${esc(d.contact)}</div></td>
-        <td>${esc(d.service || '—')}</td>
-        <td><span class="pill ${pillClass[d.stage] || 'new'}">${esc(d.stage)}</span></td>
-        <td>${money(d.value)}</td>
-        <td class="muted">${d.updated_at ? new Date(d.updated_at).toLocaleDateString() : '—'}</td>
-      </tr>`).join('');
-    }
-    async function addDeal(e){
-      e.preventDefault();
-      const contact = document.getElementById('dContact').value.trim();
-      if (!contact) return;
-      const payload = {
-        contact,
-        business: document.getElementById('dBiz').value.trim() || null,
-        service: document.getElementById('dService').value.trim() || null,
-        value: parseInt(document.getElementById('dValue').value, 10) || 0,
-        stage: document.getElementById('dStage').value,
-      };
-      const { data, error } = await sb.from('deals').insert(payload).select().single();
-      if (error){ alert(error.message); return; }
-      deals.unshift(data);
-      document.getElementById('dealsSrc').textContent = deals.length + ' total';
-      renderDeals();
-      renderStats();
-      document.getElementById('dealForm').reset();
-      document.getElementById('dealForm').classList.remove('open');
-    }
-
     async function loadLeads(){
       const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending:false });
       leads = data || [];
       if (error) console.warn('leads load error', error.message);
-      renderLeads();
-    }
-    // The real funnel: a prospect (New) gets reached out to (Contacted), gets a consult on
-    // the calendar (Meeting Set), gets sent an account-creation link (Invited), and finally
-    // actually finishes signing up (Converted). Status is manually editable per-row since we
-    // can't reliably auto-detect "they showed up to the meeting" or "they finished onboarding"
-    // without deeper integration — the action buttons just suggest the next status.
-    const LEAD_STATUSES = ['New', 'Contacted', 'Meeting Set', 'Invited', 'Converted'];
-    const pillClass = { New:'new', Contacted:'warn', 'Meeting Set':'warn', Invited:'new', Converted:'ok' };
-
-    function renderLeads(){
-      const body = document.getElementById('leadsBody');
-      if (!leads.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No leads yet — click "+ Add Lead" to add one.</td></tr>'; return; }
-      body.innerHTML = leads.map(l => `<tr>
-        <td><b>${esc(l.full_name)}</b></td>
-        <td>${esc(l.email)}${l.phone ? '<div class="muted">' + esc(l.phone) + '</div>' : ''}</td>
-        <td>${esc(l.business || '—')}</td>
-        <td>
-          <span class="pill ${pillClass[l.status] || 'new'}" style="margin-bottom:0.35rem;display:inline-block;">${esc(l.status)}</span>
-          <select class="sel" style="width:auto;padding:0.3rem 0.5rem;font-size:0.72rem;display:block;" onchange="updateLeadStatus('${l.id}', this.value)">
-            ${LEAD_STATUSES.map(s => `<option value="${s}" ${s === l.status ? 'selected' : ''}>${s}</option>`).join('')}
-          </select>
-        </td>
-        <td class="muted">${l.created_at ? new Date(l.created_at).toLocaleDateString() : '—'}</td>
-        <td><div class="row-actions">
-          <button class="btn btn-sm" onclick="inviteConsult('${l.id}')">Invite to Consult</button>
-          <button class="btn btn-p btn-sm" ${l.status === 'Converted' ? 'disabled' : ''} onclick="convertToCustomer('${l.id}')">${l.status === 'Invited' || l.status === 'Converted' ? 'Resend Invite' : 'Send Account Invite'}</button>
-        </div></td>
-      </tr>`).join('');
-    }
-    async function updateLeadStatus(id, status){
-      const lead = leads.find(l => l.id === id);
-      if (!lead) return;
-      lead.status = status;
-      await sb.from('leads').update({ status }).eq('id', id);
-      renderLeads();
-      renderStats();
-    }
-    // Only moves a lead forward in the funnel — never regresses one that's already further along.
-    function advanceLeadStatus(id, minStatus){
-      const lead = leads.find(l => l.id === id);
-      if (!lead) return;
-      if (LEAD_STATUSES.indexOf(minStatus) > LEAD_STATUSES.indexOf(lead.status)) updateLeadStatus(id, minStatus);
-    }
-    async function addLead(e){
-      e.preventDefault();
-      const full_name = document.getElementById('lFullName').value.trim();
-      const email = document.getElementById('lEmail').value.trim();
-      const phone = document.getElementById('lPhone').value.trim();
-      const business = document.getElementById('lBusiness').value.trim();
-      const { data, error } = await sb.from('leads').insert({ full_name, email, phone, business }).select().single();
-      if (error){ alert(error.message); return; }
-      leads.unshift(data);
-      renderLeads();
-      renderStats();
-      document.getElementById('leadForm').reset();
-      document.getElementById('leadForm').classList.remove('open');
-    }
-    function inviteConsult(id){
-      const lead = leads.find(l => l.id === id);
-      if (!lead) return;
-      const url = CALCOM_BOOKING_URL + '?name=' + encodeURIComponent(lead.full_name) + '&email=' + encodeURIComponent(lead.email);
-      window.open(url, '_blank', 'noopener');
-      advanceLeadStatus(id, 'Meeting Set');
-    }
-    async function convertToCustomer(id){
-      const lead = leads.find(l => l.id === id);
-      if (!lead) return;
-      if (!confirm('Send ' + lead.full_name + ' (' + lead.email + ') an account-creation link?')) return;
-      const { error } = await sb.auth.signInWithOtp({ email: lead.email, options: { emailRedirectTo: window.location.origin + '/onboarding.html' } });
-      if (error){ alert(error.message); return; }
-      advanceLeadStatus(id, 'Invited');
-      alert('Sign-in link emailed to ' + lead.email + '. Once they click it, onboarding.html will pre-fill what we already know about them. Flip their status to "Converted" once they finish setup.');
     }
 
     // ── CALENDAR — a real month grid, not just a flat upcoming list. Cal.com's v2 API only
@@ -885,15 +822,11 @@
       if (!full_name || !email) return;
       const note = document.getElementById('addClientNote');
       note.textContent = 'Sending invite…';
-      const { data: lead, error: leadErr } = await sb.from('leads')
-        .insert({ full_name, email, phone: phone || null, business: business || null, status: 'Invited' })
-        .select().single();
-      if (leadErr){ note.textContent = '⚠ ' + leadErr.message; return; }
+      // Skips the sales funnel entirely — this is for onboarding someone directly (e.g. they
+      // called in). Their onboarding progress is tracked by project_setup once they sign in,
+      // same as any other client; no leads row is needed for that.
       const { error: otpErr } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/onboarding.html' } });
       if (otpErr){ note.textContent = '⚠ ' + otpErr.message; return; }
-      leads.unshift(lead);
-      renderLeads();
-      renderStats();
       note.textContent = 'Invite sent to ' + email + ' ✓';
       document.getElementById('addClientForm').reset();
     }
@@ -1570,36 +1503,165 @@
     }
     async function bearer(){ const { data } = await sb.auth.getSession(); return data.session && data.session.access_token; }
 
+    // Reps eligible for assignment (used by both the Prospects and Opportunities add/edit forms).
+    function repOptionsHtml(selectedId){
+      const reps = (teamProfiles||[]).filter(p => p.role === 'rep');
+      return '<option value="">— unassigned —</option>' +
+        reps.map(r => `<option value="${r.user_id}" ${r.user_id===selectedId?'selected':''}>${esc(r.full_name)||'Rep'}</option>`).join('');
+    }
+
     async function adminLoadProspects(){
-      aRow('aProspectsBody', 4, 'Loading…');
+      aRow('aProspectsBody', 5, 'Loading…');
+      document.getElementById('apRep').innerHTML = repOptionsHtml();
       const { data, error } = await sb.from('leads').select('*').eq('lifecycle','prospect').is('archived_at',null).order('updated_at',{ascending:false});
-      if (error){ aRow('aProspectsBody',4,'Couldn’t load — ' + error.message, true); return; }
+      if (error){ aRow('aProspectsBody',5,'Couldn’t load — ' + error.message, true); return; }
       document.getElementById('aProspectsSrc').textContent = (data.length) + ' active';
-      if (!data.length){ aRow('aProspectsBody',4,'No prospects yet.'); return; }
+      if (!data.length){ aRow('aProspectsBody',5,'No prospects yet.'); return; }
       const names = {}; (teamProfiles||[]).forEach(p => names[p.user_id] = p.full_name);
       document.getElementById('aProspectsBody').innerHTML = data.map(p => `<tr>
         <td><b>${esc(p.full_name)}</b></td><td>${esc(p.business)||'—'}</td>
         <td><span class="pill ${aPill(p.status)}">${esc(p.status)}</span></td>
-        <td>${esc(names[p.assigned_rep_id] || '—')}</td></tr>`).join('');
+        <td>${esc(names[p.assigned_rep_id] || '—')}</td>
+        <td><button class="btn btn-sm" onclick="openContactModal('${p.id}')">Edit</button></td></tr>`).join('');
+    }
+    async function adminAddProspect(e){
+      e.preventDefault();
+      const full_name = document.getElementById('apName').value.trim();
+      if (!full_name) return;
+      const payload = {
+        full_name, business: document.getElementById('apBiz').value.trim() || null,
+        email: document.getElementById('apEmail').value.trim() || null,
+        phone: document.getElementById('apPhone').value.trim() || null,
+        assigned_rep_id: document.getElementById('apRep').value || null,
+        lifecycle: 'prospect', status: document.getElementById('apRep').value ? 'Assigned' : 'New',
+      };
+      const { error } = await sb.from('leads').insert(payload);
+      if (error){ alert(error.message); return; }
+      document.getElementById('aProspectForm').reset();
+      document.getElementById('aProspectForm').classList.remove('open');
+      adminLoadProspects();
+    }
+
+    // ── Shared edit modal for prospects & leads (both rows live in the leads table) ──
+    let contactEditId = null;
+    async function openContactModal(id){
+      const { data, error } = await sb.from('leads').select('*').eq('id', id).single();
+      if (error || !data){ alert('Could not load contact: ' + (error && error.message)); return; }
+      contactEditId = id;
+      document.getElementById('contactModalTitle').textContent = 'Edit ' + (data.lifecycle === 'lead' ? 'lead' : 'prospect');
+      document.getElementById('cmName').value = data.full_name || '';
+      document.getElementById('cmBiz').value = data.business || '';
+      document.getElementById('cmEmail').value = data.email || '';
+      document.getElementById('cmPhone').value = data.phone || '';
+      document.getElementById('cmNotes').value = data.notes || '';
+      document.getElementById('cmRep').innerHTML = repOptionsHtml(data.assigned_rep_id);
+      document.getElementById('contactModalErr').textContent = '';
+      document.getElementById('contactModal').classList.remove('hidden');
+    }
+    function closeContactModal(){ contactEditId = null; document.getElementById('contactModal').classList.add('hidden'); }
+    async function saveContactEdit(e){
+      e.preventDefault();
+      if (!contactEditId) return;
+      const full_name = document.getElementById('cmName').value.trim();
+      if (!full_name){ document.getElementById('contactModalErr').textContent = 'Name is required.'; return; }
+      const { error } = await sb.from('leads').update({
+        full_name, business: document.getElementById('cmBiz').value.trim() || null,
+        email: document.getElementById('cmEmail').value.trim() || null,
+        phone: document.getElementById('cmPhone').value.trim() || null,
+        notes: document.getElementById('cmNotes').value.trim() || null,
+        assigned_rep_id: document.getElementById('cmRep').value || null,
+      }).eq('id', contactEditId);
+      if (error){ document.getElementById('contactModalErr').textContent = 'Save failed — ' + error.message; return; }
+      closeContactModal();
+      adminLoadProspects();
     }
 
     async function adminLoadOpps(){
-      aRow('aOppsBody', 5, 'Loading…');
+      aRow('aOppsBody', 6, 'Loading…');
+      document.getElementById('aoRep').innerHTML = repOptionsHtml();
+      document.getElementById('aoStage').innerHTML = A_OPP_STAGES.filter(s => s !== 'Won').map(s => `<option>${s}</option>`).join('');
+      document.getElementById('omStage').innerHTML = A_OPP_STAGES.map(s => `<option>${s}</option>`).join('');
       const { data, error } = await sb.from('deals').select('*').is('archived_at',null).order('updated_at',{ascending:false});
-      if (error){ aRow('aOppsBody',5,'Couldn’t load — ' + error.message, true); return; }
+      if (error){ aRow('aOppsBody',6,'Couldn’t load — ' + error.message, true); return; }
       document.getElementById('aOppsSrc').textContent = data.length + ' total';
-      if (!data.length){ aRow('aOppsBody',5,'No opportunities yet.'); return; }
+      if (!data.length){ aRow('aOppsBody',6,'No opportunities yet.'); return; }
+      const names = {}; (teamProfiles||[]).forEach(p => names[p.user_id] = p.full_name);
       document.getElementById('aOppsBody').innerHTML = data.map(d => {
         const canClose = d.stage !== 'Won' && d.stage !== 'Lost';
         return `<tr>
           <td><b>${esc(d.contact)}</b><br><span class="muted">${esc(d.business)||''}</span></td>
           <td>${money(d.value)}</td><td>${money(d.setup_revenue)} / ${money(d.mrr)}</td>
           <td><span class="pill ${aPill(d.stage)}">${esc(d.stage)}</span></td>
-          <td>${d.stage==='Won' ? '<span class="pill ok">Closed</span>'
-            : canClose ? `<button class="btn btn-p btn-sm" onclick="adminCloseOpp('${d.id}')">Confirm payment &amp; close</button>` : '—'}</td>
+          <td>${esc(names[d.rep_id] || '—')}</td>
+          <td><div class="row-actions">
+            <button class="btn btn-sm" onclick="openOppModal('${d.id}')">Edit</button>
+            ${d.stage==='Won' ? '<span class="pill ok">Closed</span>'
+              : canClose ? `<button class="btn btn-p btn-sm" onclick="adminCloseOpp('${d.id}')">Confirm payment &amp; close</button>` : ''}
+          </div></td>
         </tr>`;
       }).join('');
     }
+    async function adminAddOpportunity(e){
+      e.preventDefault();
+      const contact = document.getElementById('aoContact').value.trim();
+      if (!contact) return;
+      const g = (id, isNum) => { const v = document.getElementById(id).value; return isNum ? (parseFloat(v)||0) : (v || null); };
+      const payload = {
+        contact, business: document.getElementById('aoBiz').value.trim() || null,
+        value: g('aoValue', true), setup_revenue: g('aoSetup', true), mrr: g('aoMrr', true),
+        probability: Math.max(0, Math.min(100, parseInt(document.getElementById('aoProb').value, 10) || 0)),
+        expected_close: g('aoClose'), stage: document.getElementById('aoStage').value,
+        rep_id: document.getElementById('aoRep').value || null,
+      };
+      const { error } = await sb.from('deals').insert(payload);
+      if (error){ alert(error.message); return; }
+      document.getElementById('aOppForm').reset();
+      document.getElementById('aOppForm').classList.remove('open');
+      adminLoadOpps();
+    }
+
+    // ── Edit modal for opportunities ──
+    let oppEditId = null;
+    async function openOppModal(id){
+      const { data, error } = await sb.from('deals').select('*').eq('id', id).single();
+      if (error || !data){ alert('Could not load opportunity: ' + (error && error.message)); return; }
+      oppEditId = id;
+      document.getElementById('omContact').value = data.contact || '';
+      document.getElementById('omBiz').value = data.business || '';
+      document.getElementById('omValue').value = data.value || '';
+      document.getElementById('omProb').value = data.probability || '';
+      document.getElementById('omSetup').value = data.setup_revenue || '';
+      document.getElementById('omMrr').value = data.mrr || '';
+      document.getElementById('omClose').value = data.expected_close || '';
+      document.getElementById('omNotes').value = data.notes || '';
+      document.getElementById('omStage').innerHTML = A_OPP_STAGES.map(s => `<option ${s===data.stage?'selected':''}>${s}</option>`).join('');
+      document.getElementById('omRep').innerHTML = repOptionsHtml(data.rep_id);
+      document.getElementById('oppModalErr').textContent = '';
+      document.getElementById('oppModal').classList.remove('hidden');
+    }
+    function closeOppModal(){ oppEditId = null; document.getElementById('oppModal').classList.add('hidden'); }
+    async function saveOppEdit(e){
+      e.preventDefault();
+      if (!oppEditId) return;
+      const contact = document.getElementById('omContact').value.trim();
+      if (!contact){ document.getElementById('oppModalErr').textContent = 'Contact is required.'; return; }
+      const stage = document.getElementById('omStage').value;
+      if (stage === 'Won'){ document.getElementById('oppModalErr').textContent = 'Use "Confirm payment & close" to mark an opportunity Won.'; return; }
+      const { error } = await sb.from('deals').update({
+        contact, business: document.getElementById('omBiz').value.trim() || null,
+        value: parseFloat(document.getElementById('omValue').value) || 0,
+        probability: Math.max(0, Math.min(100, parseInt(document.getElementById('omProb').value, 10) || 0)),
+        setup_revenue: parseFloat(document.getElementById('omSetup').value) || 0,
+        mrr: parseFloat(document.getElementById('omMrr').value) || 0,
+        expected_close: document.getElementById('omClose').value || null,
+        notes: document.getElementById('omNotes').value.trim() || null,
+        stage, rep_id: document.getElementById('omRep').value || null,
+      }).eq('id', oppEditId);
+      if (error){ document.getElementById('oppModalErr').textContent = 'Save failed — ' + error.message; return; }
+      closeOppModal();
+      adminLoadOpps();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape'){ closeContactModal(); closeOppModal(); } });
     async function adminCloseOpp(dealId){
       const ref = prompt('Enter the confirmed Stripe payment / reference id for this deal:');
       if (ref === null) return;
