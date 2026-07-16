@@ -113,15 +113,42 @@
   .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
   .nav-hamburger.open span:nth-child(2) { opacity: 0; }
   .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-  .mobile-nav { display: none; position: fixed; inset: 0; z-index: 205; background: rgba(11,15,25,0.97); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 1.3rem; opacity: 0; pointer-events: none; transition: opacity 0.3s; overflow-y: auto; padding: 6rem 4% 3rem; }
+  .mobile-nav {
+    display: none; position: fixed; inset: 0; z-index: 205;
+    background: rgba(11,15,25,0.97); backdrop-filter: blur(20px);
+    flex-direction: column; align-items: stretch; justify-content: flex-start;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    overflow-y: auto; padding: 5.5rem 6% 3rem;
+  }
   .mobile-nav.open { opacity: 1; pointer-events: auto; }
-  .mobile-nav a { font-family: 'Inter', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; letter-spacing: -0.02em; transition: color 0.2s; }
-  .mobile-nav a:hover { color: var(--gold); }
-  .mobile-nav-label { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-top: 0.8rem; }
-  .mobile-nav .mobile-sublink { font-size: 1.05rem; font-weight: 500; color: var(--gray-light); }
-  .mobile-nav .mobile-sublink:hover { color: var(--gold); }
-  .mobile-nav .mobile-cta { margin-top: 1rem; background: var(--gold); color: #fff; padding: 0.9rem 2.2rem; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; border-radius: 8px; text-decoration: none; display: inline-block; }
-  .mobile-nav-close { position: absolute; top: 1.3rem; right: 5%; background: none; border: none; color: var(--white); padding: 0.5rem; cursor: pointer; display: flex; }
+  .mnav-header { margin-bottom: 1.5rem; }
+  .mnav-logo { height: 30px; display: block; margin-bottom: 1rem; }
+  .mnav-tagline { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 1.18; letter-spacing: -0.02em; color: var(--white); margin-bottom: 0.5rem; }
+  .mnav-subtagline { font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--warm-muted); line-height: 1.5; }
+  .mnav-section-label { font-family: 'Inter', sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-light); margin: 1.5rem 0 0.2rem; padding-top: 1.1rem; border-top: 1px solid var(--card-border); }
+  .mnav-section-label.mnav-first { border-top: none; padding-top: 0; margin-top: 0.3rem; }
+  .mnav-row { display: flex; align-items: center; gap: 0.9rem; padding: 0.8rem 0; text-decoration: none; border-bottom: 1px solid rgba(242,244,248,0.06); transition: opacity 0.15s; }
+  .mnav-row:active { opacity: 0.7; }
+  .mnav-icon { width: 2.15rem; height: 2.15rem; border-radius: 8px; background: rgba(76,89,247,0.12); border: 1px solid rgba(76,89,247,0.22); display: flex; align-items: center; justify-content: center; color: var(--gold-light); flex-shrink: 0; }
+  .mnav-icon svg { width: 18px; height: 18px; }
+  .mnav-label { flex: 1; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600; color: var(--white); letter-spacing: 0; }
+  .mnav-row-top .mnav-label { font-size: 1.08rem; font-weight: 700; }
+  .mnav-chevron { color: var(--warm-muted); flex-shrink: 0; display: flex; }
+  .mnav-chevron svg { width: 16px; height: 16px; }
+  .mnav-login-card { display: flex; align-items: center; gap: 0.9rem; margin-top: 1.3rem; padding: 0.95rem 1rem; border: 1px solid var(--card-border); border-radius: 10px; background: var(--dark3); text-decoration: none; }
+  .mnav-login-title { display: block; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.96rem; color: var(--white); }
+  .mnav-login-sub { display: block; font-family: 'Inter', sans-serif; font-size: 0.74rem; color: var(--warm-muted); margin-top: 0.15rem; }
+  .mnav-cta { display: flex; align-items: center; gap: 0.9rem; margin-top: 1rem; padding: 1.05rem 1.1rem; border-radius: 10px; background: var(--gold); text-decoration: none; box-shadow: 0 4px 20px rgba(76,89,247,0.35); }
+  .mnav-cta-icon { width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+  .mnav-cta-icon svg { width: 19px; height: 19px; }
+  .mnav-cta-title { display: block; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.94rem; color: #fff; }
+  .mnav-cta-sub { display: block; font-family: 'Inter', sans-serif; font-size: 0.74rem; color: rgba(255,255,255,0.75); margin-top: 0.1rem; }
+  .mnav-cta .mnav-chevron { color: rgba(255,255,255,0.8); }
+  .mnav-text-link { display: block; text-align: center; margin-top: 1.1rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--gold-light); text-decoration: none; }
+  .mobile-nav-close {
+    position: absolute; top: 1.3rem; right: 5%; background: none; border: none;
+    color: var(--white); padding: 0.5rem; cursor: pointer; display: flex; z-index: 2;
+  }
   .mobile-nav-close svg { width: 26px; height: 26px; }
 
   .float-cta { position: fixed; bottom: 2rem; right: 2rem; z-index: 300; display: flex; align-items: center; gap: 0.6rem; background: var(--gold); color: #fff; padding: 0.85rem 1.4rem; border-radius: 50px; font-weight: 600; font-size: 0.85rem; text-decoration: none; box-shadow: 0 4px 20px rgba(76,89,247,0.5); opacity: 0; transform: translateY(20px) scale(0.95); transition: opacity 0.4s, transform 0.4s, background 0.2s, box-shadow 0.2s; pointer-events: none; }
@@ -289,17 +316,34 @@
 
 <div class="mobile-nav" id="mobileNav">
   <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-  <a href="work.html" class="mobile-link">Work</a>
-  <a href="about.html" class="mobile-link">About</a>
-  <div class="mobile-nav-label">Services</div>
-  <a href="seo.html" class="mobile-link mobile-sublink">SEO</a>
-  <a href="paid-advertising.html" class="mobile-link mobile-sublink">Paid Advertising</a>
-  <a href="web-development.html" class="mobile-link mobile-sublink">Web Development</a>
-  <a href="ugc-content.html" class="mobile-link mobile-sublink">UGC Content</a>
-  <a href="dashboards.html" class="mobile-link mobile-sublink">Dashboards</a>
-  <a href="ai-lead-generation.html" class="mobile-link mobile-sublink">AI Lead Generation</a>
-  <a href="login.html" class="mobile-link" style="margin-top:0.8rem;">Client Login</a>
-  <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="mobile-cta">Text Us Now</a>
+  <div class="mnav-header">
+    <img src="meridion-logo-full.png" alt="Meridion AI" class="mnav-logo">
+    <div class="mnav-tagline">Scale Your Business.<br>Anywhere You Operate.</div>
+    <div class="mnav-subtagline">SEO &middot; Paid Advertising &middot; Web Development &middot; UGC Content &middot; Dashboards &middot; AI Lead Generation</div>
+  </div>
+  <a href="work.html" class="mobile-link mnav-row mnav-row-top"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><path d="M2 13h20"/></svg></span><span class="mnav-label">Work</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="about.html" class="mobile-link mnav-row mnav-row-top"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></span><span class="mnav-label">About</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <div class="mnav-section-label mnav-first">Services</div>
+  <a href="seo.html" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><span class="mnav-label">SEO</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="paid-advertising.html" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span><span class="mnav-label">Paid Advertising</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="web-development.html" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span class="mnav-label">Web Development</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="ugc-content.html" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m9 9 6 3-6 3V9Z"/></svg></span><span class="mnav-label">UGC Content</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="dashboards.html" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span><span class="mnav-label">Dashboards</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="ai-lead-generation.html" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M9 13v2M15 13v2"/></svg></span><span class="mnav-label">AI Lead Generation</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <div class="mnav-section-label">Resources</div>
+  <a href="index.html#audit" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/><path d="m9 14 2 2 4-4"/></svg></span><span class="mnav-label">Website Audit</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="index.html#faq" class="mobile-link mnav-row"><span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span><span class="mnav-label">FAQ</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></a>
+  <a href="login.html" class="mobile-link mnav-login-card">
+    <span class="mnav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+    <span><span class="mnav-login-title">Client Login</span><span class="mnav-login-sub">Access your project dashboard</span></span>
+    <span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+  </a>
+  <a href="index.html#audit" class="mobile-link mnav-cta">
+    <span class="mnav-cta-icon"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 13.5 9 20 10.5 13.5 12 12 19 10.5 12 4 10.5 10.5 9 12 2Z"/></svg></span>
+    <span><span class="mnav-cta-title">Get Your Free Website Audit</span><span class="mnav-cta-sub">See how your site performs</span></span>
+    <span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+  </a>
+  <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="mobile-link mnav-text-link">or Text Us Now &mdash; (480) 589-0098</a>
 </div>
 
 <section class="hero" id="main">
@@ -446,7 +490,7 @@ document.querySelectorAll('[data-target]').forEach(el=>cObs.observe(el));
 const hamburger=document.getElementById('navHamburger'), mobileNav=document.getElementById('mobileNav');
 function closeMobileNav(){hamburger.classList.remove('open');mobileNav.classList.remove('open');hamburger.setAttribute('aria-expanded','false');document.body.style.overflow='';}
 hamburger.addEventListener('click',()=>{const o=hamburger.classList.toggle('open');mobileNav.classList.toggle('open',o);hamburger.setAttribute('aria-expanded',o?'true':'false');document.body.style.overflow=o?'hidden':'';});
-document.querySelectorAll('.mobile-link,.mobile-cta').forEach(l=>l.addEventListener('click',closeMobileNav));
+document.querySelectorAll('.mobile-link').forEach(l=>l.addEventListener('click',closeMobileNav));
 
 (function() {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
