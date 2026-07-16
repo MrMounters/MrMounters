@@ -146,8 +146,22 @@
   .acad-head{ background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1.3rem 1.4rem; margin-bottom:1.2rem; box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.25); }
   .acad-head-top{ display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:0.7rem; flex-wrap:wrap; }
   .acad-pct{ font-family:var(--mono); font-size:0.72rem; color:var(--gold); font-weight:700; }
-  .progress-track{ height:8px; border-radius:4px; background:rgba(76,89,247,0.12); overflow:hidden; }
-  .progress-fill{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:4px; transition:width 0.6s cubic-bezier(0.22,1,0.36,1); }
+  /* Fuse: track holds the burn trail + a lit spark that rides the leading edge, plus a
+     checkmark badge that pops in once the fuse fully burns down. */
+  .progress-track{ position:relative; height:10px; border-radius:5px; background:rgba(76,89,247,0.12); overflow:visible; }
+  .progress-track-inner{ position:relative; height:100%; border-radius:5px; overflow:hidden; }
+  .progress-fill{ display:block; height:100%; width:0%; background:linear-gradient(90deg,#8a2f0f,#e8752f,#ffb347); border-radius:5px; transition:width 0.7s cubic-bezier(0.22,1,0.36,1); position:relative; }
+  .progress-spark{ position:absolute; top:50%; right:-1px; width:14px; height:14px; border-radius:50%; transform:translate(50%,-50%); pointer-events:none; opacity:0; transition:opacity 0.2s; background:radial-gradient(circle,#fff7d6 0%,#ffcf5c 35%,#ff7a1a 65%,rgba(255,122,26,0) 75%); box-shadow:0 0 6px 2px rgba(255,159,45,0.65), 0 0 14px 5px rgba(255,100,20,0.35); }
+  .progress-track.lit .progress-spark{ opacity:1; animation:fuseFlicker 0.45s ease-in-out infinite alternate; }
+  @keyframes fuseFlicker{
+    0%{ transform:translate(50%,-50%) scale(0.85); filter:brightness(0.9); }
+    50%{ transform:translate(50%,-52%) scale(1.05); filter:brightness(1.15); }
+    100%{ transform:translate(50%,-48%) scale(0.95); filter:brightness(1); }
+  }
+  .progress-check{ position:absolute; top:50%; right:-3px; width:20px; height:20px; border-radius:50%; transform:translate(50%,-50%) scale(0); background:var(--green); display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 3px var(--dark3), 0 0 10px rgba(95,208,138,0.6); opacity:0; }
+  .progress-check svg{ width:12px; height:12px; stroke:var(--dark); stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .progress-track.complete .progress-check{ animation:checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  @keyframes checkPop{ 0%{ transform:translate(50%,-50%) scale(0); opacity:0; } 60%{ transform:translate(50%,-50%) scale(1.25); opacity:1; } 100%{ transform:translate(50%,-50%) scale(1); opacity:1; } }
   .mod-card{ display:flex; align-items:center; gap:1rem; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; padding:1.05rem 1.15rem; cursor:pointer; text-align:left; width:100%; transition:border-color .2s, transform .15s; box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.25); }
   .mod-card:hover{ border-color:rgba(76,89,247,0.4); transform:translateY(-1px); }
   .mod-card.done{ border-color:rgba(31,169,113,0.35); }
@@ -155,7 +169,10 @@
   .mod-card.done .mod-num{ background:rgba(31,169,113,0.1); color:var(--green); border-color:rgba(31,169,113,0.3); }
   .mod-body{ flex:1; min-width:0; }
   .mod-t{ font-weight:600; color:var(--white); font-size:0.94rem; }
+  .mod-card.done .mod-t{ text-decoration:line-through; text-decoration-color:rgba(95,208,138,0.6); color:var(--warm-accent); }
   .mod-d{ font-size:0.76rem; color:var(--warm-muted); margin-top:0.15rem; }
+  .mod-done-icon{ display:inline-flex; align-items:center; gap:0.3rem; }
+  .mod-done-icon svg{ width:11px; height:11px; stroke:var(--green); stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round; }
   .callout{ position:relative; background:rgba(76,89,247,0.05); border:1px solid rgba(76,89,247,0.22); border-left:3px solid var(--gold); border-radius:6px; padding:1rem 1.1rem; margin:0.9rem 0; }
   .callout p{ color:var(--white) !important; font-style:italic; margin:0; padding-right:3.4rem; }
   .callout-k{ font-family:var(--mono); font-size:0.55rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:0.4rem; }
@@ -224,7 +241,8 @@
       <button class="menu-x" onclick="closeMenu()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
     </div>
     <div class="acct">
-      <div class="acct-logo">M</div>
+      <div class="acct-logo" id="acctLogo">M</div>
+      <img class="acct-logo hidden" id="menuAvatar" alt="" style="object-fit:cover;">
       <div><div class="acct-name" id="acctName2">Sales Rep</div><div class="acct-sub">Independent Sales Representative</div></div>
     </div>
     <div class="menu-div"></div>
@@ -512,7 +530,11 @@
           <b>Your progress</b>
           <span class="acad-pct" id="acadPct">0% · 0/5 modules</span>
         </div>
-        <div class="progress-track"><span class="progress-fill" id="acadFill"></span></div>
+        <div class="progress-track" id="acadTrack">
+          <div class="progress-track-inner"><span class="progress-fill" id="acadFill"></span></div>
+          <span class="progress-spark" id="acadSpark"></span>
+          <span class="progress-check" id="acadCheck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+        </div>
       </div>
 
       <div class="badge-cert locked" id="certCard">
@@ -822,6 +844,13 @@
     function goLogin(){ window.location.href = 'login.html?next=rep.html'; }
     function openMenu(){ document.getElementById('menu').classList.add('open'); document.body.style.overflow = 'hidden'; }
     function closeMenu(){ document.getElementById('menu').classList.remove('open'); document.body.style.overflow = ''; }
+    // Shows the rep's photo next to their name in the menu when they have one, else the "M" tile.
+    function setMenuAvatar(url){
+      const img = document.getElementById('menuAvatar'), logo = document.getElementById('acctLogo');
+      if (!img || !logo) return;
+      if (url){ img.src = url; img.classList.remove('hidden'); logo.classList.add('hidden'); }
+      else { img.classList.add('hidden'); logo.classList.remove('hidden'); }
+    }
 
     async function init(){
       let name = null;
@@ -832,7 +861,7 @@
         session = data.session;
         if (!session){ goLogin(); return; }
         // Role gate: this is the Sales Rep portal. Send everyone else to their own home.
-        const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
+        const { data: profile } = await sb.from('profiles').select('role, avatar_url').eq('user_id', session.user.id).single();
         const role = profile && profile.role;
         if (role !== 'rep'){
           window.location.href = role === 'admin' ? 'admin.html' : role === 'manager' ? 'manager.html' : 'portal.html';
@@ -840,6 +869,7 @@
         }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
+        setMenuAvatar(profile && profile.avatar_url);
         sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
       } else { goLogin(); return; }
       document.getElementById('acctName').textContent = name;
@@ -1073,7 +1103,7 @@
       const { data } = sb.storage.from('avatars').getPublicUrl(path);
       const url = data.publicUrl + '?t=' + Date.now();
       await sb.from('profiles').update({ avatar_url: url }).eq('user_id', session.user.id);
-      document.getElementById('avatarImg').src = url; msg.textContent = 'Saved ✓';
+      document.getElementById('avatarImg').src = url; setMenuAvatar(url); msg.textContent = 'Saved ✓';
     }
 
     // ---- LEADS ----
@@ -1303,13 +1333,18 @@
       const pct = Math.round(doneCount / MODS.length * 100);
       document.getElementById('acadPct').textContent = pct + '% · ' + doneCount + '/' + MODS.length + ' modules';
       document.getElementById('acadFill').style.width = pct + '%';
+      const track = document.getElementById('acadTrack');
+      track.classList.toggle('lit', pct > 0 && pct < 100);       // fuse flickers while burning
+      track.classList.toggle('complete', pct === 100);            // checkmark pops once fully burned
       MODS.forEach(m => {
         const card = document.getElementById('mc-' + m), pillEl = document.getElementById('mp-' + m);
         if (!card || !pillEl) return;
         const done = !!acad.done[m];
         card.classList.toggle('done', done);
         pillEl.className = 'pill ' + (done ? 'ok' : 'new');
-        pillEl.textContent = done ? '✓ Done' : 'Start';
+        pillEl.innerHTML = done
+          ? '<span class="mod-done-icon"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Done</span>'
+          : 'Start';
       });
       const cert = document.getElementById('certCard');
       const name = document.getElementById('acctName').textContent || 'Rep';
