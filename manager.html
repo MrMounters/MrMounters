@@ -15,6 +15,7 @@
     --green:#5FD08A; --amber:#F5B43C; --red:#ff8b6b; --card-border:rgba(242,244,248,0.1); --mono:'Space Mono',monospace;
   }
   *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ overflow-x:hidden; max-width:100%; }
   body{ font-family:'Inter',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
   a{ color:var(--gold); }
   .shell{ display:flex; min-height:100vh; }
@@ -57,7 +58,7 @@
   .btn{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.5rem 0.9rem; border-radius:4px; cursor:pointer; border:1px solid transparent; }
   .btn-o{ background:none; border-color:var(--card-border); color:var(--warm-accent); }
   .btn-o:hover{ border-color:var(--gold); color:var(--white); }
-  .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; }
+  .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; max-width:9.5rem; }
   .data-state{ font-family:var(--mono); font-size:0.72rem; letter-spacing:0.03em; color:var(--warm-muted); padding:1.4rem 0.2rem; text-align:center; }
   .data-state.err{ color:var(--red); }
   .hidden{ display:none !important; }

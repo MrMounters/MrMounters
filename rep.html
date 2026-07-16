@@ -16,6 +16,7 @@
     --green:#5FD08A; --amber:#F5B43C; --red:#ff8b6b;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html,body{ overflow-x:hidden; max-width:100%; }
   body{ font-family:'Inter',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
   a{ color:inherit; }
   body::before{ content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
@@ -91,7 +92,7 @@
   .data-state{ font-family:var(--mono); font-size:0.72rem; letter-spacing:0.03em; color:var(--warm-muted); padding:1.4rem 0.2rem; text-align:center; }
   .data-state.err{ color:var(--red); }
   .row-act{ display:inline-flex; gap:0.35rem; flex-wrap:wrap; align-items:center; }
-  .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; }
+  .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; max-width:9.5rem; }
   .btn-xs{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.04em; text-transform:uppercase; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; border:1px solid var(--card-border); background:none; color:var(--warm-accent); }
   .btn-xs:hover{ border-color:var(--gold); color:var(--white); }
   .btn-xs.p{ background:var(--gold); color:var(--dark); border-color:var(--gold); font-weight:700; }
