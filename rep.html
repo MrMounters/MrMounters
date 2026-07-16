@@ -87,6 +87,11 @@
   .inp:focus, .sel:focus, .ta:focus{ border-color:rgba(76,89,247,0.45); }
   .ta{ resize:vertical; min-height:70px; }
   .ok-msg{ font-family:var(--mono); font-size:0.7rem; color:var(--green); margin-top:0.6rem; }
+  .err-msg{ font-family:var(--mono); font-size:0.7rem; color:var(--red); margin-top:0.6rem; }
+  .data-state{ font-family:var(--mono); font-size:0.72rem; letter-spacing:0.03em; color:var(--warm-muted); padding:1.4rem 0.2rem; text-align:center; }
+  .data-state.err{ color:var(--red); }
+  .row-act{ display:inline-flex; gap:0.35rem; flex-wrap:wrap; align-items:center; }
+  .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; }
   .pipe{ display:grid; grid-template-columns:repeat(5,1fr); gap:0.6rem; min-width:640px; }
   .stage{ background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.7rem; }
   .stage-h{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; display:flex; justify-content:space-between; }
@@ -214,9 +219,14 @@
     <div class="menu-div"></div>
     <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
     <div class="m-section">Sell</div>
-    <a class="m-item" data-s="pipeline" onclick="go('pipeline')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>Pipeline &amp; Deals</a>
-    <a class="m-item" data-s="dialer" onclick="go('dialer')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Dialer</a>
+    <a class="m-item" data-s="prospects" onclick="go('prospects')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>My Prospects</a>
+    <a class="m-item" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/></svg>My Leads</a>
+    <a class="m-item" data-s="opportunities" onclick="go('opportunities')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>My Opportunities</a>
+    <a class="m-item" data-s="myclients" onclick="go('myclients')"><svg viewBox="0 0 24 24"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>My Clients</a>
+    <div class="m-section">Money</div>
     <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
+    <div class="m-section">Tools</div>
+    <a class="m-item" data-s="dialer" onclick="go('dialer')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Dialer</a>
     <div class="m-section">Resources</div>
     <a class="m-item" data-s="kb" onclick="go('kb')"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>The Academy</a>
     <a class="m-item" data-s="docs" onclick="go('docs')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Documents &amp; Onboarding</a>
@@ -231,17 +241,17 @@
       <h1 class="h1">Welcome back<span id="hi"></span>. <span class="cert-chip hidden" id="certChip">🏅 Certified Closer</span></h1>
       <p class="lead">Your numbers this month. Keep the pipeline full.</p>
       <div class="stat-grid">
-        <div class="stat"><div class="stat-k">Commission · MTD</div><div class="stat-v">$3,180</div><div class="stat-d">▲ 24%</div></div>
-        <div class="stat"><div class="stat-k">Open deals</div><div class="stat-v">7</div><div class="stat-d">$31k pipeline</div></div>
-        <div class="stat"><div class="stat-k">Closed · MTD</div><div class="stat-v">4</div><div class="stat-d">▲ 1</div></div>
-        <div class="stat"><div class="stat-k">Close rate</div><div class="stat-v">36<small>%</small></div></div>
+        <div class="stat"><div class="stat-k">Commission · pending</div><div class="stat-v" id="ovCommission">—</div><div class="stat-d" id="ovCommissionD">your ledger</div></div>
+        <div class="stat"><div class="stat-k">Open opportunities</div><div class="stat-v" id="ovOpps">—</div><div class="stat-d" id="ovOppsD">in pipeline</div></div>
+        <div class="stat"><div class="stat-k">Active prospects</div><div class="stat-v" id="ovProspects">—</div><div class="stat-d">assigned to you</div></div>
+        <div class="stat"><div class="stat-k">Won clients</div><div class="stat-v" id="ovClients">—</div><div class="stat-d">closed</div></div>
       </div>
       <div class="panel">
         <div class="panel-h"><div class="panel-t">Quick actions</div></div>
         <div class="sign-row">
-          <button class="btn btn-p" onclick="go('pipeline')">+ Enter a deal</button>
+          <button class="btn btn-p" onclick="go('prospects')">+ Add a prospect</button>
+          <button class="btn btn-o" onclick="go('opportunities')">Work opportunities</button>
           <button class="btn btn-o" onclick="go('kb')">Train in The Academy</button>
-          <button class="btn btn-o" onclick="go('docs')">Finish onboarding</button>
         </div>
       </div>
       <div class="panel">
@@ -256,59 +266,110 @@
       </div>
     </section>
 
-    <!-- PIPELINE & DEALS (core) -->
-    <section class="sec" id="sec-pipeline">
-      <div class="eyebrow">// Sell</div>
-      <h1 class="h1">Pipeline &amp; deals</h1>
-      <p class="lead">Enter every new deal and move it down the pipeline to closed-won.</p>
-
+    <!-- MY PROSPECTS -->
+    <section class="sec" id="sec-prospects">
+      <div class="eyebrow">// Sell · Prospecting</div>
+      <h1 class="h1">My prospects</h1>
+      <p class="lead">Unqualified contacts assigned to you. Work them — then convert the ones that show real interest into Leads.</p>
       <div class="panel">
-        <div class="panel-h"><div class="panel-t">Enter a deal</div></div>
-        <form onsubmit="addDeal(event)">
+        <div class="panel-h"><div class="panel-t">Add a prospect</div></div>
+        <form onsubmit="addProspect(event)">
           <div class="form-grid">
-            <div class="fld"><label>Client / contact</label><input class="inp" id="dContact" placeholder="Maria Gomez" required></div>
-            <div class="fld"><label>Business</label><input class="inp" id="dBiz" placeholder="Desert Home Services"></div>
-            <div class="fld"><label>Service</label>
-              <select class="sel" id="dService">
-                <option>Website — Monthly ($294/mo)</option>
-                <option>Website — One-time ($3,500)</option>
-                <option>App Development ($5,000+)</option>
-                <option>Ad Campaigns ($100/wk + 10%)</option>
-                <option>AI Voice Agent ($497/mo)</option>
-                <option>AI Chat &amp; SMS ($297/mo)</option>
-                <option>Buy-Intent Data ($697/mo)</option>
-                <option>Reputation / Email / SMS</option>
-              </select>
+            <div class="fld"><label>Name</label><input class="inp" id="pName" placeholder="Maria Gomez" required></div>
+            <div class="fld"><label>Business</label><input class="inp" id="pBiz" placeholder="Desert Home Services"></div>
+            <div class="fld"><label>Email</label><input class="inp" id="pEmail" type="email" placeholder="maria@desert.com"></div>
+            <div class="fld"><label>Phone</label><input class="inp" id="pPhone" placeholder="+1 (480) 000-0000"></div>
+            <div class="fld"><label>Source</label>
+              <select class="sel" id="pSource"><option value="manual">Manual entry</option><option value="scraped">Scraped</option><option value="imported">Imported list</option><option value="bot">Bot</option></select>
             </div>
-            <div class="fld"><label>Deal value ($)</label><input class="inp" id="dValue" type="number" placeholder="3500" inputmode="numeric"></div>
-            <div class="fld full"><label>Stage</label>
-              <select class="sel" id="dStage"><option>New</option><option>Contacted</option><option>Quoted</option><option>Won</option><option>Lost</option></select>
-            </div>
-            <div class="fld full"><label>Notes</label><textarea class="ta" id="dNotes" placeholder="Where they came from, what they need, next step…"></textarea></div>
+            <div class="fld full"><label>Notes</label><textarea class="ta" id="pNotes" placeholder="Where they came from, what you noticed…"></textarea></div>
           </div>
-          <button class="btn btn-p" type="submit">+ Add deal to pipeline</button>
-          <div class="ok-msg hidden" id="dealOk">✓ Deal added to your pipeline.</div>
+          <button class="btn btn-p" type="submit">+ Add prospect</button>
+          <div class="ok-msg hidden" id="prospectOk">✓ Prospect added.</div>
+          <div class="err-msg hidden" id="prospectErr"></div>
         </form>
       </div>
-
       <div class="panel">
-        <div class="panel-h"><div class="panel-t">Pipeline</div><span class="panel-k" id="pipeCount">— open</span></div>
-        <p class="muted" style="margin-bottom:0.9rem">Drag a deal between stages — changes save automatically.</p>
-        <div class="pipe">
-          <div class="stage" data-stage="New" id="st-New"><div class="stage-h"><span>New</span><span class="ct">0</span></div><div class="stage-body" id="body-New"></div></div>
-          <div class="stage" data-stage="Contacted" id="st-Contacted"><div class="stage-h"><span>Contacted</span><span class="ct">0</span></div><div class="stage-body" id="body-Contacted"></div></div>
-          <div class="stage" data-stage="Quoted" id="st-Quoted"><div class="stage-h"><span>Quoted</span><span class="ct">0</span></div><div class="stage-body" id="body-Quoted"></div></div>
-          <div class="stage" data-stage="Won" id="st-Won"><div class="stage-h"><span>Won</span><span class="ct">0</span></div><div class="stage-body" id="body-Won"></div></div>
-          <div class="stage" data-stage="Lost" id="st-Lost"><div class="stage-h"><span>Lost</span><span class="ct">0</span></div><div class="stage-body" id="body-Lost"></div></div>
-        </div>
+        <div class="panel-h"><div class="panel-t">Prospects</div><span class="panel-k" id="prospectCount">—</span></div>
+        <div id="prospectsState" class="data-state">Loading…</div>
+        <table id="prospectsTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Actions</th></tr></thead><tbody id="prospectsBody"></tbody></table>
       </div>
+    </section>
 
+    <!-- MY LEADS -->
+    <section class="sec" id="sec-leads">
+      <div class="eyebrow">// Sell · Leads</div>
+      <h1 class="h1">My leads</h1>
+      <p class="lead">Contacts you've had meaningful contact with. Move them to <b>Qualified</b>, then create an Opportunity.</p>
       <div class="panel">
-        <div class="panel-h"><div class="panel-t">Deal tracker</div></div>
-        <table id="dealTable">
-          <thead><tr><th>Client</th><th>Service</th><th>Value</th><th>Stage</th><th>Updated</th></tr></thead>
-          <tbody id="dealBody"></tbody>
-        </table>
+        <div class="panel-h"><div class="panel-t">Leads</div><span class="panel-k" id="leadCount">—</span></div>
+        <div id="leadsState" class="data-state">Loading…</div>
+        <table id="leadsTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Stage</th><th>Actions</th></tr></thead><tbody id="leadsBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- MY OPPORTUNITIES -->
+    <section class="sec" id="sec-opportunities">
+      <div class="eyebrow">// Sell · Opportunities</div>
+      <h1 class="h1">My opportunities</h1>
+      <p class="lead">Qualified deals worth money. Advance the stage as you go. When payment clears, an admin confirms it and the Client + your commission are created automatically.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Enter an opportunity</div></div>
+        <form onsubmit="addOpportunity(event)">
+          <div class="form-grid">
+            <div class="fld"><label>Contact</label><input class="inp" id="oContact" placeholder="Maria Gomez" required></div>
+            <div class="fld"><label>Business</label><input class="inp" id="oBiz" placeholder="Desert Home Services"></div>
+            <div class="fld"><label>Estimated value ($)</label><input class="inp" id="oValue" type="number" inputmode="numeric" placeholder="3500"></div>
+            <div class="fld"><label>Setup revenue ($)</label><input class="inp" id="oSetup" type="number" inputmode="numeric" placeholder="3500"></div>
+            <div class="fld"><label>MRR ($/mo)</label><input class="inp" id="oMrr" type="number" inputmode="numeric" placeholder="294"></div>
+            <div class="fld"><label>Probability (%)</label><input class="inp" id="oProb" type="number" inputmode="numeric" min="0" max="100" placeholder="40"></div>
+            <div class="fld"><label>Expected close</label><input class="inp" id="oClose" type="date"></div>
+            <div class="fld"><label>Stage</label><select class="sel" id="oStage"></select></div>
+            <div class="fld full"><label>Notes</label><textarea class="ta" id="oNotes" placeholder="Scope, services, next action…"></textarea></div>
+          </div>
+          <button class="btn btn-p" type="submit">+ Add opportunity</button>
+          <div class="ok-msg hidden" id="oppOk">✓ Opportunity added.</div>
+          <div class="err-msg hidden" id="oppErr"></div>
+        </form>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Pipeline</div><span class="panel-k" id="oppCount">—</span></div>
+        <div id="oppsState" class="data-state">Loading…</div>
+        <table id="oppsTable" class="hidden"><thead><tr><th>Contact</th><th>Value</th><th>Stage</th><th>Actions</th></tr></thead><tbody id="oppsBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- MY CLIENTS -->
+    <section class="sec" id="sec-myclients">
+      <div class="eyebrow">// Sell · Clients</div>
+      <h1 class="h1">My clients</h1>
+      <p class="lead">Customers you closed. This is your receipt — onboarding status only. Production, internal notes, and margins live in Delivery and aren't shown here.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Clients</div><span class="panel-k" id="clientCount">—</span></div>
+        <div id="clientsState" class="data-state">Loading…</div>
+        <table id="clientsTable" class="hidden"><thead><tr><th>Business</th><th>Onboarding</th><th>Lifetime value</th></tr></thead><tbody id="clientsBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- COMMISSIONS -->
+    <section class="sec" id="sec-commissions">
+      <div class="eyebrow">// Money</div>
+      <h1 class="h1">Commissions</h1>
+      <p class="lead">Your earned commissions and their payout status. Amounts are locked to the plan that was in effect when each deal closed.</p>
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-k">Pending</div><div class="stat-v" id="comPending">—</div></div>
+        <div class="stat"><div class="stat-k">Approved</div><div class="stat-v" id="comApproved">—</div></div>
+        <div class="stat"><div class="stat-k">Payable</div><div class="stat-v" id="comPayable">—</div></div>
+        <div class="stat"><div class="stat-k">Paid</div><div class="stat-v" id="comPaid">—</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Payout setup</div></div>
+        <p class="muted" id="connectMsg">Checking payout account…</p>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Ledger</div><span class="panel-k" id="comCount">—</span></div>
+        <div id="commissionsState" class="data-state">Loading…</div>
+        <table id="commissionsTable" class="hidden"><thead><tr><th>Type</th><th>Basis</th><th>Rate</th><th>Amount</th><th>Status</th></tr></thead><tbody id="commissionsBody"></tbody></table>
       </div>
     </section>
 
@@ -345,41 +406,6 @@
         </table>
       </div>
       <p class="muted" id="dialerNote">In-browser calling activates when Twilio is connected (see <code>/api/twilio-token</code>). Until then, Call opens your phone's dialer.</p>
-    </section>
-
-    <!-- COMMISSIONS -->
-    <section class="sec" id="sec-commissions">
-      <div class="eyebrow">// Earnings</div>
-      <h1 class="h1">Commissions</h1>
-      <p class="lead">How you get paid, and what you've earned.</p>
-      <div class="stat-grid">
-        <div class="stat"><div class="stat-k">Paid · YTD</div><div class="stat-v">$18.4<small>k</small></div></div>
-        <div class="stat"><div class="stat-k">Pending</div><div class="stat-v">$1,240</div><div class="stat-d">next payout Jul 15</div></div>
-        <div class="stat"><div class="stat-k">Avg / deal</div><div class="stat-v">$640</div></div>
-        <div class="stat"><div class="stat-k">Residuals</div><div class="stat-v">$820<small>/mo</small></div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-h"><div class="panel-t">Commission structure</div></div>
-        <table>
-          <tbody>
-            <tr><td><b>One-time website ($3,500)</b></td><td style="text-align:right"><b>15%</b> on close</td></tr>
-            <tr><td><b>Monthly plans &amp; services</b></td><td style="text-align:right"><b>First month</b> + <b>5%</b> residual / 12 mo</td></tr>
-            <tr><td><b>High-ticket (Voice, Intent, App)</b></td><td style="text-align:right"><b>20%</b> first month + setup share</td></tr>
-            <tr><td><b>Quarterly bonus</b></td><td style="text-align:right">$1,000 at <b>10 closed</b></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="panel">
-        <div class="panel-h"><div class="panel-t">Payout history</div></div>
-        <table>
-          <thead><tr><th>Date</th><th>Deals</th><th>Amount</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td class="nw">Jun 15, 2026</td><td>5</td><td>$3,180</td><td><span class="pill ok">Paid</span></td></tr>
-            <tr><td class="nw">May 15, 2026</td><td>4</td><td>$2,560</td><td><span class="pill ok">Paid</span></td></tr>
-            <tr><td class="nw">Apr 15, 2026</td><td>6</td><td>$3,940</td><td><span class="pill ok">Paid</span></td></tr>
-          </tbody>
-        </table>
-      </div>
     </section>
 
     <!-- THE ACADEMY -->
@@ -676,8 +702,11 @@
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
     let sb = null, session = null;
-    const STAGES = ['New','Contacted','Quoted','Won','Lost'];
-    let deals = [];
+    // Sales vocabularies (app-enforced; the DB CHECK-constrains only `lifecycle`).
+    const PROSPECT_STATUSES = ['New','Assigned','Researching','Ready to Contact','Attempted Contact','Bad Data','Wrong Number','Duplicate','Do Not Contact','Archived'];
+    const PROSPECT_DEAD = ['Bad Data','Wrong Number','Duplicate','Do Not Contact','Archived'];
+    const LEAD_STATUSES = ['New Lead','Contacted','Discovery Scheduled','Discovery Completed','Follow-Up','Nurture','Qualified','Disqualified','Lost'];
+    const OPP_STAGES = ['Opportunity Created','Audit or Concept Sent','Proposal Sent','Negotiating','Verbal Yes','Contract Sent','Payment Pending','Won','Lost'];
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
 
     function goLogin(){ window.location.href = 'login.html?next=rep.html'; }
@@ -692,9 +721,13 @@
         const { data } = await sb.auth.getSession();
         session = data.session;
         if (!session){ goLogin(); return; }
-        // Role gate: this is the rep portal — a plain client account belongs in portal.html.
+        // Role gate: this is the Sales Rep portal. Send everyone else to their own home.
         const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
-        if (!profile || profile.role === 'client'){ window.location.href = 'portal.html'; return; }
+        const role = profile && profile.role;
+        if (role !== 'rep'){
+          window.location.href = role === 'admin' ? 'admin.html' : role === 'manager' ? 'manager.html' : 'portal.html';
+          return;
+        }
         const u = session.user;
         name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
         sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
@@ -704,7 +737,8 @@
       const first = String(name).split('@')[0].split(' ')[0];
       document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
       document.getElementById('loading').classList.add('hidden');
-      await loadDeals();
+      initSalesForms();
+      await loadSalesData();
       initAcademy();
       initTwilio();
     }
@@ -716,123 +750,236 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ── DEAL DATA + PIPELINE (drag-and-drop, persisted) ──
-    const seed = [
-      { id:'d1', contact:'Sunrise Cafe', business:'Sunrise Cafe', service:'Website — Monthly',  value:12000, stage:'Quoted',    updated:'Today' },
-      { id:'d2', contact:'Devon Reed',   business:'Devon Reed',   service:'AI Voice Agent',      value:8000,  stage:'New',       updated:'Today' },
-      { id:'d3', contact:'Priya Shah',   business:'Priya Shah',   service:'Ad Campaigns',        value:2900,  stage:'Contacted', updated:'Yesterday' },
-      { id:'d4', contact:'Maria Gomez',  business:'Desert Home',  service:'Website — Monthly',   value:3500,  stage:'New',       updated:'Today' },
-      { id:'d5', contact:'Carlos M.',    business:'Carlos M.',    service:'AI Chat & SMS',       value:5000,  stage:'Contacted', updated:'Jun 27' },
-      { id:'d6', contact:'RedD LLC',     business:'RedD LLC',     service:'Website — One-time',  value:9000,  stage:'Won',       updated:'Jun 28' },
-      { id:'d7', contact:'KATO',         business:'KATO',         service:'Website — One-time',  value:3500,  stage:'Won',       updated:'Jun 20' }
-    ];
-    function saveLocal(){ localStorage.setItem('jb-rep-deals', JSON.stringify(deals)); }
-    async function loadDeals(){
-      if (sb && session){
-        const { data } = await sb.from('deals').select('*').order('updated_at', { ascending:false });
-        deals = (data || []).map(r => ({ id:r.id, contact:r.contact, business:r.business, service:r.service, value:Number(r.value)||0, stage:r.stage, notes:r.notes, updated:'synced' }));
-      } else {
-        const ls = localStorage.getItem('jb-rep-deals');
-        deals = ls ? JSON.parse(ls) : seed.slice();
-        if (!ls) saveLocal();
+    // ── SALES DATA LAYER (Prospects → Leads → Opportunities → Clients → Commissions) ──
+    // Everything reads through Supabase RLS: a rep only ever sees rows assigned to them.
+    function esc(s){ return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+    function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString(undefined,{maximumFractionDigits:2}) : '$0'; }
+    function pct(v){ v = Number(v)||0; return (v*100).toFixed(0) + '%'; }
+    function statusPill(s){
+      if (['Won','Qualified','Enabled','paid','approved','payable','live'].includes(s)) return 'ok';
+      if (['Lost','Disqualified','Bad Data','Wrong Number','Do Not Contact','Duplicate','Archived','reversed','restricted','churned'].includes(s)) return 'lost';
+      if (['pending','Payment Pending','Nurture','Follow-Up'].includes(s)) return 'warn';
+      return 'new';
+    }
+    function setState(id, msg, isErr){
+      const el = document.getElementById(id); if (!el) return;
+      el.className = 'data-state' + (isErr ? ' err' : ''); el.textContent = msg; el.classList.remove('hidden');
+    }
+    // Render a table with loading/empty/error/unauthorized states baked in.
+    function renderTable(stateId, tableId, bodyId, res, rowFn, emptyMsg){
+      const table = document.getElementById(tableId), state = document.getElementById(stateId), body = document.getElementById(bodyId);
+      if (res.error){
+        table.classList.add('hidden');
+        const denied = /permission|row-level|denied|JWT/i.test(res.error.message || '');
+        setState(stateId, denied ? "You don't have access to these records." : ('Couldn’t load — ' + (res.error.message || 'try again.')), true);
+        return [];
       }
-      renderDeals();
+      const rows = res.data || [];
+      if (!rows.length){ table.classList.add('hidden'); setState(stateId, emptyMsg, false); return rows; }
+      state.classList.add('hidden'); table.classList.remove('hidden');
+      body.innerHTML = rows.map(rowFn).join('');
+      return rows;
     }
-    async function persistAdd(d){
-      if (sb && session){
-        const { data } = await sb.from('deals').insert({ contact:d.contact, business:d.business, service:d.service, value:d.value, stage:d.stage, notes:d.notes }).select().single();
-        if (data){ d.id = data.id; renderDeals(); }
-      } else { saveLocal(); }
+    function demoBlocked(){
+      // Real sales data requires a signed-in rep. Demo mode has no backend.
+      ['prospects','leads','opps','clients','commissions'].forEach(k => setState(k + 'State', 'Sign in with your rep account to see live data (demo mode has no backend).', false));
     }
-    async function persistUpdate(d){
-      if (sb && session){ await sb.from('deals').update({ stage:d.stage }).eq('id', d.id); }
-      else { saveLocal(); }
+    async function logActivity(entity_type, entity_id, action, detail){
+      try { await sb.from('activity_log').insert({ entity_type, entity_id, action, detail: detail || {} }); } catch (_){ /* non-fatal */ }
     }
-    function pill(s){ return { New:'new', Contacted:'warn', Quoted:'warn', Won:'ok', Lost:'lost' }[s] || 'new'; }
-    function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString() : '—'; }
-    function moneyShort(v){ v = Number(v)||0; return v >= 1000 ? '$' + (Math.round(v/100)/10) + 'k' : (v ? '$' + v : '—'); }
-    function esc(s){ return String(s||'').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])); }
 
-    function renderDeals(){
-      STAGES.forEach(s => {
-        const body = document.getElementById('body-' + s); if (!body) return;
-        body.innerHTML = '';
-        const items = deals.filter(d => d.stage === s);
-        const ct = document.querySelector('#st-' + s + ' .ct'); if (ct) ct.textContent = items.length;
-        items.forEach(d => body.appendChild(makeCard(d)));
-      });
-      const tb = document.getElementById('dealBody');
-      if (tb){ tb.innerHTML = '';
-        deals.forEach(d => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td><b>' + esc(d.contact) + '</b></td><td>' + esc(d.service) + '</td><td>' + money(d.value) +
-            '</td><td><span class="pill ' + pill(d.stage) + '">' + d.stage + '</span></td><td class="nw">' + esc(d.updated || '—') + '</td>';
-          tb.appendChild(tr);
-        });
-      }
-      const open = deals.filter(d => d.stage !== 'Won' && d.stage !== 'Lost').length;
-      const pc = document.getElementById('pipeCount'); if (pc) pc.textContent = open + ' open';
+    function initSalesForms(){
+      const oStage = document.getElementById('oStage');
+      if (oStage) oStage.innerHTML = OPP_STAGES.filter(s => s !== 'Won').map(s => `<option>${s}</option>`).join('');
     }
-    function makeCard(d){
-      const el = document.createElement('div');
-      el.className = 'deal'; el.dataset.id = d.id;
-      el.innerHTML = '<b>' + esc(d.business || d.contact) + '</b><span>' + moneyShort(d.value) + '</span>';
-      attachDrag(el);
-      return el;
+
+    async function loadSalesData(){
+      if (!(sb && session)){ demoBlocked(); return; }
+      await Promise.all([loadProspects(), loadLeads(), loadOpps(), loadClients(), loadCommissions(), loadConnect()]);
     }
-    function stageUnder(x, y){ const e = document.elementFromPoint(x, y); return e ? e.closest('.stage') : null; }
-    function moveDeal(id, stage){
-      const d = deals.find(x => String(x.id) === String(id));
-      if (!d || d.stage === stage) return;
-      d.stage = stage; d.updated = 'Just now';
-      renderDeals(); persistUpdate(d);
+
+    // ---- PROSPECTS ----
+    async function loadProspects(){
+      setState('prospectsState','Loading…',false); document.getElementById('prospectsTable').classList.add('hidden');
+      const res = await sb.from('leads').select('*').eq('lifecycle','prospect').is('archived_at',null).order('updated_at',{ascending:false});
+      const rows = renderTable('prospectsState','prospectsTable','prospectsBody', res, p => {
+        const opts = PROSPECT_STATUSES.map(s => `<option ${s===p.status?'selected':''}>${s}</option>`).join('');
+        const canConvert = !PROSPECT_DEAD.includes(p.status);
+        return `<tr>
+          <td><b>${esc(p.full_name)}</b></td><td>${esc(p.business)||'—'}</td>
+          <td><select class="sel-sm" onchange="updateProspectStatus('${p.id}', this.value)">${opts}</select></td>
+          <td><div class="row-act">
+            ${canConvert ? `<button class="btn btn-p" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="convertProspectToLead('${p.id}')">→ Lead</button>` : ''}
+            <button class="btn btn-o" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="archiveRecord('leads','${p.id}','prospect')">Archive</button>
+          </div></td></tr>`;
+      }, 'No prospects yet. Add one above, or ask your manager to assign you some.');
+      const c = document.getElementById('prospectCount'); if (c) c.textContent = (res.data ? res.data.length : 0) + ' active';
+      document.getElementById('ovProspects').textContent = res.error ? '—' : (res.data ? res.data.length : 0);
+      return rows;
     }
-    function attachDrag(el){
-      el.addEventListener('pointerdown', e => {
-        if (e.button > 0) return;
-        const id = el.dataset.id, sx = e.clientX, sy = e.clientY;
-        let moved = false, ghost = null;
-        function mv(ev){
-          if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 7) return;
-          if (!moved){
-            moved = true;
-            ghost = el.cloneNode(true); ghost.classList.add('drag-ghost');
-            ghost.style.position = 'fixed'; ghost.style.zIndex = '999'; ghost.style.pointerEvents = 'none';
-            ghost.style.width = el.offsetWidth + 'px';
-            document.body.appendChild(ghost); el.style.opacity = '0.35';
-          }
-          ghost.style.left = (ev.clientX - el.offsetWidth / 2) + 'px';
-          ghost.style.top = (ev.clientY - 16) + 'px';
-          const st = stageUnder(ev.clientX, ev.clientY);
-          document.querySelectorAll('.stage').forEach(s => s.classList.toggle('drop-hover', s === st));
-        }
-        function up(ev){
-          document.removeEventListener('pointermove', mv); document.removeEventListener('pointerup', up);
-          el.style.opacity = ''; if (ghost) ghost.remove();
-          document.querySelectorAll('.stage').forEach(s => s.classList.remove('drop-hover'));
-          if (moved){ const st = stageUnder(ev.clientX, ev.clientY); if (st) moveDeal(id, st.dataset.stage); }
-        }
-        document.addEventListener('pointermove', mv); document.addEventListener('pointerup', up);
-      });
-    }
-    async function addDeal(e){
+    async function addProspect(e){
       e.preventDefault();
-      const contact = document.getElementById('dContact').value.trim();
-      if (!contact) return;
-      const d = {
-        id: 'local-' + Date.now(),
-        contact,
-        business: document.getElementById('dBiz').value.trim(),
-        service: document.getElementById('dService').value.split(' (')[0],
-        value: parseInt(document.getElementById('dValue').value, 10) || 0,
-        stage: document.getElementById('dStage').value,
-        notes: document.getElementById('dNotes').value.trim(),
-        updated: 'Just now'
+      const err = document.getElementById('prospectErr'); err.classList.add('hidden');
+      const full_name = document.getElementById('pName').value.trim();
+      if (!full_name){ err.textContent = 'Name is required.'; err.classList.remove('hidden'); return; }
+      if (!(sb && session)){ err.textContent = 'Sign in to add prospects.'; err.classList.remove('hidden'); return; }
+      const payload = {
+        full_name, business: document.getElementById('pBiz').value.trim() || null,
+        email: document.getElementById('pEmail').value.trim() || null,
+        phone: document.getElementById('pPhone').value.trim() || null,
+        source: document.getElementById('pSource').value, notes: document.getElementById('pNotes').value.trim() || null,
+        lifecycle: 'prospect', status: 'New', assigned_rep_id: session.user.id
       };
-      deals.unshift(d); renderDeals();
-      document.getElementById('dealOk').classList.remove('hidden');
-      ['dContact','dBiz','dValue','dNotes'].forEach(id => document.getElementById(id).value = '');
-      await persistAdd(d);
+      const { data, error } = await sb.from('leads').insert(payload).select().single();
+      if (error){ err.textContent = 'Could not add — ' + error.message; err.classList.remove('hidden'); return; }
+      await logActivity('lead', data.id, 'prospect_created', { source: payload.source });
+      document.getElementById('prospectOk').classList.remove('hidden');
+      setTimeout(() => document.getElementById('prospectOk').classList.add('hidden'), 2500);
+      ['pName','pBiz','pEmail','pPhone','pNotes'].forEach(id => document.getElementById(id).value = '');
+      loadProspects();
+    }
+    async function updateProspectStatus(id, status){
+      const { error } = await sb.from('leads').update({ status }).eq('id', id);
+      if (error){ alert('Update failed: ' + error.message); loadProspects(); return; }
+      logActivity('lead', id, 'status_change', { to: status });
+    }
+    async function convertProspectToLead(id){
+      const { error } = await sb.from('leads').update({ lifecycle:'lead', status:'New Lead', became_lead_at: new Date().toISOString() }).eq('id', id);
+      if (error){ alert('Convert failed: ' + error.message); return; }
+      await logActivity('lead', id, 'prospect_to_lead', {});
+      loadProspects(); loadLeads();
+    }
+
+    // ---- LEADS ----
+    async function loadLeads(){
+      setState('leadsState','Loading…',false); document.getElementById('leadsTable').classList.add('hidden');
+      const res = await sb.from('leads').select('*').eq('lifecycle','lead').is('archived_at',null).order('updated_at',{ascending:false});
+      renderTable('leadsState','leadsTable','leadsBody', res, l => {
+        const opts = LEAD_STATUSES.map(s => `<option ${s===l.status?'selected':''}>${s}</option>`).join('');
+        return `<tr>
+          <td><b>${esc(l.full_name)}</b></td><td>${esc(l.business)||'—'}</td>
+          <td><select class="sel-sm" onchange="updateLeadStatus('${l.id}', this.value)">${opts}</select></td>
+          <td><div class="row-act">
+            ${l.status==='Qualified' ? `<button class="btn btn-p" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="createOpportunity('${l.id}')">Create Opportunity</button>` : ''}
+            <button class="btn btn-o" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="archiveRecord('leads','${l.id}','lead')">Archive</button>
+          </div></td></tr>`;
+      }, 'No leads yet. Convert an interested prospect to start a lead.');
+      const c = document.getElementById('leadCount'); if (c) c.textContent = (res.data ? res.data.length : 0) + ' active';
+    }
+    async function updateLeadStatus(id, status){
+      const patch = { status }; if (status === 'Qualified') patch.qualified_at = new Date().toISOString();
+      const { error } = await sb.from('leads').update(patch).eq('id', id);
+      if (error){ alert('Update failed: ' + error.message); loadLeads(); return; }
+      logActivity('lead', id, status === 'Qualified' ? 'lead_qualified' : 'status_change', { to: status });
+      if (status === 'Qualified') loadLeads();
+    }
+    async function createOpportunity(leadId){
+      // Transactional, dup-safe RPC (raises if not Qualified or an opportunity already exists).
+      const { data, error } = await sb.rpc('convert_lead_to_opportunity', { p_lead_id: leadId });
+      if (error){ alert('Could not create opportunity: ' + (error.message || 'error')); return; }
+      loadLeads(); await loadOpps(); go('opportunities');
+    }
+
+    // ---- OPPORTUNITIES ----
+    async function loadOpps(){
+      setState('oppsState','Loading…',false); document.getElementById('oppsTable').classList.add('hidden');
+      const res = await sb.from('deals').select('*').is('archived_at',null).order('updated_at',{ascending:false});
+      renderTable('oppsState','oppsTable','oppsBody', res, d => {
+        // Reps advance up to Payment Pending; Won is set by an admin after payment clears.
+        const opts = OPP_STAGES.map(s => `<option ${s===d.stage?'selected':''} ${s==='Won'?'disabled':''}>${s}</option>`).join('');
+        return `<tr>
+          <td><b>${esc(d.contact)}</b><br><span class="muted">${esc(d.business)||''}</span></td>
+          <td>${money(d.value)}${Number(d.mrr)?` <span class="muted">+${money(d.mrr)}/mo</span>`:''}</td>
+          <td>${d.stage==='Won' ? '<span class="pill ok">Won</span>' : `<select class="sel-sm" onchange="updateOppStage('${d.id}', this.value)">${opts}</select>`}</td>
+          <td><div class="row-act">
+            ${d.stage!=='Won' ? `<button class="btn btn-o" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="archiveRecord('deals','${d.id}','opportunity')">Archive</button>` : '<span class="pill ok">Client created</span>'}
+          </div></td></tr>`;
+      }, 'No opportunities yet. Qualify a lead, or add one above.');
+      const open = (res.data||[]).filter(d => d.stage!=='Won' && d.stage!=='Lost').length;
+      const c = document.getElementById('oppCount'); if (c) c.textContent = open + ' open';
+      document.getElementById('ovOpps').textContent = res.error ? '—' : open;
+    }
+    async function addOpportunity(e){
+      e.preventDefault();
+      const err = document.getElementById('oppErr'); err.classList.add('hidden');
+      const contact = document.getElementById('oContact').value.trim();
+      if (!contact){ err.textContent = 'Contact is required.'; err.classList.remove('hidden'); return; }
+      if (!(sb && session)){ err.textContent = 'Sign in to add opportunities.'; err.classList.remove('hidden'); return; }
+      const prob = parseInt(document.getElementById('oProb').value,10);
+      const payload = {
+        contact, business: document.getElementById('oBiz').value.trim() || null,
+        value: parseFloat(document.getElementById('oValue').value) || 0,
+        setup_revenue: parseFloat(document.getElementById('oSetup').value) || 0,
+        mrr: parseFloat(document.getElementById('oMrr').value) || 0,
+        probability: (isNaN(prob) ? 0 : Math.max(0, Math.min(100, prob))),
+        expected_close: document.getElementById('oClose').value || null,
+        stage: document.getElementById('oStage').value, notes: document.getElementById('oNotes').value.trim() || null
+      };
+      const { data, error } = await sb.from('deals').insert(payload).select().single();
+      if (error){ err.textContent = 'Could not add — ' + error.message; err.classList.remove('hidden'); return; }
+      await logActivity('deal', data.id, 'opportunity_created', {});
+      document.getElementById('oppOk').classList.remove('hidden');
+      setTimeout(() => document.getElementById('oppOk').classList.add('hidden'), 2500);
+      ['oContact','oBiz','oValue','oSetup','oMrr','oProb','oClose','oNotes'].forEach(id => document.getElementById(id).value = '');
+      loadOpps();
+    }
+    async function updateOppStage(id, stage){
+      if (stage === 'Won'){ alert('Won is set by an admin after payment clears. Move to “Payment Pending” and notify your admin.'); loadOpps(); return; }
+      const { error } = await sb.from('deals').update({ stage }).eq('id', id);
+      if (error){ alert('Update failed: ' + error.message); loadOpps(); return; }
+      logActivity('deal', id, 'stage_change', { to: stage });
+    }
+
+    // ---- CLIENTS (read-only summary; no kitchen) ----
+    async function loadClients(){
+      setState('clientsState','Loading…',false); document.getElementById('clientsTable').classList.add('hidden');
+      const res = await sb.from('clients').select('business_name,onboarding_status,lifetime_value,status').is('archived_at',null).order('created_at',{ascending:false});
+      renderTable('clientsState','clientsTable','clientsBody', res, c =>
+        `<tr><td><b>${esc(c.business_name)||'—'}</b></td>
+         <td><span class="pill ${statusPill(c.onboarding_status)}">${esc(c.onboarding_status)}</span></td>
+         <td>${money(c.lifetime_value)}</td></tr>`,
+        'No clients yet. Close an opportunity to create your first client.');
+      const c = document.getElementById('clientCount'); if (c) c.textContent = (res.data ? res.data.length : 0) + ' total';
+      document.getElementById('ovClients').textContent = res.error ? '—' : (res.data ? res.data.length : 0);
+    }
+
+    // ---- COMMISSIONS ----
+    async function loadCommissions(){
+      setState('commissionsState','Loading…',false); document.getElementById('commissionsTable').classList.add('hidden');
+      const res = await sb.from('commissions').select('*').order('created_at',{ascending:false});
+      renderTable('commissionsState','commissionsTable','commissionsBody', res, c =>
+        `<tr><td>${c.kind==='override'?'Override':'Direct'} · ${esc(c.revenue_type)}</td>
+         <td>${money(c.basis_amount)}</td><td>${pct(c.rate_snapshot)}</td><td><b>${money(c.amount)}</b></td>
+         <td><span class="pill ${statusPill(c.status)}">${esc(c.status)}</span></td></tr>`,
+        'No commissions yet. They’re created automatically when an opportunity is closed-won.');
+      const rows = res.data || [];
+      const sum = st => rows.filter(r => r.status===st).reduce((a,r)=>a+(Number(r.amount)||0),0);
+      document.getElementById('comPending').textContent = money(sum('pending'));
+      document.getElementById('comApproved').textContent = money(sum('approved'));
+      document.getElementById('comPayable').textContent = money(sum('payable'));
+      document.getElementById('comPaid').textContent = money(sum('paid'));
+      document.getElementById('comCount').textContent = rows.length + ' entries';
+      document.getElementById('ovCommission').textContent = res.error ? '—' : money(sum('pending'));
+    }
+    async function loadConnect(){
+      const { data } = await sb.from('profiles').select('connect_status').eq('user_id', session.user.id).single();
+      const s = (data && data.connect_status) || 'not_started';
+      const label = { not_started:'Not started', pending:'Pending', restricted:'Restricted', enabled:'Enabled' }[s] || s;
+      const msg = document.getElementById('connectMsg');
+      if (s === 'enabled') msg.innerHTML = `Payout account: <span class="pill ok">Enabled</span> — you're set up to receive commission payouts.`;
+      else if (s === 'not_started') msg.innerHTML = `Payout account: <span class="pill mut">Not started</span> — an admin will send you a Stripe onboarding link to set up payouts.`;
+      else msg.innerHTML = `Payout account: <span class="pill ${statusPill(s)}">${label}</span> — finish Stripe onboarding from the link your admin sent to enable payouts.`;
+    }
+
+    // ---- ARCHIVE (never hard-delete from the UI) ----
+    async function archiveRecord(table, id, kind){
+      if (!confirm('Archive this ' + kind + '? It stays in history but leaves your active list.')) return;
+      const patch = { archived_at: new Date().toISOString() };
+      if (table === 'leads') patch.status = 'Archived';
+      const { error } = await sb.from(table).update(patch).eq('id', id);
+      if (error){ alert('Archive failed: ' + error.message); return; }
+      await logActivity(table === 'leads' ? 'lead' : 'deal', id, 'archived', { kind });
+      loadSalesData();
     }
 
     // Academy module reader

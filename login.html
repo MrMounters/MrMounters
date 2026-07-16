@@ -139,7 +139,11 @@
       if (!session) { window.location.href = PORTAL; return; }
       const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
       const role = profile && profile.role;
-      window.location.href = role === 'admin' ? 'admin.html' : (role === 'rep' ? 'rep.html' : 'portal.html');
+      const home = role === 'admin' ? 'admin.html'
+                 : role === 'manager' ? 'manager.html'
+                 : role === 'rep' ? 'rep.html'
+                 : 'portal.html';
+      window.location.href = home;
     }
 
     function msg(t, k){ const m = document.getElementById('status'); m.textContent = t; m.className = 'auth-status ' + (k || ''); }

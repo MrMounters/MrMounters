@@ -40,8 +40,12 @@ module.exports = async function handler(req, res) {
       return res.status(403).json({ error: 'forbidden', detail: 'Only admins can invite reps.' });
     }
 
-    const { email, full_name } = req.body || {};
+    const { email, full_name, role, manager_id, team_id } = req.body || {};
     if (!email) return res.status(400).json({ error: 'email_required' });
+
+    // Only these two staff roles can be invited here (never 'admin' or 'client' from the browser).
+    // 'rep' == Sales Rep, 'manager' == Team Manager.
+    const newRole = role === 'manager' ? 'manager' : 'rep';
 
     const origin = req.headers.origin || `https://${req.headers.host}`;
     const { data: invited, error: inviteErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
@@ -53,14 +57,17 @@ module.exports = async function handler(req, res) {
     }
 
     // handle_new_user() already created their profiles row (default role 'client') the
-    // instant the auth.users row was created above — promote it now.
-    const { error: roleErr } = await supabaseAdmin.from('profiles').update({ role: 'rep' }).eq('user_id', invited.user.id);
+    // instant the auth.users row was created above — promote it + set org placement now.
+    const patch = { role: newRole };
+    if (manager_id) patch.manager_id = manager_id;   // assign a rep to their team manager
+    if (team_id) patch.team_id = team_id;
+    const { error: roleErr } = await supabaseAdmin.from('profiles').update(patch).eq('user_id', invited.user.id);
     if (roleErr) {
       return res.status(500).json({ error: 'role_update_failed', detail: roleErr.message });
     }
 
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json({ ok: true, user_id: invited.user.id });
+    return res.status(200).json({ ok: true, user_id: invited.user.id, role: newRole });
   } catch (e) {
     return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
   }

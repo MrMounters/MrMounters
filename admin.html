@@ -222,6 +222,14 @@
       <div class="side-tag">Admin</div>
       <nav class="side-nav">
         <button class="side-item active" type="button" data-page="dashboard" onclick="go('dashboard')">Dashboard</button>
+        <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Growth</div>
+        <button class="side-item" type="button" data-page="aprospects" onclick="go('aprospects'); adminLoadProspects()">Prospects</button>
+        <button class="side-item" type="button" data-page="aopps" onclick="go('aopps'); adminLoadOpps()">Opportunities</button>
+        <button class="side-item" type="button" data-page="aclients" onclick="go('aclients'); adminLoadClientAccounts()">Client Accounts</button>
+        <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Finance</div>
+        <button class="side-item" type="button" data-page="acommissions" onclick="go('acommissions'); adminLoadCommissions()">Commissions</button>
+        <button class="side-item" type="button" data-page="aconnect" onclick="go('aconnect'); adminLoadConnect()">Stripe Connect</button>
+        <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Delivery</div>
         <button class="side-item" type="button" data-page="deals" onclick="go('deals')">Deals / Projects</button>
         <button class="side-item" type="button" data-page="pipeline" onclick="go('pipeline')">Project Pipeline</button>
         <button class="side-item" type="button" data-page="leads" onclick="go('leads')">Leads</button>
@@ -421,6 +429,15 @@
           <form class="lead-form" id="repInviteForm" onsubmit="inviteRep(event)">
             <div><label>Full name</label><input class="inp" id="repName"></div>
             <div><label>Email</label><input class="inp" type="email" id="repEmail" required></div>
+            <div><label>Role</label>
+              <select class="inp" id="repRole" onchange="document.getElementById('repMgrWrap').style.display = this.value==='rep' ? '' : 'none'">
+                <option value="rep">Sales Rep</option>
+                <option value="manager">Team Manager</option>
+              </select>
+            </div>
+            <div id="repMgrWrap"><label>Reports to (manager)</label>
+              <select class="inp" id="repManager"><option value="">— none —</option></select>
+            </div>
             <div class="full">
               <button type="submit" class="btn btn-p btn-sm">Send Invite</button>
               <span class="muted" id="repInviteNote" style="margin-left:0.6rem;"></span>
@@ -432,6 +449,65 @@
               <tbody id="teamBody"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
             </table>
           </div>
+        </div>
+      </div>
+
+      <!-- GROWTH · PROSPECTS (all reps' prospects) -->
+      <div class="page" id="page-aprospects">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Prospects</div><div class="muted" id="aProspectsSrc"></div></div>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Assigned rep</th></tr></thead>
+            <tbody id="aProspectsBody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- GROWTH · OPPORTUNITIES (confirm payment → close won) -->
+      <div class="page" id="page-aopps">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Opportunities</div><div class="muted" id="aOppsSrc"></div></div>
+          <p class="muted" style="margin-bottom:0.9rem">Closing an opportunity confirms payment cleared, then creates the Client and commission ledger automatically (one transaction, no duplicates).</p>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Contact</th><th>Value</th><th>Setup / MRR</th><th>Stage</th><th>Action</th></tr></thead>
+            <tbody id="aOppsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- GROWTH · CLIENT ACCOUNTS (commercial records created on close) -->
+      <div class="page" id="page-aclients">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Client accounts</div><div class="muted" id="aClientsSrc"></div></div>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Business</th><th>Onboarding</th><th>Lifetime value</th><th>Status</th></tr></thead>
+            <tbody id="aClientsBody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- FINANCE · COMMISSIONS (approval workflow) -->
+      <div class="page" id="page-acommissions">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Commission ledger</div><div class="muted" id="aComSrc"></div></div>
+          <p class="muted" style="margin-bottom:0.9rem">Advance status: Pending → Approved → Payable → Paid. Amounts are locked to the plan snapshot captured when each deal closed. Payouts (Stripe transfers) are a later phase.</p>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Earner</th><th>Type</th><th>Basis</th><th>Rate</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="aComBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- FINANCE · STRIPE CONNECT -->
+      <div class="page" id="page-aconnect">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Stripe Connect</div><div class="muted" id="aConnectSrc"></div></div>
+          <p class="muted" style="margin-bottom:0.9rem">Generate a Stripe onboarding link for each rep / manager. No funds move until payouts are enabled in a later phase.</p>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Name</th><th>Role</th><th>Payout status</th><th>Action</th></tr></thead>
+            <tbody id="aConnectBody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+          <div class="muted" id="aConnectNote" style="margin-top:0.8rem;"></div>
         </div>
       </div>
     </main>
@@ -470,7 +546,8 @@
 
       const { data: profile } = await sb.from('profiles').select('role, full_name').eq('user_id', session.user.id).single();
       if (!profile || profile.role !== 'admin'){
-        window.location.href = profile && profile.role === 'rep' ? 'rep.html' : 'portal.html';
+        window.location.href = profile && profile.role === 'rep' ? 'rep.html'
+          : profile && profile.role === 'manager' ? 'manager.html' : 'portal.html';
         return;
       }
       sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
@@ -826,10 +903,11 @@
     // uses the service_role key server-side to create the account and set role='rep' in one step.
     let teamProfiles = [];
     async function loadTeam(){
-      const { data, error } = await sb.from('profiles').select('user_id, role, full_name, business_name').in('role', ['rep','admin']).order('role');
+      const { data, error } = await sb.from('profiles').select('user_id, role, full_name, business_name, manager_id, connect_status').in('role', ['rep','manager','admin']).order('role');
       if (error) return;
       teamProfiles = data || [];
       renderTeam();
+      populateManagerSelect();
     }
     function renderTeam(){
       document.getElementById('teamSrc').textContent = teamProfiles.length + ' total';
@@ -841,11 +919,21 @@
         <td>${esc(p.business_name || '—')}</td>
       </tr>`).join('');
     }
+    function populateManagerSelect(){
+      const sel = document.getElementById('repManager'); if (!sel) return;
+      const managers = teamProfiles.filter(p => p.role === 'manager');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">— none —</option>' +
+        managers.map(m => `<option value="${m.user_id}">${esc(m.full_name || 'Manager')}</option>`).join('');
+      sel.value = cur;
+    }
     async function inviteRep(e){
       e.preventDefault();
       const full_name = document.getElementById('repName').value.trim();
       const email = document.getElementById('repEmail').value.trim();
       if (!email) return;
+      const role = document.getElementById('repRole').value === 'manager' ? 'manager' : 'rep';
+      const manager_id = role === 'rep' ? (document.getElementById('repManager').value || undefined) : undefined;
       const note = document.getElementById('repInviteNote');
       note.textContent = 'Sending invite…';
       try {
@@ -854,12 +942,13 @@
         const r = await fetch('/api/invite-rep', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-          body: JSON.stringify({ email, full_name: full_name || undefined }),
+          body: JSON.stringify({ email, full_name: full_name || undefined, role, manager_id }),
         });
         const data = await r.json();
         if (!r.ok) throw new Error(data.detail || data.error || 'Could not send invite.');
-        note.textContent = 'Invite sent to ' + email + ' ✓';
+        note.textContent = (role === 'manager' ? 'Manager' : 'Rep') + ' invite sent to ' + email + ' ✓';
         document.getElementById('repInviteForm').reset();
+        document.getElementById('repMgrWrap').style.display = '';
         loadTeam();
       } catch (err) {
         note.textContent = '⚠ ' + err.message;
@@ -1434,6 +1523,140 @@
     window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
 
     init();
+  </script>
+
+  <script>
+    // ── ADMIN GROWTH + FINANCE (new sales model). Shares sb/session/esc/money from the
+    // main script's global scope. Each loader runs when its sidebar item is clicked. ──
+    const A_OPP_STAGES = ['Opportunity Created','Audit or Concept Sent','Proposal Sent','Negotiating','Verbal Yes','Contract Sent','Payment Pending','Won','Lost'];
+    function aPill(s){
+      if (['Won','Qualified','Enabled','enabled','paid','approved','payable','live'].includes(s)) return 'ok';
+      if (['Lost','Disqualified','Archived','reversed','restricted','churned'].includes(s)) return 'lost';
+      if (['pending','Payment Pending','not_started'].includes(s)) return 'warn';
+      return 'new';
+    }
+    function aRow(bodyId, cols, msg, isErr){
+      document.getElementById(bodyId).innerHTML = `<tr><td colspan="${cols}" class="empty"${isErr?' style="color:var(--red)"':''}>${msg}</td></tr>`;
+    }
+    async function bearer(){ const { data } = await sb.auth.getSession(); return data.session && data.session.access_token; }
+
+    async function adminLoadProspects(){
+      aRow('aProspectsBody', 4, 'Loading…');
+      const { data, error } = await sb.from('leads').select('*').eq('lifecycle','prospect').is('archived_at',null).order('updated_at',{ascending:false});
+      if (error){ aRow('aProspectsBody',4,'Couldn’t load — ' + error.message, true); return; }
+      document.getElementById('aProspectsSrc').textContent = (data.length) + ' active';
+      if (!data.length){ aRow('aProspectsBody',4,'No prospects yet.'); return; }
+      const names = {}; (teamProfiles||[]).forEach(p => names[p.user_id] = p.full_name);
+      document.getElementById('aProspectsBody').innerHTML = data.map(p => `<tr>
+        <td><b>${esc(p.full_name)}</b></td><td>${esc(p.business)||'—'}</td>
+        <td><span class="pill ${aPill(p.status)}">${esc(p.status)}</span></td>
+        <td>${esc(names[p.assigned_rep_id] || '—')}</td></tr>`).join('');
+    }
+
+    async function adminLoadOpps(){
+      aRow('aOppsBody', 5, 'Loading…');
+      const { data, error } = await sb.from('deals').select('*').is('archived_at',null).order('updated_at',{ascending:false});
+      if (error){ aRow('aOppsBody',5,'Couldn’t load — ' + error.message, true); return; }
+      document.getElementById('aOppsSrc').textContent = data.length + ' total';
+      if (!data.length){ aRow('aOppsBody',5,'No opportunities yet.'); return; }
+      document.getElementById('aOppsBody').innerHTML = data.map(d => {
+        const canClose = d.stage !== 'Won' && d.stage !== 'Lost';
+        return `<tr>
+          <td><b>${esc(d.contact)}</b><br><span class="muted">${esc(d.business)||''}</span></td>
+          <td>${money(d.value)}</td><td>${money(d.setup_revenue)} / ${money(d.mrr)}</td>
+          <td><span class="pill ${aPill(d.stage)}">${esc(d.stage)}</span></td>
+          <td>${d.stage==='Won' ? '<span class="pill ok">Closed</span>'
+            : canClose ? `<button class="btn btn-p btn-sm" onclick="adminCloseOpp('${d.id}')">Confirm payment &amp; close</button>` : '—'}</td>
+        </tr>`;
+      }).join('');
+    }
+    async function adminCloseOpp(dealId){
+      const ref = prompt('Enter the confirmed Stripe payment / reference id for this deal:');
+      if (ref === null) return;
+      if (!ref.trim()){ alert('A payment reference is required to confirm payment.'); return; }
+      try {
+        const r = await fetch('/api/close-opportunity', {
+          method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + (await bearer()) },
+          body: JSON.stringify({ deal_id: dealId, payment_ref: ref.trim() })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Close failed.');
+        alert('Closed won ✓ — client + commission ledger created.');
+        adminLoadOpps();
+      } catch (err){ alert('⚠ ' + err.message); }
+    }
+
+    async function adminLoadClientAccounts(){
+      aRow('aClientsBody', 4, 'Loading…');
+      const { data, error } = await sb.from('clients').select('*').order('created_at',{ascending:false});
+      if (error){ aRow('aClientsBody',4,'Couldn’t load — ' + error.message, true); return; }
+      document.getElementById('aClientsSrc').textContent = data.length + ' total';
+      if (!data.length){ aRow('aClientsBody',4,'No client accounts yet — close an opportunity to create one.'); return; }
+      document.getElementById('aClientsBody').innerHTML = data.map(c => `<tr>
+        <td><b>${esc(c.business_name)||'—'}</b></td>
+        <td><span class="pill ${aPill(c.onboarding_status)}">${esc(c.onboarding_status)}</span></td>
+        <td>${money(c.lifetime_value)}</td>
+        <td><span class="pill ${aPill(c.status)}">${esc(c.status)}</span></td></tr>`).join('');
+    }
+
+    async function adminLoadCommissions(){
+      aRow('aComBody', 7, 'Loading…');
+      const { data, error } = await sb.from('commissions').select('*').order('created_at',{ascending:false});
+      if (error){ aRow('aComBody',7,'Couldn’t load — ' + error.message, true); return; }
+      document.getElementById('aComSrc').textContent = data.length + ' entries';
+      if (!data.length){ aRow('aComBody',7,'No commissions yet.'); return; }
+      const names = {}; (teamProfiles||[]).forEach(p => names[p.user_id] = p.full_name);
+      const NEXT = { pending:'approved', approved:'payable', payable:'paid' };
+      document.getElementById('aComBody').innerHTML = data.map(c => {
+        const nxt = NEXT[c.status];
+        return `<tr>
+          <td>${esc(names[c.rep_id] || '—')}</td>
+          <td>${c.kind==='override'?'Override':'Direct'} · ${esc(c.revenue_type)}</td>
+          <td>${money(c.basis_amount)}</td><td>${((Number(c.rate_snapshot)||0)*100).toFixed(0)}%</td>
+          <td><b>${money(c.amount)}</b></td>
+          <td><span class="pill ${aPill(c.status)}">${esc(c.status)}</span></td>
+          <td><div style="display:flex;gap:0.3rem;flex-wrap:wrap">
+            ${nxt ? `<button class="btn btn-o btn-sm" onclick="adminSetCommission('${c.id}','${nxt}')">→ ${nxt}</button>` : ''}
+            ${c.status!=='reversed' && c.status!=='paid' ? `<button class="btn btn-o btn-sm" onclick="adminSetCommission('${c.id}','reversed')">Reverse</button>` : ''}
+          </div></td></tr>`;
+      }).join('');
+    }
+    async function adminSetCommission(id, status){
+      const { error } = await sb.from('commissions').update({ status }).eq('id', id);
+      if (error){ alert('Update failed: ' + error.message); return; }
+      adminLoadCommissions();
+    }
+
+    async function adminLoadConnect(){
+      aRow('aConnectBody', 4, 'Loading…');
+      if (!(teamProfiles && teamProfiles.length)) await loadTeam();
+      const staff = (teamProfiles || []).filter(p => p.role === 'rep' || p.role === 'manager');
+      if (!staff.length){ aRow('aConnectBody',4,'No reps or managers yet.'); return; }
+      document.getElementById('aConnectSrc').textContent = staff.length + ' eligible';
+      const labels = { not_started:'Not started', pending:'Pending', restricted:'Restricted', enabled:'Enabled' };
+      document.getElementById('aConnectBody').innerHTML = staff.map(p => {
+        const s = p.connect_status || 'not_started';
+        return `<tr>
+          <td><b>${esc(p.full_name || 'Unnamed')}</b></td>
+          <td><span class="pill new">${p.role==='manager'?'Team Manager':'Sales Rep'}</span></td>
+          <td><span class="pill ${aPill(s)}">${labels[s] || s}</span></td>
+          <td><button class="btn btn-o btn-sm" onclick="adminConnect('${p.user_id}')">${s==='not_started'?'Start onboarding':'Regenerate link'}</button></td>
+        </tr>`;
+      }).join('');
+    }
+    async function adminConnect(userId){
+      const note = document.getElementById('aConnectNote'); note.textContent = 'Generating link…';
+      try {
+        const r = await fetch('/api/create-connect-account', {
+          method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + (await bearer()) },
+          body: JSON.stringify({ user_id: userId })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Could not generate link.');
+        note.innerHTML = 'Onboarding link ready: <a href="' + data.url + '" target="_blank" rel="noopener" style="color:var(--gold)">open Stripe onboarding →</a> (share with the rep).';
+        loadTeam();
+      } catch (err){ note.textContent = '⚠ ' + err.message; }
+    }
   </script>
 </body>
 </html>

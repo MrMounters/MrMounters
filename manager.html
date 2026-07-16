@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Team Manager — Meridion AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#4C59F7; --gold-light:#8A74FF; --cyan:#7DD3FC; --dark:#0B0F19; --dark2:#111A2E; --dark3:#141E33; --dark4:#1A2540;
+    --white:#F2F4F8; --gray:#A6B0C3; --warm-muted:#7C88A0; --warm-accent:#B0BAD1;
+    --green:#5FD08A; --amber:#F5B43C; --red:#ff8b6b; --card-border:rgba(242,244,248,0.1); --mono:'Space Mono',monospace;
+  }
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',sans-serif; font-weight:300; color:var(--white); background:var(--dark); min-height:100vh; }
+  a{ color:var(--gold); }
+  .shell{ display:flex; min-height:100vh; }
+  .sidebar{ width:250px; flex-shrink:0; background:var(--dark2); border-right:1px solid var(--card-border); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
+  .side-logo{ padding:1.3rem 1.2rem 0.5rem; }
+  .side-tag{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); padding:0 1.2rem 1rem; }
+  .side-nav{ flex:1; overflow-y:auto; padding:0.4rem 0.6rem; }
+  .side-item{ display:block; width:100%; text-align:left; background:none; border:none; color:var(--warm-accent); font-family:'Inter',sans-serif; font-size:0.88rem; padding:0.65rem 0.9rem; border-radius:5px; cursor:pointer; transition:background 0.15s, color 0.15s; }
+  .side-item:hover{ background:var(--dark4); color:var(--white); }
+  .side-item.active{ background:rgba(76,89,247,0.14); color:var(--white); font-weight:600; }
+  .side-foot{ padding:1rem 1.2rem; border-top:1px solid var(--card-border); }
+  .side-name{ font-size:0.85rem; font-weight:600; }
+  .side-role{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); }
+  .side-signout{ margin-top:0.7rem; width:100%; background:none; border:1px solid var(--card-border); color:var(--warm-accent); font-family:var(--mono); font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; padding:0.55rem; border-radius:4px; cursor:pointer; }
+  .side-signout:hover{ border-color:var(--gold); color:var(--white); }
+  .main{ flex:1; min-width:0; padding:2rem 2.2rem 4rem; max-width:1100px; }
+  .mobile-menu-btn{ display:none; }
+  .page{ display:none; } .page.active{ display:block; }
+  .eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:0.5rem; }
+  h1.h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; margin-bottom:0.3rem; }
+  .lead{ font-size:0.9rem; color:var(--warm-accent); line-height:1.6; margin-bottom:1.4rem; max-width:60ch; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:0.8rem; margin-bottom:1.4rem; }
+  .stat{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1rem 1.1rem; }
+  .stat-k{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.4rem; }
+  .stat-v{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.5rem; }
+  .panel{ background:var(--dark3); border:1px solid var(--card-border); border-radius:6px; padding:1.2rem 1.3rem; margin-bottom:1.3rem; }
+  .panel-h{ display:flex; justify-content:space-between; align-items:center; margin-bottom:0.9rem; }
+  .panel-t{ font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:1rem; }
+  .panel-k, .muted{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.05em; color:var(--warm-muted); }
+  .muted{ line-height:1.6; }
+  table{ width:100%; border-collapse:collapse; }
+  th{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); text-align:left; padding:0.5rem 0.6rem; border-bottom:1px solid var(--card-border); }
+  td{ font-size:0.84rem; padding:0.6rem; border-bottom:1px solid rgba(242,244,248,0.05); vertical-align:middle; }
+  .pill{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.2rem 0.55rem; border-radius:20px; white-space:nowrap; }
+  .pill.ok{ color:var(--green); background:rgba(95,208,138,0.1); border:1px solid rgba(95,208,138,0.3); }
+  .pill.warn{ color:var(--amber); background:rgba(245,180,60,0.1); border:1px solid rgba(245,180,60,0.3); }
+  .pill.new{ color:var(--gold); background:rgba(76,89,247,0.1); border:1px solid rgba(76,89,247,0.3); }
+  .pill.mut{ color:var(--warm-muted); background:rgba(242,244,248,0.08); border:1px solid var(--card-border); }
+  .pill.lost{ color:var(--red); background:rgba(255,139,107,0.1); border:1px solid rgba(255,139,107,0.3); }
+  .btn{ font-family:var(--mono); font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; padding:0.5rem 0.9rem; border-radius:4px; cursor:pointer; border:1px solid transparent; }
+  .btn-o{ background:none; border-color:var(--card-border); color:var(--warm-accent); }
+  .btn-o:hover{ border-color:var(--gold); color:var(--white); }
+  .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; }
+  .data-state{ font-family:var(--mono); font-size:0.72rem; letter-spacing:0.03em; color:var(--warm-muted); padding:1.4rem 0.2rem; text-align:center; }
+  .data-state.err{ color:var(--red); }
+  .hidden{ display:none !important; }
+  .row-act{ display:inline-flex; gap:0.35rem; flex-wrap:wrap; align-items:center; }
+  #loading{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--dark); z-index:100; font-family:var(--mono); font-size:0.8rem; color:var(--warm-muted); }
+  @media (max-width:900px){
+    .sidebar{ position:fixed; z-index:50; transform:translateX(-100%); transition:transform 0.25s; }
+    .sidebar.open{ transform:none; }
+    .mobile-menu-btn{ display:inline-block; margin-bottom:1rem; background:var(--dark3); border:1px solid var(--card-border); color:var(--white); padding:0.5rem 0.9rem; border-radius:5px; font-family:var(--mono); font-size:0.7rem; cursor:pointer; }
+    .main{ padding:1.4rem 1.1rem 4rem; }
+  }
+</style>
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xj1vynd82i");
+</script>
+</head>
+<body>
+  <div id="loading">Loading your team…</div>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="side-logo"><img src="meridion-logo-full.png" alt="Meridion AI" style="height:26px;display:block;"></div>
+      <div class="side-tag">Team Manager</div>
+      <nav class="side-nav">
+        <button class="side-item active" data-page="dashboard" onclick="go('dashboard')">Team Dashboard</button>
+        <button class="side-item" data-page="prospects" onclick="go('prospects')">Prospects</button>
+        <button class="side-item" data-page="leads" onclick="go('leads')">Leads</button>
+        <button class="side-item" data-page="opportunities" onclick="go('opportunities')">Opportunities</button>
+        <button class="side-item" data-page="clients" onclick="go('clients')">Clients</button>
+        <button class="side-item" data-page="commissions" onclick="go('commissions')">Commissions</button>
+        <button class="side-item" data-page="team" onclick="go('team')">My Team</button>
+      </nav>
+      <div class="side-foot">
+        <div class="side-name" id="acctName">Manager</div>
+        <div class="side-role">Team Manager</div>
+        <button class="side-signout" onclick="signOut()">Sign out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menu</button>
+
+      <div class="page active" id="page-dashboard">
+        <div class="eyebrow">// Team</div>
+        <h1 class="h1">Team dashboard</h1>
+        <p class="lead">Your downline's pipeline at a glance. You see every prospect, lead, opportunity, client, and commission owned by reps who report to you.</p>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-k">Team prospects</div><div class="stat-v" id="dProspects">—</div></div>
+          <div class="stat"><div class="stat-k">Team leads</div><div class="stat-v" id="dLeads">—</div></div>
+          <div class="stat"><div class="stat-k">Open opportunities</div><div class="stat-v" id="dOpps">—</div></div>
+          <div class="stat"><div class="stat-k">Team clients</div><div class="stat-v" id="dClients">—</div></div>
+          <div class="stat"><div class="stat-k">Override · pending</div><div class="stat-v" id="dOverride">—</div></div>
+        </div>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Reps</div><span class="panel-k" id="dTeamCount">—</span></div>
+          <div id="dTeamState" class="data-state">Loading…</div>
+          <table id="dTeamTable" class="hidden"><thead><tr><th>Rep</th><th>Prospects</th><th>Opportunities</th></tr></thead><tbody id="dTeamBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page" id="page-prospects">
+        <div class="eyebrow">// Team · Prospecting</div>
+        <h1 class="h1">Team prospects</h1>
+        <p class="lead">Reassign, re-status, or archive any prospect across your team.</p>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Prospects</div><span class="panel-k" id="pCount">—</span></div>
+          <div id="pState" class="data-state">Loading…</div>
+          <table id="pTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Assigned</th><th></th></tr></thead><tbody id="pBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page" id="page-leads">
+        <div class="eyebrow">// Team · Leads</div>
+        <h1 class="h1">Team leads</h1>
+        <p class="lead">Move leads through the stages; qualified leads become opportunities.</p>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Leads</div><span class="panel-k" id="lCount">—</span></div>
+          <div id="lState" class="data-state">Loading…</div>
+          <table id="lTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Stage</th><th>Assigned</th><th></th></tr></thead><tbody id="lBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page" id="page-opportunities">
+        <div class="eyebrow">// Team · Opportunities</div>
+        <h1 class="h1">Team opportunities</h1>
+        <p class="lead">Your team's pipeline. Closing on confirmed payment is done by an admin.</p>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Opportunities</div><span class="panel-k" id="oCount">—</span></div>
+          <div id="oState" class="data-state">Loading…</div>
+          <table id="oTable" class="hidden"><thead><tr><th>Contact</th><th>Value</th><th>Stage</th><th>Rep</th></tr></thead><tbody id="oBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page" id="page-clients">
+        <div class="eyebrow">// Team · Clients</div>
+        <h1 class="h1">Team clients</h1>
+        <p class="lead">Closed customers across your team — onboarding status only. Delivery internals stay in the kitchen.</p>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Clients</div><span class="panel-k" id="cCount">—</span></div>
+          <div id="cState" class="data-state">Loading…</div>
+          <table id="cTable" class="hidden"><thead><tr><th>Business</th><th>Onboarding</th><th>Lifetime value</th></tr></thead><tbody id="cBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page" id="page-commissions">
+        <div class="eyebrow">// Money</div>
+        <h1 class="h1">Team commissions</h1>
+        <p class="lead">Your team's direct commissions and your manager overrides. Amounts are locked to the plan in effect at close.</p>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-k">Pending</div><div class="stat-v" id="comPending">—</div></div>
+          <div class="stat"><div class="stat-k">Approved</div><div class="stat-v" id="comApproved">—</div></div>
+          <div class="stat"><div class="stat-k">Payable</div><div class="stat-v" id="comPayable">—</div></div>
+          <div class="stat"><div class="stat-k">Paid</div><div class="stat-v" id="comPaid">—</div></div>
+        </div>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Ledger</div><span class="panel-k" id="comCount">—</span></div>
+          <div id="comState" class="data-state">Loading…</div>
+          <table id="comTable" class="hidden"><thead><tr><th>Earner</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody id="comBody"></tbody></table>
+        </div>
+      </div>
+
+      <div class="page" id="page-team">
+        <div class="eyebrow">// Organization</div>
+        <h1 class="h1">My team</h1>
+        <p class="lead">Reps reporting to you. New reps are added by an admin and assigned to you.</p>
+        <div class="panel"><div class="panel-h"><div class="panel-t">Reps</div><span class="panel-k" id="tCount">—</span></div>
+          <div id="tState" class="data-state">Loading…</div>
+          <table id="tTable" class="hidden"><thead><tr><th>Name</th><th>Role</th><th>Payout status</th></tr></thead><tbody id="tBody"></tbody></table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="auth-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
+    const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
+    let sb = null, session = null, team = [], teamNames = {}, allProspects = [], allOpps = [];
+    const PROSPECT_STATUSES = ['New','Assigned','Researching','Ready to Contact','Attempted Contact','Bad Data','Wrong Number','Duplicate','Do Not Contact','Archived'];
+    const LEAD_STATUSES = ['New Lead','Contacted','Discovery Scheduled','Discovery Completed','Follow-Up','Nurture','Qualified','Disqualified','Lost'];
+
+    function esc(s){ return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+    function money(v){ v = Number(v)||0; return v ? '$' + v.toLocaleString(undefined,{maximumFractionDigits:2}) : '$0'; }
+    function goLogin(){ window.location.href = 'login.html'; }
+    async function signOut(){ if (sb) await sb.auth.signOut(); goLogin(); }
+    function statusPill(s){
+      if (['Won','Qualified','enabled','paid','approved','payable','live','Enabled'].includes(s)) return 'ok';
+      if (['Lost','Disqualified','Bad Data','Wrong Number','Do Not Contact','Duplicate','Archived','reversed','restricted','churned'].includes(s)) return 'lost';
+      if (['pending','Payment Pending','Nurture','Follow-Up','not_started'].includes(s)) return 'warn';
+      return 'new';
+    }
+    function setState(id, msg, isErr){ const el = document.getElementById(id); if (!el) return; el.className = 'data-state' + (isErr?' err':''); el.textContent = msg; el.classList.remove('hidden'); }
+    function renderTable(stateId, tableId, bodyId, res, rowFn, emptyMsg){
+      const table = document.getElementById(tableId), state = document.getElementById(stateId), body = document.getElementById(bodyId);
+      if (res.error){ table.classList.add('hidden'); const denied = /permission|row-level|denied|JWT/i.test(res.error.message||''); setState(stateId, denied ? "You don't have access to these records." : ('Couldn’t load — ' + (res.error.message||'try again.')), true); return []; }
+      const rows = res.data || [];
+      if (!rows.length){ table.classList.add('hidden'); setState(stateId, emptyMsg, false); return rows; }
+      state.classList.add('hidden'); table.classList.remove('hidden'); body.innerHTML = rows.map(rowFn).join(''); return rows;
+    }
+
+    function go(page){
+      document.querySelectorAll('.page').forEach(el => el.classList.toggle('active', el.id === 'page-' + page));
+      document.querySelectorAll('.side-item[data-page]').forEach(el => el.classList.toggle('active', el.dataset.page === page));
+      document.getElementById('sidebar').classList.remove('open');
+      window.scrollTo(0, 0);
+    }
+
+    async function init(){
+      if (!(configured && window.supabase)){ goLogin(); return; }
+      sb = window.supabase.createClient(URL_, KEY_);
+      const { data } = await sb.auth.getSession();
+      session = data.session;
+      if (!session){ goLogin(); return; }
+      const { data: profile } = await sb.from('profiles').select('role, full_name').eq('user_id', session.user.id).single();
+      const role = profile && profile.role;
+      if (role !== 'manager'){
+        window.location.href = role === 'admin' ? 'admin.html' : role === 'rep' ? 'rep.html' : 'portal.html';
+        return;
+      }
+      sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+      document.getElementById('acctName').textContent = profile.full_name || session.user.email || 'Manager';
+      document.getElementById('loading').classList.add('hidden');
+      await loadTeam();
+      await Promise.all([loadProspects(), loadLeads(), loadOpps(), loadClients(), loadCommissions()]);
+      renderDashTeam();
+    }
+    function renderDashTeam(){
+      const state = document.getElementById('dTeamState'), tbl = document.getElementById('dTeamTable');
+      if (!team.length){ setState('dTeamState','No reps report to you yet. An admin assigns reps to your team.', false); tbl.classList.add('hidden'); return; }
+      state.classList.add('hidden'); tbl.classList.remove('hidden');
+      document.getElementById('dTeamBody').innerHTML = team.map(r => {
+        const pC = allProspects.filter(p => p.assigned_rep_id === r.user_id).length;
+        const oC = allOpps.filter(o => o.rep_id === r.user_id && o.stage !== 'Won' && o.stage !== 'Lost').length;
+        return `<tr><td><b>${esc(r.full_name)||'Rep'}</b></td><td>${pC}</td><td>${oC}</td></tr>`;
+      }).join('');
+    }
+
+    async function loadTeam(){
+      const res = await sb.from('profiles').select('user_id, full_name, role, connect_status').eq('role','rep');
+      team = res.data || [];
+      teamNames = {}; team.forEach(r => teamNames[r.user_id] = r.full_name || 'Rep');
+      const labels = { not_started:'Not started', pending:'Pending', restricted:'Restricted', enabled:'Enabled' };
+      renderTable('tState','tTable','tBody', res, r =>
+        `<tr><td><b>${esc(r.full_name)||'Unnamed'}</b></td><td><span class="pill new">Sales Rep</span></td>
+         <td><span class="pill ${statusPill(r.connect_status||'not_started')}">${labels[r.connect_status||'not_started']}</span></td></tr>`,
+        'No reps report to you yet. An admin assigns reps to your team.');
+      document.getElementById('tCount').textContent = team.length + ' reps';
+      document.getElementById('dTeamCount').textContent = team.length + ' reps';
+    }
+    function repOptions(sel){ return '<option value="">— unassigned —</option>' + team.map(r => `<option value="${r.user_id}" ${r.user_id===sel?'selected':''}>${esc(r.full_name)||'Rep'}</option>`).join(''); }
+
+    async function loadProspects(){
+      const res = await sb.from('leads').select('*').eq('lifecycle','prospect').is('archived_at',null).order('updated_at',{ascending:false});
+      renderTable('pState','pTable','pBody', res, p => {
+        const opts = PROSPECT_STATUSES.map(s => `<option ${s===p.status?'selected':''}>${s}</option>`).join('');
+        return `<tr><td><b>${esc(p.full_name)}</b></td><td>${esc(p.business)||'—'}</td>
+          <td><select class="sel-sm" onchange="setStatus('${p.id}', this.value)">${opts}</select></td>
+          <td><select class="sel-sm" onchange="reassign('${p.id}', this.value)">${repOptions(p.assigned_rep_id)}</select></td>
+          <td><button class="btn btn-o" style="padding:0.3rem 0.6rem" onclick="archive('${p.id}')">Archive</button></td></tr>`;
+      }, 'No prospects across your team yet.');
+      allProspects = res.data || [];
+      const n = res.data ? res.data.length : 0;
+      document.getElementById('pCount').textContent = n + ' active'; document.getElementById('dProspects').textContent = res.error?'—':n;
+    }
+    async function loadLeads(){
+      const res = await sb.from('leads').select('*').eq('lifecycle','lead').is('archived_at',null).order('updated_at',{ascending:false});
+      renderTable('lState','lTable','lBody', res, l => {
+        const opts = LEAD_STATUSES.map(s => `<option ${s===l.status?'selected':''}>${s}</option>`).join('');
+        return `<tr><td><b>${esc(l.full_name)}</b></td><td>${esc(l.business)||'—'}</td>
+          <td><select class="sel-sm" onchange="setStatus('${l.id}', this.value)">${opts}</select></td>
+          <td><select class="sel-sm" onchange="reassign('${l.id}', this.value)">${repOptions(l.assigned_rep_id)}</select></td>
+          <td><button class="btn btn-o" style="padding:0.3rem 0.6rem" onclick="archive('${l.id}')">Archive</button></td></tr>`;
+      }, 'No leads across your team yet.');
+      const n = res.data ? res.data.length : 0;
+      document.getElementById('lCount').textContent = n + ' active'; document.getElementById('dLeads').textContent = res.error?'—':n;
+    }
+    async function setStatus(id, status){ const { error } = await sb.from('leads').update({ status }).eq('id', id); if (error) alert('Update failed: ' + error.message); }
+    async function reassign(id, rep){ const { error } = await sb.from('leads').update({ assigned_rep_id: rep || null }).eq('id', id); if (error){ alert('Reassign failed: ' + error.message); } }
+    async function archive(id){ if (!confirm('Archive this record? It stays in history.')) return; const { error } = await sb.from('leads').update({ archived_at:new Date().toISOString(), status:'Archived' }).eq('id', id); if (error){ alert('Archive failed: ' + error.message); return; } loadProspects(); loadLeads(); }
+
+    async function loadOpps(){
+      const res = await sb.from('deals').select('*').is('archived_at',null).order('updated_at',{ascending:false});
+      renderTable('oState','oTable','oBody', res, d =>
+        `<tr><td><b>${esc(d.contact)}</b><br><span class="muted">${esc(d.business)||''}</span></td>
+         <td>${money(d.value)}</td><td><span class="pill ${statusPill(d.stage)}">${esc(d.stage)}</span></td>
+         <td>${esc(teamNames[d.rep_id] || '—')}</td></tr>`,
+        'No opportunities across your team yet.');
+      allOpps = res.data || [];
+      const open = (res.data||[]).filter(d => d.stage!=='Won' && d.stage!=='Lost').length;
+      document.getElementById('oCount').textContent = open + ' open'; document.getElementById('dOpps').textContent = res.error?'—':open;
+    }
+    async function loadClients(){
+      const res = await sb.from('clients').select('business_name,onboarding_status,lifetime_value').order('created_at',{ascending:false});
+      renderTable('cState','cTable','cBody', res, c =>
+        `<tr><td><b>${esc(c.business_name)||'—'}</b></td><td><span class="pill ${statusPill(c.onboarding_status)}">${esc(c.onboarding_status)}</span></td><td>${money(c.lifetime_value)}</td></tr>`,
+        'No clients across your team yet.');
+      const n = res.data ? res.data.length : 0;
+      document.getElementById('cCount').textContent = n + ' total'; document.getElementById('dClients').textContent = res.error?'—':n;
+    }
+    async function loadCommissions(){
+      const res = await sb.from('commissions').select('*').order('created_at',{ascending:false});
+      renderTable('comState','comTable','comBody', res, c =>
+        `<tr><td>${esc(teamNames[c.rep_id] || (c.rep_id===session.user.id?'You (override)':'—'))}</td>
+         <td>${c.kind==='override'?'Override':'Direct'} · ${esc(c.revenue_type)}</td><td><b>${money(c.amount)}</b></td>
+         <td><span class="pill ${statusPill(c.status)}">${esc(c.status)}</span></td></tr>`,
+        'No commissions across your team yet.');
+      const rows = res.data || [];
+      const sum = st => rows.filter(r => r.status===st).reduce((a,r)=>a+(Number(r.amount)||0),0);
+      document.getElementById('comPending').textContent = money(sum('pending'));
+      document.getElementById('comApproved').textContent = money(sum('approved'));
+      document.getElementById('comPayable').textContent = money(sum('payable'));
+      document.getElementById('comPaid').textContent = money(sum('paid'));
+      document.getElementById('comCount').textContent = rows.length + ' entries';
+      const myOverride = rows.filter(r => r.kind==='override' && r.rep_id===session.user.id && r.status==='pending').reduce((a,r)=>a+(Number(r.amount)||0),0);
+      document.getElementById('dOverride').textContent = res.error?'—':money(myOverride);
+    }
+
+    window.addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
+    init();
+  </script>
+</body>
+</html>
