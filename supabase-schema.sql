@@ -1292,3 +1292,54 @@ create policy "users manage their own avatar" on storage.objects for all
 -- ============================================================
 -- END M2
 -- ============================================================
+
+-- ############################################################
+-- M3 — REAL E-SIGNATURE FOR NDA / NON-COMPETE  (idempotent — safe to re-run)
+-- Replaces the old "type your name" fake signature with a real, audit-trailed
+-- e-signature via Documenso (documenso.com — open-source, free tier available).
+-- Secrets (API key, webhook secret, template IDs) live only in Vercel env vars
+-- and are used only inside /api/create-signing-request.js and
+-- /api/documenso-webhook.js — never in the browser.
+-- ############################################################
+
+-- De-dupe first: the old flow could insert more than one row per (rep_id, doc_type)
+-- since it never checked for an existing signature. Keep the newest row per pair so the
+-- unique index below can be added safely.
+delete from public.agreements a using public.agreements b
+where a.rep_id = b.rep_id and a.doc_type = b.doc_type
+  and a.signed_at < b.signed_at;
+
+alter table public.agreements add column if not exists status text not null default 'pending'
+  check (status in ('pending','signed','voided'));
+alter table public.agreements add column if not exists documenso_document_id bigint;
+alter table public.agreements add column if not exists signing_url text;
+alter table public.agreements add column if not exists signed_pdf_path text;
+alter table public.agreements add column if not exists updated_at timestamptz default now();
+
+-- Backfill: any legacy typed-name row counts as already "signed" (no PDF on file for those).
+update public.agreements set status = 'signed' where status is distinct from 'signed' and signed_name is not null and signed_pdf_path is null and documenso_document_id is null;
+
+drop trigger if exists agreements_touch on public.agreements;
+create trigger agreements_touch before update on public.agreements
+  for each row execute function public.touch_updated_at();
+
+-- One record per rep per doc type — re-requesting a link updates the same row instead of
+-- creating a duplicate (also what api/create-signing-request.js upserts against).
+create unique index if not exists agreements_rep_doctype_uniq on public.agreements(rep_id, doc_type);
+
+-- Admin can view every rep's agreement status (the existing rep-private policy is
+-- untouched — this ADDS an admin read, it doesn't replace anything).
+drop policy if exists "admins view all agreements" on public.agreements;
+create policy "admins view all agreements" on public.agreements for select
+  using (public.current_user_role() = 'admin');
+
+-- Admin can also open reps' uploaded docs (signed NDA/NC PDFs + W-9s) in rep-docs storage
+-- to review compliance; reps keep their own existing rep-docs policy.
+drop policy if exists "admins manage all rep docs" on storage.objects;
+create policy "admins manage all rep docs" on storage.objects for all
+  using (bucket_id = 'rep-docs' and public.current_user_role() = 'admin')
+  with check (bucket_id = 'rep-docs' and public.current_user_role() = 'admin');
+
+-- ============================================================
+-- END M3
+-- ============================================================

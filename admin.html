@@ -445,8 +445,8 @@
           </form>
           <div style="overflow-x:auto;">
             <table>
-              <thead><tr><th>Name</th><th>Role</th><th>Business</th></tr></thead>
-              <tbody id="teamBody"><tr><td colspan="3" class="empty">Loading…</td></tr></tbody>
+              <thead><tr><th>Name</th><th>Role</th><th>Business</th><th>NDA</th><th>Non-Compete</th><th>W-9</th></tr></thead>
+              <tbody id="teamBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -902,22 +902,52 @@
     // profiles.role from the browser), so inviting one goes through api/invite-rep.js, which
     // uses the service_role key server-side to create the account and set role='rep' in one step.
     let teamProfiles = [];
+    let teamAgreements = {}; // user_id -> { nda: row, non_compete: row }
+    let teamW9 = {};         // user_id -> true if a w9- file exists in rep-docs
     async function loadTeam(){
       const { data, error } = await sb.from('profiles').select('user_id, role, full_name, business_name, manager_id, connect_status').in('role', ['rep','manager','admin']).order('role');
       if (error) return;
       teamProfiles = data || [];
+      const { data: agData } = await sb.from('agreements').select('rep_id, doc_type, status, signed_pdf_path');
+      teamAgreements = {};
+      (agData || []).forEach(a => { teamAgreements[a.rep_id] = teamAgreements[a.rep_id] || {}; teamAgreements[a.rep_id][a.doc_type] = a; });
       renderTeam();
       populateManagerSelect();
+    }
+    function docPill(a){
+      if (!a) return '<span class="pill mut">Not started</span>';
+      if (a.status === 'signed') return `<span class="pill ok" style="cursor:pointer" onclick="viewRepDoc('${a.signed_pdf_path}')">✓ Signed</span>`;
+      if (a.status === 'pending') return '<span class="pill warn">In progress</span>';
+      return '<span class="pill mut">Not started</span>';
+    }
+    async function viewRepDoc(path){
+      if (!path) return;
+      const { data, error } = await sb.storage.from('rep-docs').createSignedUrl(path, 3600);
+      if (error || !data){ alert('Could not open document: ' + (error && error.message)); return; }
+      window.open(data.signedUrl, '_blank', 'noopener');
+    }
+    async function viewRepW9(userId){
+      const { data, error } = await sb.storage.from('rep-docs').list(userId);
+      if (error || !data){ alert('Could not list documents: ' + (error && error.message)); return; }
+      const w9 = data.filter(f => f.name.startsWith('w9-')).sort((a,b) => b.name.localeCompare(a.name))[0];
+      if (!w9){ alert('No W-9 on file yet.'); return; }
+      viewRepDoc(userId + '/' + w9.name);
     }
     function renderTeam(){
       document.getElementById('teamSrc').textContent = teamProfiles.length + ' total';
       const body = document.getElementById('teamBody');
-      if (!teamProfiles.length){ body.innerHTML = '<tr><td colspan="3" class="empty">No team members yet.</td></tr>'; return; }
-      body.innerHTML = teamProfiles.map(p => `<tr>
+      if (!teamProfiles.length){ body.innerHTML = '<tr><td colspan="6" class="empty">No team members yet.</td></tr>'; return; }
+      body.innerHTML = teamProfiles.map(p => {
+        const ag = teamAgreements[p.user_id] || {};
+        return `<tr>
         <td><b>${esc(p.full_name || 'Unnamed')}</b></td>
         <td><span class="pill ${p.role === 'admin' ? 'ok' : 'new'}">${esc(p.role)}</span></td>
         <td>${esc(p.business_name || '—')}</td>
-      </tr>`).join('');
+        <td>${docPill(ag.nda)}</td>
+        <td>${docPill(ag.non_compete)}</td>
+        <td><span class="pill mut" style="cursor:pointer" onclick="viewRepW9('${p.user_id}')">View</span></td>
+      </tr>`;
+      }).join('');
     }
     function populateManagerSelect(){
       const sel = document.getElementById('repManager'); if (!sel) return;

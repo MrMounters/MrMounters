@@ -773,10 +773,10 @@
           <p><strong>4. Term.</strong> These obligations survive for three (3) years following the end of the engagement.</p>
         </div>
         <div class="sign-row">
-          <input class="inp" id="ndaName" placeholder="Type your full legal name to sign" style="max-width:280px">
-          <button class="btn btn-p" onclick="sign('nda')">Sign NDA</button>
+          <button class="btn btn-p" id="ndaBtn" onclick="startSigning('nda')">Sign NDA</button>
+          <a class="btn btn-o hidden" id="ndaViewBtn" href="#" target="_blank" rel="noopener">View signed copy</a>
         </div>
-        <div class="ok-msg hidden" id="ndaOk">✓ NDA signed and on file.</div>
+        <p class="muted" id="ndaHint" style="margin-top:0.5rem"></p>
       </div>
 
       <div class="panel">
@@ -789,10 +789,10 @@
           <p class="muted" style="margin-top:0.4rem">Note: non-compete enforceability varies by state — this is a demo template, not legal advice.</p>
         </div>
         <div class="sign-row">
-          <input class="inp" id="ncName" placeholder="Type your full legal name to sign" style="max-width:280px">
-          <button class="btn btn-p" onclick="sign('nc')">Sign Non-Compete</button>
+          <button class="btn btn-p" id="ncBtn" onclick="startSigning('non_compete')">Sign Non-Compete</button>
+          <a class="btn btn-o hidden" id="ncViewBtn" href="#" target="_blank" rel="noopener">View signed copy</a>
         </div>
-        <div class="ok-msg hidden" id="ncOk">✓ Non-compete signed and on file.</div>
+        <p class="muted" id="ncHint" style="margin-top:0.5rem"></p>
       </div>
 
       <div class="panel">
@@ -881,6 +881,7 @@
       initCal();
       await loadSalesData();
       initAcademy();
+      loadAgreements();
       initTwilio();
     }
 
@@ -1461,15 +1462,62 @@
       document.getElementById('dialStatus').innerHTML = twilioReady ? 'In-browser calling <b>ready</b>' : 'Tap a number, then Call';
     }
 
-    // Compliance docs
-    async function sign(which){
-      const map = { nda:['ndaName','ndaOk','ndaStatus'], nc:['ncName','ncOk','ncStatus'] }[which];
-      const name = document.getElementById(map[0]).value.trim();
-      if (!name){ document.getElementById(map[0]).focus(); return; }
-      document.getElementById(map[1]).classList.remove('hidden');
-      const st = document.getElementById(map[2]); st.textContent = 'Signed'; st.className = 'pill ok';
-      if (sb && session){ try { await sb.from('agreements').insert({ doc_type: which === 'nc' ? 'non_compete' : 'nda', signed_name: name }); } catch (_) {} }
+    // ── Compliance docs — real, audit-trailed e-signature via Documenso ──
+    const DOC_UI = {
+      nda:          { statusId:'ndaStatus', btnId:'ndaBtn', viewId:'ndaViewBtn', hintId:'ndaHint' },
+      non_compete:  { statusId:'ncStatus',  btnId:'ncBtn',  viewId:'ncViewBtn',  hintId:'ncHint' }
+    };
+    async function loadAgreements(){
+      if (!(sb && session)) return;
+      const { data } = await sb.from('agreements').select('doc_type, status, signing_url, signed_pdf_path').eq('rep_id', session.user.id);
+      const byType = {}; (data || []).forEach(a => byType[a.doc_type] = a);
+      for (const doc_type of ['nda','non_compete']){
+        const ui = DOC_UI[doc_type], a = byType[doc_type];
+        const st = document.getElementById(ui.statusId), btn = document.getElementById(ui.btnId),
+              view = document.getElementById(ui.viewId), hint = document.getElementById(ui.hintId);
+        if (!st) continue;
+        if (a && a.status === 'signed'){
+          st.textContent = 'Signed'; st.className = 'pill ok';
+          btn.classList.add('hidden'); hint.textContent = '';
+          if (a.signed_pdf_path){
+            const { data: signedUrl } = await sb.storage.from('rep-docs').createSignedUrl(a.signed_pdf_path, 3600);
+            if (signedUrl){ view.href = signedUrl.signedUrl; view.classList.remove('hidden'); }
+          }
+        } else if (a && a.status === 'pending' && a.signing_url){
+          st.textContent = 'In progress'; st.className = 'pill warn';
+          btn.textContent = 'Continue signing'; btn.classList.remove('hidden'); view.classList.add('hidden');
+          hint.textContent = 'You started this — click to finish signing.';
+        } else {
+          st.textContent = 'Action needed'; st.className = 'pill warn';
+          btn.textContent = doc_type === 'nda' ? 'Sign NDA' : 'Sign Non-Compete';
+          btn.classList.remove('hidden'); view.classList.add('hidden'); hint.textContent = '';
+        }
+      }
     }
+    async function startSigning(doc_type){
+      const ui = DOC_UI[doc_type], btn = document.getElementById(ui.btnId), hint = document.getElementById(ui.hintId);
+      const prevText = btn.textContent; btn.textContent = 'Opening…'; btn.disabled = true;
+      try {
+        const { data: sessionData } = await sb.auth.getSession();
+        const token = sessionData.session && sessionData.session.access_token;
+        const r = await fetch('/api/create-signing-request', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ doc_type })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Could not start signing.');
+        if (data.status === 'signed'){ await loadAgreements(); return; }
+        window.open(data.signing_url, '_blank', 'noopener');
+        hint.textContent = 'Opened in a new tab — finish signing there, then come back here.';
+        await loadAgreements();
+      } catch (err) {
+        hint.textContent = '⚠ ' + err.message;
+      } finally {
+        btn.disabled = false; if (btn.textContent === 'Opening…') btn.textContent = prevText;
+      }
+    }
+    // Refresh status when the rep comes back to this tab (e.g. after signing in the popup).
+    window.addEventListener('focus', () => { if (sb && session) loadAgreements(); });
     function pickFile(){
       const f = document.getElementById('taxFile').files[0];
       document.getElementById('taxFileName').textContent = f ? f.name : 'No file selected';
