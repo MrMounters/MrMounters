@@ -1298,8 +1298,9 @@ create policy "users manage their own avatar" on storage.objects for all
 -- Replaces the old "type your name" fake signature with a real, audit-trailed
 -- e-signature via Documenso (documenso.com — open-source, free tier available).
 -- Secrets (API key, webhook secret, template IDs) live only in Vercel env vars
--- and are used only inside /api/create-signing-request.js and
--- /api/documenso-webhook.js — never in the browser.
+-- and are used only inside api/actions.js (actions "create-signing-request" and
+-- "documenso-webhook") — never in the browser. Configure the Documenso dashboard
+-- webhook URL as .../api/actions?action=documenso-webhook.
 -- ############################################################
 
 -- De-dupe first: the old flow could insert more than one row per (rep_id, doc_type)
@@ -1324,7 +1325,7 @@ create trigger agreements_touch before update on public.agreements
   for each row execute function public.touch_updated_at();
 
 -- One record per rep per doc type — re-requesting a link updates the same row instead of
--- creating a duplicate (also what api/create-signing-request.js upserts against).
+-- creating a duplicate (also what the "create-signing-request" action upserts against).
 create unique index if not exists agreements_rep_doctype_uniq on public.agreements(rep_id, doc_type);
 
 -- Admin can view every rep's agreement status (the existing rep-private policy is

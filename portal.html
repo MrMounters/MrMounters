@@ -1322,7 +1322,7 @@
 
     async function payDeposit(stageId){
       try {
-        const r = await fetch('/api/create-deposit-session', {
+        const r = await fetch('/api/actions?action=create-deposit-session', {
           method:'POST', headers:{'Content-Type':'application/json'},
           body: JSON.stringify({ stageId }),
         });
@@ -1366,7 +1366,7 @@
       status.textContent = 'Opening your billing portal…'; status.className = 'ok-msg';
       if (btn) btn.disabled = true;
       try {
-        const r = await fetch('/api/create-portal-session', {
+        const r = await fetch('/api/actions?action=create-portal-session', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: currentEmail }),
         });

@@ -641,7 +641,7 @@
 
     async function loadConsults(){
       try {
-        const r = await fetch('/api/cal-bookings?take=100');
+        const r = await fetch('/api/actions?action=cal-bookings&take=100');
         const data = await r.json();
         if (!data.configured){
           document.getElementById('calSrc').textContent = 'Cal.com not connected yet — add CALCOM_API_KEY in Vercel to show real bookings.';
@@ -832,8 +832,9 @@
     }
 
     // ── TEAM — reps can't self-elevate (RLS blocks anyone from changing someone else's
-    // profiles.role from the browser), so inviting one goes through api/invite-rep.js, which
-    // uses the service_role key server-side to create the account and set role='rep' in one step.
+    // profiles.role from the browser), so inviting one goes through the "invite-rep" action in
+    // api/actions.js, which uses the service_role key server-side to create the account and
+    // set role='rep' in one step.
     let teamProfiles = [];
     let teamAgreements = {}; // user_id -> { nda: row, non_compete: row }
     let teamW9 = {};         // user_id -> true if a w9- file exists in rep-docs
@@ -902,7 +903,7 @@
       try {
         const { data: sessionData } = await sb.auth.getSession();
         const token = sessionData.session && sessionData.session.access_token;
-        const r = await fetch('/api/invite-rep', {
+        const r = await fetch('/api/actions?action=invite-rep', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
           body: JSON.stringify({ email, full_name: full_name || undefined, role, manager_id }),
@@ -1243,7 +1244,7 @@
         const { data: sessionData } = await sb.auth.getSession();
         const adminSession = sessionData.session;
         const token = adminSession && adminSession.access_token;
-        const r = await fetch('/api/impersonate', {
+        const r = await fetch('/api/actions?action=impersonate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
           body: JSON.stringify({ client_id: clientId }),
@@ -1667,7 +1668,7 @@
       if (ref === null) return;
       if (!ref.trim()){ alert('A payment reference is required to confirm payment.'); return; }
       try {
-        const r = await fetch('/api/close-opportunity', {
+        const r = await fetch('/api/actions?action=close-opportunity', {
           method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + (await bearer()) },
           body: JSON.stringify({ deal_id: dealId, payment_ref: ref.trim() })
         });
@@ -1739,7 +1740,7 @@
     async function adminConnect(userId){
       const note = document.getElementById('aConnectNote'); note.textContent = 'Generating link…';
       try {
-        const r = await fetch('/api/create-connect-account', {
+        const r = await fetch('/api/actions?action=create-connect-account', {
           method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + (await bearer()) },
           body: JSON.stringify({ user_id: userId })
         });

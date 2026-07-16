@@ -711,7 +711,7 @@ async function startCheckout(plan, btn) {
   status.textContent = 'Redirecting to secure checkout…';
   if (btn) btn.disabled = true;
   try {
-    const r = await fetch('/api/create-checkout-session', {
+    const r = await fetch('/api/actions?action=create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ plan }),

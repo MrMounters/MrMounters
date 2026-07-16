@@ -538,7 +538,7 @@
           </tbody>
         </table>
       </div>
-      <p class="muted" id="dialerNote">In-browser calling activates when Twilio is connected (see <code>/api/twilio-token</code>). Until then, Call opens your phone's dialer.</p>
+      <p class="muted" id="dialerNote">In-browser calling activates when Twilio is connected. Until then, Call opens your phone's dialer.</p>
     </section>
 
     <!-- THE ACADEMY -->
@@ -1518,7 +1518,7 @@
       if (true) return;
       if (!window.Twilio || !window.Twilio.Device) return;
       try {
-        const r = await fetch('/api/twilio-token');
+        const r = await fetch('/api/actions?action=twilio-token');
         if (!r.ok) return;
         const { token } = await r.json();
         if (!token) return;
@@ -1592,7 +1592,7 @@
       try {
         const { data: sessionData } = await sb.auth.getSession();
         const token = sessionData.session && sessionData.session.access_token;
-        const r = await fetch('/api/create-signing-request', {
+        const r = await fetch('/api/actions?action=create-signing-request', {
           method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
           body: JSON.stringify({ doc_type })
         });
