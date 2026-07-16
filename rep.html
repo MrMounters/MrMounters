@@ -791,6 +791,10 @@
   <script src="https://sdk.twilio.com/js/voice/releases/2.11.1/twilio.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Cal.com embed — opens the booking as a fast in-page popup instead of navigating away -->
+  <script>
+    (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  </script>
   <script>
     const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
     const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
@@ -802,7 +806,18 @@
     const OPP_STAGES = ['Opportunity Created','Audit or Concept Sent','Proposal Sent','Negotiating','Verbal Yes','Contract Sent','Payment Pending','Won','Lost'];
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
     // John Bertana's demo booking calendar — reps book prospects here to create Opportunities.
-    const CALCOM_BOOKING_URL = 'https://cal.com/john-bert/15min';
+    const CAL_LINK = 'john-bert/15min';                              // for the in-page embed popup
+    const CALCOM_BOOKING_URL = 'https://cal.com/' + CAL_LINK;        // fallback if the embed can't load
+    let pendingBookingLeadId = null;                                 // which contact the open modal is for
+    function initCal(){
+      if (!window.Cal) return;
+      Cal('init', { origin: 'https://cal.com' });
+      // When a booking completes inside the popup, promote that contact to an Opportunity.
+      Cal('on', { action: 'bookingSuccessful', callback: () => {
+        const id = pendingBookingLeadId; pendingBookingLeadId = null;
+        if (id) createOppFromBooking(id);
+      }});
+    }
 
     function goLogin(){ window.location.href = 'login.html?next=rep.html'; }
     function openMenu(){ document.getElementById('menu').classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -833,6 +848,7 @@
       document.getElementById('hi').textContent = first && first !== name ? ', ' + first : '';
       document.getElementById('loading').classList.add('hidden');
       initSalesForms();
+      initCal();
       await loadSalesData();
       initAcademy();
       initTwilio();
@@ -956,11 +972,21 @@
       logActivity('lead', id, 'call_answered', {});
       loadProspects();
     }
-    // The core appointment-setter action: open John's Cal, then (on confirm) spin the
-    // prospect/lead into an Opportunity ("ready for the demo").
-    async function bookDemo(id){
-      window.open(CALCOM_BOOKING_URL, '_blank', 'noopener');
-      if (!confirm('Did they book the demo? OK creates an Opportunity from this contact.')) return;
+    // The core appointment-setter action: open John's Cal as an in-page popup (fast, no
+    // navigating away). When the booking completes, the Cal 'bookingSuccessful' event
+    // (wired in initCal) fires createOppFromBooking for this contact.
+    function bookDemo(id){
+      pendingBookingLeadId = id;
+      if (window.Cal){
+        Cal('modal', { calLink: CAL_LINK, config: { layout: 'month_view', theme: 'dark' } });
+      } else {
+        // Embed didn't load — fall back to a new tab + manual confirm.
+        window.open(CALCOM_BOOKING_URL, '_blank', 'noopener');
+        if (confirm('Did they book the demo? OK creates an Opportunity from this contact.')) createOppFromBooking(id);
+        pendingBookingLeadId = null;
+      }
+    }
+    async function createOppFromBooking(id){
       const { data: lead, error: le } = await sb.from('leads').select('*').eq('id', id).single();
       if (le || !lead){ alert('Could not load contact: ' + (le && le.message)); return; }
       // Create the opportunity (one per lead is enforced by a DB unique index).
@@ -969,8 +995,8 @@
         stage: 'Opportunity Created', demo_booked_at: new Date().toISOString()
       }).select().single();
       if (error){
-        alert(/deals_one_per_lead|duplicate/i.test(error.message) ? 'This contact already has an opportunity.' : ('Could not create opportunity: ' + error.message));
-        return;
+        if (/deals_one_per_lead|duplicate/i.test(error.message)){ go('opportunities'); return; } // already an opp — fine
+        alert('Could not create opportunity: ' + error.message); return;
       }
       // Promote the contact so the funnel stays honest.
       await sb.from('leads').update({ lifecycle:'lead', status:'Discovery Scheduled', became_lead_at: new Date().toISOString() }).eq('id', id);
