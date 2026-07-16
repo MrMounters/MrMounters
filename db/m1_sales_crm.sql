@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Meridion AI — sales-CRM migration (M1 + M2), STANDALONE & idempotent.
 -- HOW TO RUN: Supabase → SQL Editor → New query → paste ALL of this → Run.
--- (Paste the CONTENTS of this file, not the filename.)
+-- (Paste the CONTENTS of this file, not the filename.) Safe to re-run.
 -- You'll get a RESULTS TABLE at the bottom; every ok must be true.
 -- ============================================================================
 
@@ -83,40 +83,49 @@ $$;
 -- (leads/deals are handled separately below — they are the SALES funnel, not the kitchen.)
 -- ============================================================
 drop policy if exists "staff manage all companies" on public.companies;
+drop policy if exists "admins manage all companies" on public.companies;
 create policy "admins manage all companies" on public.companies for all
   using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 drop policy if exists "staff manage all projects" on public.projects;
+drop policy if exists "admins manage all projects" on public.projects;
 create policy "admins manage all projects" on public.projects for all
   using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 drop policy if exists "staff view all project setup" on public.project_setup;
+drop policy if exists "admins view all project setup" on public.project_setup;
 create policy "admins view all project setup" on public.project_setup for select
   using (public.current_user_role() = 'admin');
 drop policy if exists "staff update all project setup" on public.project_setup;
+drop policy if exists "admins update all project setup" on public.project_setup;
 create policy "admins update all project setup" on public.project_setup for update
   using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 drop policy if exists "staff manage all project stages" on public.project_stages;
+drop policy if exists "admins manage all project stages" on public.project_stages;
 create policy "admins manage all project stages" on public.project_stages for all
   using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 drop policy if exists "staff manage all notifications" on public.notifications;
+drop policy if exists "admins manage all notifications" on public.notifications;
 create policy "admins manage all notifications" on public.notifications for all
   using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 drop policy if exists "staff manage all messages" on public.messages;
+drop policy if exists "admins manage all messages" on public.messages;
 create policy "admins manage all messages" on public.messages for all
   using (public.current_user_role() = 'admin') with check (public.current_user_role() = 'admin');
 
 -- Storage: client-assets is a delivery bucket -> admin only. (rep-docs stays rep-owned.)
 drop policy if exists "staff manage all client assets" on storage.objects;
+drop policy if exists "admins manage all client assets" on storage.objects;
 create policy "admins manage all client assets" on storage.objects for all
   using (bucket_id = 'client-assets' and public.current_user_role() = 'admin')
   with check (bucket_id = 'client-assets' and public.current_user_role() = 'admin');
 
 -- Managers need to read their downline's profiles (to render rep names / assignments).
 drop policy if exists "staff can view all profiles" on public.profiles;
+drop policy if exists "admins can view all profiles" on public.profiles;
 create policy "admins can view all profiles" on public.profiles for select
   using (public.current_user_role() = 'admin');
 drop policy if exists "managers can view downline profiles" on public.profiles;
