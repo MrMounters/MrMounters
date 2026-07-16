@@ -1,10 +1,8 @@
 -- ============================================================================
--- Meridion AI — M1 sales-CRM migration (STANDALONE, idempotent).
--- Run this WHOLE file in Supabase → SQL Editor → New query → Run.
--- Requires the base schema (profiles/leads/deals/... + current_user_role(),
--- touch_updated_at()) to already exist — it does in your project.
--- After it runs you should see a RESULTS TABLE at the bottom with ok = true
--- for every row. Then run:  notify pgrst, 'reload schema';
+-- Meridion AI — sales-CRM migration (M1 + M2), STANDALONE & idempotent.
+-- HOW TO RUN: Supabase → SQL Editor → New query → paste ALL of this → Run.
+-- (Paste the CONTENTS of this file, not the filename.)
+-- You'll get a RESULTS TABLE at the bottom; every ok must be true.
 -- ============================================================================
 
 -- ############################################################
@@ -558,28 +556,68 @@ revoke all on function public.convert_opportunity_to_client(uuid, text, uuid) fr
 -- END M1
 -- ============================================================
 
--- ============================================================================
--- VERIFICATION — this SELECT returns rows so you can SEE it worked.
--- Every ok must be true. If any is false, the object above it did not apply.
--- ============================================================================
-select 'leads.lifecycle' as object,
-       exists(select 1 from information_schema.columns
-              where table_schema='public' and table_name='leads' and column_name='lifecycle') as ok
-union all select 'leads.assigned_rep_id',
-       exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='assigned_rep_id')
-union all select 'deals.archived_at',
-       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')
-union all select 'deals.setup_revenue',
-       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='setup_revenue')
-union all select 'table clients',        (to_regclass('public.clients')        is not null)
-union all select 'table commissions',    (to_regclass('public.commissions')    is not null)
-union all select 'table commission_plans',(to_regclass('public.commission_plans') is not null)
-union all select 'table activity_log',   (to_regclass('public.activity_log')   is not null)
-union all select 'fn convert_lead_to_opportunity',   (to_regproc('public.convert_lead_to_opportunity') is not null)
-union all select 'fn convert_opportunity_to_client', exists(select 1 from pg_proc where proname='convert_opportunity_to_client')
-union all select 'profiles.role allows manager',
-       (pg_get_constraintdef((select oid from pg_constraint where conname='profiles_role_check')) ilike '%manager%')
-order by object;
+-- ############################################################
+-- M2 — REP APPOINTMENT-SETTER EXPERIENCE  (idempotent — safe to re-run)
+-- Rep profile (photo + swag mailing address + email signature), call
+-- dispositions on prospects/leads, and a "booked on Cal" marker used to spin
+-- an appointment into an Opportunity ("ready for the demo").
+-- ############################################################
 
--- Refresh the API cache so the app can see the new tables/columns immediately:
+-- Rep profile fields
+alter table public.profiles add column if not exists avatar_url      text;
+alter table public.profiles add column if not exists ship_name       text;   -- name for swag shipment
+alter table public.profiles add column if not exists ship_address1   text;
+alter table public.profiles add column if not exists ship_address2   text;
+alter table public.profiles add column if not exists ship_city       text;
+alter table public.profiles add column if not exists ship_state      text;
+alter table public.profiles add column if not exists ship_postal     text;
+alter table public.profiles add column if not exists ship_country    text;
+alter table public.profiles add column if not exists email_signature text;
+
+-- Call disposition on prospects/leads (Answered, No Answer, Voicemail, Callback, ...)
+alter table public.leads add column if not exists call_outcome      text;
+alter table public.leads add column if not exists last_contacted_at timestamptz;
+
+-- Appointment-setter: when the prospect booked the demo on Cal.com.
+alter table public.deals add column if not exists demo_booked_at timestamptz;
+
+-- Avatars: a PUBLIC bucket for rep profile photos (name files under <user_id>/...).
+insert into storage.buckets (id, name, public) values ('avatars','avatars',true)
+on conflict (id) do nothing;
+
+drop policy if exists "avatars are readable by anyone" on storage.objects;
+create policy "avatars are readable by anyone" on storage.objects for select
+  using (bucket_id = 'avatars');
+
+drop policy if exists "users manage their own avatar" on storage.objects;
+create policy "users manage their own avatar" on storage.objects for all
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ============================================================
+-- END M2
+-- ============================================================
+
+-- ============================================================================
+-- VERIFICATION — returns rows so you can SEE it worked. Every ok must be true.
+-- ============================================================================
+with checks(object, ok) as (values
+  ('leads.lifecycle',            (to_regclass('public.leads') is not null and exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='lifecycle'))),
+  ('leads.call_outcome',         exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='call_outcome')),
+  ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),
+  ('deals.demo_booked_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='demo_booked_at')),
+  ('profiles.avatar_url',        exists(select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='avatar_url')),
+  ('profiles.email_signature',   exists(select 1 from information_schema.columns where table_schema='public' and table_name='profiles' and column_name='email_signature')),
+  ('table clients',              (to_regclass('public.clients') is not null)),
+  ('table commissions',          (to_regclass('public.commissions') is not null)),
+  ('table commission_plans',     (to_regclass('public.commission_plans') is not null)),
+  ('table activity_log',         (to_regclass('public.activity_log') is not null)),
+  ('bucket avatars',             exists(select 1 from storage.buckets where id='avatars')),
+  ('fn convert_lead_to_opportunity',   (to_regproc('public.convert_lead_to_opportunity') is not null)),
+  ('fn convert_opportunity_to_client', exists(select 1 from pg_proc where proname='convert_opportunity_to_client')),
+  ('role allows manager',        (pg_get_constraintdef((select oid from pg_constraint where conname='profiles_role_check')) ilike '%manager%'))
+)
+select object, ok from checks order by object;
+
+-- Refresh the API cache so the app sees the new tables/columns immediately:
 notify pgrst, 'reload schema';

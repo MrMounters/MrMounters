@@ -1242,3 +1242,45 @@ revoke all on function public.convert_opportunity_to_client(uuid, text, uuid) fr
 -- ============================================================
 -- END M1
 -- ============================================================
+
+-- ############################################################
+-- M2 — REP APPOINTMENT-SETTER EXPERIENCE  (idempotent — safe to re-run)
+-- Rep profile (photo + swag mailing address + email signature), call
+-- dispositions on prospects/leads, and a "booked on Cal" marker used to spin
+-- an appointment into an Opportunity ("ready for the demo").
+-- ############################################################
+
+-- Rep profile fields
+alter table public.profiles add column if not exists avatar_url      text;
+alter table public.profiles add column if not exists ship_name       text;   -- name for swag shipment
+alter table public.profiles add column if not exists ship_address1   text;
+alter table public.profiles add column if not exists ship_address2   text;
+alter table public.profiles add column if not exists ship_city       text;
+alter table public.profiles add column if not exists ship_state      text;
+alter table public.profiles add column if not exists ship_postal     text;
+alter table public.profiles add column if not exists ship_country    text;
+alter table public.profiles add column if not exists email_signature text;
+
+-- Call disposition on prospects/leads (Answered, No Answer, Voicemail, Callback, ...)
+alter table public.leads add column if not exists call_outcome      text;
+alter table public.leads add column if not exists last_contacted_at timestamptz;
+
+-- Appointment-setter: when the prospect booked the demo on Cal.com.
+alter table public.deals add column if not exists demo_booked_at timestamptz;
+
+-- Avatars: a PUBLIC bucket for rep profile photos (name files under <user_id>/...).
+insert into storage.buckets (id, name, public) values ('avatars','avatars',true)
+on conflict (id) do nothing;
+
+drop policy if exists "avatars are readable by anyone" on storage.objects;
+create policy "avatars are readable by anyone" on storage.objects for select
+  using (bucket_id = 'avatars');
+
+drop policy if exists "users manage their own avatar" on storage.objects;
+create policy "users manage their own avatar" on storage.objects for all
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text)
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = auth.uid()::text);
+
+-- ============================================================
+-- END M2
+-- ============================================================

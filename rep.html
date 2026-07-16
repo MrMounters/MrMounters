@@ -92,6 +92,17 @@
   .data-state.err{ color:var(--red); }
   .row-act{ display:inline-flex; gap:0.35rem; flex-wrap:wrap; align-items:center; }
   .sel-sm{ font-family:var(--mono); font-size:0.62rem; padding:0.3rem 0.4rem; background:var(--dark4); color:var(--white); border:1px solid var(--card-border); border-radius:3px; }
+  .btn-xs{ font-family:var(--mono); font-size:0.6rem; letter-spacing:0.04em; text-transform:uppercase; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; border:1px solid var(--card-border); background:none; color:var(--warm-accent); }
+  .btn-xs:hover{ border-color:var(--gold); color:var(--white); }
+  .btn-xs.p{ background:var(--gold); color:var(--dark); border-color:var(--gold); font-weight:700; }
+  /* locked "coming soon" teaser — reused for the dialer */
+  .locked{ position:relative; overflow:hidden; border-radius:6px; }
+  .locked .teaser{ filter:blur(5px); opacity:0.35; pointer-events:none; user-select:none; }
+  .locked .lock-ov{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; text-align:center; padding:1rem; background:radial-gradient(ellipse at center, rgba(11,15,25,0.55), rgba(11,15,25,0.8)); }
+  .locked .lock-ov svg{ width:26px; height:26px; stroke:var(--gold); }
+  .lock-title{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1rem; }
+  .lock-pill{ font-family:var(--mono); font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); background:rgba(76,89,247,0.12); border:1px solid rgba(76,89,247,0.3); padding:0.2rem 0.6rem; border-radius:20px; }
+  .cal-cta{ display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
   .pipe{ display:grid; grid-template-columns:repeat(5,1fr); gap:0.6rem; min-width:640px; }
   .stage{ background:var(--dark4); border:1px solid var(--card-border); border-radius:6px; padding:0.7rem; }
   .stage-h{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.55rem; display:flex; justify-content:space-between; }
@@ -219,17 +230,17 @@
     <div class="menu-div"></div>
     <a class="m-item active" data-s="overview" onclick="go('overview')"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21H3z"/><path d="M9 21v-6h6v6"/></svg>Home</a>
     <div class="m-section">Sell</div>
-    <a class="m-item" data-s="prospects" onclick="go('prospects')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>My Prospects</a>
+    <a class="m-item" data-s="prospects" onclick="go('prospects')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Prospecting</a>
     <a class="m-item" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/></svg>My Leads</a>
     <a class="m-item" data-s="opportunities" onclick="go('opportunities')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>My Opportunities</a>
     <a class="m-item" data-s="myclients" onclick="go('myclients')"><svg viewBox="0 0 24 24"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>My Clients</a>
     <div class="m-section">Money</div>
     <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
-    <div class="m-section">Tools</div>
-    <a class="m-item" data-s="dialer" onclick="go('dialer')"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L8 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2z"/></svg>Dialer</a>
     <div class="m-section">Resources</div>
     <a class="m-item" data-s="kb" onclick="go('kb')"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>The Academy</a>
     <a class="m-item" data-s="docs" onclick="go('docs')"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Documents &amp; Onboarding</a>
+    <div class="m-section">Account</div>
+    <a class="m-item" data-s="profile" onclick="go('profile'); loadProfile()"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>Profile</a>
     <div class="menu-div"></div>
     <a class="m-item" onclick="signOut()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sign out</a>
   </div>
@@ -291,8 +302,29 @@
       </div>
       <div class="panel">
         <div class="panel-h"><div class="panel-t">Prospects</div><span class="panel-k" id="prospectCount">—</span></div>
+        <p class="muted" style="margin-bottom:0.8rem">Your job: work the list, log the call, and <b>book the ones who say yes onto the demo calendar</b> — that creates an Opportunity.</p>
         <div id="prospectsState" class="data-state">Loading…</div>
         <table id="prospectsTable" class="hidden"><thead><tr><th>Name</th><th>Business</th><th>Status</th><th>Actions</th></tr></thead><tbody id="prospectsBody"></tbody></table>
+      </div>
+
+      <!-- Dialer — coming soon (locked + teased) -->
+      <div class="panel locked">
+        <div class="teaser">
+          <div class="panel-h"><div class="panel-t">Power Dialer</div><span class="panel-k">auto-dial your list</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;max-width:230px;margin:0.4rem 0 0.2rem;">
+            <div class="btn btn-o">1</div><div class="btn btn-o">2</div><div class="btn btn-o">3</div>
+            <div class="btn btn-o">4</div><div class="btn btn-o">5</div><div class="btn btn-o">6</div>
+            <div class="btn btn-o">7</div><div class="btn btn-o">8</div><div class="btn btn-o">9</div>
+            <div class="btn btn-o">*</div><div class="btn btn-o">0</div><div class="btn btn-o">#</div>
+          </div>
+          <button class="btn btn-p" style="margin-top:0.5rem">Call</button>
+        </div>
+        <div class="lock-ov">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div class="lock-title">In-browser dialer</div>
+          <div class="lock-pill">Coming soon</div>
+          <p class="muted" style="max-width:34ch">Click-to-call your Maps list right from the portal, with local presence and auto-logging. We're switching it on shortly.</p>
+        </div>
       </div>
     </section>
 
@@ -300,7 +332,22 @@
     <section class="sec" id="sec-leads">
       <div class="eyebrow">// Sell · Leads</div>
       <h1 class="h1">My leads</h1>
-      <p class="lead">Contacts you've had meaningful contact with. Move them to <b>Qualified</b>, then create an Opportunity.</p>
+      <p class="lead">Contacts you've made real contact with. Book the demo to spin one into an Opportunity, or mark <b>Qualified</b> and create one manually.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Add a lead</div></div>
+        <form onsubmit="addLead(event)">
+          <div class="form-grid">
+            <div class="fld"><label>Name</label><input class="inp" id="lName" placeholder="Maria Gomez" required></div>
+            <div class="fld"><label>Business</label><input class="inp" id="lBiz" placeholder="Desert Home Services"></div>
+            <div class="fld"><label>Email</label><input class="inp" id="lEmail" type="email" placeholder="maria@desert.com"></div>
+            <div class="fld"><label>Phone</label><input class="inp" id="lPhone" placeholder="+1 (480) 000-0000"></div>
+            <div class="fld full"><label>Notes</label><textarea class="ta" id="lNotes" placeholder="What you discussed, next step…"></textarea></div>
+          </div>
+          <button class="btn btn-p" type="submit">+ Add lead</button>
+          <div class="ok-msg hidden" id="leadOk">✓ Lead added.</div>
+          <div class="err-msg hidden" id="leadErr"></div>
+        </form>
+      </div>
       <div class="panel">
         <div class="panel-h"><div class="panel-t">Leads</div><span class="panel-k" id="leadCount">—</span></div>
         <div id="leadsState" class="data-state">Loading…</div>
@@ -373,7 +420,43 @@
       </div>
     </section>
 
-    <!-- DIALER -->
+    <!-- PROFILE -->
+    <section class="sec" id="sec-profile">
+      <div class="eyebrow">// Account</div>
+      <h1 class="h1">Your profile</h1>
+      <p class="lead">Your photo and mailing address (so we can send you swag), plus your email signature.</p>
+      <div id="profileState" class="data-state">Loading…</div>
+      <div id="profileWrap" class="hidden">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Photo</div></div>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <img id="avatarImg" alt="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--dark4);border:1px solid var(--card-border);">
+            <label class="btn btn-o file-btn">Choose photo<input type="file" id="avatarFile" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="uploadAvatar()"></label>
+            <span class="muted" id="avatarMsg"></span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Swag mailing address</div></div>
+          <form onsubmit="saveProfile(event)">
+            <div class="form-grid">
+              <div class="fld"><label>Full name</label><input class="inp" id="shipName" placeholder="Maria Gomez"></div>
+              <div class="fld"><label>Address line 1</label><input class="inp" id="ship1" placeholder="123 Main St"></div>
+              <div class="fld"><label>Address line 2</label><input class="inp" id="ship2" placeholder="Apt 4"></div>
+              <div class="fld"><label>City</label><input class="inp" id="shipCity" placeholder="Phoenix"></div>
+              <div class="fld"><label>State</label><input class="inp" id="shipState" placeholder="AZ"></div>
+              <div class="fld"><label>ZIP / Postal</label><input class="inp" id="shipPostal" placeholder="85001"></div>
+              <div class="fld"><label>Country</label><input class="inp" id="shipCountry" placeholder="USA"></div>
+              <div class="fld full"><label>Email signature</label><textarea class="ta" id="emailSig" placeholder="Maria Gomez · Meridion AI · (480) 000-0000"></textarea></div>
+            </div>
+            <button class="btn btn-p" type="submit">Save profile</button>
+            <div class="ok-msg hidden" id="profileOk">✓ Saved.</div>
+            <div class="err-msg hidden" id="profileErr"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIALER (retired from nav — replaced by the 'coming soon' teaser in Prospecting) -->
     <section class="sec" id="sec-dialer">
       <div class="eyebrow">// Dialer</div>
       <h1 class="h1">Dialer</h1>
@@ -708,6 +791,8 @@
     const LEAD_STATUSES = ['New Lead','Contacted','Discovery Scheduled','Discovery Completed','Follow-Up','Nurture','Qualified','Disqualified','Lost'];
     const OPP_STAGES = ['Opportunity Created','Audit or Concept Sent','Proposal Sent','Negotiating','Verbal Yes','Contract Sent','Payment Pending','Won','Lost'];
     const demo = JSON.parse(localStorage.getItem('jb-demo-session') || 'null');
+    // John Bertana's demo booking calendar — reps book prospects here to create Opportunities.
+    const CALCOM_BOOKING_URL = 'https://cal.com/john-bert/15min';
 
     function goLogin(){ window.location.href = 'login.html?next=rep.html'; }
     function openMenu(){ document.getElementById('menu').classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -809,8 +894,10 @@
           <td><b>${esc(p.full_name)}</b></td><td>${esc(p.business)||'—'}</td>
           <td><select class="sel-sm" onchange="updateProspectStatus('${p.id}', this.value)">${opts}</select></td>
           <td><div class="row-act">
-            ${canConvert ? `<button class="btn btn-p" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="convertProspectToLead('${p.id}')">→ Lead</button>` : ''}
-            <button class="btn btn-o" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="archiveRecord('leads','${p.id}','prospect')">Archive</button>
+            <button class="btn-xs" onclick="markAnswered('${p.id}')">Answered</button>
+            ${canConvert ? `<button class="btn-xs" onclick="convertProspectToLead('${p.id}')">→ Lead</button>` : ''}
+            ${canConvert ? `<button class="btn-xs p" onclick="bookDemo('${p.id}')">Book demo</button>` : ''}
+            <button class="btn-xs" onclick="archiveRecord('leads','${p.id}','prospect')">Archive</button>
           </div></td></tr>`;
       }, 'No prospects yet. Add one above, or ask your manager to assign you some.');
       const c = document.getElementById('prospectCount'); if (c) c.textContent = (res.data ? res.data.length : 0) + ' active';
@@ -849,6 +936,98 @@
       await logActivity('lead', id, 'prospect_to_lead', {});
       loadProspects(); loadLeads();
     }
+    // Log a connected call: mark the disposition and nudge the status forward.
+    async function markAnswered(id){
+      const patch = { call_outcome:'Answered', last_contacted_at: new Date().toISOString() };
+      const { data: cur } = await sb.from('leads').select('status').eq('id', id).single();
+      if (cur && ['New','Assigned','Researching','Ready to Contact'].includes(cur.status)) patch.status = 'Attempted Contact';
+      const { error } = await sb.from('leads').update(patch).eq('id', id);
+      if (error){ alert('Update failed: ' + error.message); return; }
+      logActivity('lead', id, 'call_answered', {});
+      loadProspects();
+    }
+    // The core appointment-setter action: open John's Cal, then (on confirm) spin the
+    // prospect/lead into an Opportunity ("ready for the demo").
+    async function bookDemo(id){
+      window.open(CALCOM_BOOKING_URL, '_blank', 'noopener');
+      if (!confirm('Did they book the demo? OK creates an Opportunity from this contact.')) return;
+      const { data: lead, error: le } = await sb.from('leads').select('*').eq('id', id).single();
+      if (le || !lead){ alert('Could not load contact: ' + (le && le.message)); return; }
+      // Create the opportunity (one per lead is enforced by a DB unique index).
+      const { data: deal, error } = await sb.from('deals').insert({
+        contact: lead.full_name, business: lead.business, lead_id: lead.id,
+        stage: 'Opportunity Created', demo_booked_at: new Date().toISOString()
+      }).select().single();
+      if (error){
+        alert(/deals_one_per_lead|duplicate/i.test(error.message) ? 'This contact already has an opportunity.' : ('Could not create opportunity: ' + error.message));
+        return;
+      }
+      // Promote the contact so the funnel stays honest.
+      await sb.from('leads').update({ lifecycle:'lead', status:'Discovery Scheduled', became_lead_at: new Date().toISOString() }).eq('id', id);
+      await logActivity('deal', deal.id, 'demo_booked', { lead_id: lead.id });
+      loadProspects(); loadLeads(); await loadOpps(); go('opportunities');
+    }
+    async function addLead(e){
+      e.preventDefault();
+      const err = document.getElementById('leadErr'); err.classList.add('hidden');
+      const full_name = document.getElementById('lName').value.trim();
+      if (!full_name){ err.textContent = 'Name is required.'; err.classList.remove('hidden'); return; }
+      if (!(sb && session)){ err.textContent = 'Sign in to add leads.'; err.classList.remove('hidden'); return; }
+      const payload = {
+        full_name, business: document.getElementById('lBiz').value.trim() || null,
+        email: document.getElementById('lEmail').value.trim() || null,
+        phone: document.getElementById('lPhone').value.trim() || null,
+        notes: document.getElementById('lNotes').value.trim() || null,
+        lifecycle: 'lead', status: 'New Lead', source: 'manual',
+        assigned_rep_id: session.user.id, became_lead_at: new Date().toISOString()
+      };
+      const { data, error } = await sb.from('leads').insert(payload).select().single();
+      if (error){ err.textContent = 'Could not add — ' + error.message; err.classList.remove('hidden'); return; }
+      await logActivity('lead', data.id, 'lead_created', {});
+      document.getElementById('leadOk').classList.remove('hidden');
+      setTimeout(() => document.getElementById('leadOk').classList.add('hidden'), 2500);
+      ['lName','lBiz','lEmail','lPhone','lNotes'].forEach(id => document.getElementById(id).value = '');
+      loadLeads();
+    }
+    // ---- PROFILE ----
+    async function loadProfile(){
+      if (!(sb && session)){ setState('profileState','Sign in to edit your profile.', false); return; }
+      setState('profileState','Loading…',false); document.getElementById('profileWrap').classList.add('hidden');
+      const { data, error } = await sb.from('profiles').select('avatar_url, ship_name, ship_address1, ship_address2, ship_city, ship_state, ship_postal, ship_country, email_signature').eq('user_id', session.user.id).single();
+      if (error){ setState('profileState','Couldn’t load — ' + error.message, true); return; }
+      const p = data || {};
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+      set('shipName', p.ship_name); set('ship1', p.ship_address1); set('ship2', p.ship_address2);
+      set('shipCity', p.ship_city); set('shipState', p.ship_state); set('shipPostal', p.ship_postal);
+      set('shipCountry', p.ship_country); set('emailSig', p.email_signature);
+      const img = document.getElementById('avatarImg'); if (img && p.avatar_url) img.src = p.avatar_url;
+      document.getElementById('profileState').classList.add('hidden');
+      document.getElementById('profileWrap').classList.remove('hidden');
+    }
+    async function saveProfile(e){
+      e.preventDefault();
+      const err = document.getElementById('profileErr'); err.classList.add('hidden');
+      const g = id => document.getElementById(id).value.trim() || null;
+      const { error } = await sb.from('profiles').update({
+        ship_name:g('shipName'), ship_address1:g('ship1'), ship_address2:g('ship2'),
+        ship_city:g('shipCity'), ship_state:g('shipState'), ship_postal:g('shipPostal'),
+        ship_country:g('shipCountry'), email_signature:g('emailSig')
+      }).eq('user_id', session.user.id);
+      if (error){ err.textContent = 'Save failed — ' + error.message; err.classList.remove('hidden'); return; }
+      const ok = document.getElementById('profileOk'); ok.classList.remove('hidden'); setTimeout(() => ok.classList.add('hidden'), 2500);
+    }
+    async function uploadAvatar(){
+      const file = document.getElementById('avatarFile').files[0]; if (!file) return;
+      const msg = document.getElementById('avatarMsg'); msg.textContent = 'Uploading…';
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = session.user.id + '/avatar.' + ext;
+      const up = await sb.storage.from('avatars').upload(path, file, { upsert:true, contentType:file.type });
+      if (up.error){ msg.textContent = '⚠ ' + up.error.message; return; }
+      const { data } = sb.storage.from('avatars').getPublicUrl(path);
+      const url = data.publicUrl + '?t=' + Date.now();
+      await sb.from('profiles').update({ avatar_url: url }).eq('user_id', session.user.id);
+      document.getElementById('avatarImg').src = url; msg.textContent = 'Saved ✓';
+    }
 
     // ---- LEADS ----
     async function loadLeads(){
@@ -860,8 +1039,9 @@
           <td><b>${esc(l.full_name)}</b></td><td>${esc(l.business)||'—'}</td>
           <td><select class="sel-sm" onchange="updateLeadStatus('${l.id}', this.value)">${opts}</select></td>
           <td><div class="row-act">
-            ${l.status==='Qualified' ? `<button class="btn btn-p" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="createOpportunity('${l.id}')">Create Opportunity</button>` : ''}
-            <button class="btn btn-o" style="padding:0.3rem 0.6rem;font-size:0.6rem" onclick="archiveRecord('leads','${l.id}','lead')">Archive</button>
+            <button class="btn-xs p" onclick="bookDemo('${l.id}')">Book demo</button>
+            ${l.status==='Qualified' ? `<button class="btn-xs" onclick="createOpportunity('${l.id}')">Create Opp</button>` : ''}
+            <button class="btn-xs" onclick="archiveRecord('leads','${l.id}','lead')">Archive</button>
           </div></td></tr>`;
       }, 'No leads yet. Convert an interested prospect to start a lead.');
       const c = document.getElementById('leadCount'); if (c) c.textContent = (res.data ? res.data.length : 0) + ' active';
@@ -1159,6 +1339,8 @@
     // ── DIALER (Twilio in-browser calling, with tel: fallback) ──
     let device = null, twilioReady = false, activeCall = null;
     async function initTwilio(){
+      // Dialer is "coming soon" (shown as a locked teaser in Prospecting). Disabled for now.
+      if (true) return;
       if (!window.Twilio || !window.Twilio.Device) return;
       try {
         const r = await fetch('/api/twilio-token');
