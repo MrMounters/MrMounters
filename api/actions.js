@@ -48,29 +48,10 @@ async function requireUser(supabaseAdmin, req) {
 // Optional:
 //   ADMIN_NOTIFY_EMAIL (where "demo booked" pings go when the rep has no manager on file)
 // ---------------------------------------------------------------------------
-async function sendEmail({ to, subject, html }) {
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
-  if (!RESEND_API_KEY || !RESEND_FROM_EMAIL || !to) return { skipped: true };
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + RESEND_API_KEY },
-      body: JSON.stringify({ from: RESEND_FROM_EMAIL, to: Array.isArray(to) ? to : [to], subject, html }),
-    });
-    const json = await r.json().catch(() => null);
-    if (!r.ok) { console.error('resend send failed', json); return { ok: false, detail: json }; }
-    return { ok: true, id: json && json.id };
-  } catch (e) {
-    console.error('resend send error', e);
-    return { ok: false, detail: String((e && e.message) || e) };
-  }
-}
-function emailShell(title, bodyHtml) {
-  return `<div style="font-family:sans-serif;max-width:520px;margin:0 auto;color:#111">
-    <h2 style="margin:0 0 12px">${title}</h2>${bodyHtml}
-    <p style="margin-top:24px;color:#888;font-size:12px">Meridion AI</p></div>`;
-}
+// sendEmail / emailShell / sendSms now live in ../lib/notify.js so the cron endpoint can
+// share them without duplicating code (and without adding another Vercel function — lib/ is
+// bundled into whichever function requires it). Both remain best-effort and never throw.
+const { sendEmail, emailShell } = require('../lib/notify');
 
 // ---------------------------------------------------------------------------
 // create-checkout-session — Stripe Checkout for the two fixed-price Web Dev plans.

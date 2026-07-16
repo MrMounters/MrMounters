@@ -670,12 +670,32 @@ alter table public.leads alter column email drop not null;
 -- END M3
 -- ============================================================
 
+
+-- ============================================================
+-- M4 — Automated follow-up nudges (cold prospect/lead reminders)
+-- ------------------------------------------------------------
+-- The daily cron (api/cron.js) emails each rep a digest of their prospects/leads that have
+-- gone cold (not contacted in a few days, still working, not archived). `last_nudged_at`
+-- records when a lead was last included in a digest so we don't re-nudge the same rows every
+-- run — a per-lead cooldown. Additive + idempotent (safe to re-run).
+-- ============================================================
+alter table public.leads add column if not exists last_nudged_at timestamptz;
+
+create index if not exists leads_followup_idx
+  on public.leads(assigned_rep_id, last_contacted_at)
+  where archived_at is null;
+
+-- ============================================================
+-- END M4
+-- ============================================================
+
 -- ============================================================================
 -- VERIFICATION — returns rows so you can SEE it worked. Every ok must be true.
 -- ============================================================================
 with checks(object, ok) as (values
   ('leads.lifecycle',            (to_regclass('public.leads') is not null and exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='lifecycle'))),
   ('leads.call_outcome',         exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='call_outcome')),
+  ('leads.last_nudged_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='last_nudged_at')),
   ('leads.email nullable',       (select is_nullable='YES' from information_schema.columns where table_schema='public' and table_name='leads' and column_name='email')),
   ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),
   ('deals.demo_booked_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='demo_booked_at')),

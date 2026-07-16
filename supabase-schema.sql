@@ -1356,3 +1356,24 @@ alter table public.leads alter column email drop not null;
 -- ============================================================
 -- END M3
 -- ============================================================
+
+
+-- ============================================================
+-- M4 — Automated follow-up nudges (cold prospect/lead reminders)
+-- ------------------------------------------------------------
+-- The daily cron (api/cron.js) emails each rep a digest of their prospects/leads that have
+-- gone cold (not contacted in a few days, still working, not archived). `last_nudged_at`
+-- records when a lead was last included in a digest so we don't re-nudge the same rows every
+-- run — a per-lead cooldown. Additive + idempotent (safe to re-run).
+-- ============================================================
+alter table public.leads add column if not exists last_nudged_at timestamptz;
+
+-- Partial index over the "still working, not archived" rows the cron scans — keeps the daily
+-- sweep cheap as the table grows.
+create index if not exists leads_followup_idx
+  on public.leads(assigned_rep_id, last_contacted_at)
+  where archived_at is null;
+
+-- ============================================================
+-- END M4
+-- ============================================================
