@@ -742,6 +742,54 @@ async function adminUpdateTeamMember(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// admin-backfill-names — auto-fills profiles.full_name from auth.users metadata for any team
+// member missing it. Covers accounts invited before invite-rep started writing full_name to
+// profiles directly (it used to only reach auth.users.raw_user_meta_data via the
+// inviteUserByEmail `data` option) — their real name was captured at invite time, it just
+// never got copied over. Run automatically whenever the admin Team page loads (best-effort,
+// no-op if there's nothing to fill), so this fixes itself with no manual clicking wherever the
+// name already exists somewhere. Accounts with no name on file anywhere (never invited with
+// one, never completed onboarding) still need a human to type it once via the Edit button.
+// ---------------------------------------------------------------------------
+async function adminBackfillNames(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const token = bearerToken(req);
+  if (!token) return res.status(401).json({ error: 'unauthorized' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+  try {
+    const { data: callerData, error: callerErr } = await supabaseAdmin.auth.getUser(token);
+    if (callerErr || !callerData || !callerData.user) return res.status(401).json({ error: 'unauthorized' });
+    const { data: callerProfile } = await supabaseAdmin.from('profiles').select('role').eq('user_id', callerData.user.id).single();
+    if (!callerProfile || callerProfile.role !== 'admin') return res.status(403).json({ error: 'forbidden' });
+
+    const { data: missing } = await supabaseAdmin.from('profiles').select('user_id')
+      .in('role', ['rep', 'manager', 'admin']).is('full_name', null);
+    if (!missing || !missing.length) return res.status(200).json({ ok: true, filled: 0 });
+
+    let filled = 0;
+    for (const row of missing) {
+      const { data: u } = await supabaseAdmin.auth.admin.getUserById(row.user_id);
+      const meta = u && u.user && u.user.user_metadata;
+      const name = meta && (meta.full_name || meta.name);
+      if (!name) continue;
+      const { error } = await supabaseAdmin.from('profiles').update({ full_name: name }).eq('user_id', row.user_id);
+      if (!error) filled++;
+    }
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ ok: true, filled });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
 const ACTIONS = {
@@ -752,6 +800,7 @@ const ACTIONS = {
   'close-opportunity': closeOpportunity,
   'invite-rep': inviteRep,
   'admin-update-team-member': adminUpdateTeamMember,
+  'admin-backfill-names': adminBackfillNames,
   'create-signing-request': createSigningRequest,
   'documenso-webhook': documensoWebhook,
   'impersonate': impersonate,

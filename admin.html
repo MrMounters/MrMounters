@@ -856,6 +856,7 @@
     let teamProfiles = [];
     let teamAgreements = {}; // user_id -> { nda: row, non_compete: row }
     let teamW9 = {};         // user_id -> true if a w9- file exists in rep-docs
+    let teamNamesBackfilled = false; // only attempt the auth-metadata backfill once per session
     async function loadTeam(){
       const { data, error } = await sb.from('profiles').select('user_id, role, full_name, business_name, manager_id, connect_status').in('role', ['rep','manager','admin']).order('role');
       if (error) return;
@@ -865,6 +866,22 @@
       (agData || []).forEach(a => { teamAgreements[a.rep_id] = teamAgreements[a.rep_id] || {}; teamAgreements[a.rep_id][a.doc_type] = a; });
       renderTeam();
       populateManagerSelect();
+
+      // Best-effort, silent: fill in any name that already exists in auth metadata (e.g. typed
+      // at invite time before profiles.full_name was wired up) so "Unnamed" rows fix themselves
+      // without an admin having to retype a name the system already captured once.
+      if (!teamNamesBackfilled && teamProfiles.some(p => !p.full_name)){
+        teamNamesBackfilled = true;
+        try {
+          const { data: { session } } = await sb.auth.getSession();
+          const r = await fetch('/api/actions?action=admin-backfill-names', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
+          });
+          const result = await r.json();
+          if (r.ok && result.filled > 0) loadTeam();
+        } catch (e) { /* best-effort — an Unnamed row just falls back to the Edit button */ }
+      }
     }
     function docPill(a){
       if (!a) return '<span class="pill mut">Not started</span>';
