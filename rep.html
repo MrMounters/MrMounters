@@ -853,6 +853,29 @@
     </div>
   </div>
 
+  <!-- EMAIL PROSPECT/LEAD — compose + sent history, one shared modal for both lists -->
+  <div class="modal-backdrop hidden" id="emailModal" onclick="if(event.target===this) closeEmailModal()">
+    <div class="modal-box">
+      <div class="modal-h"><div class="modal-t">Email <span id="emailModalTo"></span></div>
+        <button class="modal-x" onclick="closeEmailModal()" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <form onsubmit="sendEmailToLead(event)">
+        <div class="form-grid">
+          <div class="fld full"><label>Subject</label><input class="inp" id="emSubject" required></div>
+          <div class="fld full"><label>Message</label><textarea class="ta" id="emBody" rows="6" required></textarea></div>
+        </div>
+        <p class="muted" style="margin:0.2rem 0 0.8rem;font-size:0.78rem;">Sent from your Meridion AI email with your signature attached — replies land in your own inbox.</p>
+        <button class="btn btn-p" type="submit" id="emSendBtn">Send</button>
+        <div class="err-msg hidden" id="emailErr"></div>
+        <div class="muted hidden" id="emailOk" style="color:var(--ok, #4ade80);margin-top:0.5rem;">✓ Sent.</div>
+      </form>
+      <div id="emailHistoryWrap" style="margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--card-border, rgba(255,255,255,0.08));">
+        <div class="muted" style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;">Sent history</div>
+        <div id="emailHistoryList" class="muted" style="font-size:0.85rem;">—</div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://sdk.twilio.com/js/voice/releases/2.11.1/twilio.min.js"></script>
   <script src="auth-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1006,6 +1029,7 @@
             <button class="btn-xs" onclick="markAnswered('${p.id}')">Answered</button>
             ${canConvert ? `<button class="btn-xs" onclick="convertProspectToLead('${p.id}')">→ Lead</button>` : ''}
             ${canConvert ? `<button class="btn-xs p" onclick="bookDemo('${p.id}')">Book demo</button>` : ''}
+            <button class="btn-xs" onclick="openEmailModal('${p.id}')">Email</button>
             <button class="btn-xs" onclick="openEditModal('${p.id}')">Edit</button>
             <button class="btn-xs" onclick="archiveRecord('leads','${p.id}','prospect')">Archive</button>
           </div></td></tr>`;
@@ -1183,6 +1207,7 @@
           <td><div class="row-act">
             <button class="btn-xs p" onclick="bookDemo('${l.id}')">Book demo</button>
             ${l.status==='Qualified' ? `<button class="btn-xs" onclick="createOpportunity('${l.id}')">Create Opp</button>` : ''}
+            <button class="btn-xs" onclick="openEmailModal('${l.id}')">Email</button>
             <button class="btn-xs" onclick="openEditModal('${l.id}')">Edit</button>
             <button class="btn-xs" onclick="archiveRecord('leads','${l.id}','lead')">Archive</button>
           </div></td></tr>`;
@@ -1342,6 +1367,75 @@
       loadProspects(); loadLeads();
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEditModal(); });
+
+    // ---- EMAIL (compose to a prospect/lead + their sent history) ----
+    let emailingId = null;
+    let emailingAddress = null;
+    async function openEmailModal(id){
+      const { data, error } = await sb.from('leads').select('id, full_name, email').eq('id', id).single();
+      if (error || !data){ alert('Could not load contact: ' + (error && error.message)); return; }
+      if (!data.email){ alert('This contact has no email on file yet — add one via Edit first.'); return; }
+      emailingId = id; emailingAddress = data.email;
+      document.getElementById('emailModalTo').textContent = '— ' + data.full_name + ' <' + data.email + '>';
+      document.getElementById('emSubject').value = '';
+      document.getElementById('emBody').value = '';
+      document.getElementById('emailErr').classList.add('hidden');
+      document.getElementById('emailOk').classList.add('hidden');
+      document.getElementById('emSendBtn').disabled = false;
+      document.getElementById('emailModal').classList.remove('hidden');
+      loadEmailHistory(id);
+    }
+    function closeEmailModal(){
+      emailingId = null; emailingAddress = null;
+      document.getElementById('emailModal').classList.add('hidden');
+    }
+    async function loadEmailHistory(id){
+      const wrap = document.getElementById('emailHistoryList');
+      wrap.textContent = 'Loading…';
+      const { data, error } = await sb.from('activity_log').select('detail, created_at')
+        .eq('entity_type', 'lead').eq('entity_id', id).eq('action', 'email_sent')
+        .order('created_at', { ascending: false }).limit(10);
+      if (error){ wrap.textContent = 'Couldn’t load history.'; return; }
+      if (!data || !data.length){ wrap.textContent = 'No emails sent yet.'; return; }
+      wrap.innerHTML = data.map(row => {
+        const d = row.detail || {};
+        const when = row.created_at ? new Date(row.created_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+        return `<div style="padding:0.55rem 0;border-bottom:1px solid var(--card-border, rgba(255,255,255,0.06));">
+          <b>${esc(d.subject || '(no subject)')}</b> <span class="muted" style="font-size:0.76rem;">${esc(when)}</span>
+          ${d.preview ? `<div class="muted" style="font-size:0.8rem;margin-top:0.2rem;">${esc(d.preview)}${d.preview.length >= 200 ? '…' : ''}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+    async function sendEmailToLead(e){
+      e.preventDefault();
+      if (!emailingId) return;
+      const err = document.getElementById('emailErr'); err.classList.add('hidden');
+      const ok = document.getElementById('emailOk'); ok.classList.add('hidden');
+      const subject = document.getElementById('emSubject').value.trim();
+      const body = document.getElementById('emBody').value.trim();
+      if (!subject || !body){ err.textContent = 'Subject and message are required.'; err.classList.remove('hidden'); return; }
+      const btn = document.getElementById('emSendBtn'); btn.disabled = true;
+      try {
+        const { data: fresh } = await sb.auth.getSession();
+        const token = fresh.session && fresh.session.access_token;
+        const r = await fetch('/api/actions?action=send-lead-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ lead_id: emailingId, subject, body }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Send failed');
+        document.getElementById('emSubject').value = '';
+        document.getElementById('emBody').value = '';
+        ok.classList.remove('hidden');
+        loadEmailHistory(emailingId);
+      } catch (err2) {
+        err.textContent = 'Send failed — ' + err2.message;
+        err.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+      }
+    }
 
     // Academy module reader
     function openDoc(which){

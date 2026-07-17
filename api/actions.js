@@ -36,6 +36,12 @@ async function requireUser(supabaseAdmin, req) {
   return data.user;
 }
 
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 // ---------------------------------------------------------------------------
 // Resend — best-effort transactional email. Never throws: a failed/unconfigured send should
 // never break the action that triggered it (e.g. an assignment still saves even if the
@@ -790,6 +796,72 @@ async function adminBackfillNames(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// send-lead-email — a rep/manager/admin emails a prospect or lead straight from the pipeline,
+// via Resend, with the sender's own signature and Reply-To (so replies land in the sender's
+// real inbox, not a noreply address). Every send is logged to activity_log so the contact's
+// "Sent" history is visible to anyone who could already see that lead (rep who owns it,
+// their manager, or admin) — reusing the existing table/policies rather than adding a new one.
+// ---------------------------------------------------------------------------
+async function sendLeadEmail(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const caller = await requireUser(supabaseAdmin, req);
+  if (!caller) return res.status(401).json({ error: 'unauthorized' });
+
+  try {
+    const { lead_id, subject, body } = req.body || {};
+    if (!lead_id) return res.status(400).json({ error: 'lead_id_required' });
+    if (!subject || !subject.trim()) return res.status(400).json({ error: 'subject_required' });
+    if (!body || !body.trim()) return res.status(400).json({ error: 'body_required' });
+
+    const { data: lead } = await supabaseAdmin.from('leads').select('id, full_name, email, assigned_rep_id').eq('id', lead_id).single();
+    if (!lead) return res.status(404).json({ error: 'lead_not_found' });
+    if (!lead.email) return res.status(400).json({ error: 'lead_has_no_email' });
+
+    // Authorization: same scoping RLS would apply in the browser — own lead (rep), downline
+    // (manager, one hop — matches the commission-override MVP design elsewhere), or admin.
+    // Needed here because this write goes through the service role, which bypasses RLS.
+    const { data: callerProfile } = await supabaseAdmin.from('profiles').select('role, full_name, phone').eq('user_id', caller.id).single();
+    const role = callerProfile && callerProfile.role;
+    let allowed = role === 'admin' || lead.assigned_rep_id === caller.id;
+    if (!allowed && role === 'manager' && lead.assigned_rep_id) {
+      const { data: repProfile } = await supabaseAdmin.from('profiles').select('manager_id').eq('user_id', lead.assigned_rep_id).single();
+      allowed = !!(repProfile && repProfile.manager_id === caller.id);
+    }
+    if (!allowed) return res.status(403).json({ error: 'forbidden' });
+
+    const senderName = (callerProfile && callerProfile.full_name) || caller.email || 'Meridion AI';
+    const bodyHtml = escapeHtml(body).replace(/\n/g, '<br>');
+    const signatureHtml = `<p style="margin-top:1.5rem;color:#666;font-size:0.85rem">
+      ${escapeHtml(senderName)}<br>Growth Advisor, Meridion AI
+      ${callerProfile && callerProfile.phone ? '<br>' + escapeHtml(callerProfile.phone) : ''}</p>`;
+
+    const result = await sendEmail({
+      to: lead.email,
+      subject: subject.trim(),
+      html: emailShell(subject.trim(), `<p>${bodyHtml}</p>${signatureHtml}`),
+      replyTo: caller.email || undefined,
+    });
+    if (result && result.skipped) return res.status(503).json({ error: 'email_not_configured' });
+    if (result && result.ok === false) return res.status(502).json({ error: 'send_failed', detail: result.detail });
+
+    await supabaseAdmin.from('activity_log').insert({
+      entity_type: 'lead', entity_id: lead_id, action: 'email_sent', actor_id: caller.id,
+      detail: { to: lead.email, subject: subject.trim(), preview: body.trim().slice(0, 200), resend_id: result && result.id },
+    });
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
 const ACTIONS = {
@@ -801,6 +873,7 @@ const ACTIONS = {
   'invite-rep': inviteRep,
   'admin-update-team-member': adminUpdateTeamMember,
   'admin-backfill-names': adminBackfillNames,
+  'send-lead-email': sendLeadEmail,
   'create-signing-request': createSigningRequest,
   'documenso-webhook': documensoWebhook,
   'impersonate': impersonate,
