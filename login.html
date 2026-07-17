@@ -124,12 +124,18 @@
     const DEMO_EMAIL = 'user@user.com';
     let sb = null;
 
+    // A real Supabase session always wins over a stale demo flag — otherwise anyone who ever
+    // clicked "Try the demo portal" on this browser gets bounced into the fake McKinley demo
+    // account instead of their real one every time they log in for real afterward.
     if (configured && window.supabase) {
       sb = window.supabase.createClient(URL_, KEY_);
-      sb.auth.getSession().then(({ data }) => { if (data.session) goToRoleHome(); });
+      sb.auth.getSession().then(({ data }) => {
+        if (data.session) { localStorage.removeItem('jb-demo-session'); goToRoleHome(); }
+        else if (localStorage.getItem('jb-demo-session')) { window.location.href = PORTAL; }
+      });
+    } else if (localStorage.getItem('jb-demo-session')) {
+      window.location.href = PORTAL;
     }
-    // already in a demo session? go straight in
-    if (localStorage.getItem('jb-demo-session')) window.location.href = PORTAL;
 
     // Real accounts are role-gated (client vs rep); demo accounts always go to the
     // ?next= hint since they're a pure frontend demo with no profiles table behind them.

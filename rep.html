@@ -897,24 +897,33 @@
 
     async function init(){
       let name = null;
-      if (demo){ name = demo.name || demo.email; }
-      else if (configured && window.supabase){
+      // A real Supabase session always wins over a stale demo flag — otherwise anyone who ever
+      // clicked "Try the demo portal" on this browser gets bounced into the fake demo account
+      // instead of their real rep account every time they log in for real afterward.
+      if (configured && window.supabase){
         sb = window.supabase.createClient(URL_, KEY_);
         const { data } = await sb.auth.getSession();
         session = data.session;
-        if (!session){ goLogin(); return; }
-        // Role gate: this is the Sales Rep portal. Send everyone else to their own home.
-        const { data: profile } = await sb.from('profiles').select('role, avatar_url').eq('user_id', session.user.id).single();
-        const role = profile && profile.role;
-        if (role !== 'rep'){
-          window.location.href = role === 'admin' ? 'admin.html' : role === 'manager' ? 'manager.html' : 'portal.html';
-          return;
-        }
-        const u = session.user;
-        name = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
-        setMenuAvatar(profile && profile.avatar_url);
-        sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
-      } else { goLogin(); return; }
+        if (session){
+          localStorage.removeItem('jb-demo-session');
+          // Role gate: this is the Sales Rep portal. Send everyone else to their own home.
+          const { data: profile } = await sb.from('profiles').select('role, avatar_url, full_name').eq('user_id', session.user.id).single();
+          const role = profile && profile.role;
+          if (role !== 'rep'){
+            window.location.href = role === 'admin' ? 'admin.html' : role === 'manager' ? 'manager.html' : 'portal.html';
+            return;
+          }
+          const u = session.user;
+          // profiles.full_name is what onboarding.html / the Profile page actually save —
+          // auth user_metadata is only populated when an admin types a name at invite time, so
+          // preferring it here used to show blank/email for anyone who set their name later.
+          name = profile.full_name || (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || u.email || u.phone || 'Sales Rep';
+          setMenuAvatar(profile && profile.avatar_url);
+          sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+        } else if (demo){ name = demo.name || demo.email; }
+        else { goLogin(); return; }
+      } else if (demo){ name = demo.name || demo.email; }
+      else { goLogin(); return; }
       document.getElementById('acctName').textContent = name;
       document.getElementById('acctName2').textContent = name;
       const first = String(name).split('@')[0].split(' ')[0];

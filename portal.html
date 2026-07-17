@@ -952,27 +952,35 @@
 
     async function init(){
       let name = null;
-      if (demo){
-        name = demo.name || demo.email;
-        currentEmail = demo.email || 'user@user.com';
-      } else if (configured && window.supabase){
+      // A real Supabase session always wins over a stale demo flag — otherwise anyone who ever
+      // clicked "Try the demo portal" on this browser gets bounced into the fake McKinley demo
+      // account instead of their real one every time they log in for real afterward.
+      if (configured && window.supabase){
         sb = window.supabase.createClient(URL_, KEY_);
         const { data: sessionData } = await sb.auth.getSession();
         session = sessionData.session;
-        if (!session){ goLogin(); return; }
-        // Role gate: this is the client portal — a rep/admin account belongs in rep.html.
-        const { data: profile } = await sb.from('profiles').select('role, full_name, phone, terms_accepted_at').eq('user_id', session.user.id).single();
-        if (profile && profile.role === 'admin'){ window.location.href = 'admin.html'; return; }
-        if (profile && profile.role === 'rep'){ window.location.href = 'rep.html'; return; }
-        // Onboarding gate: don't show the dashboard until account setup is complete.
-        if (profile && (!profile.full_name || !profile.phone || !profile.terms_accepted_at)){ window.location.href = 'onboarding.html'; return; }
-        const u = session.user;
-        // profiles.full_name is what onboarding.html actually collects and saves — Supabase's
-        // own user_metadata is never populated by anything in this app, so relying on it (as
-        // this used to) always fell through to showing the raw email address instead of a name.
-        name = profile.full_name || u.email || u.phone || 'Client';
-        currentEmail = u.email || null;
-        sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+        if (session){
+          localStorage.removeItem('jb-demo-session');
+          // Role gate: this is the client portal — a rep/admin account belongs in rep.html.
+          const { data: profile } = await sb.from('profiles').select('role, full_name, phone, terms_accepted_at').eq('user_id', session.user.id).single();
+          if (profile && profile.role === 'admin'){ window.location.href = 'admin.html'; return; }
+          if (profile && profile.role === 'rep'){ window.location.href = 'rep.html'; return; }
+          // Onboarding gate: don't show the dashboard until account setup is complete.
+          if (profile && (!profile.full_name || !profile.phone || !profile.terms_accepted_at)){ window.location.href = 'onboarding.html'; return; }
+          const u = session.user;
+          // profiles.full_name is what onboarding.html actually collects and saves — Supabase's
+          // own user_metadata is never populated by anything in this app, so relying on it (as
+          // this used to) always fell through to showing the raw email address instead of a name.
+          name = profile.full_name || u.email || u.phone || 'Client';
+          currentEmail = u.email || null;
+          sb.auth.onAuthStateChange((_e, s) => { if (!s) goLogin(); });
+        } else if (demo){
+          name = demo.name || demo.email;
+          currentEmail = demo.email || 'user@user.com';
+        } else { goLogin(); return; }
+      } else if (demo){
+        name = demo.name || demo.email;
+        currentEmail = demo.email || 'user@user.com';
       } else { goLogin(); return; }
 
       document.getElementById('acctName').textContent = firstName(name);
