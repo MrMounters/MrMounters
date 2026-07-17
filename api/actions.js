@@ -59,6 +59,21 @@ function escapeHtml(s) {
 // bundled into whichever function requires it). Both remain best-effort and never throw.
 const { sendEmail, emailShell } = require('../lib/notify');
 
+// In-app companion to sendEmail — writes a row to the notifications table (M5's recipient_id)
+// so the recipient sees a real bell/badge in rep.html or manager.html, not just an email that
+// can get lost in an inbox. Best-effort and never throws, matching sendEmail's contract.
+async function notifyInApp(supabaseAdmin, recipientId, title, body) {
+  if (!recipientId) return { skipped: true };
+  try {
+    const { error } = await supabaseAdmin.from('notifications').insert({ recipient_id: recipientId, title, body });
+    if (error) { console.error('in-app notify failed', error); return { ok: false, detail: error.message }; }
+    return { ok: true };
+  } catch (e) {
+    console.error('in-app notify error', e);
+    return { ok: false, detail: String((e && e.message) || e) };
+  }
+}
+
 // ---------------------------------------------------------------------------
 // create-checkout-session — Stripe Checkout for the two fixed-price Web Dev plans.
 // ---------------------------------------------------------------------------
@@ -548,7 +563,7 @@ async function calBookings(req, res) {
     const data = await r.json();
     const list = data.data || data.bookings || [];
     const bookings = list.map(b => ({
-      id: b.id || b.uid, title: b.title,
+      id: b.id || b.uid, uid: b.uid, title: b.title,
       attendeeName: (b.attendees && b.attendees[0] && b.attendees[0].name) || null,
       attendeeEmail: (b.attendees && b.attendees[0] && b.attendees[0].email) || null,
       start: b.start || b.startTime, end: b.end || b.endTime, status: b.status,
@@ -557,6 +572,45 @@ async function calBookings(req, res) {
     return res.status(200).json({ configured: true, bookings });
   } catch (e) {
     return res.status(200).json({ configured: true, bookings: [], error: String((e && e.message) || e) });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// cancel-booking — admin cancels a Cal.com booking (used from the admin Consultations
+// calendar). Rescheduling is handled client-side by opening Cal.com's own hosted reschedule
+// page (https://cal.com/reschedule/{uid}) rather than reimplementing a slot picker here.
+// ---------------------------------------------------------------------------
+async function cancelBooking(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { CALCOM_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!CALCOM_API_KEY) return res.status(503).json({ error: 'calcom_not_configured' });
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const caller = await requireUser(supabaseAdmin, req);
+  if (!caller) return res.status(401).json({ error: 'unauthorized' });
+
+  try {
+    const { data: callerProfile } = await supabaseAdmin.from('profiles').select('role').eq('user_id', caller.id).single();
+    if (!callerProfile || callerProfile.role !== 'admin') return res.status(403).json({ error: 'forbidden' });
+
+    const { booking_uid, reason } = req.body || {};
+    if (!booking_uid) return res.status(400).json({ error: 'booking_uid_required' });
+
+    const CAL_API_VERSION = '2024-08-13';
+    const r = await fetch(`https://api.cal.com/v2/bookings/${encodeURIComponent(booking_uid)}/cancel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + CALCOM_API_KEY, 'cal-api-version': CAL_API_VERSION },
+      body: JSON.stringify({ cancellationReason: (reason && reason.trim()) || 'Cancelled by admin' }),
+    });
+    const data = await r.json().catch(() => null);
+    if (!r.ok) return res.status(502).json({ error: 'calcom_cancel_failed', detail: data });
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
   }
 }
 
@@ -606,17 +660,20 @@ async function notifyAssignment(req, res) {
     const { data: lead } = await supabaseAdmin.from('leads').select('full_name, business, lifecycle, assigned_rep_id').eq('id', lead_id).single();
     if (!lead || !lead.assigned_rep_id) return res.status(200).json({ ok: true, skipped: true });
 
+    const kind = lead.lifecycle === 'lead' ? 'lead' : 'prospect';
+    const inApp = await notifyInApp(supabaseAdmin, lead.assigned_rep_id, `New ${kind} assigned`,
+      `${lead.full_name}${lead.business ? ' — ' + lead.business : ''}`);
+
     const { data: rep } = await supabaseAdmin.auth.admin.getUserById(lead.assigned_rep_id);
     const repEmail = rep && rep.user && rep.user.email;
-    if (!repEmail) return res.status(200).json({ ok: true, skipped: true });
+    if (!repEmail) return res.status(200).json({ ok: true, in_app: inApp, email: { skipped: true } });
 
-    const kind = lead.lifecycle === 'lead' ? 'lead' : 'prospect';
     const result = await sendEmail({
       to: repEmail,
       subject: `New ${kind} assigned: ${lead.full_name}`,
       html: emailShell('New assignment', `<p>${lead.full_name}${lead.business ? ' — ' + lead.business : ''} has been assigned to you as a ${kind}.</p><p>Open rep.html to follow up.</p>`),
     });
-    return res.status(200).json({ ok: true, email: result });
+    return res.status(200).json({ ok: true, in_app: inApp, email: result });
   } catch (e) {
     return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
   }
@@ -644,22 +701,25 @@ async function notifyDemoBooked(req, res) {
     if (!deal) return res.status(200).json({ ok: true, skipped: true });
 
     const { data: repProfile } = await supabaseAdmin.from('profiles').select('full_name, manager_id').eq('user_id', deal.rep_id).single();
+    const repName = (repProfile && repProfile.full_name) || 'A rep';
 
     let toEmail = null;
+    let inApp = { skipped: true };
     if (repProfile && repProfile.manager_id) {
+      inApp = await notifyInApp(supabaseAdmin, repProfile.manager_id, 'Demo booked',
+        `${repName} just booked a demo with ${deal.contact}${deal.business ? ' — ' + deal.business : ''}.`);
       const { data: manager } = await supabaseAdmin.auth.admin.getUserById(repProfile.manager_id);
       toEmail = manager && manager.user && manager.user.email;
     }
     if (!toEmail) toEmail = process.env.ADMIN_NOTIFY_EMAIL || null;
-    if (!toEmail) return res.status(200).json({ ok: true, skipped: true });
+    if (!toEmail) return res.status(200).json({ ok: true, in_app: inApp, skipped: true });
 
-    const repName = (repProfile && repProfile.full_name) || 'A rep';
     const result = await sendEmail({
       to: toEmail,
       subject: `Demo booked: ${deal.contact}${deal.business ? ' (' + deal.business + ')' : ''}`,
       html: emailShell('Demo booked', `<p>${repName} just booked a demo with ${deal.contact}${deal.business ? ' — ' + deal.business : ''}. An Opportunity has been created.</p>`),
     });
-    return res.status(200).json({ ok: true, email: result });
+    return res.status(200).json({ ok: true, in_app: inApp, email: result });
   } catch (e) {
     return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
   }
@@ -689,17 +749,20 @@ async function notifyCommissionStatus(req, res) {
     const { data: commission } = await supabaseAdmin.from('commissions').select('rep_id, amount, status, kind, revenue_type').eq('id', commission_id).single();
     if (!commission) return res.status(200).json({ ok: true, skipped: true });
 
+    const amount = '$' + Number(commission.amount || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+    const inApp = await notifyInApp(supabaseAdmin, commission.rep_id, 'Commission update',
+      `Your ${commission.kind === 'override' ? 'override ' : ''}commission of ${amount} is now ${commission.status}.`);
+
     const { data: rep } = await supabaseAdmin.auth.admin.getUserById(commission.rep_id);
     const repEmail = rep && rep.user && rep.user.email;
-    if (!repEmail) return res.status(200).json({ ok: true, skipped: true });
+    if (!repEmail) return res.status(200).json({ ok: true, in_app: inApp, email: { skipped: true } });
 
-    const amount = '$' + Number(commission.amount || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
     const result = await sendEmail({
       to: repEmail,
       subject: `Commission update: ${amount} is now ${commission.status}`,
       html: emailShell('Commission status updated', `<p>Your ${commission.kind === 'override' ? 'override ' : ''}commission of ${amount} is now <b>${commission.status}</b>.</p>`),
     });
-    return res.status(200).json({ ok: true, email: result });
+    return res.status(200).json({ ok: true, in_app: inApp, email: result });
   } catch (e) {
     return res.status(500).json({ error: 'server_error', detail: String((e && e.message) || e) });
   }
@@ -878,6 +941,7 @@ const ACTIONS = {
   'documenso-webhook': documensoWebhook,
   'impersonate': impersonate,
   'cal-bookings': calBookings,
+  'cancel-booking': cancelBooking,
   'twilio-token': twilioToken,
   'notify-assignment': notifyAssignment,
   'notify-demo-booked': notifyDemoBooked,

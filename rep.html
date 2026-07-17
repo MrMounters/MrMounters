@@ -28,6 +28,27 @@
   .pnav-acct{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.98rem; flex:1; min-width:0;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .pnav-tag{ font-family:var(--mono); font-size:0.56rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); border:1px solid rgba(76,89,247,0.3); border-radius:20px; padding:0.25rem 0.6rem; }
+  /* Notifications — real bell, wired to notifications.recipient_id (M5) */
+  .notif-wrap{ position:relative; }
+  .notif-btn{ position:relative; background:var(--dark3); border:1px solid var(--card-border); border-radius:8px;
+    width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--white); padding:0; }
+  .notif-btn svg{ width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .notif-badge{ position:absolute; top:-5px; right:-5px; background:var(--red); color:#fff; font-family:var(--mono); font-size:0.6rem;
+    font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+  .notif-dropdown{ position:absolute; top:44px; right:0; width:320px; max-width:82vw; max-height:420px; overflow-y:auto;
+    background:var(--dark3); border:1px solid var(--card-border); border-radius:8px; box-shadow:0 20px 50px rgba(0,0,0,0.5); z-index:70; }
+  .notif-dropdown.hidden{ display:none; }
+  .notif-dropdown-h{ display:flex; align-items:center; justify-content:space-between; padding:0.8rem 1rem;
+    border-bottom:1px solid var(--card-border); font-weight:700; font-size:0.82rem; position:sticky; top:0; background:var(--dark3); }
+  .notif-dropdown-h button{ background:none; border:none; color:var(--gold); font-family:var(--mono); font-size:0.6rem;
+    text-transform:uppercase; letter-spacing:0.04em; cursor:pointer; }
+  .notif-item{ padding:0.8rem 1rem; border-bottom:1px solid var(--card-border); }
+  .notif-item:last-child{ border-bottom:none; }
+  .notif-item.unread{ background:rgba(76,89,247,0.05); }
+  .notif-item-t{ font-size:0.82rem; font-weight:600; display:flex; align-items:center; gap:0.4rem; }
+  .notif-item.unread .notif-item-t::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+  .notif-item-b{ font-size:0.76rem; color:var(--warm-muted); margin-top:0.25rem; }
+  .notif-item-time{ font-family:var(--mono); font-size:0.58rem; color:var(--warm-muted); margin-top:0.35rem; }
   .menu{ position:fixed; inset:0; z-index:60; background:var(--dark); transform:translateX(-100%); transition:transform 0.32s cubic-bezier(0.16,1,0.3,1); overflow-y:auto; padding:1rem 1.2rem 3rem; }
   .menu.open{ transform:none; }
   .menu-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.4rem; }
@@ -243,6 +264,16 @@
   <nav class="pnav">
     <button class="hamb" onclick="openMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
     <div class="pnav-acct" id="acctName">Sales Rep</div>
+    <div class="notif-wrap">
+      <button class="notif-btn" id="notifBtn" onclick="toggleNotifDropdown(event)" aria-label="Notifications">
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="notif-badge hidden" id="notifBadge">0</span>
+      </button>
+      <div class="notif-dropdown hidden" id="notifDropdown">
+        <div class="notif-dropdown-h">Notifications <button onclick="markAllNotifsRead()">Mark all read</button></div>
+        <div id="notifList"><div class="muted" style="padding:0.8rem 1rem;">Loading…</div></div>
+      </div>
+    </div>
     <span class="pnav-tag">Rep Portal</span>
   </nav>
 
@@ -958,6 +989,61 @@
       initAcademy();
       loadAgreements();
       initTwilio();
+      initNotifications();
+    }
+
+    // ---- NOTIFICATIONS (real bell — new assignment, demo booked to your manager, commission
+    // status changes — see notifyInApp() in api/actions.js). Demo mode has no real recipient
+    // row to query, so it's skipped there. ----
+    let notifications = [];
+    function initNotifications(){
+      if (!(sb && session)) return; // demo mode — no real account to fetch notifications for
+      loadNotifications();
+      setInterval(loadNotifications, 30000);
+      document.addEventListener('click', (e) => {
+        const dd = document.getElementById('notifDropdown');
+        if (!dd.classList.contains('hidden') && !e.target.closest('#notifDropdown') && !e.target.closest('#notifBtn')) dd.classList.add('hidden');
+      });
+    }
+    async function loadNotifications(){
+      const { data, error } = await sb.from('notifications').select('*').eq('recipient_id', session.user.id).order('created_at', { ascending:false }).limit(100);
+      if (error) return;
+      notifications = data || [];
+      renderNotifBadge();
+      renderNotifList();
+    }
+    function renderNotifBadge(){
+      const unread = notifications.filter(n => !n.read).length;
+      const badge = document.getElementById('notifBadge');
+      if (unread){ badge.textContent = unread > 9 ? '9+' : unread; badge.classList.remove('hidden'); }
+      else badge.classList.add('hidden');
+    }
+    function renderNotifList(){
+      const list = document.getElementById('notifList');
+      if (!notifications.length){ list.innerHTML = '<div class="muted" style="padding:0.8rem 1rem;">No notifications yet.</div>'; return; }
+      list.innerHTML = notifications.map(n => `<div class="notif-item ${n.read ? '' : 'unread'}">
+        <div class="notif-item-t">${esc(n.title)}</div>
+        ${n.body ? `<div class="notif-item-b">${esc(n.body)}</div>` : ''}
+        <div class="notif-item-time">${timeAgo(n.created_at)}</div>
+      </div>`).join('');
+    }
+    function toggleNotifDropdown(e){
+      if (e) e.stopPropagation();
+      document.getElementById('notifDropdown').classList.toggle('hidden');
+    }
+    async function markAllNotifsRead(){
+      const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+      if (!unreadIds.length) return;
+      await sb.from('notifications').update({ read:true }).in('id', unreadIds);
+      notifications.forEach(n => { n.read = true; });
+      renderNotifBadge(); renderNotifList();
+    }
+    function timeAgo(ts){
+      const s = Math.floor((Date.now() - new Date(ts).getTime()) / 1000);
+      if (s < 60) return 'just now';
+      if (s < 3600) return Math.floor(s / 60) + 'm ago';
+      if (s < 86400) return Math.floor(s / 3600) + 'h ago';
+      return Math.floor(s / 86400) + 'd ago';
     }
 
     function go(s){

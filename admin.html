@@ -728,9 +728,14 @@
     }
 
     function bookingDetailHtml(b){
+      const isCancelled = b.status === 'cancelled';
       return `<div class="muted" style="margin-bottom:0.5rem;">${b.start ? new Date(b.start).toLocaleString() : ''}${b.end ? ' – ' + new Date(b.end).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}) : ''}</div>
         <div style="margin-bottom:0.4rem;"><b>Attendee:</b> ${esc(b.attendeeName || '—')}${b.attendeeEmail ? ` (${esc(b.attendeeEmail)})` : ''}</div>
-        <div><b>Status:</b> <span class="pill ${b.status === 'cancelled' ? 'lost' : 'ok'}">${esc(b.status || 'confirmed')}</span></div>`;
+        <div style="margin-bottom:0.8rem;"><b>Status:</b> <span class="pill ${isCancelled ? 'lost' : 'ok'}">${esc(b.status || 'confirmed')}</span></div>
+        ${!isCancelled && b.uid ? `<div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-o btn-sm" onclick="rescheduleBooking('${b.uid}')">Reschedule</button>
+          <button class="btn btn-o btn-sm" style="color:var(--red, #ff6b6b);" onclick="cancelBooking('${b.uid}')">Cancel booking</button>
+        </div>` : ''}`;
     }
     function openBookingDetail(id){
       const b = calBookings.find(x => String(x.id) === String(id));
@@ -741,6 +746,31 @@
           <button class="btn btn-sm" onclick="document.getElementById('calDetail').classList.add('hidden')">Close</button></div>
         ${bookingDetailHtml(b)}`;
       panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+    // Rescheduling opens Cal.com's own hosted reschedule page for that booking uid — lets the
+    // admin pick a new time through Cal's real availability UI instead of us reimplementing a
+    // slot picker against the API.
+    function rescheduleBooking(uid){
+      window.open('https://cal.com/reschedule/' + encodeURIComponent(uid), '_blank', 'noopener');
+    }
+    async function cancelBooking(uid){
+      const reason = prompt('Cancellation reason (shown to the attendee, optional):', '');
+      if (reason === null) return; // user hit Cancel on the prompt itself
+      if (!confirm('Cancel this booking? The attendee will be notified by Cal.com.')) return;
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        const r = await fetch('/api/actions?action=cancel-booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + session.access_token },
+          body: JSON.stringify({ booking_uid: uid, reason }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail && (data.detail.message || JSON.stringify(data.detail)) || data.error || 'Cancel failed');
+        document.getElementById('calDetail').classList.add('hidden');
+        await loadConsults();
+      } catch (e) {
+        alert('Could not cancel booking: ' + e.message);
+      }
     }
     function openDayDetail(year, month, day){
       const key = year + '-' + month + '-' + day;

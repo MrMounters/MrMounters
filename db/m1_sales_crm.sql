@@ -689,6 +689,29 @@ create index if not exists leads_followup_idx
 -- END M4
 -- ============================================================
 
+
+-- ============================================================
+-- M5 — Real in-app notifications for reps & managers (not just admin/client)
+-- ------------------------------------------------------------
+-- The `notifications` table only ever had `client_id` (client-facing, kitchen stage changes)
+-- and got locked to admin-only SELECT by M1's kitchen lockout — so rep.html and manager.html
+-- had no bell at all, even though the app already emails reps on assignment/demo-booked/
+-- commission-status events. `recipient_id` is a generic "this row is for this specific staff
+-- user" pointer (separate from `client_id`, which stays kitchen/admin-only), so any authenticated
+-- user can see their own — and only their own — notifications without touching kitchen data.
+-- ============================================================
+alter table public.notifications add column if not exists recipient_id uuid references auth.users(id) on delete cascade;
+create index if not exists notifications_recipient_idx on public.notifications(recipient_id, created_at desc);
+
+drop policy if exists "users manage their own notifications" on public.notifications;
+create policy "users manage their own notifications" on public.notifications for all
+  using (auth.uid() = recipient_id)
+  with check (auth.uid() = recipient_id);
+
+-- ============================================================
+-- END M5
+-- ============================================================
+
 -- ============================================================================
 -- VERIFICATION — returns rows so you can SEE it worked. Every ok must be true.
 -- ============================================================================
@@ -696,6 +719,7 @@ with checks(object, ok) as (values
   ('leads.lifecycle',            (to_regclass('public.leads') is not null and exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='lifecycle'))),
   ('leads.call_outcome',         exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='call_outcome')),
   ('leads.last_nudged_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='last_nudged_at')),
+  ('notifications.recipient_id', exists(select 1 from information_schema.columns where table_schema='public' and table_name='notifications' and column_name='recipient_id')),
   ('leads.email nullable',       (select is_nullable='YES' from information_schema.columns where table_schema='public' and table_name='leads' and column_name='email')),
   ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),
   ('deals.demo_booked_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='demo_booked_at')),
