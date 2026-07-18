@@ -845,7 +845,7 @@
     }
     .hero-media {
       top: 4.15rem; right: 0; bottom: auto; width: 100%;
-      height: clamp(22rem, 56vw, 31rem);
+      height: clamp(22rem, 56vw, 31rem); overflow: visible;
     }
     .hero-media-poster,
     .hero-video { object-position: 62% 50%; }
@@ -857,8 +857,9 @@
         rgba(11,15,25,0.18) 100%);
     }
     .hero-media::after {
+      inset: 0 0 -12rem;
       background:
-        linear-gradient(180deg, rgba(11,15,25,0.22) 0%, transparent 20%, transparent 54%, var(--dark) 100%),
+        linear-gradient(180deg, rgba(11,15,25,0.22) 0%, transparent 20%, rgba(11,15,25,0.16) 48%, var(--dark) 76%, var(--dark) 100%),
         radial-gradient(ellipse 58% 44% at 70% 60%, rgba(76,89,247,0.13), transparent 74%);
     }
     .hero::after { background: none; }
@@ -873,6 +874,7 @@
     .hero-media {
       top: 3.85rem; height: clamp(14.5rem, 38svh, 20rem);
     }
+    .hero-media::after { inset: 0 0 -10rem; }
     .hero h1 {
       font-size: clamp(2.65rem, 11vw, 4rem);
       line-height: 1.02; width: 100%;
@@ -1023,10 +1025,19 @@
   var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (reducedMotion || (connection && connection.saveData)) return;
 
+  function setPlaybackRate(){
+    video.defaultPlaybackRate = 0.5;
+    video.playbackRate = 0.5;
+  }
+
+  setPlaybackRate();
+
   video.querySelectorAll('source[data-src]').forEach(function(source){
     source.src = source.dataset.src;
   });
+  video.addEventListener('loadedmetadata', setPlaybackRate, { once: true });
   video.addEventListener('playing', function(){
+    setPlaybackRate();
     video.classList.add('is-ready');
   }, { once: true });
   video.load();
