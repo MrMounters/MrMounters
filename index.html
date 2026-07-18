@@ -282,9 +282,40 @@
       linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%);
   }
   .hero > *:not(.hero-bg) { position: relative; z-index: 2; }
-  .hero-lottie-mobile {
-    display: none; position: absolute; inset: 0; width: 100%; height: 100%;
-    opacity: 0.55; pointer-events: none;
+  .hero-media {
+    position: absolute; top: 4.6rem; right: 0; bottom: 0;
+    width: min(61vw, 1080px); overflow: hidden; isolation: isolate;
+  }
+  .hero-media::before,
+  .hero-media::after {
+    content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  }
+  .hero-media::before {
+    background: linear-gradient(90deg,
+      var(--dark) 0%,
+      rgba(11,15,25,0.96) 12%,
+      rgba(11,15,25,0.72) 28%,
+      rgba(11,15,25,0.16) 52%,
+      rgba(11,15,25,0.02) 100%);
+  }
+  .hero-media::after {
+    background:
+      linear-gradient(180deg, rgba(11,15,25,0.26) 0%, transparent 18%, transparent 68%, var(--dark2) 100%),
+      radial-gradient(ellipse 52% 40% at 72% 62%, rgba(76,89,247,0.14), transparent 72%);
+  }
+  .hero-media-poster,
+  .hero-video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: 78% 50%;
+  }
+  .hero-media-poster { z-index: 0; }
+  .hero-video {
+    z-index: 1; opacity: 0; transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1);
+  }
+  .hero-video.is-ready { opacity: 1; }
+  .hero::after {
+    content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(90deg, rgba(11,15,25,0.22) 0%, transparent 47%);
   }
 
   .hero-eyebrow {
@@ -295,8 +326,9 @@
 
   .hero h1 {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(2.8rem, 6.4vw, 5.6rem); font-weight: 700;
-    line-height: 1.04; max-width: 900px; margin-bottom: 1.6rem; letter-spacing: -0.03em;
+    font-size: clamp(2.8rem, 5.7vw, 5.25rem); font-weight: 700;
+    line-height: 1.04; width: min(57vw, 820px); max-width: 100%;
+    margin-bottom: 1.6rem; letter-spacing: -0.03em; text-wrap: balance;
   }
   .reveal-line { display: block; overflow: hidden; line-height: 1.1; }
   .reveal-line > span {
@@ -786,7 +818,6 @@
   }
   @media (max-width: 640px) {
     nav { padding:1rem 4%; }
-    .hero { padding:7rem 4% 3rem; }
     .portfolio-scroll-track { gap: 1rem; }
     .portfolio-scroll-track .browser-frame { width: 260px; }
     .step-connector { display:none; }
@@ -794,15 +825,9 @@
     .hero-stats { gap:2rem; }
     .app-soon-inner { flex-direction:column; align-items:flex-start; gap:1.6rem; }
     .float-cta { bottom:1.2rem; right:1.2rem; padding:0.75rem 1.1rem; font-size:0.76rem; }
-    .bp-panel { display: none; }
     .nav-login-label { display: none; }
     .nav-login { padding: 0.5rem 0.6rem; }
     .nav-tools { gap: 0.6rem; margin-left: 0.8rem; }
-    .hero-lottie-mobile { display: block; opacity: 0.4; }
-    .hero-bg::after {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(180deg, rgba(11,15,25,0.8) 0%, rgba(11,15,25,0.42) 42%, rgba(11,15,25,0.85) 100%);
-    }
   }
 
   /* Process numbers: a real sequence, set as a mono index */
@@ -812,67 +837,52 @@
   }
   .step-num::before { content: '/ '; color: var(--gold); }
 
-  /* ── HERO SIGNATURE: wireframe that resolves into a finished build ── */
-  .bp-panel {
-    position: absolute; top: 47%; right: 4.5%; transform: translateY(-50%);
-    width: 340px; z-index: 1; pointer-events: none;
-    opacity: 0; animation: bpFade 0.9s 0.5s forwards;
+  /* The rocket owns its own stage below desktop width so copy never sits on moving detail. */
+  @media (max-width: 900px) {
+    .hero {
+      justify-content: flex-start;
+      padding: calc(clamp(22rem, 56vw, 31rem) + 6rem) 4% 3rem;
+    }
+    .hero-media {
+      top: 4.15rem; right: 0; bottom: auto; width: 100%;
+      height: clamp(22rem, 56vw, 31rem);
+    }
+    .hero-media-poster,
+    .hero-video { object-position: 62% 50%; }
+    .hero-media::before {
+      background: linear-gradient(90deg,
+        rgba(11,15,25,0.38) 0%,
+        rgba(11,15,25,0.04) 36%,
+        rgba(11,15,25,0.04) 80%,
+        rgba(11,15,25,0.18) 100%);
+    }
+    .hero-media::after {
+      background:
+        linear-gradient(180deg, rgba(11,15,25,0.22) 0%, transparent 20%, transparent 54%, var(--dark) 100%),
+        radial-gradient(ellipse 58% 44% at 70% 60%, rgba(76,89,247,0.13), transparent 74%);
+    }
+    .hero::after { background: none; }
+    .hero h1 { width: min(100%, 780px); }
+    .hero-sub { max-width: 620px; }
   }
-  /* Signature only on wide desktops — the right zone beside the sub-copy
-     is empty there; below this it would collide with the headline. */
-  @media (max-width: 1300px) { .bp-panel { display: none; } }
-  @keyframes bpFade { to { opacity: 1; } }
-  .bp-dim {
-    font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.16em;
-    color: var(--warm-muted); text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;
+
+  @media (max-width: 640px) {
+    .hero {
+      padding-top: calc(clamp(14.5rem, 38svh, 20rem) + 5.4rem);
+    }
+    .hero-media {
+      top: 3.85rem; height: clamp(14.5rem, 38svh, 20rem);
+    }
+    .hero h1 {
+      font-size: clamp(2.65rem, 11vw, 4rem);
+      line-height: 1.02; width: 100%;
+    }
+    .hero-eyebrow { margin-bottom: 1.2rem; }
   }
-  .bp-dim::before, .bp-dim::after { content: ''; height: 1px; flex: 1; background: rgba(76,89,247,0.25); }
-  .bp-dim-top { margin-bottom: 0.55rem; }
-  .bp-frame {
-    border: 1px solid rgba(76,89,247,0.32); border-radius: 3px;
-    background: rgba(255,255,255,0.92); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
-    box-shadow: 0 30px 70px rgba(0,0,0,0.5), 0 0 44px rgba(76,89,247,0.07); overflow: hidden;
-  }
-  .bp-chrome {
-    display: flex; align-items: center; gap: 6px; padding: 9px 12px;
-    border-bottom: 1px solid rgba(76,89,247,0.2);
-  }
-  .bp-chrome span { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(76,89,247,0.5); }
-  .bp-chrome i {
-    font-family: var(--mono); font-style: normal; font-size: 0.6rem;
-    color: var(--warm-muted); margin-left: 8px; letter-spacing: 0.04em;
-  }
-  .bp-body { padding: 15px; display: flex; flex-direction: column; gap: 11px; }
-  .bp-block {
-    border: 1px dashed rgba(76,89,247,0.45); background: rgba(76,89,247,0);
-    border-radius: 2px; animation: bpResolve 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
-  }
-  @keyframes bpResolve {
-    to { border-style: solid; border-color: rgba(76,89,247,0.18); background: rgba(76,89,247,0.13); }
-  }
-  .bp-hero { height: 58px; animation-delay: 1.0s; }
-  .bp-row { display: flex; gap: 10px; }
-  .bp-col { flex: 1; height: 40px; }
-  .bp-col:nth-child(1) { animation-delay: 1.22s; }
-  .bp-col:nth-child(2) { animation-delay: 1.34s; }
-  .bp-col:nth-child(3) { animation-delay: 1.46s; }
-  .bp-linewide { height: 9px; width: 80%; animation-delay: 1.6s; }
-  .bp-cta {
-    height: 26px; width: 42%; align-self: flex-start;
-    animation: bpResolveCta 0.7s 1.75s cubic-bezier(0.16,1,0.3,1) forwards;
-  }
-  @keyframes bpResolveCta {
-    to { border-style: solid; border-color: var(--gold); background: rgba(76,89,247,0.85); box-shadow: 0 0 18px rgba(76,89,247,0.4); }
-  }
-  .bp-dim-side { margin-top: 0.6rem; justify-content: flex-end; }
-  .bp-dim-side .bp-ok { color: var(--gold); }
-  .bp-frame { background: var(--dark3); border-color: var(--card-border); box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-  .bp-chrome { border-bottom: 1px solid var(--card-border); }
-  .bp-chrome span { border-color: rgba(76,89,247,0.5); }
-  .bp-block { border-color: rgba(76,89,247,0.4); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    .hero-video { display: none; }
   }
 </style>
 <script type="text/javascript">
@@ -882,7 +892,6 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "xj1vynd82i");
 </script>
-<script src="https://unpkg.com/@lottiefiles/dotlottie-wc" type="module"></script>
 </head>
 <body>
 
@@ -962,24 +971,13 @@
 <!-- HERO -->
 <section class="hero" id="main">
   <div class="hero-bg">
-    <div class="bp-panel" aria-hidden="true">
-      <div class="bp-dim bp-dim-top">Your site · 1440 px</div>
-      <div class="bp-frame">
-        <div class="bp-chrome"><span></span><span></span><span></span><i>yourbusiness.com</i></div>
-        <div class="bp-body">
-          <div class="bp-block bp-hero"></div>
-          <div class="bp-row">
-            <div class="bp-block bp-col"></div>
-            <div class="bp-block bp-col"></div>
-            <div class="bp-block bp-col"></div>
-          </div>
-          <div class="bp-block bp-linewide"></div>
-          <div class="bp-block bp-cta"></div>
-        </div>
-      </div>
-      <div class="bp-dim bp-dim-side"><span class="bp-ok">Built · 5–7 days ✓</span></div>
+    <div class="hero-media" aria-hidden="true">
+      <img class="hero-media-poster" src="assets/hero/meridion-rocket-poster.jpg" alt="" fetchpriority="high">
+      <video id="heroVideo" class="hero-video" autoplay muted loop playsinline preload="none" poster="assets/hero/meridion-rocket-poster.jpg" tabindex="-1">
+        <source data-src="assets/hero/meridion-rocket.webm" type="video/webm">
+        <source data-src="assets/hero/meridion-rocket.mp4" type="video/mp4">
+      </video>
     </div>
-    <dotlottie-wc id="heroLottie" class="hero-lottie-mobile" aria-hidden="true"></dotlottie-wc>
   </div>
   <div class="hero-eyebrow">Global Growth Partner</div>
   <h1>
@@ -1018,41 +1016,33 @@
 
 <script>
 (function(){
-  if (!window.matchMedia('(max-width:640px)').matches) return;
-  var el = document.getElementById('heroLottie');
-  if (!el) return;
-  // Autoplay/loop by default so it's guaranteed to animate even if the scroll
-  // hook below never engages (e.g. a component version with a different ready event).
-  el.setAttribute('autoplay', '');
-  el.setAttribute('loop', '');
-  el.setAttribute('src', 'https://lottie.host/14a91a74-e0bf-42ee-a98a-dfaf67a54bfc/aj772PKG96.lottie');
+  var video = document.getElementById('heroVideo');
+  if (!video) return;
 
-  var wired = false;
-  function wireScroll(dl){
-    if (wired || !dl || !dl.totalFrames) return;
-    wired = true;
-    dl.pause();
-    el.removeAttribute('loop');
-    var hero = document.querySelector('.hero');
-    function updateFrame(){
-      var rect = hero.getBoundingClientRect();
-      var span = rect.height + window.innerHeight;
-      var progress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / span));
-      dl.setFrame(Math.floor(progress * (dl.totalFrames - 1)));
-    }
-    window.addEventListener('scroll', updateFrame, { passive: true });
-    updateFrame();
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (reducedMotion || (connection && connection.saveData)) return;
+
+  video.querySelectorAll('source[data-src]').forEach(function(source){
+    source.src = source.dataset.src;
+  });
+  video.addEventListener('playing', function(){
+    video.classList.add('is-ready');
+  }, { once: true });
+  video.load();
+  var playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(function(){ /* The poster remains when autoplay is blocked. */ });
   }
-  el.addEventListener('ready', function(){ wireScroll(el.dotLottie); });
-  el.addEventListener('load', function(){ wireScroll(el.dotLottie); });
-  // Fallback poll in case neither event fires on this component version —
-  // keeps checking for the underlying instance for up to ~10s.
-  var tries = 0;
-  var poll = setInterval(function(){
-    tries++;
-    if (wired || tries > 100) { clearInterval(poll); return; }
-    if (el.dotLottie && el.dotLottie.totalFrames) wireScroll(el.dotLottie);
-  }, 100);
+
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) {
+      video.pause();
+    } else {
+      var resume = video.play();
+      if (resume && typeof resume.catch === 'function') resume.catch(function(){});
+    }
+  });
 })();
 </script>
 
