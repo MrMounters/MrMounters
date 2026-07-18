@@ -869,22 +869,33 @@
 
   @media (max-width: 640px) {
     .hero {
-      padding-top: calc(clamp(14.5rem, 38svh, 20rem) + 1.4rem);
+      min-height: 100svh;
+      padding: 7.5rem 4% 3rem;
     }
     .hero-media {
-      top: 3.85rem; height: calc(clamp(14.5rem, 38svh, 20rem) + 10rem);
+      top: 3.85rem; height: min(42rem, 100svh); overflow: hidden;
+    }
+    .hero-media-poster,
+    .hero-video { object-position: 69% 50%; }
+    .hero-media::before {
+      background: linear-gradient(90deg,
+        var(--dark) 0%,
+        rgba(11,15,25,0.98) 42%,
+        rgba(11,15,25,0.72) 64%,
+        rgba(11,15,25,0.08) 100%);
     }
     .hero-media::after {
-      inset: 0 0 -4rem;
+      inset: 0;
       background:
-        linear-gradient(180deg, rgba(11,15,25,0.18) 0%, rgba(11,15,25,0.08) 26%, rgba(11,15,25,0.56) 58%, var(--dark) 86%, var(--dark) 100%),
+        linear-gradient(180deg, rgba(11,15,25,0.1) 0%, rgba(11,15,25,0.12) 45%, rgba(11,15,25,0.68) 80%, var(--dark) 100%),
         radial-gradient(ellipse 62% 42% at 72% 54%, rgba(76,89,247,0.12), transparent 74%);
     }
     .hero h1 {
-      font-size: clamp(2.65rem, 11vw, 4rem);
-      line-height: 1.02; width: 100%;
+      font-size: clamp(2.15rem, 9.4vw, 2.7rem);
+      line-height: 1.06; width: 64%;
     }
-    .hero-eyebrow { margin-bottom: 1.2rem; }
+    .hero-eyebrow { margin-bottom: 0.8rem; }
+    .hero-sub { max-width: 62%; font-size: 0.97rem; line-height: 1.58; margin-bottom: 2rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
