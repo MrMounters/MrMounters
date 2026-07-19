@@ -279,6 +279,9 @@
   .portfolio-card-info { padding: 1rem 1.2rem 1.3rem; border-top: 1px solid rgba(242,244,248,0.06); background: var(--dark3); }
   .portfolio-card-tag { font-family: 'Inter', sans-serif; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 0.35rem; }
   .portfolio-card-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); }
+  /* Mobile swipe affordances (built by JS, revealed only in the carousel breakpoint below) */
+  .portfolio-hint { display: none; }
+  .portfolio-dots { display: none; }
 
   #testimonials { background: var(--dark); position: relative; overflow: hidden; }
   #testimonials::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 55% 55% at 90% 85%, rgba(76,89,247,0.05) 0%, transparent 55%); }
@@ -297,8 +300,40 @@
     .portfolio-grid { grid-template-columns: repeat(2,1fr); }
   }
   @media (max-width: 640px) {
-    .portfolio-grid { grid-template-columns:1fr; }
+    /* Thumb-swipe carousel: horizontal scroll-snap with a peek of the next card so it reads
+       as swipeable at a glance, scrollbar hidden, and soft edge fades hinting there's more. */
+    .portfolio-grid {
+      display: flex;
+      grid-template-columns: none;
+      gap: 0.9rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-padding-left: 4%;
+      padding-bottom: 0.4rem;
+      scrollbar-width: none;
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4.5%, #000 95.5%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0, #000 4.5%, #000 95.5%, transparent 100%);
+    }
+    .portfolio-grid::-webkit-scrollbar { display: none; }
+    .portfolio-grid .browser-frame { flex: 0 0 82%; min-width: 0; scroll-snap-align: center; }
     .portfolio-featured .browser-preview { aspect-ratio:16/9 !important; }
+
+    .portfolio-hint {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
+      color: var(--gold-light); margin: -2rem 0 1.1rem; transition: opacity 0.4s;
+    }
+    .portfolio-hint.gone { opacity: 0; pointer-events: none; }
+    .portfolio-hint svg { width: 15px; height: 15px; animation: swipe-nudge 1.5s ease-in-out infinite; }
+    @keyframes swipe-nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
+
+    .portfolio-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.1rem; }
+    .portfolio-dots .pd {
+      width: 7px; height: 7px; padding: 0; border: none; border-radius: 50%;
+      background: var(--card-border-hover); cursor: pointer; transition: background 0.25s, transform 0.25s;
+    }
+    .portfolio-dots .pd.active { background: var(--gold); transform: scale(1.35); }
   }
 
 </style>
@@ -514,6 +549,45 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 
 const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
 document.querySelectorAll('.portfolio-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
+
+// Portfolio mobile carousel affordances — a "Swipe to explore" nudge above the row and
+// progress dots below it. Both are CSS-gated to the ≤640px carousel breakpoint, so on desktop
+// (where the grid is browsable) they're simply invisible; here we just build the elements and
+// keep the active dot in sync with the thumb-scroll position.
+(function(){
+  const grid = document.querySelector('.portfolio-grid');
+  if (!grid) return;
+  const cards = Array.from(grid.children);
+  if (!cards.length) return;
+
+  const hint = document.createElement('div');
+  hint.className = 'portfolio-hint';
+  hint.innerHTML = 'Swipe to explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  grid.parentNode.insertBefore(hint, grid);
+
+  const dots = document.createElement('div');
+  dots.className = 'portfolio-dots';
+  cards.forEach((card, i) => {
+    const d = document.createElement('button');
+    d.className = 'pd' + (i === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Go to project ' + (i + 1));
+    d.addEventListener('click', () => card.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' }));
+    dots.appendChild(d);
+  });
+  grid.parentNode.insertBefore(dots, grid.nextSibling);
+
+  const dotEls = Array.from(dots.children);
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const idx = cards.indexOf(e.target);
+      dotEls.forEach((d, i) => d.classList.toggle('active', i === idx));
+    });
+  }, { root: grid, threshold: 0.6 });
+  cards.forEach(c => io.observe(c));
+
+  grid.addEventListener('scroll', () => hint.classList.add('gone'), { once:true, passive:true });
+})();
 
 (function() {
   if (localStorage.getItem('jb-cookie')) return;
