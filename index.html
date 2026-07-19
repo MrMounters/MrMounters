@@ -439,12 +439,17 @@
   }
   .portfolio-scroll-band::before { left: 0; background: linear-gradient(to right, var(--dark2), transparent); }
   .portfolio-scroll-band::after  { right: 0; background: linear-gradient(to left, var(--dark2), transparent); }
+  /* Real horizontal scroll container: JS auto-scrolls it (see the marquee script), but because
+     it's a genuine overflow scroller the user can grab it with a thumb/trackpad at any time and
+     auto-scroll resumes shortly after they let go. Scrollbar hidden; edge fades come from the
+     band's ::before/::after. */
   .portfolio-scroll-track {
-    display: flex; gap: 1.5rem; width: max-content; padding: 0 4%;
-    animation: portfolio-scroll 34s linear infinite;
+    display: flex; gap: 1.5rem; padding: 0 4%;
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto;
   }
-  .portfolio-scroll-track:hover { animation-play-state: paused; }
-  @keyframes portfolio-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .portfolio-scroll-track::-webkit-scrollbar { display: none; }
   .portfolio-scroll-track .browser-frame { width: 420px; flex-shrink: 0; }
 
   .browser-frame {
@@ -1649,6 +1654,50 @@ document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 // ── STAGGERED GRID ───────────────────────────────
 const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
 document.querySelectorAll('.services-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
+
+// ── PORTFOLIO MARQUEE: auto-scroll that yields to the user ──────────
+// The strip auto-scrolls, but it's a real overflow scroller — so a thumb drag / trackpad
+// swipe / wheel takes over instantly, and auto-scroll resumes a moment after the user lets go.
+// The card set is duplicated in the markup (second copy is aria-hidden), so wrapping the
+// scroll position by half the content width loops seamlessly with no visible jump.
+(function(){
+  const track = document.querySelector('.portfolio-scroll-track');
+  if (!track) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let loopW = track.scrollWidth / 2;
+  const recompute = () => { loopW = track.scrollWidth / 2; };
+  window.addEventListener('resize', recompute, { passive: true });
+  // Thumbnails load lazily; their arrival changes the width, so recompute when they do.
+  track.querySelectorAll('img').forEach(img => { if (!img.complete) img.addEventListener('load', recompute, { once: true }); });
+
+  const SPEED = 0.55;             // px per frame (~33px/s at 60fps) — calm, premium drift
+  const RESUME_DELAY = 2200;      // ms of stillness after the user lets go before drifting again
+  let paused = reduce;            // reduced-motion users get a static, fully manual strip
+  let resumeTimer = null;
+
+  const pause = () => { paused = true; clearTimeout(resumeTimer); };
+  const scheduleResume = () => { clearTimeout(resumeTimer); resumeTimer = setTimeout(() => { paused = false; }, RESUME_DELAY); };
+
+  // User-takeover signals — pause the instant a finger/pointer/wheel touches it…
+  ['pointerdown', 'touchstart', 'wheel'].forEach(ev => track.addEventListener(ev, pause, { passive: true }));
+  // …and schedule a resume once they're done.
+  ['pointerup', 'touchend', 'mouseleave'].forEach(ev => track.addEventListener(ev, scheduleResume, { passive: true }));
+  track.addEventListener('wheel', scheduleResume, { passive: true });
+
+  // Seamless forward wrap (covers both auto drift and a user who drags into the duplicate half).
+  track.addEventListener('scroll', () => { if (loopW > 0 && track.scrollLeft >= loopW) track.scrollLeft -= loopW; }, { passive: true });
+
+  function tick(){
+    if (!paused && loopW > 0){
+      let x = track.scrollLeft + SPEED;
+      if (x >= loopW) x -= loopW;
+      track.scrollLeft = x;
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
 
 // ── COOKIE CONSENT ───────────────────────────────
 (function() {
