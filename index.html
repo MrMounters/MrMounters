@@ -362,7 +362,9 @@
   .region-chip span { font-family: 'Inter', sans-serif; font-size: 0.74rem; font-weight: 600; color: var(--gray-light); white-space: nowrap; }
   .region-break { display:none; }
 
-  .hero-audit { width:min(100%,560px); margin-top:1.9rem; max-width:560px; animation:fadeUp .7s .78s both; }
+  .audit-band { padding:5.5rem 4%; background:var(--dark); position:relative; overflow:hidden; border-top:1px solid var(--card-border); }
+  .audit-band::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 50% 90% at 50% 50%,rgba(76,89,247,.1),transparent 68%); }
+  .audit-capture { width:min(100%,1100px); margin:0 auto; position:relative; }
   .hero-audit-kicker { font-family:'Inter',sans-serif; font-size:1rem; font-weight:650; color:var(--white); margin-bottom:.7rem; text-align:center; letter-spacing:-.02em; }
   .hero-audit-label { display:flex; align-items:center; justify-content:center; gap:.6rem; position:relative; overflow:hidden; font-family:'Inter',sans-serif; font-size:.72rem; font-weight:750; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-light); margin-bottom:.8rem; padding:.68rem 1rem; border:1px solid rgba(138,116,255,.44); border-radius:999px; background:linear-gradient(90deg,rgba(24,34,62,.86),rgba(20,28,52,.72)); box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 10px 26px rgba(5,8,18,.18); }
   .hero-audit-label::after { content:''; position:absolute; top:-80%; bottom:-80%; left:-42%; width:22%; transform:rotate(22deg); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent); animation:audit-sheen 3.8s 1.3s cubic-bezier(.22,1,.36,1) both; }
@@ -515,9 +517,10 @@
   #how { background:var(--dark); position:relative; overflow:hidden; }
   #how::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 50%, rgba(76,89,247,0.022) 0%, transparent 65%); }
   .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
-  .step { position:relative; padding:1.5rem; border:1px solid rgba(242,244,248,0.08); border-radius:10px; background:rgba(20,27,43,0.35); transition:border-color .55s cubic-bezier(.22,1,.36,1),box-shadow .55s cubic-bezier(.22,1,.36,1),background .55s cubic-bezier(.22,1,.36,1); }
-  .step.visible { border-color:rgba(138,116,255,0.46); background:linear-gradient(145deg,rgba(76,89,247,0.16),rgba(20,27,43,0.64)); box-shadow:0 0 0 1px rgba(138,116,255,0.08),0 0 32px rgba(76,89,247,0.18),inset 0 1px 0 rgba(255,255,255,0.07); }
-  .step:nth-child(2) { transition-delay:.1s; } .step:nth-child(3) { transition-delay:.2s; } .step:nth-child(4) { transition-delay:.3s; }
+  .step { position:relative; padding:1.5rem; border:1px solid rgba(242,244,248,.1); border-radius:10px; background:linear-gradient(145deg,rgba(27,39,69,.82),rgba(15,22,38,.82)); transform-style:preserve-3d; transform-origin:left center; backface-visibility:hidden; transition:transform .8s cubic-bezier(.16,1,.3,1),opacity .55s cubic-bezier(.16,1,.3,1),border-color .55s,box-shadow .55s,background .55s; }
+  .steps .step.reveal { opacity:0; transform:perspective(1000px) rotateY(-78deg) translateX(-24px) translateZ(-45px); }
+  .steps .step.reveal.visible { opacity:1; transform:perspective(1000px) rotateY(0) translateX(0) translateZ(0); border-color:rgba(138,116,255,.5); background:linear-gradient(145deg,rgba(76,89,247,.16),rgba(20,27,43,.64)); box-shadow:0 0 0 1px rgba(138,116,255,.08),0 0 32px rgba(76,89,247,.18),inset 0 1px 0 rgba(255,255,255,.07); }
+  .step:nth-child(2) { transition-delay:.12s; } .step:nth-child(3) { transition-delay:.24s; } .step:nth-child(4) { transition-delay:.36s; }
   .step-title { font-family:'Inter',sans-serif; font-weight:600; font-size:0.98rem; margin-bottom:0.5rem; }
   .step-desc { font-family:'Inter',sans-serif; color:var(--gray); font-size:0.85rem; line-height:1.72; font-weight:300; }
   .step-connector { display:none; }
@@ -1031,15 +1034,6 @@
     <a href="work.html" class="btn-primary">See Our Work</a>
     <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-outline" data-desktop-label="Book a Free Call">Text Us Now</a>
   </div>
-  <form class="hero-audit" id="audit" onsubmit="submitAuditUrl(event)">
-    <div class="hero-audit-kicker">Your next breakthrough starts here.</div>
-    <div class="hero-audit-label"><span class="dot"></span>Free Site Audit + Concept Design — Ready in 24hr</div>
-    <div class="audit-input-wrap">
-      <svg class="audit-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      <input type="text" id="auditUrl" class="audit-input" placeholder="yourbusiness.com" required autocomplete="off" inputmode="url" aria-label="Your website URL">
-      <button type="submit" class="audit-submit" aria-label="Get my free audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-    </div>
-  </form>
   <div class="hero-stats">
     <div><div class="hero-stat-num" data-target="5" data-suffix="+">5+</div><div class="hero-stat-label">Regions Served</div></div>
     <div><div class="hero-stat-num" data-target="40" data-suffix="+">40+</div><div class="hero-stat-label">Active Clients</div></div>
@@ -1243,6 +1237,19 @@
     <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-outline" id="bookTextInstead" data-desktop-href="tel:4805890098" data-desktop-label="Call Instead">Text Instead</a>
   </div>
 </div>
+
+<!-- SITE AUDIT CAPTURE -->
+<section class="audit-band" id="audit">
+  <form class="audit-capture reveal" onsubmit="submitAuditUrl(event)">
+    <div class="hero-audit-kicker">Your next breakthrough starts here.</div>
+    <div class="hero-audit-label"><span class="dot"></span>Free Site Audit + Concept Design — Ready in 24hr</div>
+    <div class="audit-input-wrap">
+      <svg class="audit-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <input type="text" id="auditUrl" class="audit-input" placeholder="yourbusiness.com" required autocomplete="off" inputmode="url" aria-label="Your website URL">
+      <button type="submit" class="audit-submit" aria-label="Get my free audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    </div>
+  </form>
+</section>
 
 <!-- PDF LEAD MAGNET -->
 <div class="lead-magnet-band">
