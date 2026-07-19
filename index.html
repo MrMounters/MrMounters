@@ -360,9 +360,13 @@
   .region-chip:hover { border-color: var(--card-border-hover); transform: translateY(-1px); }
   .region-chip svg, .region-chip img { width: 18px; height: 13px; border-radius: 2px; flex-shrink: 0; display: block; }
   .region-chip span { font-family: 'Inter', sans-serif; font-size: 0.74rem; font-weight: 600; color: var(--gray-light); white-space: nowrap; }
+  .region-break { display:none; }
 
   .hero-audit { margin-top: 1.8rem; max-width: 460px; animation: fadeUp 0.7s 0.78s both; }
-  .hero-audit-label { display: flex; align-items: center; gap: 0.5rem; font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 0.7rem; }
+  .hero-audit-kicker { font-family:'Inter',sans-serif; font-size:0.92rem; font-weight:600; color:var(--white); margin-bottom:0.55rem; text-align:center; }
+  .hero-audit-label { display:flex; align-items:center; justify-content:center; gap:0.5rem; position:relative; overflow:hidden; font-family:'Inter',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.11em; text-transform:uppercase; color:var(--gold-light); margin-bottom:0.75rem; padding:0.52rem 0.75rem; border:1px solid rgba(138,116,255,0.28); border-radius:999px; background:rgba(76,89,247,0.08); }
+  .hero-audit-label::after { content:''; position:absolute; top:-80%; bottom:-80%; left:-42%; width:22%; transform:rotate(22deg); background:linear-gradient(90deg,transparent,rgba(255,255,255,0.8),transparent); animation:audit-sheen 3.8s 1.3s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes audit-sheen { from{left:-42%;opacity:0} 12%{opacity:1} 48%,to{left:120%;opacity:0} }
   .hero-audit-label .dot { width: 6px; height: 6px; border-radius: 50%; background: #2ECC71; box-shadow: 0 0 6px rgba(46,204,113,0.7); animation: pulse-dot 2s ease-in-out infinite; flex-shrink: 0; }
   .audit-input-wrap {
     display: flex; align-items: center; gap: 0.6rem; background: var(--dark3);
@@ -425,22 +429,6 @@
     background: radial-gradient(circle, rgba(76,89,247,0.06) 0%, transparent 70%);
     width: 500px; height: 500px; top: -100px; left: -100px;
   }
-
-  /* ── TICKER ─────────────────────────────────── */
-  .ticker-band {
-    background: var(--dark3); border-top: 1px solid var(--card-border);
-    border-bottom: 1px solid var(--card-border); padding: 1.1rem 0; overflow: hidden; position: relative;
-  }
-  .ticker-band::before,.ticker-band::after {
-    content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2; pointer-events: none;
-  }
-  .ticker-band::before { left: 0; background: linear-gradient(to right, var(--dark3), transparent); }
-  .ticker-band::after  { right: 0; background: linear-gradient(to left, var(--dark3), transparent); }
-  .ticker-track { display: flex; gap: 3rem; white-space: nowrap; animation: ticker-scroll 28s linear infinite; width: max-content; }
-  .ticker-track:hover { animation-play-state: paused; }
-  @keyframes ticker-scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-  .ticker-item { display: flex; align-items: center; gap: 1rem; font-family: 'Inter', sans-serif; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); }
-  .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0.6; flex-shrink: 0; }
 
   /* ── PORTFOLIO ──────────────────────────────── */
   #portfolio { background: var(--dark2); position: relative; overflow: hidden; padding-bottom: 3rem; }
@@ -520,11 +508,13 @@
   /* ── HOW IT WORKS ───────────────────────────── */
   #how { background:var(--dark); position:relative; overflow:hidden; }
   #how::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 70% 50% at 50% 50%, rgba(76,89,247,0.022) 0%, transparent 65%); }
-  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:2.5rem; }
-  .step { position:relative; }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; }
+  .step { position:relative; padding:1.5rem; border:1px solid rgba(242,244,248,0.08); border-radius:10px; background:rgba(20,27,43,0.35); transition:border-color .55s cubic-bezier(.22,1,.36,1),box-shadow .55s cubic-bezier(.22,1,.36,1),background .55s cubic-bezier(.22,1,.36,1); }
+  .step.visible { border-color:rgba(138,116,255,0.46); background:linear-gradient(145deg,rgba(76,89,247,0.16),rgba(20,27,43,0.64)); box-shadow:0 0 0 1px rgba(138,116,255,0.08),0 0 32px rgba(76,89,247,0.18),inset 0 1px 0 rgba(255,255,255,0.07); }
+  .step:nth-child(2) { transition-delay:.1s; } .step:nth-child(3) { transition-delay:.2s; } .step:nth-child(4) { transition-delay:.3s; }
   .step-title { font-family:'Inter',sans-serif; font-weight:600; font-size:0.98rem; margin-bottom:0.5rem; }
   .step-desc { font-family:'Inter',sans-serif; color:var(--gray); font-size:0.85rem; line-height:1.72; font-weight:300; }
-  .step-connector { position:absolute; top:2.8rem; right:-1.5rem; width:1.5rem; height:1px; background:linear-gradient(to right,rgba(242,244,248,0.12),transparent); }
+  .step-connector { display:none; }
 
   /* ── SERVICES ───────────────────────────────── */
   #services { background:var(--dark2); position:relative; overflow:hidden; }
@@ -820,6 +810,7 @@
     nav { padding:1rem 4%; }
     .portfolio-scroll-track { gap: 1rem; }
     .portfolio-scroll-track .browser-frame { width: 260px; }
+    .region-break { display:block; flex-basis:100%; height:0; }
     .step-connector { display:none; }
     .footer-inner { flex-direction:column; }
     .hero-stats { gap:2rem; }
@@ -1002,13 +993,14 @@
     <span class="reveal-line"><span>Scale Your Business.</span></span>
     <span class="reveal-line"><span class="line-gold">Anywhere You Operate.</span></span>
   </h1>
-  <p class="hero-sub">SEO, paid advertising, web development, UGC content, dashboards, and AI-powered lead generation — one team, built for businesses across the USA, Europe, the UK, Australia, and the Gulf.</p>
+  <p class="hero-sub">Turn attention into booked calls, qualified leads, and dependable growth—with every channel working together.</p>
   <div class="hero-regions">
     <span class="hero-regions-label">Serving businesses in</span>
     <div class="region-chips">
       <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#B22234"/><g fill="#fff"><rect y="1.38" width="24" height="1.38"/><rect y="4.15" width="24" height="1.38"/><rect y="6.92" width="24" height="1.38"/><rect y="9.69" width="24" height="1.38"/><rect y="12.46" width="24" height="1.38"/><rect y="15.23" width="24" height="1.38"/></g><rect width="10.8" height="9.69" fill="#3C3B6E"/></svg><span>USA</span></div>
       <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#003399"/><g fill="#FFCC00"><circle cx="12" cy="4" r=".6"/><circle cx="16" cy="5.2" r=".6"/><circle cx="18.5" cy="9" r=".6"/><circle cx="16" cy="12.8" r=".6"/><circle cx="12" cy="14" r=".6"/><circle cx="8" cy="12.8" r=".6"/><circle cx="5.5" cy="9" r=".6"/><circle cx="8" cy="5.2" r=".6"/></g></svg><span>Europe</span></div>
       <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#00247D"/><path d="M0 0L24 18M24 0L0 18" stroke="#fff" stroke-width="3.6"/><path d="M0 0L24 18M24 0L0 18" stroke="#CF142B" stroke-width="1.2"/><path d="M12 0V18M0 9H24" stroke="#fff" stroke-width="5.4"/><path d="M12 0V18M0 9H24" stroke="#CF142B" stroke-width="3"/></svg><span>UK</span></div>
+      <span class="region-break" aria-hidden="true"></span>
       <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#00247D"/><g fill="#fff"><circle cx="18" cy="4" r=".5"/><circle cx="20" cy="8" r=".7"/><circle cx="19" cy="12" r=".5"/><circle cx="16" cy="14" r=".5"/><circle cx="15" cy="9" r=".4"/></g><rect width="9" height="6.75" fill="#00247D" stroke="#fff" stroke-width=".5"/></svg><span>Australia</span></div>
       <div class="region-chip"><svg viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#fff"/><rect width="24" height="6" fill="#00732F"/><rect y="12" width="24" height="6" fill="#000"/><rect width="7" height="18" fill="#FF0000"/></svg><span>Gulf</span></div>
     </div>
@@ -1018,6 +1010,7 @@
     <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="btn-outline" data-desktop-label="Book a Free Call">Text Us Now</a>
   </div>
   <form class="hero-audit" id="audit" onsubmit="submitAuditUrl(event)">
+    <div class="hero-audit-kicker">Your next breakthrough starts here.</div>
     <div class="hero-audit-label"><span class="dot"></span>Free Site Audit + Concept Design — Ready in 24hr</div>
     <div class="audit-input-wrap">
       <svg class="audit-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -1165,39 +1158,6 @@
   </div>
 </section>
 
-<!-- PDF LEAD MAGNET -->
-<div class="lead-magnet-band">
-  <div class="lead-magnet-inner">
-    <div class="lm-visual reveal">
-      <div class="lm-grab">
-        <span class="lm-grab-text">Grab your free copy</span>
-        <svg class="lm-grab-arrow" viewBox="0 0 92 78" aria-hidden="true">
-          <path d="M84 9 C 46 0, 8 16, 20 58" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-          <path d="M9 45 L20 60 L35 52" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <a href="#" onclick="handlePdfDownload(event)" class="lm-cover-wrap" aria-label="Download the free Website Audit Checklist PDF">
-        <img src="audit-cover.jpg" alt="Website Audit Checklist — free PDF" class="lm-cover" loading="lazy">
-        <span class="lm-cover-tag">PDF · Free</span>
-      </a>
-    </div>
-    <div class="lm-content reveal">
-      <div class="lm-eyebrow">Free Download</div>
-      <h3 class="lm-title">The Local Business Website Audit:<br><em>17 Things Your Site Must Do to Win Customers</em></h3>
-      <p class="lm-sub">Most business sites fail at least 11 of these. Download the free checklist and find out exactly where yours stands — in under 5 minutes.</p>
-      <ul class="lm-bullets">
-        <li>The #1 homepage element converting visitors to calls (most sites skip it)</li>
-        <li>Why your contact form may be driving customers away</li>
-        <li>What your hero section should say — and what kills conversions instantly</li>
-      </ul>
-      <div class="lm-actions">
-        <a href="#" onclick="handlePdfDownload(event)" class="btn-primary">↓ Get Your Free Copy</a>
-        <span class="lm-disclaimer">Free. Takes 10 seconds.</span>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- PORTFOLIO -->
 <section id="portfolio">
   <div class="glow-accent"></div>
@@ -1214,6 +1174,9 @@
     <a href="https://liferesetpeptides.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="Life Reset Peptides" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></a>
     <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="Segal Group" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
     <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
+    <a href="https://uniq-ruddy.vercel.app/" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">uniq-ruddy.vercel.app</div></div><div class="browser-preview"><img src="uniq-ruddy-thumb.jpg" alt="UniQ plant-based restaurant website" loading="lazy" width="960" height="600"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Hospitality</div><div class="portfolio-card-name">UniQ</div></div></a>
+    <a href="https://cardealer-psi.vercel.app/" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">cardealer-psi.vercel.app</div></div><div class="browser-preview"><img src="cardealer-thumb.jpg" alt="Plaza Motors dealership website" loading="lazy" width="960" height="600"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Automotive</div><div class="portfolio-card-name">Plaza Motors</div></div></a>
+    <a href="https://goldstreetfinal.vercel.app/" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">goldstreetfinal.vercel.app</div></div><div class="browser-preview"><img src="goldstreet-thumb.jpg" alt="Gold Street financial publication website" loading="lazy" width="960" height="600"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Financial Media</div><div class="portfolio-card-name">Gold Street</div></div></a>
     <a href="https://katorenovation.com" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">katorenovation.com</div></div><div class="browser-preview"><img src="kato-thumb.webp" alt="" loading="lazy" width="1200" height="525"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Renovation</div><div class="portfolio-card-name">KATO Renovation</div></div></a>
     <a href="https://carmen2.vercel.app" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">carmen2.vercel.app</div></div><div class="browser-preview"><img src="carmen-thumb.webp" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Nightlife</div><div class="portfolio-card-name">Carmen — Tempe, AZ</div></div></a>
     <a href="https://hormone-zone.com" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">hormone-zone.com</div></div><div class="browser-preview"><img src="hormonezone-thumb.webp" alt="" style="object-position:top center;" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Wellness</div><div class="portfolio-card-name">Hormone Zone</div></div></a>
@@ -1221,28 +1184,9 @@
     <a href="https://liferesetpeptides.com" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></a>
     <div class="browser-frame no-link" aria-hidden="true"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
     <div class="browser-frame no-link" aria-hidden="true"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
-  </div>
-</div>
-
-<!-- CLIENT TICKER -->
-<div class="ticker-band">
-  <div class="ticker-track">
-    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>40+ Businesses Served</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>KATO Renovation</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Carmen</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Hormone Zone</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>RedD Construction</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Life Reset Peptides</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Segal Group</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Scottsdale Ketamine</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>40+ Businesses Served</span>
+    <a href="https://uniq-ruddy.vercel.app/" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">uniq-ruddy.vercel.app</div></div><div class="browser-preview"><img src="uniq-ruddy-thumb.jpg" alt="" loading="lazy" width="960" height="600"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Hospitality</div><div class="portfolio-card-name">UniQ</div></div></a>
+    <a href="https://cardealer-psi.vercel.app/" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">cardealer-psi.vercel.app</div></div><div class="browser-preview"><img src="cardealer-thumb.jpg" alt="" loading="lazy" width="960" height="600"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Automotive</div><div class="portfolio-card-name">Plaza Motors</div></div></a>
+    <a href="https://goldstreetfinal.vercel.app/" target="_blank" rel="noopener" class="browser-frame" aria-hidden="true" tabindex="-1"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">goldstreetfinal.vercel.app</div></div><div class="browser-preview"><img src="goldstreet-thumb.jpg" alt="" loading="lazy" width="960" height="600"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Financial Media</div><div class="portfolio-card-name">Gold Street</div></div></a>
   </div>
 </div>
 
@@ -1269,17 +1213,50 @@
   </div>
 </div>
 
+<!-- PDF LEAD MAGNET -->
+<div class="lead-magnet-band">
+  <div class="lead-magnet-inner">
+    <div class="lm-visual reveal">
+      <div class="lm-grab">
+        <span class="lm-grab-text">Take the next step</span>
+        <svg class="lm-grab-arrow" viewBox="0 0 92 78" aria-hidden="true">
+          <path d="M84 9 C 46 0, 8 16, 20 58" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M9 45 L20 60 L35 52" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <a href="#" onclick="handlePdfDownload(event)" class="lm-cover-wrap" aria-label="Download the free Website Audit Checklist PDF">
+        <img src="audit-cover.jpg" alt="Website Audit Checklist — free PDF" class="lm-cover" loading="lazy">
+        <span class="lm-cover-tag">PDF · Free</span>
+      </a>
+    </div>
+    <div class="lm-content reveal">
+      <div class="lm-eyebrow">While You Decide</div>
+      <h3 class="lm-title">Get the Website Audit Checklist:<br><em>17 Things Your Site Must Do to Win Customers</em></h3>
+      <p class="lm-sub">Not ready to book yet? Use this free checklist to find the conversion leaks on your site and see exactly what to improve first.</p>
+      <ul class="lm-bullets">
+        <li>The #1 homepage element that turns visitors into calls</li>
+        <li>Why your contact form may be sending customers away</li>
+        <li>What your hero needs to say to create instant clarity</li>
+      </ul>
+      <div class="lm-actions">
+        <a href="#" onclick="handlePdfDownload(event)" class="btn-primary">↓ Get Your Free Copy</a>
+        <span class="lm-disclaimer">Free. Takes 10 seconds.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HOW IT WORKS -->
 <section id="how">
   <div class="glow-accent" style="right:-80px;left:auto;"></div>
   <div class="section-eyebrow">The Process</div>
   <h2 class="section-title">From Zero to Live<br><em>in Days, Not Months.</em></h2>
   <p class="section-sub">We keep it simple so you can focus on running your business.</p>
-  <div class="steps reveal">
-    <div class="step"><div class="step-num">01</div><div class="step-title">Book a Call</div><div class="step-desc">Tell us your goals and where you're growing. No lengthy intake forms — just a real conversation.</div><div class="step-connector"></div></div>
-    <div class="step"><div class="step-num">02</div><div class="step-title">Custom Strategy</div><div class="step-desc">We map the right mix of SEO, ads, web, content, dashboards, or AI lead gen for your market and goals.</div><div class="step-connector"></div></div>
-    <div class="step"><div class="step-num">03</div><div class="step-title">We Build &amp; Launch</div><div class="step-desc">Our team executes fast — websites, campaigns, and systems built to convert, wherever your customers are.</div><div class="step-connector"></div></div>
-    <div class="step"><div class="step-num">04</div><div class="step-title">Track &amp; Scale</div><div class="step-desc">Live dashboards keep you in the loop. We refine and scale what's working — no guesswork.</div></div>
+  <div class="steps">
+    <div class="step reveal"><div class="step-num">01</div><div class="step-title">Book a Call</div><div class="step-desc">Tell us where you want to go. No lengthy intake forms—just a focused, real conversation.</div></div>
+    <div class="step reveal"><div class="step-num">02</div><div class="step-title">Custom Strategy</div><div class="step-desc">We choose the right mix of SEO, ads, web, content, dashboards, and AI lead generation for your goals.</div></div>
+    <div class="step reveal"><div class="step-num">03</div><div class="step-title">We Build &amp; Launch</div><div class="step-desc">Our team moves fast on websites, campaigns, and systems engineered to turn demand into action.</div></div>
+    <div class="step reveal"><div class="step-num">04</div><div class="step-title">Track &amp; Scale</div><div class="step-desc">See what is working in one clear view, then double down on the growth that earns its place.</div></div>
   </div>
 </section>
 
