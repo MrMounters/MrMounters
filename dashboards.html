@@ -160,6 +160,31 @@
   .hero { min-height: 88vh; display: flex; flex-direction: column; justify-content: center; padding: 9rem 4% 5rem; position: relative; overflow: hidden; }
   .hero-bg { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(60% 55% at 85% 10%, rgba(76,89,247,0.18) 0%, transparent 60%), radial-gradient(50% 50% at 10% 90%, rgba(125,211,252,0.12) 0%, transparent 60%), linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); }
   .hero > *:not(.hero-bg) { position: relative; z-index: 2; }
+  /* ── Rocket hero media (ported from index.html so every landing page shares it) ── */
+  .hero-media { position: absolute; top: 4.6rem; right: 0; bottom: 0; width: min(61vw, 1080px); overflow: hidden; isolation: isolate; }
+  .hero-media::before, .hero-media::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .hero-media::before { background: linear-gradient(90deg, var(--dark) 0%, rgba(11,15,25,0.96) 12%, rgba(11,15,25,0.72) 28%, rgba(11,15,25,0.16) 52%, rgba(11,15,25,0.02) 100%); }
+  .hero-media::after { background: linear-gradient(180deg, rgba(11,15,25,0.26) 0%, transparent 18%, transparent 68%, var(--dark2) 100%), radial-gradient(ellipse 52% 40% at 72% 62%, rgba(76,89,247,0.14), transparent 72%); }
+  .hero-media-poster, .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 78% 50%; }
+  .hero-media-poster { z-index: 0; }
+  .hero-video { z-index: 1; opacity: 0; transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1); }
+  .hero-video.is-ready { opacity: 1; }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(11,15,25,0.22) 0%, transparent 47%); }
+  @media (max-width: 900px) {
+    .hero.has-rocket { justify-content: flex-start; padding: calc(clamp(22rem, 56vw, 31rem) + 6rem) 4% 3rem; }
+    .hero-media { top: 4.15rem; right: 0; bottom: auto; width: 100%; height: clamp(22rem, 56vw, 31rem); overflow: visible; }
+    .hero-media-poster, .hero-video { object-position: 62% 50%; }
+    .hero-media::before { background: linear-gradient(90deg, rgba(11,15,25,0.38) 0%, rgba(11,15,25,0.04) 36%, rgba(11,15,25,0.04) 80%, rgba(11,15,25,0.18) 100%); }
+    .hero-media::after { inset: 0 0 -12rem; background: linear-gradient(180deg, rgba(11,15,25,0.22) 0%, transparent 20%, rgba(11,15,25,0.16) 48%, var(--dark) 76%, var(--dark) 100%), radial-gradient(ellipse 58% 44% at 70% 60%, rgba(76,89,247,0.13), transparent 74%); }
+    .hero.has-rocket::after { background: none; }
+  }
+  @media (max-width: 640px) {
+    .hero-media { top: 3.85rem; height: min(42rem, 100svh); overflow: hidden; }
+    .hero-media-poster, .hero-video { object-position: 69% 50%; }
+    .hero-media::before { background: linear-gradient(90deg, var(--dark) 0%, rgba(11,15,25,0.98) 42%, rgba(11,15,25,0.72) 64%, rgba(11,15,25,0.08) 100%); }
+    .hero-media::after { inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.1) 0%, rgba(11,15,25,0.12) 45%, rgba(11,15,25,0.68) 80%, var(--dark) 100%), radial-gradient(ellipse 62% 42% at 72% 54%, rgba(76,89,247,0.12), transparent 74%); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }
   .hero-eyebrow { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.6rem; animation: fadeUp 0.6s 0.1s both; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
   .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.6rem, 5.8vw, 4.8rem); font-weight: 700; line-height: 1.06; max-width: 880px; margin-bottom: 1.6rem; letter-spacing: -0.03em; animation: fadeUp 0.7s 0.2s both; }
@@ -346,8 +371,16 @@
   <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="mobile-link mnav-text-link">or Text Us Now &mdash; (480) 589-0098</a>
 </div>
 
-<section class="hero" id="main">
-  <div class="hero-bg"></div>
+<section class="hero has-rocket" id="main">
+  <div class="hero-bg">
+    <div class="hero-media" aria-hidden="true">
+      <img class="hero-media-poster" src="assets/hero/meridion-rocket-poster.jpg" alt="" fetchpriority="high">
+      <video id="heroVideo" class="hero-video" autoplay muted loop playsinline preload="none" poster="assets/hero/meridion-rocket-poster.jpg" tabindex="-1">
+        <source data-src="assets/hero/meridion-rocket.webm" type="video/webm">
+        <source data-src="assets/hero/meridion-rocket.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
   <div class="hero-eyebrow">Dashboards</div>
   <h1>See Everything.<br><span class="line-gold">In One Place.</span></h1>
   <p class="hero-sub">Custom reporting dashboards that pull your leads, ad spend, and site performance into one live view — no more digging through five different logins.</p>
@@ -525,6 +558,27 @@ document.querySelectorAll('.services-grid').forEach(g=>{Array.from(g.children).f
   });
   document.getElementById('cbDecline').addEventListener('click', () => {
     localStorage.setItem('jb-cookie', 'declined'); dismiss();
+  });
+})();
+</script>
+<script>
+(function(){
+  var video = document.getElementById('heroVideo');
+  if (!video) return;
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (reducedMotion || (connection && connection.saveData)) return;
+  function setPlaybackRate(){ video.defaultPlaybackRate = 0.5; video.playbackRate = 0.5; }
+  setPlaybackRate();
+  video.querySelectorAll('source[data-src]').forEach(function(source){ source.src = source.dataset.src; });
+  video.addEventListener('loadedmetadata', setPlaybackRate, { once: true });
+  video.addEventListener('playing', function(){ setPlaybackRate(); video.classList.add('is-ready'); }, { once: true });
+  video.load();
+  var playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') { playPromise.catch(function(){}); }
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) { video.pause(); }
+    else { var resume = video.play(); if (resume && typeof resume.catch === 'function') resume.catch(function(){}); }
   });
 })();
 </script>
