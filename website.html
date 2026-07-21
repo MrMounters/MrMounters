@@ -248,6 +248,12 @@
   .faq-item { border-bottom: 1px solid var(--card-border); padding: 1.5rem 0; }
   .faq-q { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1rem; color: var(--white); margin-bottom: 0.6rem; }
   .faq-a { font-family: 'Inter', sans-serif; color: var(--gray); font-size: 0.9rem; line-height: 1.72; font-weight: 300; }
+  /* FAQ accordion — collapse answers so the list is scannable; JS toggles .open per item. */
+  .faq-q { cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0; }
+  .faq-q::after { content: '+'; color: var(--gold-light); font-size: 1.35rem; line-height: 1; flex-shrink: 0; transition: transform 0.25s; }
+  .faq-item.open .faq-q::after { transform: rotate(45deg); }
+  .faq-a { max-height: 0; overflow: hidden; opacity: 0; margin-top: 0; transition: max-height 0.4s ease, opacity 0.3s, margin-top 0.3s; }
+  .faq-item.open .faq-a { max-height: 360px; opacity: 1; margin-top: 0.7rem; }
 
   @media (max-width: 768px) {
     .nav-links { display: none; }
@@ -589,6 +595,14 @@ async function startCheckout(plan, btn) {
     else { var resume = video.play(); if (resume && typeof resume.catch === 'function') resume.catch(function(){}); }
   });
 })();
+</script>
+<script>
+document.querySelectorAll('#faq .faq-q').forEach(function(q){
+  q.setAttribute('role','button'); q.setAttribute('tabindex','0'); q.setAttribute('aria-expanded','false');
+  function toggle(){ var item = q.closest('.faq-item'); var open = item.classList.toggle('open'); q.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  q.addEventListener('click', toggle);
+  q.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+});
 </script>
 </body>
 </html>
