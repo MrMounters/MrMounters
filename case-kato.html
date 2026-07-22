@@ -4,31 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="telephone=no">
-<title>Our Work — Meridion AI</title>
-<meta name="description" content="Real websites and campaigns we've built for real clients — construction, healthcare, hospitality, and more. The same portfolio, everywhere we operate.">
-<link rel="canonical" href="https://meridionai.com/work.html">
-<meta property="og:title" content="Our Work — Meridion AI">
-<meta property="og:description" content="Real websites and campaigns we've built for real clients — construction, healthcare, hospitality, and more. The same portfolio, everywhere we operate.">
+<title>KATO Renovation — Case Study | Meridion AI</title>
+<meta name="description" content="How Meridion AI built KATO Renovation a custom, conversion-first website in 5–7 days — designed to turn local searches into booked estimates.">
+<link rel="canonical" href="https://meridionai.com/case-kato.html">
+<meta property="og:title" content="KATO Renovation — Case Study | Meridion AI">
+<meta property="og:description" content="How Meridion AI built KATO Renovation a custom, conversion-first website in 5–7 days — designed to turn local searches into booked estimates.">
 <meta property="og:image" content="og-image.jpg">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://meridionai.com/work.html">
+<meta property="og:url" content="https://meridionai.com/case-kato.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Our Work — Meridion AI">
-<meta name="twitter:description" content="Real websites and campaigns we've built for real clients — construction, healthcare, hospitality, and more. The same portfolio, everywhere we operate.">
+<meta name="twitter:title" content="KATO Renovation — Case Study | Meridion AI">
+<meta name="twitter:description" content="How Meridion AI built KATO Renovation a custom, conversion-first website in 5–7 days — designed to turn local searches into booked estimates.">
 <meta name="twitter:image" content="og-image.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B0F19'/%3E%3Cpath d='M8 22V10l8 8 8-8v12' stroke='%234C59F7' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": "Our Work \u2014 Meridion AI",
-  "url": "https://meridionai.com/work.html",
-  "description": "Real websites and campaigns we've built for real clients \u2014 construction, healthcare, hospitality, and more. The same portfolio, everywhere we operate.",
-  "isPartOf": {
-    "@type": "WebSite",
-    "name": "Meridion AI",
-    "url": "https://meridionai.com/"
-  }
+  "@type": "Article",
+  "headline": "KATO Renovation — Case Study",
+  "about": "Custom website design and development for a construction & renovation company",
+  "author": { "@type": "Organization", "name": "Meridion AI", "url": "https://meridionai.com/" },
+  "publisher": { "@type": "Organization", "name": "Meridion AI" },
+  "image": "https://meridionai.com/kato-thumb.webp",
+  "mainEntityOfPage": "https://meridionai.com/case-kato.html"
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -152,6 +150,31 @@
   .hero { min-height: 88vh; display: flex; flex-direction: column; justify-content: center; padding: 9rem 4% 5rem; position: relative; overflow: hidden; }
   .hero-bg { position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(60% 55% at 85% 10%, rgba(76,89,247,0.18) 0%, transparent 60%), radial-gradient(50% 50% at 10% 90%, rgba(125,211,252,0.12) 0%, transparent 60%), linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); }
   .hero > *:not(.hero-bg) { position: relative; z-index: 2; }
+  /* ── Rocket hero media (ported from index.html so every landing page shares it) ── */
+  .hero-media { position: absolute; top: 4.6rem; right: 0; bottom: 0; width: min(61vw, 1080px); overflow: hidden; isolation: isolate; }
+  .hero-media::before, .hero-media::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .hero-media::before { background: linear-gradient(90deg, var(--dark) 0%, rgba(11,15,25,0.96) 12%, rgba(11,15,25,0.72) 28%, rgba(11,15,25,0.16) 52%, rgba(11,15,25,0.02) 100%); }
+  .hero-media::after { background: linear-gradient(180deg, rgba(11,15,25,0.26) 0%, transparent 18%, transparent 68%, var(--dark2) 100%), radial-gradient(ellipse 52% 40% at 72% 62%, rgba(76,89,247,0.14), transparent 72%); }
+  .hero-media-poster, .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 78% 50%; }
+  .hero-media-poster { z-index: 0; }
+  .hero-video { z-index: 1; opacity: 0; transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1); }
+  .hero-video.is-ready { opacity: 1; }
+  .hero::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, rgba(11,15,25,0.22) 0%, transparent 47%); }
+  @media (max-width: 900px) {
+    .hero.has-rocket { justify-content: flex-start; padding: calc(clamp(22rem, 56vw, 31rem) + 6rem) 4% 3rem; }
+    .hero-media { top: 4.15rem; right: 0; bottom: auto; width: 100%; height: clamp(22rem, 56vw, 31rem); overflow: visible; }
+    .hero-media-poster, .hero-video { object-position: 62% 50%; }
+    .hero-media::before { background: linear-gradient(90deg, rgba(11,15,25,0.38) 0%, rgba(11,15,25,0.04) 36%, rgba(11,15,25,0.04) 80%, rgba(11,15,25,0.18) 100%); }
+    .hero-media::after { inset: 0 0 -12rem; background: linear-gradient(180deg, rgba(11,15,25,0.22) 0%, transparent 20%, rgba(11,15,25,0.16) 48%, var(--dark) 76%, var(--dark) 100%), radial-gradient(ellipse 58% 44% at 70% 60%, rgba(76,89,247,0.13), transparent 74%); }
+    .hero.has-rocket::after { background: none; }
+  }
+  @media (max-width: 640px) {
+    .hero-media { top: 3.85rem; height: min(42rem, 100svh); overflow: hidden; }
+    .hero-media-poster, .hero-video { object-position: 69% 50%; }
+    .hero-media::before { background: linear-gradient(90deg, var(--dark) 0%, rgba(11,15,25,0.98) 42%, rgba(11,15,25,0.72) 64%, rgba(11,15,25,0.08) 100%); }
+    .hero-media::after { inset: 0; background: linear-gradient(180deg, rgba(11,15,25,0.1) 0%, rgba(11,15,25,0.12) 45%, rgba(11,15,25,0.68) 80%, var(--dark) 100%), radial-gradient(ellipse 62% 42% at 72% 54%, rgba(76,89,247,0.12), transparent 74%); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-video { display: none; } }
   .hero-eyebrow { font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.6rem; animation: fadeUp 0.6s 0.1s both; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
   .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.6rem, 5.8vw, 4.8rem); font-weight: 700; line-height: 1.06; max-width: 880px; margin-bottom: 1.6rem; letter-spacing: -0.03em; animation: fadeUp 0.7s 0.2s both; }
@@ -265,84 +288,90 @@
   }
 
 
-  #portfolio { background: var(--dark2); position: relative; overflow: hidden; }
-  #portfolio::before { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 60% 40% at 85% 15%, rgba(76,89,247,0.04) 0%, transparent 60%); }
-  .portfolio-featured { margin-bottom: 1.5rem; }
-  .portfolio-featured .browser-frame .browser-preview { aspect-ratio: 21/9 !important; }
-  .portfolio-featured .portfolio-card-info { padding: 1.3rem 1.5rem 1.7rem; }
-  .portfolio-featured .portfolio-card-name { font-size: 1.2rem; }
-  .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
-  .browser-frame { display: block; text-decoration: none; color: inherit; border-radius: 8px; overflow: hidden; border: 1px solid var(--card-border); background: var(--dark3); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.2); transition: border-color 0.3s, box-shadow 0.35s; }
-  .browser-frame:hover { border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); }
-  .browser-frame.no-link { cursor: default; }
-  .browser-chrome { background: #1C1C1C; padding: 0.58rem 1rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .browser-dots { display: flex; gap: 0.38rem; }
-  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-red{background:#ff5f57} .dot-yellow{background:#febc2e} .dot-green{background:#28c840}
-  .browser-bar { flex: 1; background: #131313; border-radius: 4px; padding: 0.26rem 0.7rem; font-size: 0.67rem; color: #3e3e3e; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .browser-preview { position: relative; overflow: hidden; aspect-ratio: 16/9; }
-  .browser-preview img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
-  .browser-frame:hover .browser-preview img { transform: scale(1.03); }
-  .portfolio-card-info { padding: 1rem 1.2rem 1.3rem; border-top: 1px solid rgba(242,244,248,0.06); background: var(--dark3); }
-  .portfolio-card-tag { font-family: 'Inter', sans-serif; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-muted); margin-bottom: 0.35rem; }
-  .portfolio-card-name { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); }
-  /* Mobile swipe affordances (built by JS, revealed only in the carousel breakpoint below) */
-  .portfolio-hint { display: none; }
-  .portfolio-dots { display: none; }
+  .mission-section { background: var(--dark2); padding: 7rem 4%; position: relative; overflow: hidden; }
+  .mission-section::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 60% 60% at 20% 40%, rgba(76,89,247,0.06) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 85% 70%, rgba(125,211,252,0.05) 0%, transparent 60%); }
+  .mission-inner { max-width: 800px; position: relative; z-index: 1; }
+  .mission-h2 { font-size: clamp(2.4rem, 4.5vw, 4rem) !important; margin-bottom: 1.6rem !important; }
+  .mission-tagline { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.3rem; color: var(--white); line-height: 1.5; margin-bottom: 1.6rem; letter-spacing: -0.01em; }
+  .mission-body { font-family: 'Inter', sans-serif; color: var(--gray-light); font-size: 1rem; line-height: 1.88; font-weight: 300; max-width: 620px; }
+  .mission-body + .mission-body { margin-top: 1.1rem; }
 
-  #testimonials { background: var(--dark); position: relative; overflow: hidden; }
-  #testimonials::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 55% 55% at 90% 85%, rgba(76,89,247,0.05) 0%, transparent 55%); }
-  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.5rem; }
-  .testimonial-card { border: 1px solid var(--card-border); border-radius: 8px; padding: 2rem; background: var(--dark3); position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.2); transition: border-color 0.3s, box-shadow 0.35s; }
-  .testimonial-card:hover { border-color: var(--card-border-hover); box-shadow: var(--card-shadow-hover); }
-  .testimonial-card::before { content:'\201C'; position:absolute; top:1.2rem; right:1.5rem; font-family:'Space Grotesk',sans-serif; font-size:4.5rem; line-height:1; color:var(--gold); opacity:0.2; pointer-events:none; }
-  .testimonial-text { color:var(--gray); font-size:0.88rem; line-height:1.82; margin-bottom:1.4rem; font-style:italic; font-family:'Inter',sans-serif; }
-  .testimonial-author { display:flex; align-items:center; gap:0.8rem; }
-  .author-avatar { width:40px; height:40px; border-radius:50%; background:var(--gold-dim); border:1px solid rgba(76,89,247,0.25); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:700; color:var(--gold-light); flex-shrink:0; }
-  .author-name { font-family:'Inter',sans-serif; font-weight:600; font-size:0.88rem; }
-  .author-biz { font-family:'Inter',sans-serif; font-size:0.74rem; color:var(--warm-muted); margin-top:0.15rem; }
+  .guarantee-band { background: linear-gradient(135deg, rgba(76,89,247,0.06) 0%, rgba(76,89,247,0.015) 100%); border-top: 1px solid rgba(242,244,248,0.08); border-bottom: 1px solid rgba(242,244,248,0.08); padding: 3.5rem 4%; position: relative; overflow: hidden; }
+  .guarantee-inner { display:flex; align-items:center; gap:3rem; flex-wrap:wrap; max-width:860px; }
+  .guarantee-icon { width:3rem; height:3rem; flex-shrink:0; color:var(--gold); filter:drop-shadow(0 0 16px rgba(76,89,247,0.4)); }
+  .guarantee-icon svg { width:100%; height:100%; stroke-width:1.4; }
+  .guarantee-title { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.5rem,3vw,2rem); font-weight:700; margin-bottom:0.6rem; letter-spacing:-0.02em; }
+  .guarantee-text { font-family:'Inter',sans-serif; color:var(--gray-light); font-size:0.92rem; line-height:1.78; max-width:560px; font-weight:300; }
+  .guarantee-text strong { color:var(--white); font-weight:500; }
 
-  @media (max-width: 900px) {
-    .portfolio-featured .browser-preview { aspect-ratio: 16/7 !important; }
-    .portfolio-grid { grid-template-columns: repeat(2,1fr); }
-  }
-  @media (max-width: 640px) {
-    /* Thumb-swipe carousel: horizontal scroll-snap with a peek of the next card so it reads
-       as swipeable at a glance, scrollbar hidden, and soft edge fades hinting there's more. */
-    .portfolio-grid {
-      display: flex;
-      grid-template-columns: none;
-      gap: 0.9rem;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scroll-padding-left: 4%;
-      padding-bottom: 0.4rem;
-      scrollbar-width: none;
-      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 4.5%, #000 95.5%, transparent 100%);
-              mask-image: linear-gradient(to right, transparent 0, #000 4.5%, #000 95.5%, transparent 100%);
-    }
-    .portfolio-grid::-webkit-scrollbar { display: none; }
-    .portfolio-grid .browser-frame { flex: 0 0 82%; min-width: 0; scroll-snap-align: center; }
-    .portfolio-featured .browser-preview { aspect-ratio:16/9 !important; }
+  .comparison-section { background: var(--dark); padding: 7rem 4%; position: relative; overflow: hidden; }
+  .comparison-section::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(76,89,247,0.025) 0%, transparent 65%); }
+  .comparison-table-wrap { overflow-x: auto; }
+  .comparison-table { width:100%; max-width:860px; border-collapse:collapse; font-family:'Inter',sans-serif; font-size:0.88rem; }
+  .comparison-table th { padding:1rem 1.2rem; text-align:center; border-bottom:1px solid rgba(242,244,248,0.1); font-weight:600; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--warm-muted); }
+  .comparison-table th.col-us { color:var(--white); font-size:0.82rem; background:rgba(76,89,247,0.08); border-radius:8px 8px 0 0; border:1px solid rgba(76,89,247,0.2); border-bottom:none; position:relative; }
+  .comparison-table th.col-us::before { content:'BEST VALUE'; position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:var(--gold); color:#fff; font-size:0.55rem; font-weight:700; letter-spacing:0.18em; padding:0.22rem 0.7rem; white-space:nowrap; border-radius:0 0 4px 4px; }
+  .comparison-table td { padding:0.9rem 1.2rem; text-align:center; border-bottom:1px solid rgba(242,244,248,0.07); color:var(--gray); vertical-align:middle; transition:background 0.2s; }
+  .comparison-table tr:hover td { background:rgba(242,244,248,0.03); }
+  .comparison-table td.col-us { color:var(--white); font-weight:500; background:rgba(76,89,247,0.08); border-left:1px solid rgba(76,89,247,0.15); border-right:1px solid rgba(76,89,247,0.15); }
+  .comparison-table tr:last-child td.col-us { border-radius:0 0 8px 8px; border-bottom:1px solid rgba(76,89,247,0.2); }
+  .comparison-table td.row-label { text-align:left; color:var(--warm-accent); font-size:0.85rem; }
+  .check{color:#6fcf97;font-size:1rem} .cross{color:var(--warm-muted);font-size:1rem} .partial{color:var(--warm-muted);font-size:0.82rem}
 
-    .portfolio-hint {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
-      color: var(--gold-light); margin: -2rem 0 1.1rem; transition: opacity 0.4s;
-    }
-    .portfolio-hint.gone { opacity: 0; pointer-events: none; }
-    .portfolio-hint svg { width: 15px; height: 15px; animation: swipe-nudge 1.5s ease-in-out infinite; }
-    @keyframes swipe-nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
+  #pricing { background: var(--dark2); position: relative; overflow: hidden; }
+  #pricing::before { content:''; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 50% 55% at 18% 75%, rgba(76,89,247,0.04) 0%, transparent 55%); }
+  .pricing-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; max-width:740px; margin-bottom: 3rem; }
+  .pricing-card { border:1px solid var(--card-border); padding:2.5rem; border-radius:8px; background:var(--dark3); position:relative; transition:border-color 0.3s, box-shadow 0.35s; }
+  .pricing-card:hover { border-color:var(--card-border-hover); box-shadow:var(--card-shadow-hover); }
+  .pricing-card.featured { border-color:rgba(76,89,247,0.32); background:linear-gradient(150deg,rgba(76,89,247,0.07),var(--dark3) 55%); box-shadow:var(--glow-strong); }
+  .pricing-card.featured:hover { border-color:rgba(76,89,247,0.52); }
+  .pricing-card.featured::before { content:'MOST POPULAR'; position:absolute; top:-1px; right:2rem; background:var(--gold); color:#fff; font-family:'Inter',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.18em; padding:0.28rem 0.8rem; }
+  .pricing-label { font-family:'Inter',sans-serif; font-size:0.66rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:1rem; }
+  .pricing-price { font-family:var(--display); font-size:3.2rem; font-weight:700; line-height:1; margin-bottom:0.4rem; letter-spacing:-0.03em; }
+  .pricing-price sup { font-size:1.4rem; vertical-align:top; margin-top:0.5rem; }
+  .pricing-period { font-family:'Inter',sans-serif; color:var(--gray); font-size:0.82rem; margin-bottom:1.6rem; }
+  .pricing-features { list-style:none; margin-bottom:2rem; }
+  .pricing-features li { padding:0.55rem 0; border-bottom:1px solid rgba(242,244,248,0.08); font-family:'Inter',sans-serif; font-size:0.87rem; color:var(--gray-light); display:flex; align-items:center; gap:0.7rem; font-weight:300; }
+  .pricing-features li::before { content:'✓'; color:var(--warm-accent); font-weight:700; flex-shrink:0; }
+  .pricing-single { display: flex; justify-content: center; }
+  .pricing-single .pricing-card { max-width: 440px; width: 100%; }
+  .pricing-card.accent { border-color: rgba(76,89,247,0.32); background: linear-gradient(150deg, rgba(76,89,247,0.07), var(--dark3) 55%); box-shadow: var(--glow-strong); }
+  .pricing-card.accent:hover { border-color: rgba(76,89,247,0.52); }
+  .pc-badge { position: absolute; top: -1px; right: 2rem; background: var(--gold); color: #fff; font-family: var(--mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; padding: 0.28rem 0.8rem; text-transform: uppercase; }
+  .price-plus { font-size: 1.7rem; vertical-align: top; color: var(--gold); margin-left: 0.05rem; }
+  .price-per { font-size: 1.3rem; font-family: 'Inter', sans-serif; font-weight: 300; color: var(--gray); }
+  .pricing-foot { margin-top: 1.5rem; color: var(--warm-muted); font-size: 0.8rem; font-family: var(--mono); }
+  .pricing-foot a { color: var(--warm-accent); text-decoration: none; }
+  .checkout-status { margin-top: 1rem; font-family: var(--mono); font-size: 0.78rem; color: var(--gold); min-height: 1.2em; }
+  .checkout-status.err { color: #ff8b6b; }
+  .checkout-banner { max-width: 900px; margin: 0 auto 1.5rem; padding: 0.9rem 1.2rem; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.88rem; text-align: center; background: rgba(76,89,247,0.1); border: 1px solid rgba(76,89,247,0.3); color: var(--white); }
+  .hidden { display: none !important; }
+  .app-platforms { display: flex; gap: 0.75rem; margin-bottom: 1rem; color: var(--warm-accent); }
+  .app-platforms svg { width: 23px; height: 23px; fill: currentColor; transition: fill 0.2s; }
+  .pricing-card:hover .app-platforms { color: var(--gold); }
+  .pricing-subhead { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.3rem; margin: 3rem 0 1.5rem; letter-spacing:-0.01em; }
+  @media (max-width: 640px) { .guarantee-inner { flex-direction:column; gap:1.5rem; } .comparison-table th,.comparison-table td { padding:0.7rem 0.8rem; font-size:0.8rem; } }
 
-    .portfolio-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.1rem; }
-    .portfolio-dots .pd {
-      width: 7px; height: 7px; padding: 0; border: none; border-radius: 50%;
-      background: var(--card-border-hover); cursor: pointer; transition: background 0.25s, transform 0.25s;
-    }
-    .portfolio-dots .pd.active { background: var(--gold); transform: scale(1.35); }
-  }
-
+  /* Case study */
+  .cs-breadcrumb { margin-bottom: 1.2rem; }
+  .cs-breadcrumb a { font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:600; color:var(--warm-accent); text-decoration:none; }
+  .cs-breadcrumb a:hover { color:var(--gold-light); }
+  .cs-meta { display:flex; flex-wrap:wrap; gap:2.4rem; margin-top:2.6rem; padding-top:2rem; border-top:1px solid rgba(242,244,248,0.09); }
+  .cs-meta-k { font-family:'Inter',sans-serif; font-size:0.66rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--warm-muted); margin-bottom:0.3rem; }
+  .cs-meta-v { font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:600; color:var(--white); }
+  .cs-meta-v a { color:var(--gold-light); text-decoration:none; }
+  .cs-shot { padding: 0 4% 1rem; }
+  .cs-shot img { display:block; width:100%; max-width:1000px; margin:0 auto; border-radius:12px; border:1px solid var(--card-border); box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+  .cs-body { max-width:760px; }
+  .cs-body p { font-family:'Inter',sans-serif; color:var(--gray-light,#C7CFDE); font-size:1rem; line-height:1.85; font-weight:300; margin-bottom:1.1rem; }
+  .cs-list { list-style:none; margin:0.4rem 0 0; }
+  .cs-list li { position:relative; padding-left:1.9rem; margin-bottom:0.9rem; font-family:'Inter',sans-serif; color:var(--gray-light,#C7CFDE); font-size:0.96rem; line-height:1.7; font-weight:300; }
+  .cs-list li::before { content:''; position:absolute; left:0; top:0.35rem; width:1.1rem; height:1.1rem; border-radius:50%; background:var(--gold-dim); border:1px solid rgba(76,89,247,0.4); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A74FF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); background-size:0.7rem; background-position:center; background-repeat:no-repeat; }
+  .cs-results-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1.2rem; max-width:900px; }
+  .cs-result { border:1px solid var(--card-border); border-radius:10px; background:var(--dark3); padding:1.8rem 1.6rem; }
+  .cs-result-num { font-family:'Space Grotesk',sans-serif; font-size:2rem; font-weight:700; color:var(--gold-light); letter-spacing:-0.02em; margin-bottom:0.4rem; }
+  .cs-result-label { font-family:'Inter',sans-serif; font-size:0.85rem; color:var(--gray); line-height:1.5; font-weight:300; }
+  .cs-placeholder { color:var(--warm-muted); font-style:italic; }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -370,13 +399,13 @@
       <div class="nav-dropdown-menu">
         <a href="seo.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>SEO</a>
         <a href="paid-advertising.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>Paid Advertising</a>
-        <a href="web-development.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Web Development</a>
+        <a href="web-development.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Web Development</a>
         <a href="ugc-content.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m9 9 6 3-6 3V9Z"/></svg>UGC Content</a>
         <a href="dashboards.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboards</a>
         <a href="ai-lead-generation.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M9 13v2M15 13v2"/></svg>AI Lead Generation</a>
       </div>
     </div>
-    <a href="work.html" class="active">Work</a>
+    <a href="work.html">Work</a>
     <a href="about.html">About</a>
     <a href="tel:4805890098" class="nav-cta">Call / Text Us</a>
   </div>
@@ -423,56 +452,63 @@
   <a href="sms:4805890098?&body=Hi%2C%20I%27d%20like%20to%20know%20about%20your%20services!" class="mobile-link mnav-text-link">or Text Us Now &mdash; (480) 589-0098</a>
 </div>
 
-<section class="hero" id="main" style="min-height:64vh;padding-bottom:3rem;">
+<section class="hero" id="main">
   <div class="hero-bg"></div>
-  <div class="hero-eyebrow">Our Work</div>
-  <h1>Businesses We've<br><span class="line-gold">Helped Scale.</span></h1>
-  <p class="hero-sub">One portfolio, shown everywhere we operate — from the USA to Europe, the UK, Australia, and the Gulf. Real clients, real sites, no fabricated case studies per market.</p>
-  <div class="hero-actions">
-    <a href="https://cal.com/john-bert/15min" target="_blank" rel="noopener" class="btn-primary" data-desktop-label="Book a Free Strategy Call">Book a Free Strategy Call</a>
-    <a href="index.html#services" class="btn-outline">See Our Services</a>
+  <div class="cs-breadcrumb"><a href="work.html">&larr; Back to Work</a></div>
+  <div class="hero-eyebrow">Case Study &middot; Construction &amp; Renovation</div>
+  <h1>KATO Renovation</h1>
+  <p class="hero-sub">A custom, conversion-first website for a renovation company &mdash; built to turn local searches into booked estimates, and launched in days, not months.</p>
+  <div class="cs-meta">
+    <div><div class="cs-meta-k">Industry</div><div class="cs-meta-v">Construction &amp; Renovation</div></div>
+    <div><div class="cs-meta-k">Timeline</div><div class="cs-meta-v">5&ndash;7 days</div></div>
+    <div><div class="cs-meta-k">Services</div><div class="cs-meta-v">Web Development</div></div>
+    <div><div class="cs-meta-k">Live site</div><div class="cs-meta-v"><a href="https://katorenovation.com" target="_blank" rel="noopener">katorenovation.com &#8599;</a></div></div>
   </div>
 </section>
 
-<section id="portfolio">
-  <div class="section-eyebrow">Our Work</div>
-  <h2 class="section-title">Real Businesses.<br><em>Real Results.</em></h2>
-  <p class="section-sub">The same portfolio we show every client, everywhere we operate. Every website below is custom-designed for the industry, audience, and goal — no templates, no shortcuts.</p>
-  <div class="portfolio-featured reveal">
-    <a href="https://katorenovation.com" target="_blank" rel="noopener" class="browser-frame">
-      <div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">katorenovation.com</div></div>
-      <div class="browser-preview"><img src="kato-thumb.webp" alt="KATO Renovation website" loading="lazy" width="1200" height="525"></div>
-      <div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Renovation</div><div class="portfolio-card-name">KATO Renovation</div></div>
-    </a>
-    <div style="text-align:right;margin-top:0.7rem;"><a href="case-kato.html" style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;color:var(--gold-light);text-decoration:none;">Read the KATO case study &rarr;</a></div>
-  </div>
-  <div class="portfolio-grid reveal">
-    <a href="https://carmen2.vercel.app" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">carmen2.vercel.app</div></div><div class="browser-preview"><img src="carmen-thumb.webp" alt="Carmen" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Restaurant &amp; Nightlife</div><div class="portfolio-card-name">Carmen — Tempe, AZ</div></div></a>
-    <a href="https://hormone-zone.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">hormone-zone.com</div></div><div class="browser-preview"><img src="hormonezone-thumb.webp" alt="Hormone Zone" style="object-position:top center;" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Wellness</div><div class="portfolio-card-name">Hormone Zone</div></div></a>
-    <a href="https://reddconstruction.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">reddconstruction.com</div></div><div class="browser-preview"><img src="redd-thumb.webp" alt="RedD Construction" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Construction &amp; Outdoor Living</div><div class="portfolio-card-name">RedD Construction LLC</div></div></a>
-    <a href="https://liferesetpeptides.com" target="_blank" rel="noopener" class="browser-frame"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">liferesetpeptides.com</div></div><div class="browser-preview"><img src="lifereset-thumb.jpeg" alt="Life Reset Peptides" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Health &amp; E-Commerce</div><div class="portfolio-card-name">Life Reset Peptides</div></div></a>
-    <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">segalgroup.com</div></div><div class="browser-preview"><img src="segal-thumb.webp" alt="Segal Group" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Insurance &amp; Financial</div><div class="portfolio-card-name">Segal Group</div></div></div>
-    <div class="browser-frame no-link"><div class="browser-chrome"><div class="browser-dots"><div class="browser-dot dot-red"></div><div class="browser-dot dot-yellow"></div><div class="browser-dot dot-green"></div></div><div class="browser-bar">scottsdaleketamine.com</div></div><div class="browser-preview"><img src="ketamine-thumb.jpeg" alt="Scottsdale Ketamine Clinic" loading="lazy" width="600" height="375"></div><div class="portfolio-card-info"><div class="portfolio-card-tag">Healthcare &amp; Medical</div><div class="portfolio-card-name">Scottsdale Ketamine Clinic</div></div></div>
+<section class="cs-shot">
+  <a href="https://katorenovation.com" target="_blank" rel="noopener"><img src="kato-thumb.webp" alt="KATO Renovation website" width="1200" height="525" loading="lazy"></a>
+</section>
+
+<section id="challenge">
+  <div class="section-eyebrow">The Challenge</div>
+  <h2 class="section-title">A Great Business<br><em>an Invisible Website.</em></h2>
+  <div class="cs-body">
+    <p>Renovation is a trust-and-timing business: people decide who to call in the few minutes they spend on your site. KATO needed a presence that looked as credible as their work, loaded fast on a phone, and made requesting an estimate effortless &mdash; without the weeks-long timeline and five-figure quotes the big agencies wanted.</p>
   </div>
 </section>
 
-<section id="testimonials">
-  <div class="glow-accent" style="right:-80px;left:auto;top:auto;bottom:-80px;"></div>
-  <div class="section-eyebrow">Client Stories</div>
-  <h2 class="section-title">What Clients<br><em>Are Saying.</em></h2>
-  <p class="section-sub">Business owners who made the switch to a site that actually works for them.</p>
-  <div class="testimonials-grid reveal">
-    <div class="testimonial-card"><p class="testimonial-text">"I was embarrassed to give out my website URL. Now I hand my card out to everyone. Meridion AI delivered in under 3 days and the calls started coming in within the first week."</p><div class="testimonial-author"><div class="author-avatar">R</div><div><div class="author-name">Rick M.</div><div class="author-biz">Owner, HVAC Company · Phoenix, AZ</div></div></div></div>
-    <div class="testimonial-card"><p class="testimonial-text">"The $294/month plan is a no-brainer. I've had other agencies charge 10x that and deliver half the result. These guys are fast, professional, and they actually answer when you text them."</p><div class="testimonial-author"><div class="author-avatar">S</div><div><div class="author-name">Sara L.</div><div class="author-biz">Owner, Boutique Fitness Studio · Scottsdale, AZ</div></div></div></div>
-    <div class="testimonial-card"><p class="testimonial-text">"We're a 2-person landscaping crew and couldn't afford the big agencies. Meridion AI gave us a site that looks like a million bucks — our leads tripled in the first month."</p><div class="testimonial-author"><div class="author-avatar">T</div><div><div class="author-name">Tony &amp; Diana V.</div><div class="author-biz">Owners, Verde Lawn &amp; Landscape · Mesa, AZ</div></div></div></div>
+<section id="approach" style="background:var(--dark2);">
+  <div class="section-eyebrow">What We Did</div>
+  <h2 class="section-title">Custom-Built<br><em>Around the Goal.</em></h2>
+  <div class="cs-body">
+    <ul class="cs-list">
+      <li>A fully custom design &mdash; no template &mdash; matched to the KATO brand and the renovation buyer.</li>
+      <li>Mobile-first and fast, so the site holds up where most local searches actually happen.</li>
+      <li>Clear estimate-request paths and click-to-call, so interest turns into a real conversation.</li>
+      <li>Delivered in 5&ndash;7 business days, with unlimited revisions until it was exactly right.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="results">
+  <div class="section-eyebrow">The Results</div>
+  <h2 class="section-title">Built to<br><em>Bring in Work.</em></h2>
+  <p class="section-sub">Replace the placeholder figures below with KATO&rsquo;s real numbers before publishing.</p>
+  <!-- METRICS ARE PLACEHOLDERS. Swap the .cs-result-num values for real, verifiable figures. -->
+  <div class="cs-results-grid reveal">
+    <div class="cs-result"><div class="cs-result-num cs-placeholder">3&times;</div><div class="cs-result-label">more estimate requests <span class="cs-placeholder">(placeholder)</span></div></div>
+    <div class="cs-result"><div class="cs-result-num cs-placeholder">#1</div><div class="cs-result-label">local ranking for a target term <span class="cs-placeholder">(placeholder)</span></div></div>
+    <div class="cs-result"><div class="cs-result-num">5&ndash;7</div><div class="cs-result-label">business days from kickoff to live</div></div>
+    <div class="cs-result"><div class="cs-result-num">100%</div><div class="cs-result-label">custom design, mobile-fast, owned outright</div></div>
   </div>
 </section>
 
 <div class="cta-band">
-  <h2>Ready to Be Our<br><em>Next Case Study?</em></h2>
-  <p>Let's build something great. Book a free strategy call — we respond fast.</p>
+  <h2>Want Results Like<br><em>KATO&rsquo;s?</em></h2>
+  <p>Let&rsquo;s build you a site that brings in work. Text or call &mdash; we respond fast.</p>
   <div class="hero-actions">
-    <a href="https://cal.com/john-bert/15min" target="_blank" rel="noopener" class="btn-primary" data-desktop-label="Book a Free Strategy Call">Book a Free Strategy Call</a>
+    <a href="website.html" class="btn-primary">See Pricing</a>
     <a href="tel:4805890098" class="btn-outline"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.632 1.6l-.465.355a1 1 0 0 0-.303 1.213 12.035 12.035 0 0 0 5.652 5.4Z"/></svg> (480) 589-0098</a>
   </div>
 </div>
@@ -565,46 +601,7 @@ const rObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isInterse
 document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 
 const gObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;Array.from(entry.target.children).forEach((c,i)=>setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)';},i*75));gObs.unobserve(entry.target);});},{threshold:0.04});
-document.querySelectorAll('.portfolio-grid,.testimonials-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
-
-// Portfolio mobile carousel affordances — a "Swipe to explore" nudge above the row and
-// progress dots below it. Both are CSS-gated to the ≤640px carousel breakpoint, so on desktop
-// (where the grid is browsable) they're simply invisible; here we just build the elements and
-// keep the active dot in sync with the thumb-scroll position.
-(function(){
-  const grid = document.querySelector('.portfolio-grid');
-  if (!grid) return;
-  const cards = Array.from(grid.children);
-  if (!cards.length) return;
-
-  const hint = document.createElement('div');
-  hint.className = 'portfolio-hint';
-  hint.innerHTML = 'Swipe to explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-  grid.parentNode.insertBefore(hint, grid);
-
-  const dots = document.createElement('div');
-  dots.className = 'portfolio-dots';
-  cards.forEach((card, i) => {
-    const d = document.createElement('button');
-    d.className = 'pd' + (i === 0 ? ' active' : '');
-    d.setAttribute('aria-label', 'Go to project ' + (i + 1));
-    d.addEventListener('click', () => card.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' }));
-    dots.appendChild(d);
-  });
-  grid.parentNode.insertBefore(dots, grid.nextSibling);
-
-  const dotEls = Array.from(dots.children);
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const idx = cards.indexOf(e.target);
-      dotEls.forEach((d, i) => d.classList.toggle('active', i === idx));
-    });
-  }, { root: grid, threshold: 0.6 });
-  cards.forEach(c => io.observe(c));
-
-  grid.addEventListener('scroll', () => hint.classList.add('gone'), { once:true, passive:true });
-})();
+document.querySelectorAll('.services-grid').forEach(g=>{Array.from(g.children).forEach(c=>{c.style.opacity='0';c.style.transform='translateY(20px)';c.style.transition='opacity 0.55s cubic-bezier(0.22,1,0.36,1),transform 0.55s cubic-bezier(0.22,1,0.36,1)';});gObs.observe(g);});
 
 (function() {
   if (localStorage.getItem('jb-cookie')) return;
@@ -619,6 +616,66 @@ document.querySelectorAll('.portfolio-grid,.testimonials-grid').forEach(g=>{Arra
   });
   document.getElementById('cbDecline').addEventListener('click', () => {
     localStorage.setItem('jb-cookie', 'declined'); dismiss();
+  });
+})();
+</script>
+<script>
+async function startCheckout(plan, btn) {
+  const status = document.getElementById('checkoutStatus');
+  status.className = 'checkout-status';
+  status.textContent = 'Redirecting to secure checkout…';
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch('/api/actions?action=create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan }),
+    });
+    const data = await r.json();
+    if (!r.ok || !data.url) throw new Error(data.detail || data.error || 'Checkout is not available yet.');
+    window.location.href = data.url;
+  } catch (e) {
+    status.className = 'checkout-status err';
+    status.textContent = 'Couldn’t start checkout — text us instead: (480) 589-0098. (' + e.message + ')';
+    if (btn) btn.disabled = false;
+  }
+}
+
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const checkout = params.get('checkout');
+  if (!checkout) return;
+  const banner = document.getElementById('checkoutBanner');
+  if (checkout === 'success') {
+    banner.textContent = '✓ Payment received — thank you! We’ll text you shortly to kick things off.';
+    banner.classList.remove('hidden');
+  } else if (checkout === 'cancelled') {
+    banner.textContent = 'Checkout was cancelled — no charge was made. Pick a plan below whenever you’re ready.';
+    banner.classList.remove('hidden');
+  }
+  params.delete('checkout');
+  const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+  window.history.replaceState({}, '', newUrl);
+})();
+</script>
+<script>
+(function(){
+  var video = document.getElementById('heroVideo');
+  if (!video) return;
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (reducedMotion || (connection && connection.saveData)) return;
+  function setPlaybackRate(){ video.defaultPlaybackRate = 0.5; video.playbackRate = 0.5; }
+  setPlaybackRate();
+  video.querySelectorAll('source[data-src]').forEach(function(source){ source.src = source.dataset.src; });
+  video.addEventListener('loadedmetadata', setPlaybackRate, { once: true });
+  video.addEventListener('playing', function(){ setPlaybackRate(); video.classList.add('is-ready'); }, { once: true });
+  video.load();
+  var playPromise = video.play();
+  if (playPromise && typeof playPromise.catch === 'function') { playPromise.catch(function(){}); }
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) { video.pause(); }
+    else { var resume = video.play(); if (resume && typeof resume.catch === 'function') resume.catch(function(){}); }
   });
 })();
 </script>
