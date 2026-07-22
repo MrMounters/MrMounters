@@ -1400,3 +1400,38 @@ create policy "users manage their own notifications" on public.notifications for
 -- ============================================================
 -- END M5
 -- ============================================================
+
+
+-- ============================================================
+-- M6 — Acquisition / ad-attribution tracking (the admin "Acquisition Command Center")
+-- ------------------------------------------------------------
+-- Ties ad spend -> booked calls -> paying clients inside admin.html. `leads.utm` stores the
+-- campaign attribution captured on the landing pages (source/medium/campaign/content) and
+-- passed through the Cal.com booking. `campaign_spend` is a lightweight manual spend entry
+-- (per utm_campaign per month) so ROAS/CPL/CAC are real without a heavy Meta/Google API sync.
+-- Attribution joins: leads.utm -> deals(lead_id, demo_booked_at) -> clients(origin_deal_id,
+-- lifetime_value). Additive + idempotent.
+-- ============================================================
+alter table public.leads add column if not exists utm jsonb;
+create index if not exists leads_utm_campaign_idx on public.leads((utm->>'campaign'));
+
+create table if not exists public.campaign_spend (
+  id           uuid primary key default gen_random_uuid(),
+  utm_campaign text not null,
+  channel      text,                 -- meta | google | linkedin
+  period       text not null,        -- 'YYYY-MM'
+  amount       numeric not null default 0,
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now()
+);
+create unique index if not exists campaign_spend_uniq on public.campaign_spend(utm_campaign, period);
+alter table public.campaign_spend enable row level security;
+
+drop policy if exists "admins manage campaign spend" on public.campaign_spend;
+create policy "admins manage campaign spend" on public.campaign_spend for all
+  using (public.current_user_role() = 'admin')
+  with check (public.current_user_role() = 'admin');
+
+-- ============================================================
+-- END M6
+-- ============================================================

@@ -244,6 +244,7 @@
         <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Finance</div>
         <button class="side-item" type="button" data-page="acommissions" onclick="go('acommissions'); adminLoadCommissions()">Commissions</button>
         <button class="side-item" type="button" data-page="aconnect" onclick="go('aconnect'); adminLoadConnect()">Stripe Connect</button>
+        <button class="side-item" type="button" data-page="acquisition" onclick="go('acquisition'); loadAcquisition()">Acquisition</button>
         <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Delivery</div>
         <button class="side-item" type="button" data-page="pipeline" onclick="go('pipeline')">Project Pipeline</button>
         <button class="side-item" type="button" data-page="calendar" onclick="go('calendar')">Calendar</button>
@@ -472,6 +473,7 @@
               <div><label>Email</label><input class="inp" id="cmEmail" type="email"></div>
               <div><label>Phone</label><input class="inp" id="cmPhone"></div>
               <div class="full"><label>Assigned rep</label><select class="sel" id="cmRep"></select></div>
+              <div class="full"><label>Campaign (for Acquisition tracking)</label><input class="inp" id="cmCampaign" placeholder="e.g. medspa_scottsdale_missedmoney"></div>
               <div class="full"><label>Notes</label><textarea class="ta" id="cmNotes"></textarea></div>
             </div>
             <button class="btn btn-p btn-sm" type="submit">Save changes</button>
@@ -568,6 +570,41 @@
             <tbody id="aConnectBody"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
           </table></div>
           <div class="muted" id="aConnectNote" style="margin-top:0.8rem;"></div>
+        </div>
+      </div>
+
+      <!-- ACQUISITION — ad spend → booked calls → clients, per campaign & creative -->
+      <div class="page" id="page-acquisition">
+        <div class="topbar" style="margin-bottom:1rem;">
+          <div><div class="h1">Acquisition</div><div class="sub">Every ad dollar tied to real booked calls and paying clients. Attribution comes from the UTMs captured on your landing pages.</div></div>
+        </div>
+        <div class="stat-grid" id="acqTiles" style="margin-bottom:1.2rem;"></div>
+
+        <div class="panel" style="margin-bottom:1.2rem;">
+          <div class="panel-h"><div class="panel-t">Log ad spend</div><div class="muted">Enter spend per campaign per month so ROAS/CPL/CAC are real.</div></div>
+          <form class="lead-form open" onsubmit="saveSpend(event)">
+            <div><label>Campaign (utm_campaign)</label><input class="inp" id="spCampaign" placeholder="medspa_scottsdale_missedmoney" required></div>
+            <div><label>Channel</label><select class="inp" id="spChannel"><option value="meta">Meta</option><option value="google">Google</option><option value="linkedin">LinkedIn</option><option value="other">Other</option></select></div>
+            <div><label>Month</label><input class="inp" id="spPeriod" type="month" required></div>
+            <div><label>Amount ($)</label><input class="inp" id="spAmount" type="number" min="0" step="0.01" required></div>
+            <div class="full"><button type="submit" class="btn btn-p btn-sm">Save spend</button> <span class="muted" id="spNote" style="margin-left:0.6rem;"></span></div>
+          </form>
+        </div>
+
+        <div class="panel" style="margin-bottom:1.2rem;">
+          <div class="panel-h"><div class="panel-t">Campaign leaderboard</div><div class="muted" id="acqCampSrc"></div></div>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Campaign</th><th>Channel</th><th>Spend</th><th>Leads</th><th>Booked</th><th>Clients</th><th>Revenue</th><th>CPL</th><th>Cost/Call</th><th>CAC</th><th>ROAS</th><th>Close%</th></tr></thead>
+            <tbody id="acqCampBody"><tr><td colspan="12" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">Winning-creative leaderboard</div><div class="muted">By utm_content (ad/creative id)</div></div>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Creative</th><th>Campaign</th><th>Leads</th><th>Booked</th><th>Clients</th><th>Revenue</th><th>Close%</th></tr></thead>
+            <tbody id="acqCreativeBody"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+          </table></div>
         </div>
       </div>
     </main>
@@ -1658,16 +1695,19 @@
     // ── Shared edit modal for prospects & leads (both rows live in the leads table) ──
     let contactEditId = null;
     let contactEditPrevRep = null;
+    let contactEditUtm = {};
     async function openContactModal(id){
       const { data, error } = await sb.from('leads').select('*').eq('id', id).single();
       if (error || !data){ alert('Could not load contact: ' + (error && error.message)); return; }
       contactEditId = id;
       contactEditPrevRep = data.assigned_rep_id || null;
+      contactEditUtm = data.utm || {};
       document.getElementById('contactModalTitle').textContent = 'Edit ' + (data.lifecycle === 'lead' ? 'lead' : 'prospect');
       document.getElementById('cmName').value = data.full_name || '';
       document.getElementById('cmBiz').value = data.business || '';
       document.getElementById('cmEmail').value = data.email || '';
       document.getElementById('cmPhone').value = data.phone || '';
+      document.getElementById('cmCampaign').value = (data.utm && data.utm.utm_campaign) || '';
       document.getElementById('cmNotes').value = data.notes || '';
       document.getElementById('cmRep').innerHTML = repOptionsHtml(data.assigned_rep_id);
       document.getElementById('contactModalErr').textContent = '';
@@ -1681,12 +1721,16 @@
       if (!full_name){ document.getElementById('contactModalErr').textContent = 'Name is required.'; return; }
       const newRepId = document.getElementById('cmRep').value || null;
       const repChanged = newRepId && newRepId !== contactEditPrevRep;
+      const campaign = document.getElementById('cmCampaign').value.trim();
+      const utm = Object.assign({}, contactEditUtm || {});
+      if (campaign) utm.utm_campaign = campaign; else delete utm.utm_campaign;
       const { error } = await sb.from('leads').update({
         full_name, business: document.getElementById('cmBiz').value.trim() || null,
         email: document.getElementById('cmEmail').value.trim() || null,
         phone: document.getElementById('cmPhone').value.trim() || null,
         notes: document.getElementById('cmNotes').value.trim() || null,
         assigned_rep_id: newRepId,
+        utm: Object.keys(utm).length ? utm : null,
       }).eq('id', contactEditId);
       if (error){ document.getElementById('contactModalErr').textContent = 'Save failed — ' + error.message; return; }
       if (repChanged) fireNotify('notify-assignment', { lead_id: contactEditId });
@@ -1867,6 +1911,88 @@
         note.innerHTML = 'Onboarding link ready: <a href="' + data.url + '" target="_blank" rel="noopener" style="color:var(--gold)">open Stripe onboarding →</a> (share with the rep).';
         loadTeam();
       } catch (err){ note.textContent = '⚠ ' + err.message; }
+    }
+
+    // ── ACQUISITION — ad spend → booked calls → paying clients, per campaign & creative.
+    // Attribution: leads.utm (captured on the landing pages) → deals(lead_id, demo_booked_at)
+    // → clients(origin_deal_id, lifetime_value). Spend is entered manually per campaign/month.
+    let acqData = null;
+    async function loadAcquisition(){
+      aRow('acqCampBody', 12, 'Loading…'); aRow('acqCreativeBody', 7, 'Loading…');
+      const [leadsRes, dealsRes, clientsRes, spendRes] = await Promise.all([
+        sb.from('leads').select('id, utm'),
+        sb.from('deals').select('id, lead_id, demo_booked_at'),
+        sb.from('clients').select('id, origin_deal_id, lifetime_value'),
+        sb.from('campaign_spend').select('*'),
+      ]);
+      const L = leadsRes.data || [], D = dealsRes.data || [], C = clientsRes.data || [], S = spendRes.data || [];
+      const leadKey = {};
+      L.forEach(l => { const u = l.utm || {}; leadKey[l.id] = { campaign: u.utm_campaign || '(unattributed)', content: u.utm_content || '(none)', channel: u.utm_source || '' }; });
+      const blank = () => ({ leads:0, booked:0, clients:0, revenue:0, spend:0, channel:'' });
+      const camp = {}, creative = {}, dealLead = {};
+      L.forEach(l => {
+        const k = leadKey[l.id];
+        camp[k.campaign] = camp[k.campaign] || blank(); camp[k.campaign].leads++;
+        if (k.channel && !camp[k.campaign].channel) camp[k.campaign].channel = k.channel;
+        const ck = k.content + ' | ' + k.campaign;
+        creative[ck] = creative[ck] || { leads:0, booked:0, clients:0, revenue:0, campaign:k.campaign, content:k.content };
+        creative[ck].leads++;
+      });
+      D.forEach(d => {
+        dealLead[d.id] = d.lead_id;
+        const k = leadKey[d.lead_id]; if (!k || !d.demo_booked_at) return;
+        camp[k.campaign].booked++;
+        const ck = k.content + ' | ' + k.campaign; if (creative[ck]) creative[ck].booked++;
+      });
+      C.forEach(c => {
+        const k = leadKey[dealLead[c.origin_deal_id]]; if (!k) return;
+        camp[k.campaign].clients++; camp[k.campaign].revenue += Number(c.lifetime_value) || 0;
+        const ck = k.content + ' | ' + k.campaign; if (creative[ck]) { creative[ck].clients++; creative[ck].revenue += Number(c.lifetime_value) || 0; }
+      });
+      S.forEach(s => { camp[s.utm_campaign] = camp[s.utm_campaign] || blank(); camp[s.utm_campaign].spend += Number(s.amount) || 0; if (s.channel && !camp[s.utm_campaign].channel) camp[s.utm_campaign].channel = s.channel; });
+      acqData = { camp, creative };
+      renderAcquisition();
+    }
+    function renderAcquisition(){
+      if (!acqData) return;
+      const camp = acqData.camp, creative = acqData.creative;
+      const t = { spend:0, leads:0, booked:0, clients:0, revenue:0 };
+      Object.values(camp).forEach(c => { t.spend += c.spend; t.leads += c.leads; t.booked += c.booked; t.clients += c.clients; t.revenue += c.revenue; });
+      const d = (n, x) => n ? x / n : 0;
+      const tile = (k, v) => `<div class="stat"><div class="stat-k">${k}</div><div class="stat-v">${v}</div></div>`;
+      const cpl = d(t.leads, t.spend), cpc = d(t.booked, t.spend), cac = d(t.clients, t.spend), roas = d(t.spend, t.revenue);
+      document.getElementById('acqTiles').innerHTML =
+        tile('Ad spend', money(t.spend)) + tile('Leads', t.leads) + tile('Booked calls', t.booked) +
+        tile('Clients won', t.clients) + tile('Revenue', money(t.revenue)) +
+        tile('CPL', cpl ? money(Math.round(cpl)) : '—') + tile('Cost / call', cpc ? money(Math.round(cpc)) : '—') +
+        tile('CAC', cac ? money(Math.round(cac)) : '—') + tile('ROAS', roas ? roas.toFixed(1) + '×' : '—');
+      const rows = Object.entries(camp).sort((a, b) => (b[1].revenue - a[1].revenue) || (b[1].clients - a[1].clients) || (b[1].leads - a[1].leads));
+      document.getElementById('acqCampSrc').textContent = rows.length + ' campaigns';
+      document.getElementById('acqCampBody').innerHTML = rows.length ? rows.map(([name, c]) => {
+        const cpl = d(c.leads, c.spend), cpc = d(c.booked, c.spend), cac = d(c.clients, c.spend), roas = d(c.spend, c.revenue), close = d(c.booked, 100 * c.clients);
+        return `<tr><td><b>${esc(name)}</b></td><td>${esc(c.channel || '—')}</td><td>${money(c.spend)}</td><td>${c.leads}</td><td>${c.booked}</td><td>${c.clients}</td><td>${money(c.revenue)}</td><td>${cpl ? money(Math.round(cpl)) : '—'}</td><td>${cpc ? money(Math.round(cpc)) : '—'}</td><td>${cac ? money(Math.round(cac)) : '—'}</td><td>${roas ? roas.toFixed(1) + '×' : '—'}</td><td>${c.booked ? close.toFixed(0) + '%' : '—'}</td></tr>`;
+      }).join('') : '<tr><td colspan="12" class="empty">No data yet — spend + UTM-tagged leads will populate this.</td></tr>';
+      const crows = Object.values(creative).sort((a, b) => (b.clients - a.clients) || (b.booked - a.booked) || (b.leads - a.leads));
+      document.getElementById('acqCreativeBody').innerHTML = crows.length ? crows.map(c => {
+        const close = d(c.booked, 100 * c.clients);
+        return `<tr><td><b>${esc(c.content)}</b></td><td>${esc(c.campaign)}</td><td>${c.leads}</td><td>${c.booked}</td><td>${c.clients}</td><td>${money(c.revenue)}</td><td>${c.booked ? close.toFixed(0) + '%' : '—'}</td></tr>`;
+      }).join('') : '<tr><td colspan="7" class="empty">No creative-level data yet.</td></tr>';
+    }
+    async function saveSpend(e){
+      e.preventDefault();
+      const note = document.getElementById('spNote'); note.textContent = 'Saving…';
+      const utm_campaign = document.getElementById('spCampaign').value.trim();
+      const channel = document.getElementById('spChannel').value;
+      const period = document.getElementById('spPeriod').value;
+      const amount = Number(document.getElementById('spAmount').value) || 0;
+      if (!utm_campaign || !period){ note.textContent = 'Campaign and month are required.'; return; }
+      const { error } = await sb.from('campaign_spend').upsert(
+        { utm_campaign, channel, period, amount, updated_at: new Date().toISOString() },
+        { onConflict: 'utm_campaign,period' });
+      if (error){ note.textContent = '⚠ ' + error.message; return; }
+      note.textContent = '✓ Saved.'; setTimeout(() => { note.textContent = ''; }, 2000);
+      document.getElementById('spAmount').value = '';
+      loadAcquisition();
     }
   </script>
 </body>

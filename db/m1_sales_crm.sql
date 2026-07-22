@@ -712,6 +712,35 @@ create policy "users manage their own notifications" on public.notifications for
 -- END M5
 -- ============================================================
 
+
+-- ============================================================
+-- M6 — Acquisition / ad-attribution tracking (admin "Acquisition Command Center")
+-- Ties ad spend -> booked calls -> paying clients. leads.utm holds attribution; campaign_spend
+-- is manual per-campaign per-month spend entry. Additive + idempotent.
+-- ============================================================
+alter table public.leads add column if not exists utm jsonb;
+create index if not exists leads_utm_campaign_idx on public.leads((utm->>'campaign'));
+
+create table if not exists public.campaign_spend (
+  id           uuid primary key default gen_random_uuid(),
+  utm_campaign text not null,
+  channel      text,
+  period       text not null,
+  amount       numeric not null default 0,
+  created_at   timestamptz default now(),
+  updated_at   timestamptz default now()
+);
+create unique index if not exists campaign_spend_uniq on public.campaign_spend(utm_campaign, period);
+alter table public.campaign_spend enable row level security;
+drop policy if exists "admins manage campaign spend" on public.campaign_spend;
+create policy "admins manage campaign spend" on public.campaign_spend for all
+  using (public.current_user_role() = 'admin')
+  with check (public.current_user_role() = 'admin');
+
+-- ============================================================
+-- END M6
+-- ============================================================
+
 -- ============================================================================
 -- VERIFICATION — returns rows so you can SEE it worked. Every ok must be true.
 -- ============================================================================
@@ -719,6 +748,8 @@ with checks(object, ok) as (values
   ('leads.lifecycle',            (to_regclass('public.leads') is not null and exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='lifecycle'))),
   ('leads.call_outcome',         exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='call_outcome')),
   ('leads.last_nudged_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='last_nudged_at')),
+  ('leads.utm',                  exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='utm')),
+  ('table campaign_spend',       (to_regclass('public.campaign_spend') is not null)),
   ('notifications.recipient_id', exists(select 1 from information_schema.columns where table_schema='public' and table_name='notifications' and column_name='recipient_id')),
   ('leads.email nullable',       (select is_nullable='YES' from information_schema.columns where table_schema='public' and table_name='leads' and column_name='email')),
   ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),

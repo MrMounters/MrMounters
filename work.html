@@ -622,5 +622,29 @@ document.querySelectorAll('.portfolio-grid,.testimonials-grid').forEach(g=>{Arra
   });
 })();
 </script>
+<script>
+/* Acquisition attribution: capture UTM params on landing, persist for the visit, and pass them
+   through to the Cal.com booking so a booked call carries its campaign + creative (utm_content).
+   Feeds the admin "Acquisition" leaderboard. Best-effort, never throws. */
+(function(){
+  try {
+    var KEY = 'meridion-utm';
+    var qs = new URLSearchParams(location.search);
+    var keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+    var utm = {};
+    keys.forEach(function(k){ if (qs.get(k)) utm[k] = qs.get(k); });
+    if (Object.keys(utm).length) { localStorage.setItem(KEY, JSON.stringify(utm)); }
+    else { try { utm = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ utm = {}; } }
+    var params = new URLSearchParams();
+    keys.forEach(function(k){ if (utm[k]) params.set(k, utm[k]); });
+    var q = params.toString();
+    if (q) {
+      document.querySelectorAll('a[href*="cal.com/"]').forEach(function(a){
+        a.href += (a.href.indexOf('?') > -1 ? '&' : '?') + q;
+      });
+    }
+  } catch(e){}
+})();
+</script>
 </body>
 </html>
