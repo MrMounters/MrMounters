@@ -925,6 +925,180 @@ async function sendLeadEmail(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// create-audit-lead-brief — public, low-friction audit capture used by the
+// homepage. It creates a lead and, when OPENAI_API_KEY is configured, produces
+// a concise internal sales brief plus a human-reviewable first follow-up.
+//
+// This deliberately does not browse the submitted website or make claims about
+// it. The URL and email are enough to draft a useful first touch, keep cost
+// predictable, and avoid handling sensitive customer/patient data.
+// ---------------------------------------------------------------------------
+function normalizeAuditWebsite(raw) {
+  if (typeof raw !== 'string') return '';
+  const value = raw.trim().slice(0, 512);
+  if (!value) return '';
+  const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  try {
+    const url = new URL(withProtocol);
+    if (!/^https?:$/.test(url.protocol) || !url.hostname || url.username || url.password) return '';
+    url.hash = '';
+    return url.toString();
+  } catch (_) {
+    return '';
+  }
+}
+
+function cleanAuditEmail(raw) {
+  const email = typeof raw === 'string' ? raw.trim().toLowerCase().slice(0, 254) : '';
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? email : '';
+}
+
+function cleanAuditUtm(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const allowed = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+  const result = {};
+  allowed.forEach(key => {
+    if (typeof raw[key] === 'string' && raw[key].trim()) result[key] = raw[key].trim().slice(0, 160);
+  });
+  return Object.keys(result).length ? result : null;
+}
+
+function auditFallbackBrief(hostname) {
+  return {
+    business_type: 'Website audit request',
+    priority: 'medium',
+    opening_sms: `Hi — thanks for requesting a Meridion site audit for ${hostname}. We’ll review the conversion path and send a few focused opportunities within 24 hours.`,
+    opening_email_subject: `Your ${hostname} site audit is underway`,
+    opening_email_body: `Thanks for requesting a Meridion site audit for ${hostname}. Our team is reviewing the conversion path, messaging, and lead capture experience. We’ll send a focused set of opportunities within 24 hours.`,
+    discovery_questions: ['What would make this audit a win for you in the next 90 days?', 'Which service or offer is the highest priority right now?', 'Where do most new customers currently find you?'],
+    next_action: 'Review the request, then send the audit and invite the contact to a 15-minute strategy call.',
+  };
+}
+
+function extractResponseText(payload) {
+  if (payload && typeof payload.output_text === 'string') return payload.output_text;
+  const output = payload && Array.isArray(payload.output) ? payload.output : [];
+  for (const item of output) {
+    for (const content of (item && item.content) || []) {
+      if (content && content.type === 'output_text' && typeof content.text === 'string') return content.text;
+    }
+  }
+  return '';
+}
+
+async function generateAuditLeadBrief({ websiteUrl, email, hostname }) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const fallback = auditFallbackBrief(hostname);
+  if (!apiKey) return { brief: fallback, status: 'not_configured', model: null };
+
+  const schema = {
+    type: 'object', additionalProperties: false,
+    properties: {
+      business_type: { type: 'string' },
+      priority: { type: 'string', enum: ['low', 'medium', 'high'] },
+      opening_sms: { type: 'string' },
+      opening_email_subject: { type: 'string' },
+      opening_email_body: { type: 'string' },
+      discovery_questions: { type: 'array', items: { type: 'string' }, minItems: 2, maxItems: 3 },
+      next_action: { type: 'string' },
+    },
+    required: ['business_type', 'priority', 'opening_sms', 'opening_email_subject', 'opening_email_body', 'discovery_questions', 'next_action'],
+  };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
+  try {
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST', signal: controller.signal,
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: process.env.OPENAI_LEAD_BRIEF_MODEL || 'gpt-5.4',
+        store: false,
+        instructions: 'You are Meridion AI’s sales operations copilot. Create a concise internal lead brief and a warm first follow-up for a website audit request. Do not claim you reviewed the site. Do not mention AI. Do not invent facts. Do not provide medical, legal, or financial advice. Do not request sensitive personal information or patient information. Keep the email under 110 words and the SMS under 260 characters. The draft is for human review before sending.',
+        input: `Website: ${websiteUrl}\nContact email: ${email}\nReturn the requested JSON only.`,
+        max_output_tokens: 450,
+        text: { format: { type: 'json_schema', name: 'meridion_audit_lead_brief', strict: true, schema } },
+      }),
+    });
+    if (!response.ok) {
+      console.error('OpenAI lead brief failed:', response.status);
+      return { brief: fallback, status: 'fallback', model: null };
+    }
+    const payload = await response.json();
+    const text = extractResponseText(payload);
+    if (!text) return { brief: fallback, status: 'fallback', model: payload && payload.model };
+    const brief = JSON.parse(text);
+    return { brief, status: 'completed', model: payload && payload.model };
+  } catch (error) {
+    console.error('OpenAI lead brief error:', String((error && error.message) || error));
+    return { brief: fallback, status: 'fallback', model: null };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function createAuditLeadBrief(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'lead_capture_not_configured' });
+
+  const body = req.body || {};
+  // A hidden field that should remain blank. It quietly accepts bots so they do not learn
+  // which validation they tripped, while preventing an AI request or database write.
+  if (body.company_website) return res.status(202).json({ ok: true });
+  const email = cleanAuditEmail(body.email);
+  const websiteUrl = normalizeAuditWebsite(body.website_url);
+  if (!email || !websiteUrl) return res.status(400).json({ error: 'valid_email_and_website_required' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const hostname = new URL(websiteUrl).hostname.replace(/^www\./, '');
+  try {
+    // A short database-backed cooldown limits accidental double submits across serverless
+    // instances before a model call. A production traffic spike should additionally use WAF
+    // or Turnstile, rather than relying on a browser-only control.
+    const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const { data: prior } = await supabaseAdmin.from('ai_lead_briefs')
+      .select('id, lead_id, brief, status').eq('email', email).eq('website_url', websiteUrl)
+      .gte('created_at', since).order('created_at', { ascending: false }).limit(1);
+    if (prior && prior[0]) {
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(200).json({ ok: true, duplicate: true, lead_id: prior[0].lead_id, ai_status: prior[0].status });
+    }
+
+    const { data: lead, error: leadError } = await supabaseAdmin.from('leads').insert({
+      full_name: hostname,
+      email,
+      business: hostname,
+      lifecycle: 'lead',
+      status: 'New',
+      source: 'site_audit',
+      notes: `Website audit request for ${websiteUrl}`,
+      utm: cleanAuditUtm(body.utm),
+    }).select('id').single();
+    if (leadError) throw leadError;
+
+    const generated = await generateAuditLeadBrief({ websiteUrl, email, hostname });
+    const { error: briefError } = await supabaseAdmin.from('ai_lead_briefs').insert({
+      lead_id: lead.id, website_url: websiteUrl, email,
+      brief: generated.brief, model: generated.model, status: generated.status,
+    });
+    if (briefError) throw briefError;
+
+    await supabaseAdmin.from('activity_log').insert({
+      entity_type: 'lead', entity_id: lead.id, action: 'audit_brief_created',
+      detail: { website_url: websiteUrl, ai_status: generated.status, model: generated.model },
+    });
+
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(201).json({ ok: true, lead_id: lead.id, ai_status: generated.status });
+  } catch (e) {
+    console.error('audit lead brief error:', e);
+    return res.status(500).json({ error: 'lead_capture_failed' });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
 const ACTIONS = {
@@ -936,6 +1110,7 @@ const ACTIONS = {
   'invite-rep': inviteRep,
   'admin-update-team-member': adminUpdateTeamMember,
   'admin-backfill-names': adminBackfillNames,
+  'create-audit-lead-brief': createAuditLeadBrief,
   'send-lead-email': sendLeadEmail,
   'create-signing-request': createSigningRequest,
   'documenso-webhook': documensoWebhook,

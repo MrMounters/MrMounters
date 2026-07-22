@@ -315,6 +315,13 @@
           <div class="stat"><div class="stat-l">Deals Won</div><div class="stat-v" id="statDealsWon">—</div></div>
           <div class="stat"><div class="stat-l">Clients Onboarded</div><div class="stat-v" id="statOnboarded">—</div></div>
         </div>
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">AI audit follow-ups</div><div class="muted">Drafts require human review before sending.</div></div>
+          <div style="overflow-x:auto;"><table>
+            <thead><tr><th>Lead</th><th>Website</th><th>Priority</th><th>Suggested first touch</th><th>Created</th></tr></thead>
+            <tbody id="aiBriefsBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+          </table></div>
+        </div>
       </div>
 
       <div class="page" id="page-pipeline">
@@ -659,7 +666,7 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('shell').classList.remove('hidden');
 
-      await Promise.all([loadDeals(), loadLeads(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications(), loadMessagesPage(), loadTeam()]);
+      await Promise.all([loadDeals(), loadLeads(), loadAiBriefs(), loadConsults(), loadClients(), loadProjectsPipeline(), loadNotifications(), loadMessagesPage(), loadTeam()]);
       renderClientsTable(); // re-render now that stagesByProject (needed for accessLabel) is guaranteed loaded
       renderProjectList(); // re-render now that notifications (needed for the per-project badge) is guaranteed loaded
       renderStats();
@@ -684,6 +691,25 @@
       const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending:false });
       leads = data || [];
       if (error) console.warn('leads load error', error.message);
+    }
+
+    async function loadAiBriefs(){
+      const body = document.getElementById('aiBriefsBody');
+      const { data, error } = await sb.from('ai_lead_briefs')
+        .select('id, website_url, brief, status, created_at, leads(full_name, email, business)')
+        .order('created_at', { ascending:false }).limit(8);
+      if (error){
+        // The table may not exist until the production migration has been applied.
+        body.innerHTML = '<tr><td colspan="5" class="empty">AI audit briefs will appear here once the first audit is submitted.</td></tr>';
+        return;
+      }
+      if (!data || !data.length){ body.innerHTML = '<tr><td colspan="5" class="empty">No audit requests yet.</td></tr>'; return; }
+      body.innerHTML = data.map(row => {
+        const b = row.brief || {}, lead = row.leads || {};
+        const touch = b.opening_email_subject || b.opening_sms || 'Draft unavailable';
+        const priority = b.priority || row.status || '—';
+        return `<tr><td><strong>${esc(lead.business || lead.full_name || 'Website audit')}</strong><br><span class="muted">${esc(lead.email || '')}</span></td><td>${esc(row.website_url)}</td><td><span class="pill ${priority === 'high' ? 'warn' : priority === 'low' ? 'ok' : 'new'}">${esc(priority)}</span></td><td style="min-width:220px">${esc(touch)}</td><td>${new Date(row.created_at).toLocaleDateString()}</td></tr>`;
+      }).join('');
     }
 
     // ── CALENDAR — a real month grid, not just a flat upcoming list. Cal.com's v2 API only

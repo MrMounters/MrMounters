@@ -260,6 +260,34 @@ create table if not exists public.leads (
 
 alter table public.leads enable row level security;
 
+-- ============================================================
+-- AI LEAD BRIEFS — server-generated internal follow-up drafts for audit leads.
+-- The browser never receives the service-role credentials or OpenAI key. Public visitors
+-- cannot read this table; staff access is enforced by the policy below.
+-- ============================================================
+create table if not exists public.ai_lead_briefs (
+  id          uuid primary key default gen_random_uuid(),
+  lead_id     uuid not null references public.leads(id) on delete cascade,
+  website_url text not null,
+  email       text not null,
+  brief       jsonb not null default '{}'::jsonb,
+  model       text,
+  status      text not null default 'completed' check (status in ('completed','fallback','not_configured')),
+  created_at  timestamptz not null default now()
+);
+alter table public.ai_lead_briefs enable row level security;
+revoke all on table public.ai_lead_briefs from anon, authenticated;
+grant select on table public.ai_lead_briefs to authenticated;
+grant select, insert, update, delete on table public.ai_lead_briefs to service_role;
+create index if not exists ai_lead_briefs_email_url_created_idx
+  on public.ai_lead_briefs(email, website_url, created_at desc);
+
+drop policy if exists "admins manage ai lead briefs" on public.ai_lead_briefs;
+create policy "admins manage ai lead briefs"
+  on public.ai_lead_briefs for all to authenticated
+  using (public.current_user_role() = 'admin')
+  with check (public.current_user_role() = 'admin');
+
 -- Only staff (rep or admin) can see/manage leads — clients never touch this table.
 drop policy if exists "staff manage leads" on public.leads;
 create policy "staff manage leads"

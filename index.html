@@ -1610,11 +1610,24 @@ function closeAuditModal() {
   }, 320);
 }
 
-function auditNext(e, step) {
+async function auditNext(e, step) {
   if (e) e.preventDefault();
   const email = document.getElementById('auditEmail').value.trim();
-  // TODO: wire up to FormSpree/webhook to actually capture {email, url: _auditUrl} —
-  // same stub state as the PDF lead magnet above; nothing is persisted yet.
+  if (!email) return;
+
+  // Capture is deliberately non-blocking: visitors can always reach the booking step even
+  // if the database or AI service is briefly unavailable.
+  try {
+    const search = new URLSearchParams(window.location.search);
+    const utm = {};
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(key => {
+      if (search.get(key)) utm[key] = search.get(key).slice(0, 160);
+    });
+    await fetch('/api/actions?action=create-audit-lead-brief', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, website_url: _auditUrl, utm }),
+    });
+  } catch (_) { /* Booking remains available; server records diagnostic details. */ }
 
   const cur = document.getElementById('auditStep' + step);
   const nxt = document.getElementById('auditStep' + (step + 1));
