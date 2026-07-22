@@ -256,6 +256,14 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
   }
 
+  .guarantee-band { background: linear-gradient(135deg, rgba(76,89,247,0.06) 0%, rgba(76,89,247,0.015) 100%); border-top: 1px solid rgba(242,244,248,0.08); border-bottom: 1px solid rgba(242,244,248,0.08); padding: 3.5rem 4%; position: relative; overflow: hidden; }
+  .guarantee-inner { display:flex; align-items:center; gap:3rem; flex-wrap:wrap; max-width:860px; margin:0 auto; }
+  .guarantee-icon { width:3rem; height:3rem; flex-shrink:0; color:var(--gold); filter:drop-shadow(0 0 16px rgba(76,89,247,0.4)); }
+  .guarantee-icon svg { width:100%; height:100%; stroke-width:1.4; }
+  .guarantee-title { font-family:'Space Grotesk',sans-serif; font-size:clamp(1.5rem,3vw,2rem); font-weight:700; margin-bottom:0.6rem; letter-spacing:-0.02em; }
+  .guarantee-text { font-family:'Inter',sans-serif; color:var(--gray-light,#C7CFDE); font-size:0.92rem; line-height:1.78; max-width:560px; font-weight:300; }
+  .guarantee-text strong { color:var(--white); font-weight:500; }
+  @media (max-width: 640px) { .guarantee-inner { flex-direction:column; gap:1.5rem; } }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -415,6 +423,16 @@
     </div>
   </div>
 </section>
+
+<div class="guarantee-band">
+  <div class="guarantee-inner">
+    <div class="guarantee-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 3 6v6c0 5 3.8 9 9 10 5.2-1 9-5 9-10V6l-9-4Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <div>
+      <div class="guarantee-title">Built to Perform &mdash; or We Keep Tuning.</div>
+      <p class="guarantee-text">We map your funnel, build the system to fit it, then <strong>keep optimizing until it's actually producing</strong>. No long-term lock-in and no black box &mdash; you see exactly what it's doing on your dashboard. If it isn't moving the needle, we don't stop working until it is.</p>
+    </div>
+  </div>
+</div>
 
 <div class="cta-band">
   <h2>Stop Losing Leads<br><em>to Slow Follow-Up.</em></h2>
