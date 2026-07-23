@@ -31,3 +31,6 @@ Local service businesses lose 20–40% of inbound to missed calls and slow follo
 
 ## North-star metric
 **Cost per booked strategy call** → then **CAC (cost per closed client)**. Everything optimizes toward booked calls that close.
+
+## Expansion verticals
+Ready-to-run playbooks (ICP, hooks, ad copy, keywords, targeting, objection framing) for each wave-2/3 niche live in **[`09-niche-playbooks.md`](./09-niche-playbooks.md)** — dental, home services, law, real estate, wellness, cosmetic/derm, auto, fitness, plus quick-start stubs for remodeling/solar and salons.
