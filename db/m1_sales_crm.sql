@@ -764,13 +764,15 @@ create table if not exists public.site_drafts (
 );
 create index if not exists site_drafts_created_by_idx on public.site_drafts(created_by, created_at desc);
 alter table public.site_drafts enable row level security;
+grant select, insert, update, delete on table public.site_drafts to authenticated;
+grant select, insert, update, delete on table public.site_drafts to service_role;
 drop policy if exists "reps manage own site drafts" on public.site_drafts;
-create policy "reps manage own site drafts" on public.site_drafts for all
-  using (created_by = auth.uid() and public.current_user_role() in ('rep','admin'))
-  with check (created_by = auth.uid() and public.current_user_role() in ('rep','admin'));
+create policy "reps manage own site drafts" on public.site_drafts for all to authenticated
+  using (created_by = (select auth.uid()) and (select public.current_user_role()) in ('rep','admin'))
+  with check (created_by = (select auth.uid()) and (select public.current_user_role()) in ('rep','admin'));
 drop policy if exists "admins view all site drafts" on public.site_drafts;
-create policy "admins view all site drafts" on public.site_drafts for select
-  using (public.current_user_role() = 'admin');
+create policy "admins view all site drafts" on public.site_drafts for select to authenticated
+  using ((select public.current_user_role()) = 'admin');
 
 -- ============================================================
 -- END M7
