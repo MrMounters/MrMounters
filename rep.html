@@ -249,6 +249,25 @@
   .stat,.panel,.acct,.kb-doc,.doc{ box-shadow:0 1px 2px rgba(0,0,0,0.2), 0 6px 20px rgba(0,0,0,0.25); }
   .pnav{ box-shadow:0 1px 3px rgba(0,0,0,0.25); }
   .deal{ box-shadow:0 1px 2px rgba(0,0,0,0.25); }
+
+  /* AI Site Builder — thinking orb + live progress log, matches the portal's own indigo palette */
+  .thinking-wrap{ display:flex; align-items:flex-start; gap:1rem; padding:1.1rem; border:1px solid var(--card-border); border-radius:10px; background:var(--dark3); margin-top:1rem; }
+  .thinking-orb{ position:relative; width:2.6rem; height:2.6rem; flex-shrink:0; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold) 55%, #2a1f6b 100%);
+    box-shadow:0 0 18px rgba(76,89,247,0.55), 0 0 40px rgba(138,116,255,0.28);
+    animation:orb-pulse 1.8s ease-in-out infinite; }
+  .thinking-orb::after{ content:''; position:absolute; inset:-6px; border-radius:50%; border:1px solid rgba(138,116,255,0.35); animation:orb-ring 1.8s ease-in-out infinite; }
+  @keyframes orb-pulse{ 0%,100%{ transform:scale(1); filter:brightness(1); } 50%{ transform:scale(1.08); filter:brightness(1.18); } }
+  @keyframes orb-ring{ 0%{ transform:scale(0.85); opacity:0.7; } 100%{ transform:scale(1.35); opacity:0; } }
+  .thinking-log{ flex:1; min-width:0; display:flex; flex-direction:column; gap:0.45rem; font-family:var(--mono); font-size:0.78rem; }
+  .thinking-line{ color:var(--warm-muted); opacity:0; transform:translateY(4px); animation:think-in 0.35s ease forwards; display:flex; align-items:center; gap:0.5rem; }
+  .thinking-line.done{ color:var(--gray); }
+  .thinking-line.active{ color:var(--white); }
+  .thinking-line .tl-dot{ width:6px; height:6px; border-radius:50%; background:var(--warm-muted); flex-shrink:0; }
+  .thinking-line.active .tl-dot{ background:var(--gold-light); box-shadow:0 0 6px rgba(138,116,255,0.7); animation:dot-blink 0.9s ease-in-out infinite; }
+  .thinking-line.done .tl-dot{ background:var(--green); box-shadow:none; animation:none; }
+  @keyframes think-in{ to{ opacity:1; transform:none; } }
+  @keyframes dot-blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -492,6 +511,10 @@
           </div>
           <button class="btn btn-p" type="submit" id="sbGenBtn">✨ Generate site draft</button>
           <div class="err-msg hidden" id="sbErr"></div>
+          <div class="thinking-wrap hidden" id="sbThinking">
+            <div class="thinking-orb"></div>
+            <div class="thinking-log" id="sbThinkingLog"></div>
+          </div>
         </form>
       </div>
       <div class="panel hidden" id="sbResultPanel">
@@ -2050,12 +2073,53 @@
       reader.readAsDataURL(file);
     }
 
+    // Narrates the real stages of generation (matching what api/actions.js:generate-site-draft
+    // actually does — parse input, run the niche rubric, optionally read the logo, draft copy,
+    // assemble the page) rather than fabricating literal model "thoughts". Auto-advances through
+    // the known steps; if the request is still in flight after the last one, that line just sits
+    // active (blinking) until finish() is called.
+    function runThinkingLog(logEl, steps){
+      logEl.innerHTML = '';
+      let i = 0, timer = null;
+      function markLastDone(){
+        const last = logEl.lastElementChild;
+        if (last){ last.classList.remove('active'); last.classList.add('done'); }
+      }
+      function pushNext(){
+        markLastDone();
+        if (i >= steps.length) return;
+        const el = document.createElement('div');
+        el.className = 'thinking-line active';
+        const dot = document.createElement('span'); dot.className = 'tl-dot';
+        const label = document.createElement('span'); label.textContent = steps[i];
+        el.appendChild(dot); el.appendChild(label);
+        logEl.appendChild(el);
+        i++;
+        if (i < steps.length) timer = setTimeout(pushNext, 600 + Math.random() * 400);
+      }
+      pushNext();
+      return {
+        finish(finalLabel){
+          if (timer) clearTimeout(timer);
+          markLastDone();
+          const el = document.createElement('div');
+          el.className = 'thinking-line done';
+          const dot = document.createElement('span'); dot.className = 'tl-dot';
+          const label = document.createElement('span'); label.textContent = finalLabel || 'Draft ready.';
+          el.appendChild(dot); el.appendChild(label);
+          logEl.appendChild(el);
+        },
+      };
+    }
+
     async function generateSiteDraft(e){
       e.preventDefault();
       const btn = document.getElementById('sbGenBtn');
       const err = document.getElementById('sbErr'); err.classList.add('hidden');
       const bizName = document.getElementById('sbBizName').value.trim();
-      const niche = document.getElementById('sbNiche').value;
+      const nicheSelect = document.getElementById('sbNiche');
+      const niche = nicheSelect.value;
+      const nicheLabel = nicheSelect.options[nicheSelect.selectedIndex].text;
       const url = document.getElementById('sbUrl').value.trim();
       const city = document.getElementById('sbCity').value.trim();
       const info = document.getElementById('sbInfo').value.trim();
@@ -2063,6 +2127,12 @@
       const logoImage = (logoInput && logoInput.dataset.logoDataUrl) || '';
       if (!bizName || !info){ err.textContent = 'Business name and pasted info are required.'; err.classList.remove('hidden'); return; }
       btn.disabled = true; btn.textContent = 'Generating…';
+      const thinkingWrap = document.getElementById('sbThinking');
+      thinkingWrap.classList.remove('hidden');
+      const steps = ['Reading business info…', `Matching niche playbook: ${nicheLabel}…`];
+      if (logoImage) steps.push('Reading brand colors off the logo…');
+      steps.push('Drafting hero, services & FAQ copy…', 'Assembling the page…');
+      const thinking = runThinkingLog(document.getElementById('sbThinkingLog'), steps);
       try {
         const { data: fresh } = await sb.auth.getSession();
         const token = fresh.session && fresh.session.access_token;
@@ -2073,12 +2143,14 @@
         });
         const data = await r.json();
         if (!r.ok) throw new Error(data.detail || data.error || 'Generation failed');
+        thinking.finish('Draft ready.');
         sbLastHtml = buildSiteHtml(data.copy, bizName, city, niche, data.palette);
         document.getElementById('sbPreviewFrame').srcdoc = sbLastHtml;
         document.getElementById('sbResultPanel').classList.remove('hidden');
         document.getElementById('sbResultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
         setAiStatusBadge('sbAiStatus', data.ai_status, data.palette_status);
       } catch (err2) {
+        thinking.finish('Failed — ' + err2.message);
         err.textContent = 'Generation failed — ' + err2.message;
         err.classList.remove('hidden');
       } finally {
