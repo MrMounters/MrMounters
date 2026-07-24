@@ -484,6 +484,11 @@
             <div class="fld"><label>Existing website (optional)</label><input class="inp" id="sbUrl" placeholder="desertpeakroofing.com"></div>
             <div class="fld"><label>City / region (optional)</label><input class="inp" id="sbCity" placeholder="Phoenix, AZ"></div>
             <div class="fld full"><label>Paste business info — GMB listing, business card text, anything you've got</label><textarea class="ta" id="sbInfo" placeholder="e.g. Desert Peak Roofing, family-owned since 2011, 4.8★ (112 reviews) on Google, licensed &amp; insured, serves Phoenix metro, specializes in tile &amp; shingle re-roofs and storm damage repair, (480) 555-0110…" required></textarea></div>
+            <div class="fld full">
+              <label>Logo / brand image (optional) — AI will read the real brand colors off it</label>
+              <input class="inp" type="file" accept="image/*" id="sbLogoFile" onchange="handleLogoFileChange(this, 'sbLogoPreview')">
+              <div id="sbLogoPreview" style="margin-top:0.5rem;"></div>
+            </div>
           </div>
           <button class="btn btn-p" type="submit" id="sbGenBtn">✨ Generate site draft</button>
           <div class="err-msg hidden" id="sbErr"></div>
@@ -1882,7 +1887,7 @@
     // Makes it visible whether the draft actually came from the model or is generic fallback
     // copy (which happens silently whenever OPENAI_API_KEY isn't set in Vercel) — otherwise a
     // rep has no way to tell the two apart just by looking at the preview.
-    function setAiStatusBadge(elId, status){
+    function setAiStatusBadge(elId, status, paletteStatus){
       const el = document.getElementById(elId); if (!el) return;
       const map = {
         completed: { text: '✨ AI-generated', color: '#6fcf97' },
@@ -1890,7 +1895,10 @@
         not_configured: { text: '⚠ OpenAI not configured — generic fallback copy shown', color: '#f2c94c' },
       };
       const m = map[status] || { text: status || '', color: '#A6B0C3' };
-      el.textContent = m.text;
+      let text = m.text;
+      if (paletteStatus === 'completed') text += ' · 🎨 logo colors used';
+      else if (paletteStatus === 'fallback') text += ' · ⚠ logo color read failed';
+      el.textContent = text;
       el.style.cssText = 'font-size:0.74rem;font-weight:600;color:' + m.color + ';margin-right:0.3rem;';
     }
 
@@ -1910,9 +1918,12 @@
     };
 
     // Renders the AI-generated copy into a standalone, self-contained page styled for the
-    // prospect's own industry — a rep-facing sample, not a Meridion-branded page.
-    function buildSiteHtml(copy, bizName, city, niche){
-      const st = SITE_STYLE_PRESETS[niche] || SITE_STYLE_PRESETS.other;
+    // prospect's own industry — a rep-facing sample, not a Meridion-branded page. When a logo
+    // was uploaded and the AI successfully read colors off it, those override the niche
+    // preset's accent colors so the draft actually matches the prospect's real brand.
+    function buildSiteHtml(copy, bizName, city, niche, palette){
+      const preset = SITE_STYLE_PRESETS[niche] || SITE_STYLE_PRESETS.other;
+      const st = palette ? Object.assign({}, preset, { accent: palette.primary, accentDark: palette.dark || palette.primary }) : preset;
       const bg2Text = st.bg2text || '#fff';
       const services = (copy.services || []).map(s => `
         <div class="s-card"><div class="s-name">${esc2(s.name)}</div><div class="s-desc">${esc2(s.desc)}</div></div>`).join('');
@@ -2001,6 +2012,44 @@
 </html>`;
     }
 
+    // Resizes/re-encodes the chosen logo client-side (max 240px, JPEG) so the upload stays a
+    // few KB regardless of the source photo, and shows a small preview. Stored on the form
+    // element itself so generateSiteDraft can pick it up without a separate module-level var
+    // going stale if the rep swaps the file.
+    function handleLogoFileChange(input, previewId){
+      const preview = document.getElementById(previewId);
+      const file = input.files && input.files[0];
+      input.dataset.logoDataUrl = '';
+      if (!file){ preview.innerHTML = ''; return; }
+      if (!file.type.startsWith('image/')){ preview.textContent = 'Please choose an image file.'; return; }
+      preview.textContent = 'Processing…';
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 240;
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          input.dataset.logoDataUrl = dataUrl;
+          preview.innerHTML = '';
+          const thumb = document.createElement('img');
+          thumb.src = dataUrl;
+          thumb.style.cssText = 'max-height:60px;border-radius:6px;border:1px solid var(--border,#242c3d);';
+          preview.appendChild(thumb);
+        };
+        img.onerror = () => { preview.textContent = 'Could not read that image.'; };
+        img.src = reader.result;
+      };
+      reader.onerror = () => { preview.textContent = 'Could not read that file.'; };
+      reader.readAsDataURL(file);
+    }
+
     async function generateSiteDraft(e){
       e.preventDefault();
       const btn = document.getElementById('sbGenBtn');
@@ -2010,6 +2059,8 @@
       const url = document.getElementById('sbUrl').value.trim();
       const city = document.getElementById('sbCity').value.trim();
       const info = document.getElementById('sbInfo').value.trim();
+      const logoInput = document.getElementById('sbLogoFile');
+      const logoImage = (logoInput && logoInput.dataset.logoDataUrl) || '';
       if (!bizName || !info){ err.textContent = 'Business name and pasted info are required.'; err.classList.remove('hidden'); return; }
       btn.disabled = true; btn.textContent = 'Generating…';
       try {
@@ -2018,15 +2069,15 @@
         const r = await fetch('/api/actions?action=generate-site-draft', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-          body: JSON.stringify({ business_name: bizName, niche, website_url: url, city, raw_info: info }),
+          body: JSON.stringify({ business_name: bizName, niche, website_url: url, city, raw_info: info, logo_image: logoImage }),
         });
         const data = await r.json();
         if (!r.ok) throw new Error(data.detail || data.error || 'Generation failed');
-        sbLastHtml = buildSiteHtml(data.copy, bizName, city, niche);
+        sbLastHtml = buildSiteHtml(data.copy, bizName, city, niche, data.palette);
         document.getElementById('sbPreviewFrame').srcdoc = sbLastHtml;
         document.getElementById('sbResultPanel').classList.remove('hidden');
         document.getElementById('sbResultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setAiStatusBadge('sbAiStatus', data.ai_status);
+        setAiStatusBadge('sbAiStatus', data.ai_status, data.palette_status);
       } catch (err2) {
         err.textContent = 'Generation failed — ' + err2.message;
         err.classList.remove('hidden');

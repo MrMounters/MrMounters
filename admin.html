@@ -580,6 +580,11 @@
             <div><label>City / region (optional)</label><input class="inp" id="sbCityA" placeholder="Phoenix, AZ"></div>
             <div class="full"><label>Paste business info — GMB listing, business card text, anything you've got</label><textarea class="ta" id="sbInfoA" placeholder="e.g. Desert Peak Roofing, family-owned since 2011, 4.8★ (112 reviews) on Google, licensed &amp; insured, serves Phoenix metro…" required></textarea></div>
             <div class="full">
+              <label>Logo / brand image (optional) — AI will read the real brand colors off it</label>
+              <input class="inp" type="file" accept="image/*" id="sbLogoFileA" onchange="handleLogoFileChange(this, 'sbLogoPreviewA')">
+              <div id="sbLogoPreviewA" style="margin-top:0.5rem;"></div>
+            </div>
+            <div class="full">
               <button class="btn btn-p btn-sm" type="submit" id="sbGenBtnA">✨ Generate site draft</button>
               <span class="muted" id="sbErrA" style="margin-left:0.6rem;color:var(--red);"></span>
             </div>
@@ -2053,7 +2058,7 @@
     // Makes it visible whether the draft actually came from the model or is generic fallback
     // copy (which happens silently whenever OPENAI_API_KEY isn't set in Vercel) — otherwise an
     // admin has no way to tell the two apart just by looking at the preview.
-    function setAiStatusBadgeA(elId, status){
+    function setAiStatusBadgeA(elId, status, paletteStatus){
       const el = document.getElementById(elId); if (!el) return;
       const map = {
         completed: { text: '✨ AI-generated', color: '#6fcf97' },
@@ -2061,8 +2066,46 @@
         not_configured: { text: '⚠ OpenAI not configured — generic fallback copy shown', color: '#f2c94c' },
       };
       const m = map[status] || { text: status || '', color: '#A6B0C3' };
-      el.textContent = m.text;
+      let text = m.text;
+      if (paletteStatus === 'completed') text += ' · 🎨 logo colors used';
+      else if (paletteStatus === 'fallback') text += ' · ⚠ logo color read failed';
+      el.textContent = text;
       el.style.cssText = 'font-size:0.74rem;font-weight:600;color:' + m.color + ';margin-right:0.3rem;';
+    }
+    // Resizes/re-encodes the chosen logo client-side (max 240px, JPEG) so the upload stays a
+    // few KB regardless of the source photo, and shows a small preview.
+    function handleLogoFileChange(input, previewId){
+      const preview = document.getElementById(previewId);
+      const file = input.files && input.files[0];
+      input.dataset.logoDataUrl = '';
+      if (!file){ preview.innerHTML = ''; return; }
+      if (!file.type.startsWith('image/')){ preview.textContent = 'Please choose an image file.'; return; }
+      preview.textContent = 'Processing…';
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 240;
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          input.dataset.logoDataUrl = dataUrl;
+          preview.innerHTML = '';
+          const thumb = document.createElement('img');
+          thumb.src = dataUrl;
+          thumb.style.cssText = 'max-height:60px;border-radius:6px;border:1px solid var(--card-border,#242c3d);';
+          preview.appendChild(thumb);
+        };
+        img.onerror = () => { preview.textContent = 'Could not read that image.'; };
+        img.src = reader.result;
+      };
+      reader.onerror = () => { preview.textContent = 'Could not read that file.'; };
+      reader.readAsDataURL(file);
     }
 
     // Deliberately NOT Meridion's own dark-navy/indigo SaaS look — this is a draft of the
@@ -2080,8 +2123,9 @@
       other:        { accent:'#2563EB', accentDark:'#1D4ED8', bg:'#FAFAFB', bg2:'#EFF2F7', text:'#191C22', muted:'#5B6270', headFont:'Poppins',            headW:'600,700', bodyFont:'Work Sans',      radius:'10px' },
     };
 
-    function buildSiteHtmlAdmin(copy, bizName, city, niche){
-      const st = SITE_STYLE_PRESETS_A[niche] || SITE_STYLE_PRESETS_A.other;
+    function buildSiteHtmlAdmin(copy, bizName, city, niche, palette){
+      const preset = SITE_STYLE_PRESETS_A[niche] || SITE_STYLE_PRESETS_A.other;
+      const st = palette ? Object.assign({}, preset, { accent: palette.primary, accentDark: palette.dark || palette.primary }) : preset;
       const bg2Text = st.bg2text || '#fff';
       const services = (copy.services || []).map(s => `
         <div class="s-card"><div class="s-name">${esc2A(s.name)}</div><div class="s-desc">${esc2A(s.desc)}</div></div>`).join('');
@@ -2179,6 +2223,8 @@
       const url = document.getElementById('sbUrlA').value.trim();
       const city = document.getElementById('sbCityA').value.trim();
       const info = document.getElementById('sbInfoA').value.trim();
+      const logoInputA = document.getElementById('sbLogoFileA');
+      const logoImage = (logoInputA && logoInputA.dataset.logoDataUrl) || '';
       if (!bizName || !info){ err.textContent = 'Business name and pasted info are required.'; return; }
       btn.disabled = true; btn.textContent = 'Generating…';
       try {
@@ -2187,15 +2233,15 @@
         const r = await fetch('/api/actions?action=generate-site-draft', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
-          body: JSON.stringify({ business_name: bizName, niche, website_url: url, city, raw_info: info }),
+          body: JSON.stringify({ business_name: bizName, niche, website_url: url, city, raw_info: info, logo_image: logoImage }),
         });
         const data = await r.json();
         if (!r.ok) throw new Error(data.detail || data.error || 'Generation failed');
-        sbLastHtmlA = buildSiteHtmlAdmin(data.copy, bizName, city, niche);
+        sbLastHtmlA = buildSiteHtmlAdmin(data.copy, bizName, city, niche, data.palette);
         document.getElementById('sbPreviewFrameA').srcdoc = sbLastHtmlA;
         document.getElementById('sbResultPanelA').classList.remove('hidden');
         document.getElementById('sbResultPanelA').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setAiStatusBadgeA('sbAiStatusA', data.ai_status);
+        setAiStatusBadgeA('sbAiStatusA', data.ai_status, data.palette_status);
       } catch (err2) {
         err.textContent = 'Generation failed — ' + err2.message;
       } finally {

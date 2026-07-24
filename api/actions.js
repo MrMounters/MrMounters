@@ -1205,6 +1205,60 @@ async function generateSiteDraftCopy({ bizName, niche, city, url, rawInfo }) {
   }
 }
 
+// Vision call: given a data-URL logo image, asks the model to read off the brand's actual
+// colors so the draft doesn't just use the niche's generic preset palette. Kept as its own
+// small call (rather than folded into the copy schema) so a missing/invalid image never
+// blocks copy generation — palette extraction fails soft and the niche preset is used instead.
+const HEX_RE = /^#[0-9a-fA-F]{6}$/;
+async function extractLogoPalette(dataUrl) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || typeof dataUrl !== 'string' || !/^data:image\/(png|jpeg|jpg|webp);base64,/.test(dataUrl)) {
+    return { palette: null, status: 'skipped' };
+  }
+  const schema = {
+    type: 'object', additionalProperties: false,
+    properties: {
+      primary: { type: 'string', description: 'Dominant brand color as a 6-digit hex code, e.g. #C2410C' },
+      accent: { type: 'string', description: 'Secondary/accent brand color as a 6-digit hex code' },
+      dark: { type: 'string', description: 'A darker shade of the primary color for hover/contrast states, 6-digit hex' },
+    },
+    required: ['primary', 'accent', 'dark'],
+  };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST', signal: controller.signal,
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: process.env.OPENAI_LEAD_BRIEF_MODEL || 'gpt-5.4',
+        store: false,
+        instructions: 'Look at this business logo/brand image and identify its real color palette. Pick the actual dominant color and a secondary accent color used in the image itself — do not invent colors that are not present. Return hex codes only.',
+        input: [{ role: 'user', content: [{ type: 'input_text', text: 'Extract the brand color palette from this logo.' }, { type: 'input_image', image_url: dataUrl }] }],
+        max_output_tokens: 300,
+        text: { format: { type: 'json_schema', name: 'meridion_logo_palette', strict: true, schema } },
+      }),
+    });
+    if (!response.ok) {
+      console.error('OpenAI logo palette failed:', response.status);
+      return { palette: null, status: 'fallback' };
+    }
+    const payload = await response.json();
+    const text = extractResponseText(payload);
+    if (!text) return { palette: null, status: 'fallback' };
+    const parsed = JSON.parse(text);
+    if (!HEX_RE.test(parsed.primary) || !HEX_RE.test(parsed.accent) || !HEX_RE.test(parsed.dark)) {
+      return { palette: null, status: 'fallback' };
+    }
+    return { palette: parsed, status: 'completed' };
+  } catch (error) {
+    console.error('OpenAI logo palette error:', String((error && error.message) || error));
+    return { palette: null, status: 'fallback' };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function generateSiteDraft(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
   const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
@@ -1222,11 +1276,19 @@ async function generateSiteDraft(req, res) {
   const niche = typeof body.niche === 'string' && NICHE_RUBRIC[body.niche] ? body.niche : 'other';
   const city = typeof body.city === 'string' ? body.city.trim().slice(0, 120) : '';
   const url = typeof body.website_url === 'string' ? body.website_url.trim().slice(0, 300) : '';
+  // Data URL of a client-resized logo image, capped well under Vercel's request body limit.
+  const logoImage = typeof body.logo_image === 'string' ? body.logo_image.slice(0, 2_000_000) : '';
 
   try {
-    const generated = await generateSiteDraftCopy({ bizName, niche, city, url, rawInfo });
+    const [generated, paletteResult] = await Promise.all([
+      generateSiteDraftCopy({ bizName, niche, city, url, rawInfo }),
+      logoImage ? extractLogoPalette(logoImage) : Promise.resolve({ palette: null, status: 'skipped' }),
+    ]);
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json({ ok: true, copy: generated.copy, ai_status: generated.status });
+    return res.status(200).json({
+      ok: true, copy: generated.copy, ai_status: generated.status,
+      palette: paletteResult.palette, palette_status: paletteResult.status,
+    });
   } catch (e) {
     console.error('generate site draft error:', e);
     return res.status(500).json({ error: 'generation_failed' });
