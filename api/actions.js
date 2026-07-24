@@ -1099,6 +1099,141 @@ async function createAuditLeadBrief(req, res) {
 }
 
 // ---------------------------------------------------------------------------
+// generate-site-draft — rep-facing tool (rep.html "AI Site Builder"). A rep pastes whatever
+// they have on a prospect (GMB listing text, business card, existing site URL) and picks the
+// closest niche; this calls an LLM to draft one-page site copy using the ICP/pain/offer-angle
+// framing from campaign/09-niche-playbooks.md as the rubric, condensed inline below so the
+// prompt stays small and doesn't require reading the repo file at request time.
+//
+// Returns copy JSON only (not full HTML) — rep.html owns the actual page template so design
+// tweaks don't require redeploying this function.
+// ---------------------------------------------------------------------------
+const NICHE_RUBRIC = {
+  dental: 'Dental & Orthodontics. ICP/pain: solo or small-group dental/ortho practices where the front desk is juggling phones and patients-in-chair, so new-patient calls and treatment-plan follow-up (Invisalign, implants) go to voicemail and the practice loses the case to whoever calls back first. Offer angle: fast response to every new-patient inquiry. Never make clinical/treatment-outcome claims.',
+  home_services: 'Home Services (HVAC, Roofing, Plumbing, Electrical). ICP/pain: owner-operators and small crews (2-20 trucks) who are on jobs, not on the phone — emergency and quote calls go unanswered mid-job and the homeowner calls the next name on Google, a lost job that can be $500-$15k. Offer angle: never miss an emergency or quote call, even mid-job. Proof stays to response time/coverage, never guaranteed-jobs-booked claims.',
+  law: 'Law Firms (Personal Injury, Family, Criminal). ICP/pain: small-to-mid firms where intake calls come in around the clock and the firm that responds first usually signs the client; slow response is the #1 reason PI/criminal leads go to a competitor. Offer angle: answer every intake call the moment it comes in. Zero legal-outcome or case-value claims, ever.',
+  real_estate: 'Real Estate Teams / Brokerages. ICP/pain: team leads/brokerages running paid lead gen where speed-to-lead is the #1 conversion factor, but agents are in showings, not on the phone, so leads sit and go cold. Offer angle: respond to every buyer/seller lead in seconds. No earnings/commission guarantees.',
+  wellness: 'Chiropractic / PT / Wellness (incl. IV therapy, peptides). ICP/pain: cash-pay/insurance-mixed practices where inquiries come by call, text, and DM throughout the day but front desk is with a patient, so leads sit unanswered and book elsewhere. Offer angle: answer every inquiry and book the first visit. No clinical outcome or treatment-result claims.',
+  cosmetic: 'Cosmetic / Dermatology & Plastic Surgery. ICP/pain: higher-ticket ($2k-$20k+), consult-heavy sales cycle where a slow reply to a DM/form inquiry means a five-figure lead books a consult elsewhere. Offer angle: fast, discreet response and consult booking. Zero outcome/results or before/after claims.',
+  auto: 'Auto (Dealerships, Repair & Detailing). ICP/pain: service departments/shops where phones ring constantly while techs are heads-down, so a caller who can\'t get through calls the next shop. Offer angle: answer every service/sales call, even during busiest hours. No guaranteed-sales or revenue claims.',
+  fitness: 'Fitness (Gyms, Studios, Personal Training). ICP/pain: boutique studios where trial/membership inquiries come through website/IG/calls while staff is coaching a class, so unanswered leads rarely follow up themselves. Offer angle: respond instantly and book the first session. No fabricated membership-growth or revenue numbers.',
+  other: 'General local service business. ICP/pain: owner-operated or small-team business where inbound calls/messages go unanswered during busy hours and the prospect goes to a competitor instead. Offer angle: respond to every inquiry fast and get it booked. No fabricated stats, reviews, or outcome guarantees.',
+};
+
+function siteDraftFallback(bizName) {
+  return {
+    hero_eyebrow: 'Built For Your Business',
+    hero_headline: `${bizName} — Always There When Customers Call.`,
+    hero_subheadline: 'A modern, mobile-friendly site that makes it easy for new customers to find you, trust you, and reach out.',
+    hooks: ['Fast to load on any phone', 'Built around how customers actually search for you', 'Easy to update as your business grows'],
+    services: [
+      { name: 'Service One', desc: 'Describe your core service and what makes it different.' },
+      { name: 'Service Two', desc: 'Describe a second offering or specialty.' },
+      { name: 'Service Three', desc: 'Describe a third offering or specialty.' },
+    ],
+    process_steps: [
+      { title: 'Reach Out', desc: 'A customer calls, texts, or fills out a form.' },
+      { title: 'Get a Quote', desc: 'You respond quickly with pricing and availability.' },
+      { title: 'Get It Done', desc: 'The job gets scheduled and completed.' },
+    ],
+    faq: [{ q: 'How do I get a quote?', a: 'Reach out using the contact button above and we\'ll get back to you quickly.' }],
+    cta_headline: 'Ready to Get Started?',
+    cta_sub: 'Reach out today and see how we can help.',
+  };
+}
+
+async function generateSiteDraftCopy({ bizName, niche, city, url, rawInfo }) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const fallback = siteDraftFallback(bizName);
+  if (!apiKey) return { copy: fallback, status: 'not_configured', model: null };
+
+  const rubric = NICHE_RUBRIC[niche] || NICHE_RUBRIC.other;
+  const schema = {
+    type: 'object', additionalProperties: false,
+    properties: {
+      hero_eyebrow: { type: 'string' },
+      hero_headline: { type: 'string' },
+      hero_subheadline: { type: 'string' },
+      hooks: { type: 'array', items: { type: 'string' }, minItems: 3, maxItems: 3 },
+      services: {
+        type: 'array', minItems: 4, maxItems: 6,
+        items: { type: 'object', additionalProperties: false, properties: { name: { type: 'string' }, desc: { type: 'string' } }, required: ['name', 'desc'] },
+      },
+      process_steps: {
+        type: 'array', minItems: 3, maxItems: 4,
+        items: { type: 'object', additionalProperties: false, properties: { title: { type: 'string' }, desc: { type: 'string' } }, required: ['title', 'desc'] },
+      },
+      faq: {
+        type: 'array', minItems: 3, maxItems: 4,
+        items: { type: 'object', additionalProperties: false, properties: { q: { type: 'string' }, a: { type: 'string' } }, required: ['q', 'a'] },
+      },
+      cta_headline: { type: 'string' },
+      cta_sub: { type: 'string' },
+    },
+    required: ['hero_eyebrow', 'hero_headline', 'hero_subheadline', 'hooks', 'services', 'process_steps', 'faq', 'cta_headline', 'cta_sub'],
+  };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST', signal: controller.signal,
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: process.env.OPENAI_LEAD_BRIEF_MODEL || 'gpt-5.4',
+        store: false,
+        instructions: `You are drafting one-page website copy for a local service business, to be shown to that business as a sales sample. Niche rubric (use this ICP/pain framing, do not deviate from its claim restrictions): ${rubric} General rules: use only facts given in the business info — never invent review counts, awards, years in business, or credentials that weren't provided. Keep tone confident and local, not generic corporate. Return the requested JSON only.`,
+        input: `Business name: ${bizName}\nCity/region: ${city || 'not provided'}\nExisting website: ${url || 'not provided'}\nPasted business info:\n${rawInfo}\n\nReturn the requested JSON only.`,
+        max_output_tokens: 1400,
+        text: { format: { type: 'json_schema', name: 'meridion_site_draft', strict: true, schema } },
+      }),
+    });
+    if (!response.ok) {
+      console.error('OpenAI site draft failed:', response.status);
+      return { copy: fallback, status: 'fallback', model: null };
+    }
+    const payload = await response.json();
+    const text = extractResponseText(payload);
+    if (!text) return { copy: fallback, status: 'fallback', model: payload && payload.model };
+    const copy = JSON.parse(text);
+    return { copy, status: 'completed', model: payload && payload.model };
+  } catch (error) {
+    console.error('OpenAI site draft error:', String((error && error.message) || error));
+    return { copy: fallback, status: 'fallback', model: null };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function generateSiteDraft(req, res) {
+  if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'method_not_allowed' }); }
+  const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return res.status(503).json({ error: 'supabase_not_configured' });
+
+  const { createClient } = require('@supabase/supabase-js');
+  const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const caller = await requireUser(supabaseAdmin, req);
+  if (!caller) return res.status(401).json({ error: 'unauthorized' });
+
+  const body = req.body || {};
+  const bizName = typeof body.business_name === 'string' ? body.business_name.trim().slice(0, 160) : '';
+  const rawInfo = typeof body.raw_info === 'string' ? body.raw_info.trim().slice(0, 4000) : '';
+  if (!bizName || !rawInfo) return res.status(400).json({ error: 'business_name_and_raw_info_required' });
+  const niche = typeof body.niche === 'string' && NICHE_RUBRIC[body.niche] ? body.niche : 'other';
+  const city = typeof body.city === 'string' ? body.city.trim().slice(0, 120) : '';
+  const url = typeof body.website_url === 'string' ? body.website_url.trim().slice(0, 300) : '';
+
+  try {
+    const generated = await generateSiteDraftCopy({ bizName, niche, city, url, rawInfo });
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json({ ok: true, copy: generated.copy, ai_status: generated.status });
+  } catch (e) {
+    console.error('generate site draft error:', e);
+    return res.status(500).json({ error: 'generation_failed' });
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Dispatcher
 // ---------------------------------------------------------------------------
 const ACTIONS = {
@@ -1111,6 +1246,7 @@ const ACTIONS = {
   'admin-update-team-member': adminUpdateTeamMember,
   'admin-backfill-names': adminBackfillNames,
   'create-audit-lead-brief': createAuditLeadBrief,
+  'generate-site-draft': generateSiteDraft,
   'send-lead-email': sendLeadEmail,
   'create-signing-request': createSigningRequest,
   'documenso-webhook': documensoWebhook,

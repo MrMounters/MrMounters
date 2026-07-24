@@ -293,6 +293,7 @@
     <a class="m-item" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/></svg>My Leads</a>
     <a class="m-item" data-s="opportunities" onclick="go('opportunities')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>My Opportunities</a>
     <a class="m-item" data-s="myclients" onclick="go('myclients')"><svg viewBox="0 0 24 24"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>My Clients</a>
+    <a class="m-item" data-s="sitebuilder" onclick="go('sitebuilder')"><svg viewBox="0 0 24 24"><path d="M12 2 13.5 9 20 10.5 13.5 12 12 19 10.5 12 4 10.5 10.5 9 12 2Z"/></svg>AI Site Builder</a>
     <div class="m-section">Money</div>
     <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
     <div class="m-section">Resources</div>
@@ -454,6 +455,49 @@
         <div class="panel-h"><div class="panel-t">Clients</div><span class="panel-k" id="clientCount">—</span></div>
         <div id="clientsState" class="data-state">Loading…</div>
         <table id="clientsTable" class="hidden"><thead><tr><th>Business</th><th>Onboarding</th><th>Lifetime value</th></tr></thead><tbody id="clientsBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- AI SITE BUILDER -->
+    <section class="sec" id="sec-sitebuilder">
+      <div class="eyebrow">// Sell · AI Site Builder</div>
+      <h1 class="h1">AI Site Builder</h1>
+      <p class="lead">Paste whatever you've got on the prospect — their existing URL, their Google Business Profile listing, or the text off their business card — and generate a ready-to-show one-page site draft in seconds. Pick the closest niche so the copy uses the right pain points.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">Generate a draft</div></div>
+        <form onsubmit="generateSiteDraft(event)">
+          <div class="form-grid">
+            <div class="fld"><label>Business name</label><input class="inp" id="sbBizName" placeholder="Desert Peak Roofing" required></div>
+            <div class="fld"><label>Niche</label>
+              <select class="sel" id="sbNiche">
+                <option value="dental">Dental &amp; Orthodontics</option>
+                <option value="home_services" selected>Home Services (HVAC, Roofing, Plumbing, Electrical)</option>
+                <option value="law">Law Firms</option>
+                <option value="real_estate">Real Estate Teams / Brokerages</option>
+                <option value="wellness">Chiropractic / PT / Wellness</option>
+                <option value="cosmetic">Cosmetic / Dermatology / Plastic Surgery</option>
+                <option value="auto">Auto (Dealerships, Repair &amp; Detailing)</option>
+                <option value="fitness">Fitness (Gyms, Studios, Personal Training)</option>
+                <option value="other">Other / not listed</option>
+              </select>
+            </div>
+            <div class="fld"><label>Existing website (optional)</label><input class="inp" id="sbUrl" placeholder="desertpeakroofing.com"></div>
+            <div class="fld"><label>City / region (optional)</label><input class="inp" id="sbCity" placeholder="Phoenix, AZ"></div>
+            <div class="fld full"><label>Paste business info — GMB listing, business card text, anything you've got</label><textarea class="ta" id="sbInfo" placeholder="e.g. Desert Peak Roofing, family-owned since 2011, 4.8★ (112 reviews) on Google, licensed &amp; insured, serves Phoenix metro, specializes in tile &amp; shingle re-roofs and storm damage repair, (480) 555-0110…" required></textarea></div>
+          </div>
+          <button class="btn btn-p" type="submit" id="sbGenBtn">✨ Generate site draft</button>
+          <div class="err-msg hidden" id="sbErr"></div>
+        </form>
+      </div>
+      <div class="panel hidden" id="sbResultPanel">
+        <div class="panel-h">
+          <div class="panel-t">Draft preview</div>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-o" type="button" onclick="copySiteDraftHtml()">Copy HTML</button>
+            <button class="btn btn-o" type="button" onclick="downloadSiteDraftHtml()">Download .html</button>
+          </div>
+        </div>
+        <iframe id="sbPreviewFrame" title="Generated site preview" style="width:100%;height:70vh;border:1px solid var(--border,#242c3d);border-radius:8px;background:#0B0F19;"></iframe>
       </div>
     </section>
 
@@ -1829,6 +1873,163 @@
           body: JSON.stringify(body),
         });
       } catch (_) { /* best-effort */ }
+    }
+
+    // ── AI SITE BUILDER ──
+    let sbLastHtml = '';
+    function esc2(s){ return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+    // Deliberately NOT Meridion's own dark-navy/indigo SaaS look — this is a draft of the
+    // PROSPECT's site, shown to them as a sample, so each niche gets its own light-background,
+    // distinct-font, distinct-accent-color style rather than a reskinned Meridion clone.
+    const SITE_STYLE_PRESETS = {
+      dental:       { accent:'#0E8F8C', accentDark:'#0B6E6B', bg:'#FBFBF9', bg2:'#F2F7F6', text:'#1B2523', muted:'#5B6D6A', headFont:'Poppins',          headW:'600,700', bodyFont:'Nunito Sans',    radius:'14px' },
+      home_services:{ accent:'#C2410C', accentDark:'#9A3412', bg:'#FCFAF7', bg2:'#F5EDE3', text:'#241A12', muted:'#6E5D4C', headFont:'Barlow Condensed',  headW:'600,700', bodyFont:'Work Sans',      radius:'6px'  },
+      law:          { accent:'#8A6D2F', accentDark:'#6B5322', bg:'#FAF8F3', bg2:'#EFE9DB', text:'#1C1E22', muted:'#5B5E66', headFont:'Playfair Display',  headW:'600,700', bodyFont:'Source Sans 3',  radius:'2px'  },
+      real_estate:  { accent:'#1B5E42', accentDark:'#123F2C', bg:'#FAFAF7', bg2:'#EDF1EC', text:'#1B221D', muted:'#5B655D', headFont:'Fraunces',          headW:'500,600', bodyFont:'Work Sans',      radius:'8px'  },
+      wellness:     { accent:'#6B8F71', accentDark:'#4E6E54', bg:'#FBFAF6', bg2:'#F0F3EC', text:'#232821', muted:'#69705E', headFont:'Poppins',            headW:'500,600', bodyFont:'Nunito Sans',    radius:'20px' },
+      cosmetic:     { accent:'#B5657A', accentDark:'#93475C', bg:'#FDFAFA', bg2:'#F7EEF0', text:'#26201F', muted:'#7A6A6A', headFont:'Playfair Display',  headW:'500,600', bodyFont:'Source Sans 3',  radius:'24px' },
+      auto:         { accent:'#C41E1E', accentDark:'#8F1414', bg:'#FAFAFA', bg2:'#1B1B1E', bg2text:'#F2F2F2', text:'#18181A', muted:'#5A5A5E', headFont:'Oswald', headW:'500,600', bodyFont:'Work Sans', radius:'4px' },
+      fitness:      { accent:'#E8590C', accentDark:'#B8460A', bg:'#FAFAFA', bg2:'#17181A', bg2text:'#F2F2F2', text:'#18181A', muted:'#5A5A5E', headFont:'Bebas Neue', headW:'400', bodyFont:'Work Sans', radius:'4px' },
+      other:        { accent:'#2563EB', accentDark:'#1D4ED8', bg:'#FAFAFB', bg2:'#EFF2F7', text:'#191C22', muted:'#5B6270', headFont:'Poppins',            headW:'600,700', bodyFont:'Work Sans',      radius:'10px' },
+    };
+
+    // Renders the AI-generated copy into a standalone, self-contained page styled for the
+    // prospect's own industry — a rep-facing sample, not a Meridion-branded page.
+    function buildSiteHtml(copy, bizName, city, niche){
+      const st = SITE_STYLE_PRESETS[niche] || SITE_STYLE_PRESETS.other;
+      const bg2Text = st.bg2text || '#fff';
+      const services = (copy.services || []).map(s => `
+        <div class="s-card"><div class="s-name">${esc2(s.name)}</div><div class="s-desc">${esc2(s.desc)}</div></div>`).join('');
+      const steps = (copy.process_steps || []).map((s, i) => `
+        <div class="step"><div class="step-num">${String(i+1).padStart(2,'0')}</div><div class="step-title">${esc2(s.title)}</div><div class="step-desc">${esc2(s.desc)}</div></div>`).join('');
+      const faq = (copy.faq || []).map(f => `
+        <div class="faq-item"><div class="faq-q">${esc2(f.q)}</div><div class="faq-a">${esc2(f.a)}</div></div>`).join('');
+      const hooks = (copy.hooks || []).map(h => `<li>${esc2(h)}</li>`).join('');
+      const title = `${esc2(bizName)}${city ? ' — ' + esc2(city) : ''}`;
+      const fontFamilies = [`${st.headFont}:wght@${st.headW}`, `${st.bodyFont}:wght@400;500;600;700`].map(f => 'family=' + f.replace(/ /g, '+')).join('&');
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="${esc2(copy.hero_subheadline || '')}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?${fontFamilies}&display=swap" rel="stylesheet">
+<style>
+  :root{ --accent:${st.accent}; --accent-dark:${st.accentDark}; --bg:${st.bg}; --bg2:${st.bg2}; --bg2-text:${bg2Text}; --text:${st.text}; --muted:${st.muted}; --radius:${st.radius}; --head-font:'${st.headFont}',sans-serif; --body-font:'${st.bodyFont}',sans-serif; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--body-font);line-height:1.65;}
+  header{padding:1.3rem 6%;border-bottom:1px solid rgba(0,0,0,0.08);font-family:var(--head-font);font-weight:600;font-size:1.2rem;}
+  .hero{padding:4.5rem 6% 4rem;}
+  .eyebrow{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:1rem;}
+  h1{font-family:var(--head-font);font-size:clamp(2.1rem,5vw,3.3rem);font-weight:600;line-height:1.12;margin-bottom:1.2rem;max-width:780px;}
+  .sub{color:var(--muted);font-size:1.05rem;max-width:560px;margin-bottom:2rem;}
+  .btn{display:inline-block;background:var(--accent);color:#fff;padding:0.85rem 1.7rem;border-radius:var(--radius);text-decoration:none;font-weight:600;}
+  .hook-list{list-style:none;margin-top:2rem;display:flex;flex-direction:column;gap:0.6rem;color:var(--muted);font-size:0.92rem;}
+  .hook-list li::before{content:"✓ ";color:var(--accent-dark);font-weight:700;}
+  section{padding:4rem 6%;}
+  h2{font-family:var(--head-font);font-weight:600;font-size:clamp(1.6rem,3.5vw,2.3rem);margin-bottom:2rem;}
+  .s-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.1rem;}
+  .s-card{background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:var(--radius);padding:1.4rem;box-shadow:0 1px 2px rgba(0,0,0,0.04);}
+  .s-name{font-weight:700;margin-bottom:0.4rem;}
+  .s-desc{color:var(--muted);font-size:0.86rem;}
+  #process{background:var(--bg2);color:var(--bg2-text);}
+  #process .step-desc{color:var(--bg2-text);opacity:0.72;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;}
+  .step-num{font-family:var(--head-font);color:var(--accent);font-weight:700;font-size:1.7rem;margin-bottom:0.5rem;}
+  .step-title{font-weight:700;margin-bottom:0.4rem;}
+  .step-desc{color:var(--muted);font-size:0.86rem;}
+  .faq-item{border-bottom:1px solid rgba(0,0,0,0.08);padding:1.2rem 0;}
+  .faq-q{font-weight:700;margin-bottom:0.5rem;}
+  .faq-a{color:var(--muted);font-size:0.88rem;}
+  .cta-band{text-align:center;background:var(--accent);color:#fff;}
+  .cta-band h2{color:#fff;margin-bottom:0.6rem;}
+  .cta-band p{color:rgba(255,255,255,0.85);margin-bottom:1.6rem;}
+  .cta-band .btn{background:#fff;color:var(--accent-dark);}
+  footer{padding:2rem 6%;text-align:center;color:var(--muted);font-size:0.8rem;border-top:1px solid rgba(0,0,0,0.08);}
+  .draft-flag{background:#1a1a1a;color:#F5C451;font-size:0.72rem;text-align:center;padding:0.5rem;font-family:monospace;}
+</style>
+</head>
+<body>
+<div class="draft-flag">AI-GENERATED DRAFT — for prospect review, not a live site</div>
+<header>${esc2(bizName)}</header>
+<section class="hero">
+  <div class="eyebrow">${esc2(copy.hero_eyebrow || '')}</div>
+  <h1>${esc2(copy.hero_headline || '')}</h1>
+  <p class="sub">${esc2(copy.hero_subheadline || '')}</p>
+  <a class="btn" href="#contact">${esc2(copy.cta_headline ? 'Get a Free Quote' : 'Contact Us')}</a>
+  <ul class="hook-list">${hooks}</ul>
+</section>
+<section id="services">
+  <h2>What We Do</h2>
+  <div class="s-grid">${services}</div>
+</section>
+<section id="process">
+  <h2>How It Works</h2>
+  <div class="steps">${steps}</div>
+</section>
+<section id="faq">
+  <h2>Questions, Answered</h2>
+  <div>${faq}</div>
+</section>
+<section class="cta-band" id="contact">
+  <h2>${esc2(copy.cta_headline || 'Ready to Get Started?')}</h2>
+  <p>${esc2(copy.cta_sub || '')}</p>
+  <a class="btn" href="#">Contact Us</a>
+</section>
+<footer>${esc2(bizName)}${city ? ' · ' + esc2(city) : ''}</footer>
+</body>
+</html>`;
+    }
+
+    async function generateSiteDraft(e){
+      e.preventDefault();
+      const btn = document.getElementById('sbGenBtn');
+      const err = document.getElementById('sbErr'); err.classList.add('hidden');
+      const bizName = document.getElementById('sbBizName').value.trim();
+      const niche = document.getElementById('sbNiche').value;
+      const url = document.getElementById('sbUrl').value.trim();
+      const city = document.getElementById('sbCity').value.trim();
+      const info = document.getElementById('sbInfo').value.trim();
+      if (!bizName || !info){ err.textContent = 'Business name and pasted info are required.'; err.classList.remove('hidden'); return; }
+      btn.disabled = true; btn.textContent = 'Generating…';
+      try {
+        const { data: fresh } = await sb.auth.getSession();
+        const token = fresh.session && fresh.session.access_token;
+        const r = await fetch('/api/actions?action=generate-site-draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ business_name: bizName, niche, website_url: url, city, raw_info: info }),
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.error || 'Generation failed');
+        sbLastHtml = buildSiteHtml(data.copy, bizName, city, niche);
+        document.getElementById('sbPreviewFrame').srcdoc = sbLastHtml;
+        document.getElementById('sbResultPanel').classList.remove('hidden');
+        document.getElementById('sbResultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err2) {
+        err.textContent = 'Generation failed — ' + err2.message;
+        err.classList.remove('hidden');
+      } finally {
+        btn.disabled = false; btn.textContent = '✨ Generate site draft';
+      }
+    }
+    async function copySiteDraftHtml(){
+      if (!sbLastHtml) return;
+      try { await navigator.clipboard.writeText(sbLastHtml); } catch(_) {}
+    }
+    function downloadSiteDraftHtml(){
+      if (!sbLastHtml) return;
+      const bizName = document.getElementById('sbBizName').value.trim() || 'site-draft';
+      const slug = bizName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'site-draft';
+      const blob = new Blob([sbLastHtml], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = slug + '.html';
+      document.body.appendChild(a); a.click(); a.remove();
     }
 
     // If this page is restored from the back/forward cache (e.g. hitting Back right after
