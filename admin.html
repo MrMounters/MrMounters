@@ -2231,31 +2231,51 @@
     // Deliberately NOT Meridion's own dark-navy/indigo SaaS look — this is a draft of the
     // PROSPECT's site, shown to them as a sample, so each niche gets its own light-background,
     // distinct-font, distinct-accent-color style rather than a reskinned Meridion clone.
+    const unsplashA = (id, w) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w||1600}&q=80`;
+    const SERVICE_ICONS_A = [
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.8 16.6a1 1 0 0 0 1.2-.3l.4-.5a2 2 0 0 1 1.6-.8h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.6 1.6l-.5.4a1 1 0 0 0-.3 1.2 12 12 0 0 0 5.7 5.4Z"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 3.8 9 9 10 5.2-1 9-5 9-10V6l-9-4Z"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 13.5 9 20 10.5 13.5 12 12 19 10.5 12 4 10.5 10.5 9 12 2Z"/></svg>',
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    ];
     const SITE_STYLE_PRESETS_A = {
-      dental:       { accent:'#0E8F8C', accentDark:'#0B6E6B', bg:'#FBFBF9', bg2:'#F2F7F6', text:'#1B2523', muted:'#5B6D6A', headFont:'Poppins',          headW:'600,700', bodyFont:'Nunito Sans',    radius:'14px' },
-      home_services:{ accent:'#C2410C', accentDark:'#9A3412', bg:'#FCFAF7', bg2:'#F5EDE3', text:'#241A12', muted:'#6E5D4C', headFont:'Barlow Condensed',  headW:'600,700', bodyFont:'Work Sans',      radius:'6px'  },
-      law:          { accent:'#8A6D2F', accentDark:'#6B5322', bg:'#FAF8F3', bg2:'#EFE9DB', text:'#1C1E22', muted:'#5B5E66', headFont:'Playfair Display',  headW:'600,700', bodyFont:'Source Sans 3',  radius:'2px'  },
-      real_estate:  { accent:'#1B5E42', accentDark:'#123F2C', bg:'#FAFAF7', bg2:'#EDF1EC', text:'#1B221D', muted:'#5B655D', headFont:'Fraunces',          headW:'500,600', bodyFont:'Work Sans',      radius:'8px'  },
-      wellness:     { accent:'#6B8F71', accentDark:'#4E6E54', bg:'#FBFAF6', bg2:'#F0F3EC', text:'#232821', muted:'#69705E', headFont:'Poppins',            headW:'500,600', bodyFont:'Nunito Sans',    radius:'20px' },
-      cosmetic:     { accent:'#B5657A', accentDark:'#93475C', bg:'#FDFAFA', bg2:'#F7EEF0', text:'#26201F', muted:'#7A6A6A', headFont:'Playfair Display',  headW:'500,600', bodyFont:'Source Sans 3',  radius:'24px' },
-      auto:         { accent:'#C41E1E', accentDark:'#8F1414', bg:'#FAFAFA', bg2:'#1B1B1E', bg2text:'#F2F2F2', text:'#18181A', muted:'#5A5A5E', headFont:'Oswald', headW:'500,600', bodyFont:'Work Sans', radius:'4px' },
-      fitness:      { accent:'#E8590C', accentDark:'#B8460A', bg:'#FAFAFA', bg2:'#17181A', bg2text:'#F2F2F2', text:'#18181A', muted:'#5A5A5E', headFont:'Bebas Neue', headW:'400', bodyFont:'Work Sans', radius:'4px' },
-      other:        { accent:'#2563EB', accentDark:'#1D4ED8', bg:'#FAFAFB', bg2:'#EFF2F7', text:'#191C22', muted:'#5B6270', headFont:'Poppins',            headW:'600,700', bodyFont:'Work Sans',      radius:'10px' },
+      dental:       { accent:'#0E8F8C', accentDark:'#0B6E6B', bg:'#FBFBF9', bg2:'#F2F7F6', text:'#1B2523', muted:'#5B6D6A', headFont:'Poppins',          headW:'600,700', bodyFont:'Nunito Sans',    radius:'14px',
+        hero:'1598256989800-fe5f95da9787', gallery:['1629909613654-28e377c37b09','1588776814546-daab30f310ce'] },
+      home_services:{ accent:'#C2410C', accentDark:'#9A3412', bg:'#FCFAF7', bg2:'#F5EDE3', text:'#241A12', muted:'#6E5D4C', headFont:'Barlow Condensed',  headW:'600,700', bodyFont:'Work Sans',      radius:'6px',
+        hero:'1635424824849-1b09bdcc55b1', gallery:['1632759145351-1d592919f522','1518736346281-76873166a64a'] },
+      law:          { accent:'#8A6D2F', accentDark:'#6B5322', bg:'#FAF8F3', bg2:'#EFE9DB', text:'#1C1E22', muted:'#5B5E66', headFont:'Playfair Display',  headW:'600,700', bodyFont:'Source Sans 3',  radius:'2px',
+        hero:'1497366754035-f200968a6e72', gallery:['1505664194779-8beaceb93744','1450101499163-c8848c66ca85'] },
+      real_estate:  { accent:'#1B5E42', accentDark:'#123F2C', bg:'#FAFAF7', bg2:'#EDF1EC', text:'#1B221D', muted:'#5B655D', headFont:'Fraunces',          headW:'500,600', bodyFont:'Work Sans',      radius:'8px',
+        hero:'1580587771525-78b9dba3b914', gallery:['1570129477492-45c003edd2be','1600596542815-ffad4c1539a9'] },
+      wellness:     { accent:'#6B8F71', accentDark:'#4E6E54', bg:'#FBFAF6', bg2:'#F0F3EC', text:'#232821', muted:'#69705E', headFont:'Poppins',            headW:'500,600', bodyFont:'Nunito Sans',    radius:'20px',
+        hero:'1758691462878-6edc3d3da1be', gallery:['1551076805-e1869033e561','1576085898419-d54e840d898f'] },
+      cosmetic:     { accent:'#B5657A', accentDark:'#93475C', bg:'#FDFAFA', bg2:'#F7EEF0', text:'#26201F', muted:'#7A6A6A', headFont:'Playfair Display',  headW:'500,600', bodyFont:'Source Sans 3',  radius:'24px',
+        hero:'1600334089648-b0d9d3028eb2', gallery:['1620733723572-11c53f73a416','1515377905703-c4788e51af15'] },
+      auto:         { accent:'#C41E1E', accentDark:'#8F1414', bg:'#FAFAFA', bg2:'#1B1B1E', bg2text:'#F2F2F2', text:'#18181A', muted:'#5A5A5E', headFont:'Oswald', headW:'500,600', bodyFont:'Work Sans', radius:'4px',
+        hero:'1615906655593-ad0386982a0f', gallery:['1486262715619-67b85e0b08d3','1596986952526-3be237187071'] },
+      fitness:      { accent:'#E8590C', accentDark:'#B8460A', bg:'#FAFAFA', bg2:'#17181A', bg2text:'#F2F2F2', text:'#18181A', muted:'#5A5A5E', headFont:'Bebas Neue', headW:'400', bodyFont:'Work Sans', radius:'4px',
+        hero:'1534438327276-14e5300c3a48', gallery:['1637430308606-86576d8fef3c','1623874514711-0f321325f318'] },
+      other:        { accent:'#2563EB', accentDark:'#1D4ED8', bg:'#FAFAFB', bg2:'#EFF2F7', text:'#191C22', muted:'#5B6270', headFont:'Poppins',            headW:'600,700', bodyFont:'Work Sans',      radius:'10px',
+        hero:'1690383922009-477ea4edc20d', gallery:['1610387853988-7a1623efb207','1752650735608-6895f65de119'] },
     };
 
-    function buildSiteHtmlAdmin(copy, bizName, city, niche, palette){
+    function buildSiteHtmlAdmin(copy, bizName, city, niche, palette, logoDataUrl){
       const preset = SITE_STYLE_PRESETS_A[niche] || SITE_STYLE_PRESETS_A.other;
       const st = palette ? Object.assign({}, preset, { accent: palette.primary, accentDark: palette.dark || palette.primary }) : preset;
-      const bg2Text = st.bg2text || '#fff';
-      const services = (copy.services || []).map(s => `
-        <div class="s-card"><div class="s-name">${esc2A(s.name)}</div><div class="s-desc">${esc2A(s.desc)}</div></div>`).join('');
+      const bg2Text = st.bg2text || st.text;
+      const services = (copy.services || []).map((s, i) => `
+        <div class="s-card"><div class="s-ico">${SERVICE_ICONS_A[i % SERVICE_ICONS_A.length]}</div><div class="s-name">${esc2A(s.name)}</div><div class="s-desc">${esc2A(s.desc)}</div></div>`).join('');
       const steps = (copy.process_steps || []).map((s, i) => `
         <div class="step"><div class="step-num">${String(i+1).padStart(2,'0')}</div><div class="step-title">${esc2A(s.title)}</div><div class="step-desc">${esc2A(s.desc)}</div></div>`).join('');
       const faq = (copy.faq || []).map(f => `
         <div class="faq-item"><div class="faq-q">${esc2A(f.q)}</div><div class="faq-a">${esc2A(f.a)}</div></div>`).join('');
       const hooks = (copy.hooks || []).map(h => `<li>${esc2A(h)}</li>`).join('');
+      const gallery = (st.gallery || []).map(id => `<img src="${unsplashA(id, 900)}" alt="" loading="lazy">`).join('');
       const title = `${esc2A(bizName)}${city ? ' — ' + esc2A(city) : ''}`;
       const fontFamilies = [`${st.headFont}:wght@${st.headW}`, `${st.bodyFont}:wght@400;500;600;700`].map(f => 'family=' + f.replace(/ /g, '+')).join('&');
+      const logoHtml = logoDataUrl ? `<img src="${logoDataUrl}" alt="${esc2A(bizName)}" class="logo-img">` : esc2A(bizName);
       return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2271,22 +2291,32 @@
   :root{ --accent:${st.accent}; --accent-dark:${st.accentDark}; --bg:${st.bg}; --bg2:${st.bg2}; --bg2-text:${bg2Text}; --text:${st.text}; --muted:${st.muted}; --radius:${st.radius}; --head-font:'${st.headFont}',sans-serif; --body-font:'${st.bodyFont}',sans-serif; }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--bg);color:var(--text);font-family:var(--body-font);line-height:1.65;}
-  header{padding:1.3rem 6%;border-bottom:1px solid rgba(0,0,0,0.08);font-family:var(--head-font);font-weight:600;font-size:1.2rem;}
-  .hero{padding:4.5rem 6% 4rem;}
-  .eyebrow{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:1rem;}
-  h1{font-family:var(--head-font);font-size:clamp(2.1rem,5vw,3.3rem);font-weight:600;line-height:1.12;margin-bottom:1.2rem;max-width:780px;}
-  .sub{color:var(--muted);font-size:1.05rem;max-width:560px;margin-bottom:2rem;}
+  header{padding:1.1rem 6%;border-bottom:1px solid rgba(0,0,0,0.08);font-family:var(--head-font);font-weight:600;font-size:1.2rem;display:flex;align-items:center;}
+  .logo-img{height:36px;width:auto;display:block;}
+  .hero{position:relative;padding:6rem 6% 5rem;color:#fff;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;z-index:0;}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;}
+  .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.5) 45%, rgba(0,0,0,0.28) 100%);}
+  .hero > *:not(.hero-bg){position:relative;z-index:1;}
+  .eyebrow{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;opacity:0.85;margin-bottom:1rem;}
+  h1{font-family:var(--head-font);font-size:clamp(2.1rem,5vw,3.4rem);font-weight:600;line-height:1.12;margin-bottom:1.2rem;max-width:780px;color:#fff;}
+  .sub{color:rgba(255,255,255,0.86);font-size:1.05rem;max-width:560px;margin-bottom:2rem;}
   .btn{display:inline-block;background:var(--accent);color:#fff;padding:0.85rem 1.7rem;border-radius:var(--radius);text-decoration:none;font-weight:600;}
-  .hook-list{list-style:none;margin-top:2rem;display:flex;flex-direction:column;gap:0.6rem;color:var(--muted);font-size:0.92rem;}
-  .hook-list li::before{content:"✓ ";color:var(--accent-dark);font-weight:700;}
+  .hook-list{list-style:none;margin-top:2rem;display:flex;flex-direction:column;gap:0.6rem;color:rgba(255,255,255,0.85);font-size:0.92rem;}
+  .hook-list li::before{content:"✓ ";color:#fff;font-weight:700;}
   section{padding:4rem 6%;}
   h2{font-family:var(--head-font);font-weight:600;font-size:clamp(1.6rem,3.5vw,2.3rem);margin-bottom:2rem;}
   .s-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.1rem;}
   .s-card{background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:var(--radius);padding:1.4rem;box-shadow:0 1px 2px rgba(0,0,0,0.04);}
+  .s-ico{width:2.1rem;height:2.1rem;border-radius:50%;background:color-mix(in srgb, var(--accent) 14%, white);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;margin-bottom:0.8rem;}
+  .s-ico svg{width:18px;height:18px;}
   .s-name{font-weight:700;margin-bottom:0.4rem;}
   .s-desc{color:var(--muted);font-size:0.86rem;}
-  #process{background:var(--bg2);color:var(--bg2-text);}
-  #process .step-desc{color:var(--bg2-text);opacity:0.72;}
+  #gallery{background:var(--bg2);}
+  #gallery h2{color:var(--bg2-text);}
+  .g-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;}
+  .g-grid img{width:100%;height:220px;object-fit:cover;border-radius:var(--radius);display:block;}
+  #process{background:var(--bg);}
   .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2rem;}
   .step-num{font-family:var(--head-font);color:var(--accent);font-weight:700;font-size:1.7rem;margin-bottom:0.5rem;}
   .step-title{font-weight:700;margin-bottom:0.4rem;}
@@ -2298,14 +2328,16 @@
   .cta-band h2{color:#fff;margin-bottom:0.6rem;}
   .cta-band p{color:rgba(255,255,255,0.85);margin-bottom:1.6rem;}
   .cta-band .btn{background:#fff;color:var(--accent-dark);}
-  footer{padding:2rem 6%;text-align:center;color:var(--muted);font-size:0.8rem;border-top:1px solid rgba(0,0,0,0.08);}
+  footer{padding:2rem 6%;display:flex;align-items:center;gap:0.6rem;justify-content:center;color:var(--muted);font-size:0.8rem;border-top:1px solid rgba(0,0,0,0.08);}
+  footer img{height:22px;width:auto;}
   .draft-flag{background:#1a1a1a;color:#F5C451;font-size:0.72rem;text-align:center;padding:0.5rem;font-family:monospace;}
 </style>
 </head>
 <body>
 <div class="draft-flag">AI-GENERATED DRAFT — for prospect review, not a live site</div>
-<header>${esc2A(bizName)}</header>
+<header>${logoHtml}</header>
 <section class="hero">
+  <div class="hero-bg"><img src="${unsplashA(st.hero)}" alt=""></div>
   <div class="eyebrow">${esc2A(copy.hero_eyebrow || '')}</div>
   <h1>${esc2A(copy.hero_headline || '')}</h1>
   <p class="sub">${esc2A(copy.hero_subheadline || '')}</p>
@@ -2315,6 +2347,10 @@
 <section id="services">
   <h2>What We Do</h2>
   <div class="s-grid">${services}</div>
+</section>
+<section id="gallery">
+  <h2>Our Work</h2>
+  <div class="g-grid">${gallery}</div>
 </section>
 <section id="process">
   <h2>How It Works</h2>
@@ -2329,7 +2365,7 @@
   <p>${esc2A(copy.cta_sub || '')}</p>
   <a class="btn" href="#">Contact Us</a>
 </section>
-<footer>${esc2A(bizName)}${city ? ' · ' + esc2A(city) : ''}</footer>
+<footer>${logoDataUrl ? `<img src="${logoDataUrl}" alt="">` : ''}<span>${esc2A(bizName)}${city ? ' · ' + esc2A(city) : ''}</span></footer>
 </body>
 </html>`;
     }
@@ -2405,7 +2441,7 @@
         const data = await r.json();
         if (!r.ok) throw new Error(data.detail || data.error || 'Generation failed');
         thinking.finish('Draft ready.');
-        sbLastHtmlA = buildSiteHtmlAdmin(data.copy, bizName, city, niche, data.palette);
+        sbLastHtmlA = buildSiteHtmlAdmin(data.copy, bizName, city, niche, data.palette, logoImage);
         document.getElementById('sbPreviewFrameA').srcdoc = sbLastHtmlA;
         document.getElementById('sbResultPanelA').classList.remove('hidden');
         document.getElementById('sbResultPanelA').scrollIntoView({ behavior: 'smooth', block: 'start' });
