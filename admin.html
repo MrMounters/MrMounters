@@ -238,6 +238,16 @@
   .thinking-line.done .tl-dot{ background:var(--green); box-shadow:none; animation:none; }
   @keyframes think-in{ to{ opacity:1; transform:none; } }
   @keyframes dot-blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  /* AI Site Builder — history list (auto-named by business name, like a chat history) */
+  .hist-item{ display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.65rem 0.7rem; border-radius:8px; cursor:pointer; transition:background 0.15s; }
+  .hist-item:hover{ background:var(--dark4); }
+  .hist-item.active{ background:rgba(76,89,247,0.14); border:1px solid rgba(76,89,247,0.35); }
+  .hist-main{ min-width:0; flex:1; }
+  .hist-name{ font-weight:600; font-size:0.88rem; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hist-meta{ font-family:var(--mono); font-size:0.66rem; color:var(--warm-muted); margin-top:0.15rem; }
+  .hist-del{ background:none; border:none; color:var(--warm-muted); cursor:pointer; padding:0.35rem; flex-shrink:0; border-radius:6px; }
+  .hist-del:hover{ color:var(--red); background:rgba(255,139,107,0.1); }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -260,7 +270,7 @@
         <button class="side-item" type="button" data-page="aprospects" onclick="go('aprospects'); adminLoadProspects()">Prospects</button>
         <button class="side-item" type="button" data-page="aopps" onclick="go('aopps'); adminLoadOpps()">Opportunities</button>
         <button class="side-item" type="button" data-page="aclients" onclick="go('aclients'); adminLoadClientAccounts()">Client Accounts</button>
-        <button class="side-item" type="button" data-page="sitebuilder" onclick="go('sitebuilder')">AI Site Builder</button>
+        <button class="side-item" type="button" data-page="sitebuilder" onclick="go('sitebuilder'); loadSiteDraftHistoryAdmin()">AI Site Builder</button>
         <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--warm-muted);padding:0.9rem 1rem 0.25rem;">Finance</div>
         <button class="side-item" type="button" data-page="acommissions" onclick="go('acommissions'); adminLoadCommissions()">Commissions</button>
         <button class="side-item" type="button" data-page="aconnect" onclick="go('aconnect'); adminLoadConnect()">Stripe Connect</button>
@@ -577,6 +587,11 @@
 
       <!-- GROWTH · AI SITE BUILDER -->
       <div class="page" id="page-sitebuilder">
+        <div class="panel">
+          <div class="panel-h"><div class="panel-t">History</div><span class="muted" id="sbHistoryCountA">—</span></div>
+          <div id="sbHistoryStateA" class="muted">Loading…</div>
+          <div id="sbHistoryListA" class="hidden"></div>
+        </div>
         <div class="panel">
           <div class="panel-h"><div class="panel-t">AI Site Builder</div></div>
           <p class="muted" style="margin-bottom:0.9rem;">Paste whatever we have on a prospect — their existing URL, Google Business Profile listing, or business card text — and generate a ready-to-show one-page site draft in the prospect's own style, not Meridion's.</p>
@@ -2077,7 +2092,89 @@
     }
     // ── AI SITE BUILDER (admin) ──
     let sbLastHtmlA = '';
+    let sbHistoryCacheA = [];
     function esc2A(s){ return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+    // Saves the finished draft to site_drafts, auto-titled by business name. Admins see every
+    // rep's drafts here (RLS: "admins view all site drafts"), reps only their own. Best-effort:
+    // a save failure never blocks showing the draft that was already generated.
+    async function saveSiteDraftToHistoryAdmin({ bizName, niche, city, url, info, copy, palette, aiStatus, paletteStatus, steps }){
+      if (!(sb && session)) return;
+      try {
+        await sb.from('site_drafts').insert({
+          created_by: session.user.id,
+          business_name: bizName, niche, city, website_url: url, raw_info: info,
+          copy, palette, ai_status: aiStatus, palette_status: paletteStatus,
+          thinking_log: steps,
+        });
+        loadSiteDraftHistoryAdmin();
+      } catch (_) { /* best-effort — the draft is already on screen either way */ }
+    }
+
+    async function loadSiteDraftHistoryAdmin(){
+      if (!(sb && session)) return;
+      const state = document.getElementById('sbHistoryStateA');
+      const list = document.getElementById('sbHistoryListA');
+      try {
+        const { data, error } = await sb.from('site_drafts').select('*')
+          .order('created_at', { ascending: false }).limit(100);
+        if (error) throw error;
+        sbHistoryCacheA = data || [];
+        document.getElementById('sbHistoryCountA').textContent = sbHistoryCacheA.length;
+        if (!sbHistoryCacheA.length){
+          state.textContent = 'No drafts yet — generate one below and it’ll show up here.';
+          state.classList.remove('hidden'); list.classList.add('hidden');
+          return;
+        }
+        list.innerHTML = sbHistoryCacheA.map(d => `
+          <div class="hist-item" onclick="loadSiteDraftFromHistoryAdmin('${d.id}')">
+            <div class="hist-main">
+              <div class="hist-name">${esc(d.business_name)}</div>
+              <div class="hist-meta">${esc(d.niche || '')} · ${timeAgo(d.created_at)}</div>
+            </div>
+            <button class="hist-del" type="button" onclick="deleteSiteDraftHistoryAdmin('${d.id}', event)" aria-label="Delete">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+            </button>
+          </div>`).join('');
+        state.classList.add('hidden'); list.classList.remove('hidden');
+      } catch (e) {
+        state.textContent = 'Couldn’t load history — ' + (e.message || 'unknown error');
+        state.classList.remove('hidden'); list.classList.add('hidden');
+      }
+    }
+
+    function loadSiteDraftFromHistoryAdmin(id){
+      const d = sbHistoryCacheA.find(x => x.id === id);
+      if (!d) return;
+      document.querySelectorAll('#sbHistoryListA .hist-item').forEach(el => el.classList.remove('active'));
+      const idx = sbHistoryCacheA.indexOf(d);
+      const rows = document.querySelectorAll('#sbHistoryListA .hist-item');
+      if (rows[idx]) rows[idx].classList.add('active');
+      document.getElementById('sbBizNameA').value = d.business_name || '';
+      document.getElementById('sbNicheA').value = d.niche || 'other';
+      document.getElementById('sbUrlA').value = d.website_url || '';
+      document.getElementById('sbCityA').value = d.city || '';
+      document.getElementById('sbInfoA').value = d.raw_info || '';
+      const thinkingWrapA = document.getElementById('sbThinkingA');
+      thinkingWrapA.classList.remove('hidden');
+      const log = document.getElementById('sbThinkingLogA');
+      log.innerHTML = (d.thinking_log || []).map(s => `<div class="thinking-line done"><span class="tl-dot"></span><span>${esc2A(s)}</span></div>`).join('')
+        + '<div class="thinking-line done"><span class="tl-dot"></span><span>Loaded from history.</span></div>';
+      sbLastHtmlA = buildSiteHtmlAdmin(d.copy || {}, d.business_name, d.city, d.niche, d.palette);
+      document.getElementById('sbPreviewFrameA').srcdoc = sbLastHtmlA;
+      document.getElementById('sbResultPanelA').classList.remove('hidden');
+      setAiStatusBadgeA('sbAiStatusA', d.ai_status, d.palette_status);
+      document.getElementById('sbResultPanelA').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function deleteSiteDraftHistoryAdmin(id, ev){
+      if (ev) ev.stopPropagation();
+      if (!(sb && session)) return;
+      try {
+        await sb.from('site_drafts').delete().eq('id', id);
+        loadSiteDraftHistoryAdmin();
+      } catch (_) { /* best-effort */ }
+    }
     // Makes it visible whether the draft actually came from the model or is generic fallback
     // copy (which happens silently whenever OPENAI_API_KEY isn't set in Vercel) — otherwise an
     // admin has no way to tell the two apart just by looking at the preview.
@@ -2312,6 +2409,7 @@
         document.getElementById('sbPreviewFrameA').srcdoc = sbLastHtmlA;
         document.getElementById('sbResultPanelA').classList.remove('hidden');
         document.getElementById('sbResultPanelA').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        saveSiteDraftToHistoryAdmin({ bizName, niche, city, url, info, copy: data.copy, palette: data.palette, aiStatus: data.ai_status, paletteStatus: data.palette_status, steps });
         setAiStatusBadgeA('sbAiStatusA', data.ai_status, data.palette_status);
       } catch (err2) {
         thinking.finish('Failed — ' + err2.message);

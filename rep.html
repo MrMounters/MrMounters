@@ -268,6 +268,16 @@
   .thinking-line.done .tl-dot{ background:var(--green); box-shadow:none; animation:none; }
   @keyframes think-in{ to{ opacity:1; transform:none; } }
   @keyframes dot-blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  /* AI Site Builder — history list (auto-named by business name, like a chat history) */
+  .hist-item{ display:flex; align-items:center; justify-content:space-between; gap:0.6rem; padding:0.65rem 0.7rem; border-radius:8px; cursor:pointer; transition:background 0.15s; }
+  .hist-item:hover{ background:var(--dark4); }
+  .hist-item.active{ background:rgba(76,89,247,0.14); border:1px solid rgba(76,89,247,0.35); }
+  .hist-main{ min-width:0; flex:1; }
+  .hist-name{ font-weight:600; font-size:0.88rem; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hist-meta{ font-family:var(--mono); font-size:0.66rem; color:var(--warm-muted); margin-top:0.15rem; }
+  .hist-del{ background:none; border:none; color:var(--warm-muted); cursor:pointer; padding:0.35rem; flex-shrink:0; border-radius:6px; }
+  .hist-del:hover{ color:var(--red); background:rgba(255,139,107,0.1); }
 </style>
 <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -312,7 +322,7 @@
     <a class="m-item" data-s="leads" onclick="go('leads')"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/></svg>My Leads</a>
     <a class="m-item" data-s="opportunities" onclick="go('opportunities')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18"/><rect x="9.5" y="3" width="5" height="12"/><rect x="16" y="3" width="5" height="8"/></svg>My Opportunities</a>
     <a class="m-item" data-s="myclients" onclick="go('myclients')"><svg viewBox="0 0 24 24"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>My Clients</a>
-    <a class="m-item" data-s="sitebuilder" onclick="go('sitebuilder')"><svg viewBox="0 0 24 24"><path d="M12 2 13.5 9 20 10.5 13.5 12 12 19 10.5 12 4 10.5 10.5 9 12 2Z"/></svg>AI Site Builder</a>
+    <a class="m-item" data-s="sitebuilder" onclick="go('sitebuilder'); loadSiteDraftHistory()"><svg viewBox="0 0 24 24"><path d="M12 2 13.5 9 20 10.5 13.5 12 12 19 10.5 12 4 10.5 10.5 9 12 2Z"/></svg>AI Site Builder</a>
     <div class="m-section">Money</div>
     <a class="m-item" data-s="commissions" onclick="go('commissions')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.5-1 2-2.5 2.5s-2.5 1-2.5 2.5a2.5 2.5 0 0 0 5 0"/></svg>Commissions</a>
     <div class="m-section">Resources</div>
@@ -482,6 +492,11 @@
       <div class="eyebrow">// Sell · AI Site Builder</div>
       <h1 class="h1">AI Site Builder</h1>
       <p class="lead">Paste whatever you've got on the prospect — their existing URL, their Google Business Profile listing, or the text off their business card — and generate a ready-to-show one-page site draft in seconds. Pick the closest niche so the copy uses the right pain points.</p>
+      <div class="panel">
+        <div class="panel-h"><div class="panel-t">History</div><span class="panel-k" id="sbHistoryCount">—</span></div>
+        <div id="sbHistoryState" class="data-state">Loading…</div>
+        <div id="sbHistoryList" class="hidden"></div>
+      </div>
       <div class="panel">
         <div class="panel-h"><div class="panel-t">Generate a draft</div></div>
         <form onsubmit="generateSiteDraft(event)">
@@ -1906,7 +1921,90 @@
 
     // ── AI SITE BUILDER ──
     let sbLastHtml = '';
+    let sbHistoryCache = [];
     function esc2(s){ return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+    // Saves the finished draft to site_drafts, auto-titled by business name, so it survives
+    // navigating away — this is what turns the tool into a searchable history rather than a
+    // one-shot generator. Best-effort: a save failure never blocks showing the draft that was
+    // already generated.
+    async function saveSiteDraftToHistory({ bizName, niche, city, url, info, copy, palette, aiStatus, paletteStatus, steps }){
+      if (!(sb && session)) return;
+      try {
+        await sb.from('site_drafts').insert({
+          created_by: session.user.id,
+          business_name: bizName, niche, city, website_url: url, raw_info: info,
+          copy, palette, ai_status: aiStatus, palette_status: paletteStatus,
+          thinking_log: steps,
+        });
+        loadSiteDraftHistory();
+      } catch (_) { /* best-effort — the draft is already on screen either way */ }
+    }
+
+    async function loadSiteDraftHistory(){
+      if (!(sb && session)) return;
+      const state = document.getElementById('sbHistoryState');
+      const list = document.getElementById('sbHistoryList');
+      try {
+        const { data, error } = await sb.from('site_drafts').select('*')
+          .eq('created_by', session.user.id).order('created_at', { ascending: false }).limit(50);
+        if (error) throw error;
+        sbHistoryCache = data || [];
+        document.getElementById('sbHistoryCount').textContent = sbHistoryCache.length;
+        if (!sbHistoryCache.length){
+          state.textContent = 'No drafts yet — generate one below and it’ll show up here.';
+          state.classList.remove('hidden'); list.classList.add('hidden');
+          return;
+        }
+        list.innerHTML = sbHistoryCache.map(d => `
+          <div class="hist-item" onclick="loadSiteDraftFromHistory('${d.id}')">
+            <div class="hist-main">
+              <div class="hist-name">${esc(d.business_name)}</div>
+              <div class="hist-meta">${esc(d.niche || '')} · ${timeAgo(d.created_at)}</div>
+            </div>
+            <button class="hist-del" type="button" onclick="deleteSiteDraftHistory('${d.id}', event)" aria-label="Delete">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+            </button>
+          </div>`).join('');
+        state.classList.add('hidden'); list.classList.remove('hidden');
+      } catch (e) {
+        state.textContent = 'Couldn’t load history — ' + (e.message || 'unknown error');
+        state.classList.remove('hidden'); list.classList.add('hidden');
+      }
+    }
+
+    function loadSiteDraftFromHistory(id){
+      const d = sbHistoryCache.find(x => x.id === id);
+      if (!d) return;
+      document.querySelectorAll('#sbHistoryList .hist-item').forEach(el => el.classList.remove('active'));
+      const idx = sbHistoryCache.indexOf(d);
+      const rows = document.querySelectorAll('#sbHistoryList .hist-item');
+      if (rows[idx]) rows[idx].classList.add('active');
+      document.getElementById('sbBizName').value = d.business_name || '';
+      document.getElementById('sbNiche').value = d.niche || 'other';
+      document.getElementById('sbUrl').value = d.website_url || '';
+      document.getElementById('sbCity').value = d.city || '';
+      document.getElementById('sbInfo').value = d.raw_info || '';
+      const thinkingWrap = document.getElementById('sbThinking');
+      thinkingWrap.classList.remove('hidden');
+      const log = document.getElementById('sbThinkingLog');
+      log.innerHTML = (d.thinking_log || []).map(s => `<div class="thinking-line done"><span class="tl-dot"></span><span>${esc2(s)}</span></div>`).join('')
+        + '<div class="thinking-line done"><span class="tl-dot"></span><span>Loaded from history.</span></div>';
+      sbLastHtml = buildSiteHtml(d.copy || {}, d.business_name, d.city, d.niche, d.palette);
+      document.getElementById('sbPreviewFrame').srcdoc = sbLastHtml;
+      document.getElementById('sbResultPanel').classList.remove('hidden');
+      setAiStatusBadge('sbAiStatus', d.ai_status, d.palette_status);
+      document.getElementById('sbResultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function deleteSiteDraftHistory(id, ev){
+      if (ev) ev.stopPropagation();
+      if (!(sb && session)) return;
+      try {
+        await sb.from('site_drafts').delete().eq('id', id);
+        loadSiteDraftHistory();
+      } catch (_) { /* best-effort */ }
+    }
     // Makes it visible whether the draft actually came from the model or is generic fallback
     // copy (which happens silently whenever OPENAI_API_KEY isn't set in Vercel) — otherwise a
     // rep has no way to tell the two apart just by looking at the preview.
@@ -2149,6 +2247,7 @@
         document.getElementById('sbResultPanel').classList.remove('hidden');
         document.getElementById('sbResultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
         setAiStatusBadge('sbAiStatus', data.ai_status, data.palette_status);
+        saveSiteDraftToHistory({ bizName, niche, city, url, info, copy: data.copy, palette: data.palette, aiStatus: data.ai_status, paletteStatus: data.palette_status, steps });
       } catch (err2) {
         thinking.finish('Failed — ' + err2.message);
         err.textContent = 'Generation failed — ' + err2.message;

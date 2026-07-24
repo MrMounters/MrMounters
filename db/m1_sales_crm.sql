@@ -741,6 +741,41 @@ create policy "admins manage campaign spend" on public.campaign_spend for all
 -- END M6
 -- ============================================================
 
+-- ============================================================
+-- M7 — AI Site Builder history (rep.html / admin.html "AI Site Builder")
+-- Persists each generated draft (auto-titled by business name) so it isn't lost on navigation.
+-- Stores input + generated copy/palette, not the full rendered HTML (rebuilt client-side from
+-- copy+niche+palette via buildSiteHtml). Additive + idempotent.
+-- ============================================================
+create table if not exists public.site_drafts (
+  id             uuid primary key default gen_random_uuid(),
+  created_by     uuid references auth.users(id) on delete cascade,
+  business_name  text not null,
+  niche          text,
+  city           text,
+  website_url    text,
+  raw_info       text,
+  copy           jsonb,
+  palette        jsonb,
+  ai_status      text,
+  palette_status text,
+  thinking_log   jsonb,
+  created_at     timestamptz default now()
+);
+create index if not exists site_drafts_created_by_idx on public.site_drafts(created_by, created_at desc);
+alter table public.site_drafts enable row level security;
+drop policy if exists "reps manage own site drafts" on public.site_drafts;
+create policy "reps manage own site drafts" on public.site_drafts for all
+  using (created_by = auth.uid() and public.current_user_role() in ('rep','admin'))
+  with check (created_by = auth.uid() and public.current_user_role() in ('rep','admin'));
+drop policy if exists "admins view all site drafts" on public.site_drafts;
+create policy "admins view all site drafts" on public.site_drafts for select
+  using (public.current_user_role() = 'admin');
+
+-- ============================================================
+-- END M7
+-- ============================================================
+
 -- ============================================================================
 -- VERIFICATION — returns rows so you can SEE it worked. Every ok must be true.
 -- ============================================================================
@@ -750,6 +785,7 @@ with checks(object, ok) as (values
   ('leads.last_nudged_at',       exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='last_nudged_at')),
   ('leads.utm',                  exists(select 1 from information_schema.columns where table_schema='public' and table_name='leads' and column_name='utm')),
   ('table campaign_spend',       (to_regclass('public.campaign_spend') is not null)),
+  ('table site_drafts',          (to_regclass('public.site_drafts') is not null)),
   ('notifications.recipient_id', exists(select 1 from information_schema.columns where table_schema='public' and table_name='notifications' and column_name='recipient_id')),
   ('leads.email nullable',       (select is_nullable='YES' from information_schema.columns where table_schema='public' and table_name='leads' and column_name='email')),
   ('deals.archived_at',          exists(select 1 from information_schema.columns where table_schema='public' and table_name='deals' and column_name='archived_at')),

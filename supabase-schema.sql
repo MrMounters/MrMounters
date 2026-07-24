@@ -1463,3 +1463,44 @@ create policy "admins manage campaign spend" on public.campaign_spend for all
 -- ============================================================
 -- END M6
 -- ============================================================
+
+-- ============================================================
+-- M7 — AI Site Builder history (rep.html / admin.html "AI Site Builder")
+-- ------------------------------------------------------------
+-- Persists each generated draft so reps/admins get a searchable history instead of losing it
+-- the moment they navigate away, auto-titled by business name. Stores the input + the generated
+-- copy/palette (not the full rendered HTML — that's cheap to rebuild client-side from
+-- copy+niche+palette via buildSiteHtml, so a large HTML blob isn't duplicated per row) plus the
+-- thinking-log step labels so reopening a history entry can show what happened. Additive +
+-- idempotent.
+-- ============================================================
+create table if not exists public.site_drafts (
+  id             uuid primary key default gen_random_uuid(),
+  created_by     uuid references auth.users(id) on delete cascade,
+  business_name  text not null,
+  niche          text,
+  city           text,
+  website_url    text,
+  raw_info       text,
+  copy           jsonb,
+  palette        jsonb,
+  ai_status      text,
+  palette_status text,
+  thinking_log   jsonb,
+  created_at     timestamptz default now()
+);
+create index if not exists site_drafts_created_by_idx on public.site_drafts(created_by, created_at desc);
+alter table public.site_drafts enable row level security;
+
+drop policy if exists "reps manage own site drafts" on public.site_drafts;
+create policy "reps manage own site drafts" on public.site_drafts for all
+  using (created_by = auth.uid() and public.current_user_role() in ('rep','admin'))
+  with check (created_by = auth.uid() and public.current_user_role() in ('rep','admin'));
+
+drop policy if exists "admins view all site drafts" on public.site_drafts;
+create policy "admins view all site drafts" on public.site_drafts for select
+  using (public.current_user_role() = 'admin');
+
+-- ============================================================
+-- END M7
+-- ============================================================
