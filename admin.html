@@ -588,7 +588,8 @@
         <div class="panel hidden" id="sbResultPanelA">
           <div class="panel-h">
             <div class="panel-t">Draft preview</div>
-            <div style="display:flex;gap:0.5rem;">
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <span id="sbAiStatusA"></span>
               <button class="btn btn-o btn-sm" type="button" onclick="copySiteDraftHtmlAdmin()">Copy HTML</button>
               <button class="btn btn-o btn-sm" type="button" onclick="downloadSiteDraftHtmlAdmin()">Download .html</button>
             </div>
@@ -2049,6 +2050,20 @@
     // ── AI SITE BUILDER (admin) ──
     let sbLastHtmlA = '';
     function esc2A(s){ return String(s == null ? '' : s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+    // Makes it visible whether the draft actually came from the model or is generic fallback
+    // copy (which happens silently whenever OPENAI_API_KEY isn't set in Vercel) — otherwise an
+    // admin has no way to tell the two apart just by looking at the preview.
+    function setAiStatusBadgeA(elId, status){
+      const el = document.getElementById(elId); if (!el) return;
+      const map = {
+        completed: { text: '✨ AI-generated', color: '#6fcf97' },
+        fallback: { text: '⚠ AI call failed — generic fallback copy shown', color: '#f2c94c' },
+        not_configured: { text: '⚠ OpenAI not configured — generic fallback copy shown', color: '#f2c94c' },
+      };
+      const m = map[status] || { text: status || '', color: '#A6B0C3' };
+      el.textContent = m.text;
+      el.style.cssText = 'font-size:0.74rem;font-weight:600;color:' + m.color + ';margin-right:0.3rem;';
+    }
 
     // Deliberately NOT Meridion's own dark-navy/indigo SaaS look — this is a draft of the
     // PROSPECT's site, shown to them as a sample, so each niche gets its own light-background,
@@ -2180,6 +2195,7 @@
         document.getElementById('sbPreviewFrameA').srcdoc = sbLastHtmlA;
         document.getElementById('sbResultPanelA').classList.remove('hidden');
         document.getElementById('sbResultPanelA').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setAiStatusBadgeA('sbAiStatusA', data.ai_status);
       } catch (err2) {
         err.textContent = 'Generation failed — ' + err2.message;
       } finally {
