@@ -1,0 +1,324 @@
+:root {
+  --page-ground: #090d16;
+  --page-surface: #101621;
+  --page-surface-raised: #151d2a;
+  --page-text: #f1f2ee;
+  --page-muted: #9ba3b1;
+  --page-line: rgba(241, 242, 238, 0.13);
+  --page-accent: #8991ff;
+}
+
+body {
+  background: var(--page-ground) !important;
+  color: var(--page-text);
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+body::before {
+  opacity: 0.32 !important;
+}
+
+.hero.has-rocket {
+  min-height: min(920px, 100dvh) !important;
+  padding-top: clamp(8rem, 15vh, 11rem) !important;
+  padding-bottom: clamp(5rem, 10vh, 8rem) !important;
+}
+
+.hero.has-rocket h1 {
+  max-width: 880px !important;
+  margin-bottom: 1.6rem !important;
+  color: var(--page-text) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: clamp(4rem, 7.2vw, 7.8rem) !important;
+  font-weight: 500 !important;
+  line-height: 0.91 !important;
+  letter-spacing: -0.062em !important;
+  text-transform: none !important;
+  text-wrap: balance;
+}
+
+.hero.has-rocket .line-gold {
+  color: var(--page-accent) !important;
+  background: none !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+.hero.has-rocket .hero-eyebrow {
+  margin-bottom: 1.1rem !important;
+  color: rgba(241, 242, 238, 0.62) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.hero.has-rocket .hero-sub {
+  max-width: 620px !important;
+  color: rgba(241, 242, 238, 0.72) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: clamp(1rem, 1.3vw, 1.18rem) !important;
+  line-height: 1.58 !important;
+  text-wrap: pretty;
+}
+
+.hero.has-rocket .hero-regions,
+.hero.has-rocket .hero-stats {
+  display: none !important;
+}
+
+.hero.has-rocket .hero-actions {
+  margin-top: 2rem !important;
+}
+
+.hero.has-rocket .hero-actions a,
+.cta-band .hero-actions a {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.hero.has-rocket .btn-primary,
+.cta-band .btn-primary {
+  background: #f1f2ee !important;
+  border-color: #f1f2ee !important;
+  color: #0a0e17 !important;
+}
+
+.hero.has-rocket .btn-outline,
+.cta-band .btn-outline {
+  border-color: rgba(241, 242, 238, 0.38) !important;
+  color: var(--page-text) !important;
+}
+
+section:not(.hero) {
+  padding-top: clamp(6rem, 10vw, 10rem) !important;
+  padding-bottom: clamp(7rem, 12vw, 12rem) !important;
+  background: var(--page-ground) !important;
+  background-image: none !important;
+}
+
+section:not(.hero):nth-of-type(even) {
+  background: var(--page-surface) !important;
+}
+
+.glow-accent {
+  display: none !important;
+}
+
+.section-eyebrow {
+  color: var(--page-muted) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.65rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.section-title,
+.cta-band h2 {
+  color: var(--page-text) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 0.94 !important;
+  letter-spacing: -0.052em !important;
+  text-transform: none !important;
+}
+
+.section-title em,
+.cta-band h2 em {
+  color: var(--page-accent) !important;
+  font-style: normal !important;
+  -webkit-text-fill-color: currentColor !important;
+  background: none !important;
+}
+
+.section-sub {
+  max-width: 62ch !important;
+  color: var(--page-muted) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  line-height: 1.6 !important;
+}
+
+.services-grid,
+.value-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 1px !important;
+  border: 1px solid var(--page-line);
+  background: var(--page-line);
+}
+
+.service-card,
+.value-card {
+  min-height: 250px;
+  padding: clamp(1.5rem, 3vw, 3rem) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--page-surface) !important;
+  box-shadow: none !important;
+}
+
+.service-card:hover,
+.value-card:hover {
+  background: var(--page-surface-raised) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.service-icon,
+.value-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border: 1px solid var(--page-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.service-name,
+.value-name,
+.step-title {
+  color: var(--page-text) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.service-desc,
+.value-desc,
+.step-desc {
+  color: var(--page-muted) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  line-height: 1.55 !important;
+}
+
+.steps {
+  border-top: 1px solid var(--page-line);
+  border-bottom: 1px solid var(--page-line);
+}
+
+.step {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.step-num {
+  color: var(--page-accent) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.8rem !important;
+}
+
+.ticker-band,
+.proof-cta {
+  display: none !important;
+}
+
+.cta-band {
+  padding-top: clamp(6rem, 10vw, 10rem) !important;
+  padding-bottom: clamp(6rem, 10vw, 10rem) !important;
+  border-top: 1px solid var(--page-line) !important;
+  border-bottom: 1px solid var(--page-line) !important;
+  background: var(--page-surface) !important;
+  background-image: none !important;
+}
+
+footer {
+  background: #070a11 !important;
+  background-image: none !important;
+}
+
+#cookieBanner {
+  left: 1rem !important;
+  right: 1rem !important;
+  bottom: 1rem !important;
+  display: grid !important;
+  width: auto !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding: 1rem !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  border: 1px solid var(--page-line) !important;
+  border-radius: 0 !important;
+  background: rgba(8, 12, 20, 0.95) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28) !important;
+}
+
+#cookieBanner .cb-text {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  color: rgba(241, 242, 238, 0.66) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 0.76rem !important;
+  line-height: 1.45 !important;
+}
+
+#cookieBanner .cb-actions {
+  display: flex !important;
+  gap: 0.4rem !important;
+}
+
+#cookieBanner button {
+  min-width: 88px !important;
+  padding: 0.7rem 0.9rem !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 760px) {
+  .hero.has-rocket {
+    min-height: 760px !important;
+    height: auto !important;
+    padding: 7.5rem 1.25rem 5rem !important;
+  }
+
+  .hero.has-rocket h1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: clamp(3rem, 14.5vw, 4.4rem) !important;
+    line-height: 0.94 !important;
+  }
+
+  .hero.hero-long h1 {
+    font-size: clamp(2.65rem, 11.5vw, 3.55rem) !important;
+    line-height: 0.96 !important;
+  }
+
+  .hero.has-rocket .hero-sub {
+    width: 100% !important;
+    max-width: 34ch !important;
+    font-size: 0.98rem !important;
+  }
+
+  .hero.has-rocket .hero-actions {
+    width: 100%;
+    max-width: 390px;
+  }
+
+  .hero.has-rocket .hero-actions a {
+    width: 100%;
+  }
+
+  .services-grid,
+  .value-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .service-card,
+  .value-card {
+    min-height: 0;
+  }
+
+  #cookieBanner {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  #cookieBanner .cb-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
