@@ -31,35 +31,24 @@
   });
   showProof(0);
 
+  var workCarousel = document.querySelector('.v2-work-list');
+  document.querySelectorAll('[data-work-direction]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      if (!workCarousel) return;
+      var card = workCarousel.querySelector('.v2-case');
+      var gap = parseFloat(window.getComputedStyle(workCarousel).gap) || 0;
+      var distance = card ? card.getBoundingClientRect().width + gap : workCarousel.clientWidth * 0.8;
+      workCarousel.scrollBy({
+        left: button.dataset.workDirection === 'next' ? distance : -distance,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      });
+    });
+  });
+
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduceMotion || !window.gsap || !window.ScrollTrigger) return;
 
   window.gsap.registerPlugin(window.ScrollTrigger);
-
-  window.gsap.utils.toArray('.v2-case').forEach(function (card) {
-    var image = card.querySelector('img');
-    if (image) {
-      window.gsap.fromTo(image, { scale: 0.88 }, {
-        scale: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: card,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true
-        }
-      });
-    }
-    window.gsap.from(card.querySelectorAll('.v2-case-meta, h3, p'), {
-      y: 18,
-      duration: 0.8,
-      stagger: 0.08,
-      scrollTrigger: {
-        trigger: card,
-        start: 'top 70%'
-      }
-    });
-  });
 
   window.gsap.utils.toArray('.v2-manifesto-line').forEach(function (line, index) {
     window.gsap.from(line, {
@@ -76,18 +65,6 @@
 
   window.ScrollTrigger.matchMedia({
     '(min-width: 900px)': function () {
-      var workSection = document.querySelector('.v2-work');
-      var workTitle = document.querySelector('.v2-work-title');
-      if (workSection && workTitle) {
-        window.ScrollTrigger.create({
-          trigger: workSection,
-          start: 'top 92px',
-          end: 'bottom bottom',
-          pin: workTitle,
-          pinSpacing: false
-        });
-      }
-
       var portalCards = window.gsap.utils.toArray('.v2-portal-card');
       portalCards.forEach(function (card, index) {
         var top = 88 + (index * 16);
@@ -110,4 +87,5 @@
       });
     }
   });
+
 })();
