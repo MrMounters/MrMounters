@@ -599,12 +599,16 @@ body > footer:not(.v2-footer) {
   padding: 0.85rem 1rem;
   border: 1px solid rgba(11, 16, 25, 0.2);
   background: rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  animation: conversationArrive 7.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
 }
 
 .growth-conversation > div:nth-child(2) {
   justify-self: end;
   background: var(--v2-ink);
   color: #fff;
+  animation-delay: 1.45s;
 }
 
 .growth-conversation > .conversation-result {
@@ -612,6 +616,13 @@ body > footer:not(.v2-footer) {
   border-color: var(--v2-electric);
   background: transparent;
   color: var(--v2-ink);
+  animation-delay: 2.9s;
+}
+
+@keyframes conversationArrive {
+  0%, 8% { opacity: 0; transform: translateY(16px) scale(0.985); }
+  15%, 78% { opacity: 1; transform: translateY(0) scale(1); }
+  90%, 100% { opacity: 0; transform: translateY(-5px) scale(1); }
 }
 
 .growth-conversation small,
@@ -1097,32 +1108,36 @@ body > footer:not(.v2-footer) {
   color: #8b8b84;
 }
 
-.v2-inline-image {
-  display: inline-block;
-  width: 1.65em;
-  height: 0.72em;
-  margin: 0 0.06em;
-  overflow: hidden;
-  vertical-align: 0.02em;
-  border-radius: 999px;
-}
-
-.v2-inline-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-  transform: scale(1.25);
-}
-
 .v2-founder-note {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: clamp(130px, 14vw, 190px) minmax(0, 1fr) auto;
   align-items: end;
   gap: 2rem;
   margin-top: clamp(4rem, 8vw, 8rem);
   padding-top: 1.5rem;
   border-top: 1px solid var(--v2-line);
+}
+
+.v2-founder-portrait {
+  margin: 0;
+}
+
+.v2-founder-portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 20%;
+  filter: grayscale(0.2) contrast(1.04);
+}
+
+.v2-founder-portrait figcaption {
+  margin-top: 0.65rem;
+  color: #6a6c68;
+  font-family: var(--v2-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .v2-founder-note p {
@@ -1207,8 +1222,9 @@ body > footer:not(.v2-footer) {
 
 .v2-portal-card img {
   justify-self: end;
-  width: min(100%, 620px);
-  max-height: 64vh;
+  width: auto;
+  height: min(64vh, 720px);
+  max-width: 100%;
   object-fit: contain;
   object-position: top center;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1266,6 +1282,13 @@ body > footer:not(.v2-footer) {
   min-width: 100%;
   margin: 0;
   padding: clamp(2rem, 5vw, 5rem) 0 0;
+}
+
+.v2-stars {
+  margin-bottom: 1.4rem;
+  color: var(--v2-electric);
+  font-size: 1.05rem;
+  letter-spacing: 0.22em;
 }
 
 .v2-quote blockquote {
@@ -1732,12 +1755,20 @@ body > footer:not(.v2-footer) {
     font-size: clamp(3rem, 15vw, 5.2rem);
   }
 
-  .v2-inline-image {
-    width: 1.4em;
-  }
-
   .v2-founder-note {
     grid-template-columns: 1fr;
+  }
+
+  .v2-founder-portrait {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    align-items: end;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .v2-founder-portrait img {
+    width: 110px;
   }
 
   .v2-portal-card {
@@ -1781,8 +1812,9 @@ body > footer:not(.v2-footer) {
 
   .v2-portal-card img {
     justify-self: center;
-    width: min(100%, 470px);
-    max-height: 58vh;
+    width: auto;
+    height: min(58vh, 640px);
+    max-width: 100%;
     border-radius: 18px;
   }
 
@@ -1891,7 +1923,8 @@ body > footer:not(.v2-footer) {
   .v2-case-image img,
   .v2-portal-card,
   .v2-manifesto-line,
-  .v2-bento-card {
+  .v2-bento-card,
+  .growth-conversation > div {
     opacity: 1 !important;
     transform: none !important;
   }
