@@ -1,5 +1,29 @@
 (function () {
+  function addIndustriesLinks() {
+    document.querySelectorAll('.nav-links').forEach(function (nav) {
+      if (nav.querySelector('a[href="industries.html"]')) return;
+      var work = nav.querySelector(':scope > a[href="work.html"]');
+      if (!work) return;
+      var link = document.createElement('a');
+      link.href = 'industries.html';
+      link.textContent = 'Industries';
+      nav.insertBefore(link, work);
+    });
+
+    document.querySelectorAll('.mobile-nav').forEach(function (nav) {
+      if (nav.querySelector('a[href="industries.html"]')) return;
+      var work = nav.querySelector('a[href="work.html"]');
+      if (!work) return;
+      var link = document.createElement('a');
+      link.href = 'industries.html';
+      link.className = 'mobile-link mnav-row mnav-row-top';
+      link.innerHTML = '<span class="mnav-label">Industries</span><span class="mnav-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>';
+      nav.insertBefore(link, work);
+    });
+  }
+
   function initMenu() {
+    addIndustriesLinks();
     var button = document.getElementById('navHamburger');
     var panel = document.getElementById('mobileNav');
     if (!button || !panel) return;
