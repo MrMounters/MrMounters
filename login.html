@@ -1,197 +1,298 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex">
-<meta name="format-detection" content="telephone=no">
-<title>Client Login — Meridion AI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --gold:#4C59F7; --gold-light:#8A74FF; --cyan:#7DD3FC; --dark:#0B0F19; --dark3:#141E33; --dark4:#1A2540;
-    --white:#F2F4F8; --gray:#A6B0C3; --warm-muted:#7C88A0; --warm-accent:#B0BAD1;
-    --card-border:rgba(242,244,248,0.1); --mono:'Space Mono',monospace;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    font-family:'Inter',sans-serif; font-weight:300; color:var(--white);
-    background:var(--dark); min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:2rem 1.2rem; position:relative; overflow-x:hidden;
-  }
-  body::before{
-    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-    background:
-      linear-gradient(rgba(76,89,247,0.05) 1px,transparent 1px) 0 0/46px 46px,
-      linear-gradient(90deg,rgba(76,89,247,0.05) 1px,transparent 1px) 0 0/46px 46px,
-      radial-gradient(ellipse 60% 50% at 50% 30%,rgba(76,89,247,0.07) 0%,transparent 70%);
-  }
-  .auth-card{
-    position:relative; z-index:1; width:100%; max-width:430px;
-    background:var(--dark3); border:1px solid rgba(76,89,247,0.22); border-top:3px solid var(--gold);
-    border-radius:6px; padding:2.6rem 2.2rem;
-    box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(76,89,247,0.05);
-  }
-  .auth-logo-full{ margin-bottom:1.6rem; }
-  .auth-eyebrow{ font-family:var(--mono); font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
-  .auth-h1{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.7rem; letter-spacing:-0.02em; margin-bottom:0.4rem; }
-  .auth-lead{ font-size:0.86rem; color:var(--warm-accent); line-height:1.6; margin-bottom:1.5rem; }
-  .demo-note{ font-family:var(--mono); font-size:0.66rem; color:var(--gold); background:rgba(76,89,247,0.07); border:1px solid rgba(76,89,247,0.25); border-radius:3px; padding:0.65rem 0.8rem; margin-bottom:1.4rem; line-height:1.5; }
-  .auth-tabs{ display:flex; gap:0.3rem; background:var(--dark4); border:1px solid var(--card-border); border-radius:3px; padding:0.3rem; margin-bottom:1rem; }
-  .auth-tab{ flex:1; font-family:var(--mono); font-size:0.62rem; letter-spacing:0.04em; text-transform:uppercase; color:var(--warm-muted); background:none; border:none; padding:0.6rem 0.3rem; cursor:pointer; border-radius:2px; transition:color 0.2s, background 0.2s; }
-  .auth-tab.active{ color:var(--dark); background:var(--gold); font-weight:700; }
-  .auth-input{
-    width:100%; background:rgba(242,244,248,0.04); border:1px solid rgba(242,244,248,0.12);
-    border-radius:4px; padding:0.85rem 1rem; color:var(--white); font-family:'Inter',sans-serif;
-    font-size:0.9rem; outline:none; margin-bottom:0.6rem; transition:border-color 0.2s, box-shadow 0.2s;
-  }
-  .auth-input:focus{ border-color:rgba(76,89,247,0.45); box-shadow:0 0 0 3px rgba(76,89,247,0.08); }
-  .auth-input::placeholder{ color:var(--warm-muted); }
-  .auth-btn{
-    width:100%; background:var(--gold); color:var(--dark); border:none; border-radius:2px;
-    padding:0.9rem 1rem; cursor:pointer; font-family:var(--mono); font-weight:700; font-size:0.76rem;
-    letter-spacing:0.1em; text-transform:uppercase; transition:background 0.2s, box-shadow 0.2s;
-  }
-  .auth-btn:hover{ background:var(--gold-light); box-shadow:0 6px 24px rgba(76,89,247,0.35); }
-  .auth-link{ font-family:var(--mono); font-size:0.64rem; letter-spacing:0.04em; color:var(--warm-accent); background:none; border:none; cursor:pointer; text-decoration:underline; text-underline-offset:3px; }
-  .auth-link:hover{ color:var(--gold); }
-  .auth-hint{ font-family:var(--mono); font-size:0.62rem; color:var(--warm-muted); margin:0.55rem 0 0; line-height:1.5; }
-  .auth-status{ font-size:0.78rem; line-height:1.5; margin-top:1rem; min-height:1.1em; text-align:center; color:var(--warm-accent); }
-  .auth-status.ok{ color:var(--gold); }
-  .auth-status.err{ color:#ff8b6b; }
-  .auth-back{ display:inline-block; margin-top:1.6rem; font-family:var(--mono); font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--warm-muted); text-decoration:none; transition:color 0.2s; }
-  .auth-back:hover{ color:var(--white); }
-  .hidden{ display:none !important; }
-  /* white-theme polish */
-  .auth-card{ box-shadow:0 2px 6px rgba(0,0,0,0.3), 0 24px 60px rgba(0,0,0,0.5); }
-  .demo-note{ color:var(--warm-accent); }
-</style>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xj1vynd82i");
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="format-detection" content="telephone=no">
+  <title>Client Workspace — Meridion AI</title>
+  <meta name="description" content="Secure passwordless access to the Meridion AI client workspace.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070b14'/%3E%3Cpath d='M8 22V10l8 8 8-8v12' stroke='%234f5df6' stroke-width='2.6' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login-v2.css">
 </head>
 <body>
-  <div class="auth-card">
-    <div class="auth-logo-full"><img src="meridion-logo-full.png" alt="Meridion AI" style="width:220px;max-width:100%;height:auto;display:block;margin:0 auto;"></div>
-    <div class="auth-eyebrow">// Client Portal</div>
-    <h1 class="auth-h1">Sign in</h1>
-    <p class="auth-lead">Access your domains, leads, ad performance, invoices, and visitor analytics. First time here? Signing in creates your account automatically — no separate sign-up.</p>
+  <a class="login-skip" href="#signIn">Skip to sign in</a>
+  <main class="login-shell">
+    <section class="workspace-showcase" aria-labelledby="workspaceTitle">
+      <header class="workspace-top">
+        <a class="workspace-logo" href="index.html" aria-label="Meridion AI home"><img src="meridion-logo-full.png" alt="Meridion AI"></a>
+        <a class="workspace-back" href="index.html">Return to the website</a>
+      </header>
 
-    <div class="demo-note">Just exploring? <button type="button" class="auth-link" onclick="startDemo()">Try the demo portal</button> — no account needed.</div>
-
-    <!-- Method tabs -->
-    <div class="auth-tabs" role="tablist">
-      <button class="auth-tab active" data-t="magic" onclick="authTab('magic')">Email</button>
-      <button class="auth-tab" data-t="phone" onclick="authTab('phone')">Text Code</button>
-    </div>
-
-    <!-- Magic link -->
-    <form id="panel-magic" onsubmit="sendMagic(event)">
-      <input type="email" id="email" class="auth-input" placeholder="you@business.com" required autocomplete="email">
-      <button type="submit" class="auth-btn">Email me a sign-in link</button>
-      <p class="auth-hint">We'll email you a secure link — no password needed.</p>
-    </form>
-
-    <!-- Phone / SMS -->
-    <form id="panel-phone" class="hidden" onsubmit="sendSms(event)">
-      <input type="tel" id="phone" class="auth-input" placeholder="+1 (480) 000-0000" autocomplete="tel">
-      <div id="smsCodeRow" class="hidden">
-        <input type="text" id="smsCode" class="auth-input" placeholder="6-digit code" inputmode="numeric" autocomplete="one-time-code">
-        <button type="button" class="auth-btn" onclick="verifySms(event)">Verify &amp; sign in</button>
+      <div class="workspace-copy">
+        <p class="workspace-kicker">Client workspace</p>
+        <h1 id="workspaceTitle">Everything we are building, <em>in one place.</em></h1>
+        <p class="workspace-lead">Review performance, approve work, send requests, and see what comes next without chasing another update.</p>
       </div>
-      <button type="submit" id="smsSendBtn" class="auth-btn">Text me a code</button>
-      <p class="auth-hint">International format, e.g. +1 555 013 0199. Message rates apply.</p>
-    </form>
 
-    <div class="auth-status" id="status"></div>
-    <a href="index.html" class="auth-back">← Back to meridionai.com</a>
-    <a href="login.html?next=rep.html" class="auth-back" style="margin-left:1.2rem;">Sales rep? Log in here →</a>
-  </div>
+      <div class="portal-preview" aria-label="Preview of the Meridion client workspace">
+        <div class="preview-head"><span>Meridion command center</span><span class="preview-live">Workspace live</span></div>
+        <div class="preview-grid">
+          <div class="preview-performance">
+            <span class="preview-label">Visitor sessions</span><strong class="preview-number">1,284</strong><span class="preview-delta">+18.6% this period</span>
+            <div class="preview-chart" aria-hidden="true"><i style="--height:24%;--delay:80ms"></i><i style="--height:38%;--delay:120ms"></i><i style="--height:31%;--delay:160ms"></i><i style="--height:54%;--delay:200ms"></i><i style="--height:48%;--delay:240ms"></i><i style="--height:72%;--delay:280ms"></i><i style="--height:64%;--delay:320ms"></i><i style="--height:88%;--delay:360ms"></i><i style="--height:79%;--delay:400ms"></i><i style="--height:68%;--delay:440ms"></i><i style="--height:56%;--delay:480ms"></i><i style="--height:44%;--delay:520ms"></i></div>
+          </div>
+          <div class="preview-activity">
+            <div class="activity-row" style="--delay:0s"><div><strong>Homepage concept ready</strong><small>Approval requested</small></div><time>Now</time></div>
+            <div class="activity-row" style="--delay:2.5s"><div><strong>Paid media report updated</strong><small>Performance · July</small></div><time>2m</time></div>
+            <div class="activity-row" style="--delay:5s"><div><strong>Change request received</strong><small>Priority set · Normal</small></div><time>8m</time></div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="workspace-footer"><span>Performance · Delivery · Requests · Approvals</span><span>Need help? <a href="sms:4805890098">Text (480) 589-0098</a></span></footer>
+    </section>
+
+    <section class="auth-pane" id="signIn" aria-labelledby="signInTitle">
+      <div class="session-check" id="sessionCheck"><span>Checking workspace access</span></div>
+      <div class="auth-wrap">
+        <span class="auth-eyebrow">Private client access</span>
+        <h2 id="signInTitle">Sign in to your workspace.</h2>
+        <p class="auth-lead">Use the email address or mobile number connected to your Meridion account. Access is invitation-only.</p>
+
+        <div id="authEntry">
+          <form class="auth-form" id="panel-email" novalidate>
+            <label class="auth-label" for="email">Work email <span>Passwordless</span></label>
+            <input class="auth-input" type="email" id="email" placeholder="you@business.com" autocomplete="email" required>
+            <button class="auth-button" type="submit" id="emailSubmit"><span>Send secure sign-in link</span></button>
+            <p class="auth-hint">No password to remember. The secure link is sent only to approved accounts.</p>
+          </form>
+
+          <form class="auth-form hidden" id="panel-phone" novalidate>
+            <label class="auth-label" for="phone">Mobile number <span>International format</span></label>
+            <input class="auth-input" type="tel" id="phone" placeholder="+1 480 000 0000" autocomplete="tel">
+            <button class="auth-button" type="submit" id="smsSendBtn"><span>Text me a sign-in code</span></button>
+            <div class="sms-code-row hidden" id="smsCodeRow">
+              <label class="auth-label" for="smsCode">Six-digit code <span>Sent by text</span></label>
+              <input class="auth-input" type="text" id="smsCode" placeholder="000000" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+              <button class="auth-button" type="button" id="smsVerifyBtn"><span>Verify and sign in</span></button>
+            </div>
+            <p class="auth-hint">Message and data rates may apply. We never use this number for login marketing.</p>
+          </form>
+
+          <button class="auth-method-switch" type="button" id="methodSwitch">Use a text message instead</button>
+          <div class="auth-status" id="status" role="status" aria-live="polite"></div>
+        </div>
+
+        <section class="auth-success hidden" id="authSuccess" aria-live="polite">
+          <div class="success-mark" aria-hidden="true">\u2713</div>
+          <h3>Check your inbox.</h3>
+          <p id="successMessage">We sent a secure sign-in link to your email address.</p>
+          <div class="success-actions"><button class="auth-text-button" type="button" id="resendButton" disabled>Resend in 45s</button><button class="auth-text-button" type="button" id="changeIdentity">Use another email</button></div>
+        </section>
+
+        <div class="demo-access"><div><strong>Want to look around first?</strong><span>Open a safe workspace with sample data.</span></div><button class="demo-button" type="button" id="demoButton">Preview demo</button></div>
+        <div class="auth-help"><span>Need access or having trouble?</span><a href="sms:4805890098">Text the Meridion team</a></div>
+        <p class="auth-legal">By continuing, you agree to the <a href="terms.html">Terms</a> and acknowledge the <a href="privacy.html">Privacy Policy</a>.</p>
+      </div>
+    </section>
+  </main>
 
   <script src="auth-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0"></script>
   <script>
-    const URL_ = window.SUPABASE_URL || '', KEY_ = window.SUPABASE_ANON_KEY || '';
-    const configured = URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_');
-    const NEXT = new URLSearchParams(location.search).get('next');
-    const PORTAL = (NEXT === 'rep.html') ? 'rep.html' : 'portal.html';
+  (function () {
+    'use strict';
+
+    const URL_ = window.SUPABASE_URL || '';
+    const KEY_ = window.SUPABASE_ANON_KEY || '';
+    const configured = Boolean(URL_ && KEY_ && !URL_.includes('YOUR-PROJECT') && !KEY_.includes('YOUR_'));
+    const next = new URLSearchParams(location.search).get('next');
+    const demoDestination = next === 'rep.html' ? 'rep.html' : 'portal.html';
     const DEMO_EMAIL = 'user@user.com';
+    const entry = document.getElementById('authEntry');
+    const success = document.getElementById('authSuccess');
+    const sessionCheck = document.getElementById('sessionCheck');
+    const status = document.getElementById('status');
+    const emailForm = document.getElementById('panel-email');
+    const phoneForm = document.getElementById('panel-phone');
+    const methodSwitch = document.getElementById('methodSwitch');
+    const resendButton = document.getElementById('resendButton');
+    let activeMethod = 'email';
+    let lastIdentity = '';
+    let resendTimer = null;
     let sb = null;
 
-    // A real Supabase session always wins over a stale demo flag — otherwise anyone who ever
-    // clicked "Try the demo portal" on this browser gets bounced into the fake McKinley demo
-    // account instead of their real one every time they log in for real afterward.
+    function message(text, kind) {
+      status.textContent = text || '';
+      status.className = 'auth-status' + (kind ? ' ' + kind : '');
+    }
+
+    function friendlyError(error) {
+      const raw = String(error && error.message || error || '').toLowerCase();
+      if (raw.includes('rate') || raw.includes('seconds')) return 'Please wait a moment before requesting another sign-in message.';
+      if (raw.includes('invalid') && raw.includes('phone')) return 'Enter the mobile number in international format, beginning with + and the country code.';
+      if (raw.includes('otp') || raw.includes('signup') || raw.includes('user')) return 'We could not find an invited workspace for those details. Ask your Meridion contact to confirm your access.';
+      if (raw.includes('network') || raw.includes('fetch')) return 'We could not reach the sign-in service. Check your connection and try again.';
+      return 'We could not complete sign-in. Try again or text the Meridion team for help.';
+    }
+
+    function setLoading(button, loading, loadingText) {
+      button.disabled = loading;
+      button.classList.toggle('is-loading', loading);
+      const label = button.querySelector('span') || button;
+      if (loading) {
+        button.dataset.label = label.textContent;
+        label.textContent = loadingText;
+      } else if (button.dataset.label) {
+        label.textContent = button.dataset.label;
+      }
+    }
+
+    function maskEmail(email) {
+      const parts = email.split('@');
+      if (parts.length !== 2) return email;
+      const name = parts[0];
+      return name.slice(0, Math.min(2, name.length)) + '\u2022'.repeat(Math.max(2, Math.min(5, name.length - 2))) + '@' + parts[1];
+    }
+
+    function startResendCountdown() {
+      clearInterval(resendTimer);
+      let remaining = 45;
+      resendButton.disabled = true;
+      resendButton.textContent = 'Resend in ' + remaining + 's';
+      resendTimer = setInterval(function () {
+        remaining -= 1;
+        resendButton.textContent = remaining > 0 ? 'Resend in ' + remaining + 's' : 'Resend sign-in link';
+        if (remaining <= 0) {
+          clearInterval(resendTimer);
+          resendButton.disabled = false;
+        }
+      }, 1000);
+    }
+
+    function showEmailSent(email) {
+      lastIdentity = email;
+      entry.classList.add('hidden');
+      success.classList.remove('hidden');
+      document.getElementById('successMessage').textContent = 'We sent a secure sign-in link to ' + maskEmail(email) + '. It may take a minute to arrive.';
+      success.querySelector('h3').textContent = 'Check your inbox.';
+      startResendCountdown();
+    }
+
+    function showEntry() {
+      clearInterval(resendTimer);
+      success.classList.add('hidden');
+      entry.classList.remove('hidden');
+      message('');
+      window.setTimeout(function () { document.getElementById(activeMethod === 'email' ? 'email' : 'phone').focus(); }, 20);
+    }
+
+    function switchMethod(method) {
+      activeMethod = method;
+      const emailActive = method === 'email';
+      emailForm.classList.toggle('hidden', !emailActive);
+      phoneForm.classList.toggle('hidden', emailActive);
+      methodSwitch.textContent = emailActive ? 'Use a text message instead' : 'Use email instead';
+      message('');
+      window.setTimeout(function () { document.getElementById(emailActive ? 'email' : 'phone').focus(); }, 20);
+    }
+
+    async function goToRoleHome() {
+      if (!(configured && sb)) return;
+      const result = await sb.auth.getSession();
+      const session = result.data && result.data.session;
+      if (!session) return;
+      const profileResult = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
+      if (profileResult.error || !profileResult.data) {
+        await sb.auth.signOut();
+        sessionCheck.classList.add('is-done');
+        message('This account is not assigned to a workspace yet. Ask your Meridion contact to finish the invitation.', 'err');
+        return;
+      }
+      localStorage.removeItem('jb-demo-session');
+      const role = profileResult.data.role;
+      location.replace(role === 'admin' ? 'admin.html' : role === 'manager' ? 'manager.html' : role === 'rep' ? 'rep.html' : 'portal.html');
+    }
+
+    async function sendMagic(email, button) {
+      if (!(configured && sb)) return message('Secure sign-in is temporarily unavailable. Use the demo or text the Meridion team.', 'err');
+      localStorage.removeItem('jb-demo-session');
+      setLoading(button, true, 'Sending secure link');
+      message('');
+      const result = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + '/login.html', shouldCreateUser: false } });
+      setLoading(button, false);
+      if (result.error) return message(friendlyError(result.error), 'err');
+      showEmailSent(email);
+    }
+
+    emailForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      const input = document.getElementById('email');
+      input.setAttribute('aria-invalid', 'false');
+      const email = input.value.trim();
+      if (!email || !input.validity.valid) {
+        input.setAttribute('aria-invalid', 'true');
+        message('Enter a valid work email address.', 'err');
+        input.focus();
+        return;
+      }
+      sendMagic(email, document.getElementById('emailSubmit'));
+    });
+
+    phoneForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const input = document.getElementById('phone');
+      const phone = input.value.trim().replace(/[()\s-]/g, '');
+      input.setAttribute('aria-invalid', 'false');
+      if (!/^\+[1-9]\d{9,14}$/.test(phone)) {
+        input.setAttribute('aria-invalid', 'true');
+        message('Use international format, beginning with + and the country code.', 'err');
+        input.focus();
+        return;
+      }
+      if (!(configured && sb)) return message('Text sign-in is temporarily unavailable. Use the demo or text the Meridion team.', 'err');
+      localStorage.removeItem('jb-demo-session');
+      const button = document.getElementById('smsSendBtn');
+      setLoading(button, true, 'Sending code');
+      const result = await sb.auth.signInWithOtp({ phone: phone, options: { shouldCreateUser: false } });
+      setLoading(button, false);
+      if (result.error) return message(friendlyError(result.error), 'err');
+      lastIdentity = phone;
+      document.getElementById('smsCodeRow').classList.remove('hidden');
+      button.classList.add('hidden');
+      message('We sent a six-digit code to your mobile number.', 'ok');
+      document.getElementById('smsCode').focus();
+    });
+
+    async function verifySms() {
+      const token = document.getElementById('smsCode').value.replace(/\D/g, '').slice(0, 6);
+      if (token.length !== 6) return message('Enter the complete six-digit code.', 'err');
+      const button = document.getElementById('smsVerifyBtn');
+      setLoading(button, true, 'Verifying code');
+      const result = await sb.auth.verifyOtp({ phone: lastIdentity, token: token, type: 'sms' });
+      setLoading(button, false);
+      if (result.error) return message('That code is invalid or has expired. Request a new one and try again.', 'err');
+      await goToRoleHome();
+    }
+
+    document.getElementById('smsVerifyBtn').addEventListener('click', verifySms);
+    document.getElementById('smsCode').addEventListener('input', function (event) {
+      event.target.value = event.target.value.replace(/\D/g, '').slice(0, 6);
+      if (event.target.value.length === 6) verifySms();
+    });
+    methodSwitch.addEventListener('click', function () { switchMethod(activeMethod === 'email' ? 'phone' : 'email'); });
+    document.getElementById('changeIdentity').addEventListener('click', showEntry);
+    resendButton.addEventListener('click', function () { if (lastIdentity) sendMagic(lastIdentity, resendButton); });
+    document.getElementById('demoButton').addEventListener('click', function () {
+      localStorage.setItem('jb-demo-session', JSON.stringify({ email: DEMO_EMAIL, name: 'McKinley Law Group', at: Date.now() }));
+      location.href = demoDestination;
+    });
+
     if (configured && window.supabase) {
       sb = window.supabase.createClient(URL_, KEY_);
-      sb.auth.getSession().then(({ data }) => {
-        if (data.session) { localStorage.removeItem('jb-demo-session'); goToRoleHome(); }
-        else if (localStorage.getItem('jb-demo-session')) { window.location.href = PORTAL; }
-      });
-    } else if (localStorage.getItem('jb-demo-session')) {
-      window.location.href = PORTAL;
+      sb.auth.getSession().then(function (result) {
+        if (result.data && result.data.session) return goToRoleHome();
+        sessionCheck.classList.add('is-done');
+      }).catch(function () { sessionCheck.classList.add('is-done'); });
+    } else {
+      sessionCheck.classList.add('is-done');
+      message('Secure sign-in is temporarily unavailable. You can still preview the demo workspace.', 'err');
     }
-
-    // Real accounts are role-gated (client vs rep); demo accounts always go to the
-    // ?next= hint since they're a pure frontend demo with no profiles table behind them.
-    async function goToRoleHome(){
-      if (!(configured && sb)) { window.location.href = PORTAL; return; }
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) { window.location.href = PORTAL; return; }
-      const { data: profile } = await sb.from('profiles').select('role').eq('user_id', session.user.id).single();
-      const role = profile && profile.role;
-      const home = role === 'admin' ? 'admin.html'
-                 : role === 'manager' ? 'manager.html'
-                 : role === 'rep' ? 'rep.html'
-                 : 'portal.html';
-      window.location.href = home;
-    }
-
-    function msg(t, k){ const m = document.getElementById('status'); m.textContent = t; m.className = 'auth-status ' + (k || ''); }
-    function authTab(which){
-      document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.t === which));
-      document.getElementById('panel-magic').classList.toggle('hidden', which !== 'magic');
-      document.getElementById('panel-phone').classList.toggle('hidden', which !== 'phone');
-      msg('');
-    }
-    function startDemo(email){
-      localStorage.setItem('jb-demo-session', JSON.stringify({ email: email || DEMO_EMAIL, name: 'McKinley Law Group', at: Date.now() }));
-      window.location.href = PORTAL;
-    }
-    async function sendMagic(e){
-      e.preventDefault();
-      if (!(configured && sb)) return msg('Magic links activate once Supabase is connected. Try the demo login above.', '');
-      const email = document.getElementById('email').value.trim();
-      msg('Sending…');
-      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/login.html' } });
-      if (error) return msg(error.message, 'err');
-      msg('Check your email — we sent you a secure sign-in link.', 'ok');
-    }
-    async function sendSms(e){
-      e.preventDefault();
-      if (!(configured && sb)) return msg('SMS codes activate once Supabase + an SMS provider are connected.', '');
-      const phone = document.getElementById('phone').value.trim();
-      if (!phone) return msg('Enter your phone number first.', 'err');
-      msg('Texting a code…');
-      const { error } = await sb.auth.signInWithOtp({ phone });
-      if (error) return msg(error.message, 'err');
-      document.getElementById('smsCodeRow').classList.remove('hidden');
-      document.getElementById('smsSendBtn').classList.add('hidden');
-      msg('We texted you a 6-digit code.', 'ok');
-    }
-    async function verifySms(){
-      if (!(configured && sb)) return;
-      const phone = document.getElementById('phone').value.trim();
-      const token = document.getElementById('smsCode').value.trim();
-      const { error } = await sb.auth.verifyOtp({ phone, token, type: 'sms' });
-      if (error) return msg(error.message, 'err');
-      goToRoleHome();
-    }
+  })();
   </script>
 </body>
 </html>
