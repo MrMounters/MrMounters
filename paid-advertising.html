@@ -309,8 +309,10 @@
 <link rel="stylesheet" href="marketing-pages.css">
 <link rel="stylesheet" href="marketing-nav.css">
 <script defer src="marketing-nav.js"></script>
+<link rel="stylesheet" href="service-v2.css">
+<script defer src="service-v2.js"></script>
 </head>
-<body>
+<body class="service-v2">
 
 <a href="#main" class="skip-link">Skip to content</a>
 
@@ -426,7 +428,7 @@
     <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div><div class="service-name">Google &amp; Meta Campaign Management</div><div class="service-desc">Full setup, targeting, and bid strategy handled end-to-end — no set-it-and-forget-it.</div></div>
     <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="service-name">Conversion-Focused Creative</div><div class="service-desc">Ad creative and copy built to convert, tested and refreshed on a real cadence.</div></div>
     <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div class="service-name">Weekly Optimization &amp; Reporting</div><div class="service-desc">Campaigns reviewed weekly, not quarterly — spend gets reallocated to what's working.</div></div>
-    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m23 6-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div><div class="service-name">ROAS-Driven Strategy</div><div class="service-desc">Clients typically see 2.2×–15× return on ad spend. We optimize for revenue, not impressions.</div></div>
+    <div class="service-card"><div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m23 6-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div><div class="service-name">Revenue-Aware Strategy</div><div class="service-desc">Budget decisions use lead quality, appointments, and attributable revenue—not impressions alone.</div></div>
   </div>
 </section>
 
@@ -580,6 +582,7 @@ document.querySelectorAll('.services-grid').forEach(g=>{Array.from(g.children).f
 </script>
 <script>
 (function(){
+  if (document.body.classList.contains('service-v2')) return;
   var video = document.getElementById('heroVideo');
   if (!video) return;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

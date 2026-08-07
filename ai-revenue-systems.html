@@ -275,8 +275,10 @@
 <link rel="stylesheet" href="marketing-pages.css">
 <link rel="stylesheet" href="marketing-nav.css">
 <script defer src="marketing-nav.js"></script>
+<link rel="stylesheet" href="service-v2.css">
+<script defer src="service-v2.js"></script>
 </head>
-<body>
+<body class="service-v2">
 
 <a href="#main" class="skip-link">Skip to content</a>
 
@@ -537,6 +539,7 @@ document.querySelectorAll('.system-grid').forEach(g=>{Array.from(g.children).for
 </script>
 <script>
 (function(){
+  if (document.body.classList.contains('service-v2')) return;
   var video = document.getElementById('heroVideo');
   if (!video) return;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
