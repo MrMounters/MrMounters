@@ -128,16 +128,44 @@
 
   var menuButton = document.querySelector('.ind-menu-button');
   var mobileMenu = document.getElementById('industryMobileMenu');
+  var menuReturnFocus = null;
+  mobileMenu.inert = true;
   function setMenu(open) {
+    if (open) menuReturnFocus = document.activeElement;
     menuButton.setAttribute('aria-expanded', String(open));
     menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     mobileMenu.classList.toggle('is-open', open);
     mobileMenu.setAttribute('aria-hidden', String(!open));
+    mobileMenu.inert = !open;
     document.body.classList.toggle('menu-open', open);
+    if (open) {
+      var firstLink = mobileMenu.querySelector('a');
+      if (firstLink) window.requestAnimationFrame(function () { firstLink.focus(); });
+    } else if (menuReturnFocus && typeof menuReturnFocus.focus === 'function') {
+      menuReturnFocus.focus();
+    }
   }
   menuButton.addEventListener('click', function () { setMenu(menuButton.getAttribute('aria-expanded') !== 'true'); });
   mobileMenu.addEventListener('click', function (event) { if (event.target.closest('a')) setMenu(false); });
-  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') setMenu(false); });
+  document.addEventListener('keydown', function (event) {
+    var open = menuButton.getAttribute('aria-expanded') === 'true';
+    if (event.key === 'Escape' && open) {
+      setMenu(false);
+      return;
+    }
+    if (event.key !== 'Tab' || !open) return;
+    var focusable = Array.from(mobileMenu.querySelectorAll('a[href], button:not([disabled])'));
+    if (!focusable.length) return;
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
 
   document.querySelectorAll('.ind-faq-question').forEach(function (button) {
     button.addEventListener('click', function () {
@@ -149,6 +177,7 @@
   });
 
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reducedMotion) document.documentElement.classList.add('ind-motion');
   var revealItems = document.querySelectorAll('.ind-reveal');
   if (!reducedMotion && 'IntersectionObserver' in window) {
     var revealObserver = new IntersectionObserver(function (entries) {
@@ -164,17 +193,32 @@
   }
 
   var flow = Array.from(document.querySelectorAll('.ind-flow-step'));
-  var flowIndex = 0;
-  function paintFlow() {
+  function paintFlow(flowIndex) {
     flow.forEach(function (item, index) {
       item.classList.toggle('is-active', index === flowIndex);
       item.classList.toggle('is-complete', index < flowIndex);
     });
-    flowIndex = (flowIndex + 1) % flow.length;
-    if (flowIndex === 0) flow.forEach(function (item) { item.classList.remove('is-complete'); });
   }
-  paintFlow();
-  if (!reducedMotion) window.setInterval(paintFlow, 1700);
+  function runFlowOnce() {
+    flow.forEach(function (_, index) {
+      window.setTimeout(function () { paintFlow(index); }, index * 720);
+    });
+  }
+  if (reducedMotion || !('IntersectionObserver' in window)) {
+    flow.forEach(function (item, index) {
+      item.classList.toggle('is-active', index === flow.length - 1);
+      item.classList.toggle('is-complete', index < flow.length - 1);
+    });
+  } else {
+    paintFlow(0);
+    var consolePanel = document.querySelector('.ind-console');
+    var flowObserver = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+      runFlowOnce();
+      flowObserver.disconnect();
+    }, { threshold: 0.35 });
+    if (consolePanel) flowObserver.observe(consolePanel);
+  }
 
   var progress = document.querySelector('.ind-progress');
   var scrollTicking = false;

@@ -7,7 +7,7 @@
 <title>Client Portal — Meridion AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --gold:#4C59F7; --gold-light:#8A74FF; --cyan:#7DD3FC; --dark:#0B0F19; --dark2:#111A2E; --dark3:#141E33; --dark4:#1A2540;
@@ -261,13 +261,8 @@
   .pnav{ box-shadow:0 1px 3px rgba(0,0,0,0.25); }
   .stat-d.down{ color:var(--red,#DF1B41); }
 </style>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xj1vynd82i");
-</script>
+<link rel="stylesheet" href="workspace-v2.css">
+<script src="workspace-v2.js" defer></script>
 <!-- Cal.com embed — lets the Discovery Call stage book inline without leaving the portal -->
 <script type="text/javascript">
   (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
@@ -277,7 +272,7 @@
   Cal("init", "discoveryCall", { origin: "https://cal.com" });
 </script>
 </head>
-<body>
+<body class="workspace-v2" data-workspace="portal">
   <div class="loading" id="loading">// authenticating…</div>
 
   <!-- Impersonation banner — only shown when an admin used "Sign in as this client" -->
@@ -1639,9 +1634,8 @@
       } catch (_) {}
     }
 
-    /* Note: Meridion AI's own agency-wide Clarity tracking snippet is live in <head> above.
-       This "Visitors" panel is a separate, future per-client tracking product (still demo
-       data) — when it's real, each client's own Clarity project ID would be looked up here. */
+    /* Private workspace pages do not load session-replay tracking. This future per-client
+       panel reads only from the server-side proxy when a client connection is available. */
 
     // If this page is restored from the back/forward cache (e.g. hitting Back right after
     // signing out), force a real reload so init() re-checks the session from scratch instead

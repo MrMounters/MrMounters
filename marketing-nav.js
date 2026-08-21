@@ -1,4 +1,14 @@
 (function () {
+  function markCurrentPage() {
+    var current = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    document.querySelectorAll('a[href]').forEach(function (link) {
+      var raw = link.getAttribute('href');
+      if (!raw || raw.charAt(0) === '#' || /^(https?:|mailto:|tel:|sms:)/i.test(raw)) return;
+      var page = raw.split('#')[0].split('?')[0].split('/').pop().toLowerCase() || 'index.html';
+      if (page === current) link.setAttribute('aria-current', 'page');
+    });
+  }
+
   function addIndustriesLinks() {
     document.querySelectorAll('.nav-links').forEach(function (nav) {
       if (nav.querySelector('a[href="industries.html"]')) return;
@@ -22,8 +32,43 @@
     });
   }
 
+  function initDesktopDropdowns() {
+    document.querySelectorAll('.nav-dropdown').forEach(function (dropdown, index) {
+      var trigger = dropdown.querySelector('.nav-dropdown-trigger');
+      var menu = dropdown.querySelector('.nav-dropdown-menu');
+      if (!trigger || !menu) return;
+      var menuId = menu.id || 'serviceMenu' + index;
+      menu.id = menuId;
+      trigger.setAttribute('aria-controls', menuId);
+      trigger.setAttribute('aria-expanded', 'false');
+
+      function setOpen(open) {
+        dropdown.classList.toggle('is-open', open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      trigger.addEventListener('click', function () { setOpen(!dropdown.classList.contains('is-open')); });
+      dropdown.addEventListener('focusout', function (event) {
+        if (!dropdown.contains(event.relatedTarget)) setOpen(false);
+      });
+      dropdown.addEventListener('pointerleave', function () {
+        if (!dropdown.contains(document.activeElement)) setOpen(false);
+      });
+      document.addEventListener('pointerdown', function (event) {
+        if (!dropdown.contains(event.target)) setOpen(false);
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape' || !dropdown.classList.contains('is-open')) return;
+        setOpen(false);
+        trigger.focus();
+      });
+    });
+  }
+
   function initMenu() {
     addIndustriesLinks();
+    markCurrentPage();
+    initDesktopDropdowns();
     var button = document.getElementById('navHamburger');
     var panel = document.getElementById('mobileNav');
     if (!button || !panel) return;
@@ -37,9 +82,15 @@
     function syncMenu() {
       var open = isOpen();
       panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.inert = !open;
       document.body.classList.toggle('menu-open', open);
       if (open) {
-        lastFocused = document.activeElement;
+        if (!lastFocused) lastFocused = document.activeElement;
+        var firstLink = Array.from(panel.querySelectorAll('a[href], button:not([disabled])')).find(function (element) {
+          return element.offsetParent !== null;
+        });
+        if (firstLink) window.requestAnimationFrame(function () { firstLink.focus({ preventScroll: true }); });
       } else if (lastFocused && document.contains(lastFocused)) {
         lastFocused.focus({ preventScroll: true });
         lastFocused = null;
@@ -60,6 +111,7 @@
     }
 
     panel.setAttribute('aria-hidden', 'true');
+    panel.inert = true;
 
     button.addEventListener('click', function () {
       window.requestAnimationFrame(syncMenu);

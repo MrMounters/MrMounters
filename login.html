@@ -28,8 +28,8 @@
         <p class="workspace-lead">Review performance, approve work, send requests, and see what comes next without chasing another update.</p>
       </div>
 
-      <div class="portal-preview" aria-label="Preview of the Meridion client workspace">
-        <div class="preview-head"><span>Meridion command center</span><span class="preview-live">Workspace live</span></div>
+      <div class="portal-preview" aria-label="Sample preview of the Meridion client workspace">
+        <div class="preview-head"><span>Sample client command center</span><span class="preview-live">Workspace preview</span></div>
         <div class="preview-grid">
           <div class="preview-performance">
             <span class="preview-label">Visitor sessions</span><strong class="preview-number">1,284</strong><span class="preview-delta">+18.6% this period</span>
@@ -49,6 +49,10 @@
     <section class="auth-pane" id="signIn" aria-labelledby="signInTitle">
       <div class="session-check" id="sessionCheck"><span>Checking workspace access</span></div>
       <div class="auth-wrap">
+        <header class="auth-mobile-brand">
+          <a class="auth-mobile-logo" href="index.html" aria-label="Meridion AI home"><img src="meridion-logo-full.png" alt="Meridion AI"></a>
+          <a href="index.html">Back to website</a>
+        </header>
         <span class="auth-eyebrow">Private client access</span>
         <h2 id="signInTitle">Sign in to your workspace.</h2>
         <p class="auth-lead">Use the email address or mobile number connected to your Meridion account. Access is invitation-only.</p>
@@ -78,7 +82,7 @@
         </div>
 
         <section class="auth-success hidden" id="authSuccess" aria-live="polite">
-          <div class="success-mark" aria-hidden="true">\u2713</div>
+          <div class="success-mark" aria-hidden="true">&#10003;</div>
           <h3>Check your inbox.</h3>
           <p id="successMessage">We sent a secure sign-in link to your email address.</p>
           <div class="success-actions"><button class="auth-text-button" type="button" id="resendButton" disabled>Resend in 45s</button><button class="auth-text-button" type="button" id="changeIdentity">Use another email</button></div>

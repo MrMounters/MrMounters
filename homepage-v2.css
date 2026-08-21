@@ -170,20 +170,21 @@ body > footer:not(.v2-footer) {
 
 #cookieBanner {
   left: 1rem !important;
-  right: 1rem !important;
+  right: auto !important;
   bottom: 1rem !important;
   display: grid !important;
-  width: auto !important;
-  max-width: 760px !important;
-  margin: 0 auto !important;
-  padding: 1rem !important;
+  width: min(560px, calc(100vw - 2rem)) !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0.85rem !important;
   grid-template-columns: minmax(0, 1fr) auto !important;
   align-items: center !important;
-  gap: 1rem !important;
+  gap: 0.8rem !important;
   border: 1px solid rgba(255, 255, 255, 0.16) !important;
   border-radius: 0 !important;
   background: rgba(8, 12, 20, 0.95) !important;
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.28) !important;
+  transition: opacity 180ms cubic-bezier(0.23, 1, 0.32, 1), transform 180ms cubic-bezier(0.23, 1, 0.32, 1) !important;
 }
 
 #cookieBanner .cb-text {
@@ -192,8 +193,8 @@ body > footer:not(.v2-footer) {
   margin: 0 !important;
   color: rgba(255, 255, 255, 0.68) !important;
   font-family: var(--v2-font) !important;
-  font-size: 0.78rem !important;
-  line-height: 1.45 !important;
+  font-size: 0.74rem !important;
+  line-height: 1.42 !important;
 }
 
 #cookieBanner .cb-actions {
@@ -202,8 +203,8 @@ body > footer:not(.v2-footer) {
 }
 
 #cookieBanner button {
-  min-width: 84px !important;
-  padding: 0.7rem 0.9rem !important;
+  min-width: 74px !important;
+  padding: 0.6rem 0.75rem !important;
   border-radius: 0 !important;
   font-family: var(--v2-font) !important;
   font-size: 0.72rem !important;
@@ -847,7 +848,7 @@ body > footer:not(.v2-footer) {
   border-right: 1px solid var(--v2-light-line);
   color: #fff;
   text-decoration: none;
-  transition: width 650ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 350ms ease;
+  transition: background-color 180ms ease;
 }
 
 .v2-accordion-item:last-child {
@@ -893,7 +894,7 @@ body > footer:not(.v2-footer) {
   line-height: 1.5;
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 250ms ease 120ms, transform 250ms ease 120ms;
+  transition: opacity 240ms cubic-bezier(0.23, 1, 0.32, 1) 80ms, transform 240ms cubic-bezier(0.23, 1, 0.32, 1) 80ms;
 }
 
 .v2-accordion-arrow {
@@ -982,7 +983,7 @@ body > footer:not(.v2-footer) {
   color: #d9ddff;
   font: 500 1.15rem/1 var(--v2-sans);
   cursor: pointer;
-  transition: background-color 220ms ease, border-color 220ms ease, transform 220ms ease;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .v2-work-arrow:hover,
@@ -1066,6 +1067,11 @@ body > footer:not(.v2-footer) {
   border-top: 0;
   color: #929bb9;
   font-size: 0.72rem;
+}
+
+.v2-case-meta span:last-child {
+  color: var(--v2-electric-light);
+  text-align: right;
 }
 
 .v2-case h3 {
@@ -1261,6 +1267,7 @@ body > footer:not(.v2-footer) {
   color: var(--v2-ink);
   font: 500 0.8rem/1 var(--v2-font);
   cursor: pointer;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .v2-proof-button:hover {
@@ -1876,6 +1883,10 @@ body > footer:not(.v2-footer) {
   }
 
   #cookieBanner {
+    right: 0.75rem !important;
+    bottom: 0.75rem !important;
+    left: 0.75rem !important;
+    width: auto !important;
     grid-template-columns: 1fr !important;
     gap: 0.8rem !important;
   }
@@ -1906,6 +1917,25 @@ body > footer:not(.v2-footer) {
   .v2-case-meta {
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .v2-case-meta span:last-child {
+    text-align: left;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .v2-bento-card:hover > img {
+    transform: none;
+  }
+
+  .v2-case-image:hover img {
+    transform: scale(1.015);
+  }
+
+  .v2-work-arrow:hover,
+  .v2-work-arrow:focus-visible {
+    transform: none;
   }
 }
 

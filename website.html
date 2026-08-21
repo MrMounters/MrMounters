@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="format-detection" content="telephone=no">
-<title>Launch the Website Your Business Has Outgrown — Meridion AI</title>
+<title>Replace the Site Your Business Has Outgrown — Meridion AI</title>
 <meta name="description" content="Replace the website holding your business back with a custom, mobile-fast conversion site delivered in 5 to 7 business days.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://meridionai.com/website.html">
-<meta property="og:title" content="Launch the Website Your Business Has Outgrown — Meridion AI">
+<link rel="canonical" href="https://www.meridionai.com/website.html">
+<meta property="og:title" content="Replace the Site Your Business Has Outgrown — Meridion AI">
 <meta property="og:description" content="A custom-designed, mobile-fast website — live in 5 to 7 business days. One-time or monthly, unlimited revisions, no templates.">
 <meta property="og:image" content="og-image.jpg">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://meridionai.com/website.html">
+<meta property="og:url" content="https://www.meridionai.com/website.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Launch the Website Your Business Has Outgrown — Meridion AI">
+<meta name="twitter:title" content="Replace the Site Your Business Has Outgrown — Meridion AI">
 <meta name="twitter:description" content="A custom-designed, mobile-fast website — live in 5 to 7 business days. One-time or monthly, unlimited revisions, no templates.">
 <meta name="twitter:image" content="og-image.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230B0F19'/%3E%3Cpath d='M8 22V10l8 8 8-8v12' stroke='%234C59F7' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
@@ -28,7 +28,7 @@
     "@type": "ProfessionalService",
     "name": "Meridion AI",
     "telephone": "+14805890098",
-    "url": "https://meridionai.com/"
+    "url": "https://www.meridionai.com/"
   },
   "areaServed": ["US","GB","AU","AE","EU"],
   "description": "A custom-designed, mobile-fast website, live in 5 to 7 business days. One-time or monthly pricing, unlimited revisions, no templates.",
@@ -41,7 +41,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 
   :root {
@@ -281,18 +281,12 @@
   .guarantee-text strong { color:var(--white); font-weight:500; }
   @media (max-width: 640px) { .guarantee-inner { flex-direction:column; gap:1.5rem; } }
 </style>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xj1vynd82i");
-</script>
 <link rel="stylesheet" href="marketing-pages.css">
 <link rel="stylesheet" href="marketing-nav.css">
 <script defer src="marketing-nav.js"></script>
 <link rel="stylesheet" href="service-v2.css">
 <script defer src="service-v2.js"></script>
+<script defer src="public-core.js"></script>
 </head>
 <body class="service-v2">
 
@@ -336,7 +330,7 @@
     </div>
   </div>
   <div class="hero-eyebrow">Website Offer</div>
-  <h1>Launch the Website<br><span class="line-gold">Your Business Has Outgrown.</span></h1>
+  <h1>Replace the Site<br><span class="line-gold">Your Business Has Outgrown.</span></h1>
   <p class="hero-sub">Replace the site holding you back with a custom, mobile-fast conversion experience delivered in 5–7 business days.</p>
   <div class="hero-actions">
     <a href="#pricing" class="btn-primary">See Pricing</a>
@@ -486,10 +480,10 @@
 </footer>
 
 <div id="cookieBanner" role="dialog" aria-label="Cookie consent">
-  <p class="cb-text">We use cookies to measure traffic and improve the site. Accept analytics or continue without them. <a href="privacy.html">Privacy Policy</a></p>
+  <p class="cb-text">Optional analytics help us improve the site. You can continue without them. <a href="privacy.html">Privacy policy</a></p>
   <div class="cb-actions">
     <button class="cb-decline" id="cbDecline">Decline</button>
-    <button class="cb-accept" id="cbAccept">Accept All</button>
+    <button class="cb-accept" id="cbAccept">Accept</button>
   </div>
 </div>
 
@@ -541,21 +535,6 @@ document.querySelectorAll('.mobile-link').forEach(l=>l.addEventListener('click',
 const rObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rObs.unobserve(e.target);}});},{threshold:0.06});
 document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
 
-(function() {
-  if (localStorage.getItem('jb-cookie')) return;
-  const banner = document.getElementById('cookieBanner');
-  setTimeout(() => banner.classList.add('cb-show'), 1200);
-  function dismiss() {
-    banner.classList.remove('cb-show');
-    setTimeout(() => { banner.style.display = 'none'; }, 500);
-  }
-  document.getElementById('cbAccept').addEventListener('click', () => {
-    localStorage.setItem('jb-cookie', 'accepted'); dismiss();
-  });
-  document.getElementById('cbDecline').addEventListener('click', () => {
-    localStorage.setItem('jb-cookie', 'declined'); dismiss();
-  });
-})();
 </script>
 <script>
 async function startCheckout(plan, btn) {
@@ -625,30 +604,6 @@ document.querySelectorAll('#faq .faq-q').forEach(function(q){
   q.addEventListener('click', toggle);
   q.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
 });
-</script>
-<script>
-/* Acquisition attribution: capture UTM params on landing, persist for the visit, and pass them
-   through to the Cal.com booking so a booked call carries its campaign + creative (utm_content).
-   Feeds the admin "Acquisition" leaderboard. Best-effort, never throws. */
-(function(){
-  try {
-    var KEY = 'meridion-utm';
-    var qs = new URLSearchParams(location.search);
-    var keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
-    var utm = {};
-    keys.forEach(function(k){ if (qs.get(k)) utm[k] = qs.get(k); });
-    if (Object.keys(utm).length) { localStorage.setItem(KEY, JSON.stringify(utm)); }
-    else { try { utm = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ utm = {}; } }
-    var params = new URLSearchParams();
-    keys.forEach(function(k){ if (utm[k]) params.set(k, utm[k]); });
-    var q = params.toString();
-    if (q) {
-      document.querySelectorAll('a[href*="cal.com/"]').forEach(function(a){
-        a.href += (a.href.indexOf('?') > -1 ? '&' : '?') + q;
-      });
-    }
-  } catch(e){}
-})();
 </script>
 </body>
 </html>

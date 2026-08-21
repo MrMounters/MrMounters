@@ -125,7 +125,7 @@ module.exports = async function handler(req, res) {
             <p>Hi ${firstName}, these prospects and leads have gone quiet — a quick touch keeps them warm:</p>
             <ul style="padding-left:18px;margin:12px 0">${items}</ul>
             ${overflowLine}
-            <p style="margin-top:16px"><a href="https://meridionai.com/rep.html" style="color:#4C59F7">Open your pipeline →</a></p>`),
+            <p style="margin-top:16px"><a href="https://www.meridionai.com/rep.html" style="color:#4C59F7">Open your pipeline →</a></p>`),
         });
       }
 

@@ -8,7 +8,7 @@
 <title>Project Setup — Meridion AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --gold:#4C59F7; --gold-light:#8A74FF; --dark:#0B0F19; --dark2:#111A2E; --dark3:#141E33; --dark4:#1A2540;
@@ -119,15 +119,10 @@
   .mobile-menu-btn{ display:none; background:var(--dark3); border:1px solid var(--card-border); color:var(--white);
     border-radius:6px; padding:0.5rem 0.7rem; cursor:pointer; margin-bottom:1rem; align-items:center; gap:0.5rem; font-size:0.8rem; }
 </style>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xj1vynd82i");
-</script>
+<link rel="stylesheet" href="workspace-v2.css">
+<script src="workspace-v2.js" defer></script>
 </head>
-<body>
+<body class="workspace-v2" data-workspace="setup">
   <div class="loading" id="loading">// loading your setup…</div>
 
   <div class="shell hidden" id="shell">

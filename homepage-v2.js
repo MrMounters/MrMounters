@@ -19,8 +19,10 @@
     proofIndex = (index + proofSlides.length) % proofSlides.length;
     proofTrack.style.transform = 'translate3d(' + (-proofIndex * 100) + '%, 0, 0)';
     proofSlides.forEach(function (slide, slideIndex) {
-      slide.classList.toggle('is-current', slideIndex === proofIndex);
-      slide.setAttribute('aria-hidden', slideIndex === proofIndex ? 'false' : 'true');
+      var current = slideIndex === proofIndex;
+      slide.classList.toggle('is-current', current);
+      slide.setAttribute('aria-hidden', current ? 'false' : 'true');
+      slide.inert = !current;
     });
   }
 

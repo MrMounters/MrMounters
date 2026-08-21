@@ -1,0 +1,91 @@
+#cookieBanner {
+  position: fixed;
+  right: clamp(0.75rem, 2vw, 1.5rem);
+  bottom: clamp(0.75rem, 2vw, 1.5rem);
+  z-index: 900;
+  display: grid;
+  width: min(31rem, calc(100vw - 1.5rem));
+  padding: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem 1rem;
+  border: 1px solid rgba(244, 243, 238, 0.18);
+  background: #0a0f1a;
+  color: #f4f3ee;
+  box-shadow: 0 18px 54px rgba(2, 5, 12, 0.34);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1), transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#cookieBanner.cb-show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#cookieBanner .cb-text {
+  margin: 0;
+  color: rgba(244, 243, 238, 0.68);
+  font: 400 0.74rem/1.45 'Outfit', sans-serif;
+}
+
+#cookieBanner .cb-text a {
+  color: #f4f3ee;
+  text-underline-offset: 3px;
+}
+
+#cookieBanner .cb-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#cookieBanner button {
+  min-height: 38px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(244, 243, 238, 0.2);
+  border-radius: 0;
+  background: transparent;
+  color: #f4f3ee;
+  font: 500 0.67rem/1 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: background 160ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms cubic-bezier(0.23, 1, 0.32, 1), transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#cookieBanner #cbAccept {
+  border-color: #5965f3;
+  background: #5965f3;
+}
+
+#cookieBanner button:active {
+  transform: scale(0.97);
+}
+
+#cookieBanner button:focus-visible {
+  outline: 2px solid #aeb5ff;
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #cookieBanner button:hover { border-color: rgba(244, 243, 238, 0.55); }
+  #cookieBanner #cbAccept:hover { border-color: #727df6; background: #727df6; }
+}
+
+@media (max-width: 620px) {
+  #cookieBanner {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: auto;
+    grid-template-columns: 1fr;
+  }
+
+  #cookieBanner .cb-actions { justify-content: stretch; }
+  #cookieBanner button { flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cookieBanner { transform: none; transition: opacity 180ms ease; }
+}

@@ -1,122 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://meridionai.com/</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/seo.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/seo.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/paid-advertising.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/paid-advertising.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/web-development.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/web-development.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/ugc-content.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/website.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/dashboards.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/ugc-content.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/ai-lead-generation.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/dashboards.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/work.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/ai-lead-generation.html</loc>
+    <lastmod>2026-08-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.meridionai.com/ai-revenue-systems.html</loc>
+    <lastmod>2026-08-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.meridionai.com/work.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/case-kato.html</loc>
-    <lastmod>2026-07-22</lastmod>
+    <loc>https://www.meridionai.com/case-kato.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/about.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.meridionai.com/about.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/industries.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/industries.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/med-spas.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/med-spas.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/cosmetic-dentistry.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/cosmetic-dentistry.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/hormone-peptide-clinics.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/hormone-peptide-clinics.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/hvac.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/hvac.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/roofing-home-services.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/roofing-home-services.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/personal-injury-law.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/personal-injury-law.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/automotive-dealers.html</loc>
-    <lastmod>2026-08-06</lastmod>
+    <loc>https://www.meridionai.com/automotive-dealers.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/privacy.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.meridionai.com/privacy.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://meridionai.com/terms.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.meridionai.com/terms.html</loc>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
